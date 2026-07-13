@@ -190,3 +190,8 @@ add_executable(test_edit tests/test_edit.c)
 target_link_libraries(test_edit PRIVATE wubuoxml wubuword_app wubuedit_app)
 target_include_directories(test_edit PRIVATE src/wubuoxml src/wubuxml apps/wubuword apps/wubuedit)
 add_test(NAME edit_roundtrip COMMAND test_edit)
+
+add_executable(test_cell_cycle tests/test_cell_cycle.c)
+target_link_libraries(test_cell_cycle PRIVATE wubucell_app wubuformula)
+target_include_directories(test_cell_cycle PRIVATE apps/wubucell src/wubuformula src/wubuformula/functions)
+add_test(NAME cell_cycle COMMAND test_cell_cycle)

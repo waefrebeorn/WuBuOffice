@@ -21,6 +21,7 @@ int main(void) {
     assert(id == 1);
     assert(wubumodel_node_kind(run) == WUBUMODEL_RUN);
     assert(wubumodel_node_find(doc, id) == run);
+    (void)wubumodel_node_find(doc, id); /* keep `id` referenced under -DNDEBUG */
 
     /* style attach (shared pointer) */
     wubumodel_style *s = wubumodel_style_create();
@@ -32,6 +33,7 @@ int main(void) {
 
     /* observer */
     assert(wubumodel_on_change(doc, on_change, NULL) == 0);
+    (void)on_change; /* referenced unconditionally so it is not flagged unused under -DNDEBUG */
 
     /* set-text command + undo */
     assert(wubumodel_cmd_set_text(doc, run, "hello") == 0);

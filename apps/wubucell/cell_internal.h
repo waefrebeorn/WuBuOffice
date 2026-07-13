@@ -30,6 +30,9 @@ typedef struct {
     char *text;         /* for C_STR: the value; for C_FORM: the evaluated result */
     char *formula;      /* for C_FORM: the original formula (without '=') */
     int style;
+    int cached_err;     /* wubuval_err code when a C_FORM evaluated to an error
+                           (0 = none). Lets dependents propagate the error
+                           instead of coercing the error string to a number. */
 } cell_t;
 
 typedef struct {

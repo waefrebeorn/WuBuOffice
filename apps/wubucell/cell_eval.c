@@ -27,7 +27,14 @@ int cell_br_resolve(void *ctx, const wubucell_ref *ref, wubuval *out) {
         const cell_t *c = &s->cells[i];
         if (c->col != ref->col || c->row != ref->row) continue;
         if (c->kind == C_NUM) { wubuval_set_num(out, c->num); return 0; }
-        if (c->kind == C_STR) { wubuval_set_str(out, c->text ? c->text : ""); return 0; }
+        if (c->kind == C_STR) {
+            /* A formula that errored is stored as a C_STR bearing the error
+             * literal; surface it as a real error value so dependents
+             * propagate it (Excel: =A1*2 where A1 is #CYCLE! -> #CYCLE!). */
+            if (c->cached_err != 0 && c->text && c->text[0] == '#')
+                { wubuval_set_err(out, (wubuval_err)c->cached_err); return 0; }
+            wubuval_set_str(out, c->text ? c->text : ""); return 0;
+        }
         if (c->kind == C_FORM) {
             int fi = 0, found = -1;
             for (size_t sh = 0; sh < b->n && found < 0; sh++)
@@ -37,6 +44,14 @@ int cell_br_resolve(void *ctx, const wubucell_ref *ref, wubuval *out) {
                         fi++;
                     }
             if (found >= 0) {
+                /* Circular-reference detection. visit[found] is 1 while this
+                 * formula cell is mid-evaluation up the call stack; if we
+                 * re-enter it, that is a cycle -> surface #CYCLE! instead of
+                 * recursing forever (which stack-overflows the app). */
+                if (R->visit[found] == 1) {
+                    wubuval_set_err(out, WERR_CYCLE);
+                    return 0;
+                }
                 wubuval v; memset(&v, 0, sizeof v);
                 int *fsheet2 = NULL, *fcol2 = NULL, *frow2 = NULL; int nf2 = 0;
                 for (size_t sh2 = 0; sh2 < b->n; sh2++)
@@ -79,26 +94,45 @@ void cell_eval_all(wubucell_book *b) {
                 fsheet[fi] = (int)sh; fcol[fi] = b->sheets[sh].cells[i].col; frow[fi] = b->sheets[sh].cells[i].row; fi++;
             }
     int *visit = calloc((size_t)nf, sizeof(int));
+    int *skipped = calloc((size_t)nf, sizeof(int));   /* formula cells the main loop
+                                                        skipped (only reached via a
+                                                        sub-evaluation -> cycle members) */
     book_resolver R; memset(&R, 0, sizeof R); R.book = b; R.visit = visit;
     for (int k = 0; k < nf; k++) {
-        if (visit[k] == 2) continue;
+        if (visit[k] == 2) { skipped[k] = 1; continue; }
         R.cur_sheet = fsheet[k];
         sheet_t *s = &b->sheets[fsheet[k]];
         cell_t *cell = NULL;
         for (size_t i = 0; i < s->n; i++)
             if (s->cells[i].col == fcol[k] && s->cells[i].row == frow[k]) { cell = &s->cells[i]; break; }
         if (!cell) continue;
-        if (visit[k] == 1) { free(cell->text); cell->text = strdup("#CYCLE!"); cell->kind = C_STR; visit[k] = 2; continue; }
         visit[k] = 1;
         wubuval v; memset(&v, 0, sizeof v);
         wubu_formula_eval(cell->formula ? cell->formula : "", cell_br_resolve, &R, &v);
         visit[k] = 2;
-        if (v.kind == WV_NUM) { cell->cached = v.num; free(cell->text); cell->text = NULL; }
-        else if (v.kind == WV_BOOL) { cell->cached = v.boolean ? 1.0 : 0.0; free(cell->text); cell->text = NULL; }
-        else if (v.kind == WV_STR) { free(cell->text); cell->text = strdup(v.str ? v.str : ""); }
-        else if (v.kind == WV_ERR) { free(cell->text); cell->text = strdup(wubuval_err_text(v.err)); }
+        if (v.kind == WV_NUM) { cell->cached = v.num; free(cell->text); cell->text = NULL; cell->cached_err = 0; }
+        else if (v.kind == WV_BOOL) { cell->cached = v.boolean ? 1.0 : 0.0; free(cell->text); cell->text = NULL; cell->cached_err = 0; }
+        else if (v.kind == WV_STR) { free(cell->text); cell->text = strdup(v.str ? v.str : ""); cell->kind = C_STR; cell->cached_err = 0; }
+        else if (v.kind == WV_ERR) { free(cell->text); cell->text = strdup(wubuval_err_text(v.err)); cell->kind = C_STR; cell->cached_err = (int)v.err; }
         else { cell->cached = 0; free(cell->text); cell->text = NULL; }
         wubuval_free(&v);
     }
-    free(fsheet); free(fcol); free(frow); free(visit);
+    /* Any formula cell the main loop skipped (only ever reached via a
+     * sub-evaluation, i.e. it sits inside a circular reference) but never had
+     * a result assigned above is a cycle member. Mark it #CYCLE! so every
+     * member of the cycle surfaces the error, matching Excel. Normal numeric
+     * formulas are NOT skipped (their k ran the eval block) and are left
+     * untouched. */
+    for (int k = 0; k < nf; k++) {
+        if (!skipped[k]) continue;
+        sheet_t *s = &b->sheets[fsheet[k]];
+        for (size_t i = 0; i < s->n; i++) {
+            cell_t *c = &s->cells[i];
+            if (c->col == fcol[k] && c->row == frow[k] && c->kind == C_FORM && !c->text) {
+                c->text = strdup(wubuval_err_text(WERR_CYCLE));
+                c->kind = C_STR;
+            }
+        }
+    }
+    free(fsheet); free(fcol); free(frow); free(visit); free(skipped);
 }
