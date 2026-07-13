@@ -56,6 +56,11 @@ target_include_directories(wubuformula PUBLIC
   src/wubuformula/functions)
 target_link_libraries(wubuformula PUBLIC m)
 
+# --- wubumodel: WS11 unified object model (shared substrate for all apps) ---
+add_library(wubumodel STATIC
+  src/wubumodel/model.c)
+target_include_directories(wubumodel PUBLIC src/wubumodel)
+
 # --- wubuoxml: OPC package writer + reader (built on wubuzip) ---
 add_library(wubuoxml STATIC
   src/wubuoxml/package.c
@@ -122,6 +127,10 @@ add_executable(test_formula tests/test_formula.c)
 target_link_libraries(test_formula PRIVATE wubuformula)
 target_include_directories(test_formula PRIVATE src/wubuformula/functions)
 add_test(NAME formula COMMAND test_formula)
+
+add_executable(test_model tests/test_model.c)
+target_link_libraries(test_model PRIVATE wubumodel)
+add_test(NAME model COMMAND test_model)
 
 add_executable(test_reader tests/test_reader.c)
 target_link_libraries(test_reader PRIVATE wubuoxml wubuword_app)
