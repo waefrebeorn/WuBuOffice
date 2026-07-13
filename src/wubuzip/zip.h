@@ -23,6 +23,12 @@ wubuzip_writer *wubuzip_create(FILE *out);
  * be NULL only when size == 0. Returns 0 on success, -1 on I/O error. */
 int wubuzip_add(wubuzip_writer *z, const char *name, const void *data, uint32_t size);
 
+/* Add a file compressed with DEFLATE (method 8). Same arguments as
+ * wubuzip_add, but the bytes are run through the from-scratch DEFLATE encoder
+ * before storage. Returns 0 on success, -1 on error. Falls back to STORE when
+ * compression would not shrink the input. */
+int wubuzip_add_deflated(wubuzip_writer *z, const char *name, const void *data, uint32_t size);
+
 /* Write the central directory + end-of-central-directory record, flush, and
  * free the writer. Returns 0 on success, -1 on I/O error. */
 int wubuzip_finalize(wubuzip_writer *z);

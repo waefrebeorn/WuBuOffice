@@ -73,7 +73,7 @@ int wubuoxml_add_relationship(wubuoxml_package *p, const char *source, const cha
 }
 
 int wubuoxml_add_part(wubuoxml_package *p, const char *path, const void *data, size_t size) {
-    return wubuzip_add(p->z, path, data, (uint32_t)size);
+    return wubuzip_add_deflated(p->z, path, data, (uint32_t)size);
 }
 
 /* Build the rels part path for a given source. source == "" -> "_rels/.rels".

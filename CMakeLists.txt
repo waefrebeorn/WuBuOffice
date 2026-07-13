@@ -20,8 +20,11 @@ add_library(wubuzip STATIC
   src/wubuzip/zip.c
   src/wubuzip/reader.c
   src/wubuzip/bit.c
+  src/wubuzip/bitw.c
   src/wubuzip/huffman.c
   src/wubuzip/fixed.c
+  src/wubuzip/fixedcode.c
+  src/wubuzip/deflate.c
   src/wubuzip/block.c
   src/wubuzip/inflate.c)
 target_include_directories(wubuzip PUBLIC src/wubuzip)
@@ -91,6 +94,10 @@ add_test(NAME wubuzip_crc COMMAND test_wubuzip)
 add_executable(test_inflate tests/test_inflate.c)
 target_link_libraries(test_inflate PRIVATE wubuzip z)
 add_test(NAME inflate COMMAND test_inflate)
+
+add_executable(test_deflate tests/test_deflate.c)
+target_link_libraries(test_deflate PRIVATE wubuzip)
+add_test(NAME deflate_roundtrip COMMAND test_deflate)
 
 add_executable(test_reader tests/test_reader.c)
 target_link_libraries(test_reader PRIVATE wubuoxml wubuword_app)
