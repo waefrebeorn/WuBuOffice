@@ -86,7 +86,32 @@ static int eval_func(const ast *n, wubuformula_resolver resolve, void *ctx, wubu
         free(args); free(flat);
         return 0;
     }
-    fn(args, n->nargs, flat, flat_n, out);
+    /* per-argument range geometry (grid for range args; cols<=0 for scalars) */
+    wubu_func_range *ranges = calloc((size_t)(n->nargs ? n->nargs : 1), sizeof(wubu_func_range));
+    for (int i = 0; i < n->nargs; i++) {
+        ranges[i].grid = NULL; ranges[i].rows = 0; ranges[i].cols = 0;
+        if (n->args[i]->kind == N_RANGE) {
+            wubuval *ra; int rn;
+            if (gather_range(&n->args[i]->range, resolve, ctx, &ra, &rn) == 0 && rn > 0) {
+                int c0 = n->args[i]->range.a.col, c1 = n->args[i]->range.b.col;
+                int r0 = n->args[i]->range.a.row, r1 = n->args[i]->range.b.row;
+                if (c1 < c0) { int t=c0; c0=c1; c1=t; }
+                if (r1 < r0) { int t=r0; r0=r1; r1=t; }
+                int cols = c1 - c0 + 1, rows = r1 - r0 + 1;
+                ranges[i].grid = ra; ranges[i].rows = rows; ranges[i].cols = cols;
+                ra = NULL; /* ownership transferred to ranges[i].grid */
+            }
+            free(ra);
+        }
+    }
+    fn(args, n->nargs, flat, flat_n, ranges, out);
+    for (int i = 0; i < n->nargs; i++) {
+        if (ranges[i].grid) {
+            for (int k = 0; k < ranges[i].rows * ranges[i].cols; k++) wubuval_free((wubuval*)&ranges[i].grid[k]);
+            free((void*)ranges[i].grid);
+        }
+    }
+    free(ranges);
     for (int i = 0; i < n->nargs; i++) wubuval_free(&args[i]);
     for (int i = 0; i < flat_n; i++) wubuval_free(&flat[i]);
     free(args); free(flat);

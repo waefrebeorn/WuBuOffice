@@ -219,7 +219,51 @@ int main(void) {
     fails += !check_num_x("Other!A1:A1", 99, 1e-9);               /* single-cell range on Other */
 
 
-    /* nested formula referencing cells */
+    /* ---- lookups & conditional aggregates over a real range ----
+     * Build a lookup table at A10:B12 and a criteria table at D1:D3. */
+    GRID_N = 0;
+    wubuval gv; memset(&gv,0,sizeof gv);
+    /* id->name table: A10=1 "apple", A11=2 "banana", A12=3 "cherry" (col B) */
+    wubuval_set_num(&gv,1);  grid_set(1,10,&gv);
+    wubuval_set_str(&gv,"apple");  grid_set(2,10,&gv);
+    wubuval_set_num(&gv,2);  grid_set(1,11,&gv);
+    wubuval_set_str(&gv,"banana"); grid_set(2,11,&gv);
+    wubuval_set_num(&gv,3);  grid_set(1,12,&gv);
+    wubuval_set_str(&gv,"cherry"); grid_set(2,12,&gv);
+    fails += !check_num("VLOOKUP(3,A10:B12,1)", 3, 1e-9);
+    fails += !check_str("VLOOKUP(1,A10:B12,2)", "apple");
+    fails += !check_str("VLOOKUP(2,A10:B12,2)", "banana");
+    fails += !check_str("VLOOKUP(3,A10:B12,2)", "cherry");
+    /* SUMIF / COUNTIF over D1:D3 = {10,20,30} */
+    GRID_N = 0;
+    wubuval sv2; memset(&sv2,0,sizeof sv2);
+    wubuval_set_num(&sv2,10); grid_set(4,1,&sv2);
+    wubuval_set_num(&sv2,20); grid_set(4,2,&sv2);
+    wubuval_set_num(&sv2,30); grid_set(4,3,&sv2);
+    fails += !check_num("SUMIF(D1:D3,\">15\")", 50, 1e-9);   /* 20+30 */
+    fails += !check_num("COUNTIF(D1:D3,\">15\")", 2, 1e-9);   /* 20,30 */
+    fails += !check_num("SUMIF(D1:D3,10)", 10, 1e-9);        /* exact match */
+    fails += !check_num("COUNTIF(D1:D3,30)", 1, 1e-9);
+    fails += !check_num("SUMIF(D1:D3,\"<20\")", 10, 1e-9);   /* 10 */
+
+    /* ---- text functions ---- */
+    fails += !check_str("SUBSTITUTE(\"a-b-c\",\"-\",\"+\")", "a+b+c");
+    fails += !check_str("SUBSTITUTE(\"a-b-c\",\"-\",\"+\",1)", "a+b-c");
+    fails += !check_num("FIND(\"bc\",\"abcd\")", 2, 1e-9);
+    fails += !check_num("SEARCH(\"BC\",\"ABCD\")", 2, 1e-9);
+    fails += !check_str("PROPER(\"hello world\")", "Hello World");
+    fails += !check_str("REPLACE(\"abcdef\",2,3,\"XYZ\")", "aXYZef");
+
+
+    /* nested formula referencing cells (rebuild the A1:A3/B1 grid that the
+     * earlier cell-reference tests populated, since the lookup block above
+     * reset GRID_N) */
+    GRID_N = 0;
+    wubuval g3; memset(&g3,0,sizeof g3);
+    wubuval_set_num(&g3, 10); grid_set(1,1,&g3);   /* A1 */
+    wubuval_set_num(&g3, 20); grid_set(1,2,&g3);   /* A2 */
+    wubuval_set_num(&g3, 30); grid_set(1,3,&g3);   /* A3 */
+    wubuval_set_num(&g3, 5);  grid_set(2,1,&g3);   /* B1 */
     fails += !check_num("SUM(A1:A3)+B1*4", 80, 1e-9);
 
     /* circular reference: A1 = B1+1, B1 = A1+1 */
