@@ -74,6 +74,36 @@ static size_t cost_tokens(const wubuzip_lz_tok *tok, size_t ntok,
     return bits;
 }
 
+/* Gather literal/length and distance frequency tables from a token stream and
+ * track the highest used symbol in each alphabet. Shared by the dynamic-block
+ * emit path and the method-cost estimator so the two never diverge. Callers
+ * must still bump lfreq[256] (end-of-block is always present). */
+static void gather_freqs(const wubuzip_lz_tok *tok, size_t ntok,
+                         uint32_t *lfreq, uint32_t *dfreq, int *maxlit, int *maxdist) {
+    *maxlit = 255; *maxdist = 0;
+    for (size_t i = 0; i < ntok; i++) {
+        if (tok[i].kind == 0) {
+            lfreq[tok[i].lit]++;
+            if ((int)tok[i].lit > *maxlit) *maxlit = (int)tok[i].lit;
+        } else {
+            int lsym = 0;
+            for (int k = 0; k < 29; k++) {
+                int hi = wubuzip_len_base[k] + (1 << wubuzip_len_extra[k]) - 1;
+                if (tok[i].len >= wubuzip_len_base[k] && tok[i].len <= hi) { lsym = 257 + k; break; }
+            }
+            lfreq[lsym]++;
+            if (lsym > *maxlit) *maxlit = lsym;
+            int dsym = 0;
+            for (int k = 0; k < 30; k++) {
+                int hi = wubuzip_dist_base[k] + (1 << wubuzip_dist_extra[k]) - 1;
+                if (tok[i].dist >= wubuzip_dist_base[k] && tok[i].dist <= hi) { dsym = k; break; }
+            }
+            dfreq[dsym]++;
+            if (dsym > *maxdist) *maxdist = dsym;
+        }
+    }
+}
+
 /* Emit one block. method: 0=stored, 1=fixed, 2=dynamic. bfinal sets BFINAL. */
 static int emit_block(wubuzip_bitwriter *w, const uint8_t *in, size_t s, size_t e,
                       int bfinal, int method) {
@@ -134,28 +164,8 @@ static int emit_block(wubuzip_bitwriter *w, const uint8_t *in, size_t s, size_t 
         uint32_t lfreq[LIT_SYMS]; uint32_t dfreq[DIST_SYMS];
         memset(lfreq, 0, sizeof lfreq);
         memset(dfreq, 0, sizeof dfreq);
-        int maxlit = 255, maxdist = 0;
-        for (size_t i = 0; i < ntok; i++) {
-            if (tok[i].kind == 0) {
-                lfreq[tok[i].lit]++;
-                if ((int)tok[i].lit > maxlit) maxlit = tok[i].lit;
-            } else {
-                int lsym = 0;
-                for (int k = 0; k < 29; k++) {
-                    int hi = wubuzip_len_base[k] + (1 << wubuzip_len_extra[k]) - 1;
-                    if (tok[i].len >= wubuzip_len_base[k] && tok[i].len <= hi) { lsym = 257 + k; break; }
-                }
-                lfreq[lsym]++;
-                if (lsym > maxlit) maxlit = lsym;
-                int dsym = 0;
-                for (int k = 0; k < 30; k++) {
-                    int hi = wubuzip_dist_base[k] + (1 << wubuzip_dist_extra[k]) - 1;
-                    if (tok[i].dist >= wubuzip_dist_base[k] && tok[i].dist <= hi) { dsym = k; break; }
-                }
-                dfreq[dsym]++;
-                if (dsym > maxdist) maxdist = dsym;
-            }
-        }
+        int maxlit, maxdist;
+        gather_freqs(tok, ntok, lfreq, dfreq, &maxlit, &maxdist);
         lfreq[256]++; /* end-of-block symbol always present */
 
         int hlit = maxlit + 1; if (hlit < 257) hlit = 257;
@@ -247,24 +257,8 @@ static int best_method(const uint8_t *in, size_t s, size_t e) {
     /* dynamic cost estimate: header overhead + token cost */
     uint32_t lfreq[LIT_SYMS]; uint32_t dfreq[DIST_SYMS];
     memset(lfreq, 0, sizeof lfreq); memset(dfreq, 0, sizeof dfreq);
-    int maxlit = 255, maxdist = 0;
-    for (size_t i = 0; i < ntok; i++) {
-        if (tok[i].kind == 0) { lfreq[tok[i].lit]++; if ((int)tok[i].lit > maxlit) maxlit = tok[i].lit; }
-        else {
-            int lsym = 0;
-            for (int k = 0; k < 29; k++) {
-                int hi = wubuzip_len_base[k] + (1 << wubuzip_len_extra[k]) - 1;
-                if (tok[i].len >= wubuzip_len_base[k] && tok[i].len <= hi) { lsym = 257 + k; break; }
-            }
-            lfreq[lsym]++; if (lsym > maxlit) maxlit = lsym;
-            int dsym = 0;
-            for (int k = 0; k < 30; k++) {
-                int hi = wubuzip_dist_base[k] + (1 << wubuzip_dist_extra[k]) - 1;
-                if (tok[i].dist >= wubuzip_dist_base[k] && tok[i].dist <= hi) { dsym = k; break; }
-            }
-            dfreq[dsym]++; if (dsym > maxdist) maxdist = dsym;
-        }
-    }
+    int maxlit, maxdist;
+    gather_freqs(tok, ntok, lfreq, dfreq, &maxlit, &maxdist);
     lfreq[256]++;
     int hlit = maxlit + 1; if (hlit < 257) hlit = 257;
     int hdist = maxdist + 1; if (hdist < 1) hdist = 1;
