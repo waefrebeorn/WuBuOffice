@@ -51,6 +51,7 @@ int wubuxml_parse(const uint8_t *data, size_t len,
     size_t i = 0;
     char **stack = NULL;        /* open element names (owned) */
     size_t sp = 0, scap = 0;
+    char *ename = NULL;         /* current open-tag name (owned) */
     int rc = 0;
 
     /* helper: flush accumulated text as one EVT_TEXT */
@@ -79,6 +80,27 @@ int wubuxml_parse(const uint8_t *data, size_t len,
                 while (nm < len && s[nm] != '>' && s[nm] != ' ') nm++;
                 char *cname = dup_range(s + tag + 1, s + nm);
                 if (!cname) { rc = -1; break; }
+                /* Validate the close against the open-element stack:
+                 *   - a close with NO open element is malformed, and
+                 *   - a close whose name != the currently-open element is
+                 *     malformed (e.g. <a><b></a>). Both must be rejected,
+                 *     not silently accepted — a deferred/misordered close is
+                 *     exactly how the ws05#0884 load-drop bug stayed hidden. */
+                if (sp == 0) {
+                    free(cname);
+                    rc = -1;
+                    break;
+                }
+                {
+                    const char *open = stack[sp - 1];
+                    size_t olen = strlen(open);
+                    size_t clen = (size_t)(nm - (tag + 1));
+                    if (olen != clen || memcmp(open, cname, clen) != 0) {
+                        free(cname);
+                        rc = -1;
+                        break;
+                    }
+                }
                 info.name = cname;
                 info.attr_count = 0;
                 if (h) rc = h(WUBUXML_EVT_END, &info, user);
@@ -108,7 +130,7 @@ int wubuxml_parse(const uint8_t *data, size_t len,
             while (p < end && s[p] != ' ' && s[p] != '\t' && s[p] != '\n' &&
                    s[p] != '\r' && s[p] != '/') p++;
             if (p <= tag) { rc = -1; break; }   /* empty name -> malformed */
-            char *ename = dup_range(s + tag, s + p);
+            ename = dup_range(s + tag, s + p);
             if (!ename) { rc = -1; break; }
 
             /* attributes */
@@ -119,21 +141,21 @@ int wubuxml_parse(const uint8_t *data, size_t len,
                 if (p >= end) break;
                 size_t an = p;
                 while (p < end && s[p] != '=' && s[p] != ' ' && s[p] != '\t') p++;
-                if (p <= an) { free(ename); rc = -1; break; } /* no '=' -> malformed */
+                if (p <= an) { free(ename); ename = NULL; rc = -1; break; } /* no '=' -> malformed */
                 char *attrn = dup_range(s + an, s + p);
-                if (!attrn) { free(ename); rc = -1; break; }
+                if (!attrn) { free(ename); ename = NULL; rc = -1; break; }
                 while (p < end && s[p] != '=') p++;
-                if (p >= end) { free(attrn); free(ename); rc = -1; break; }
+                if (p >= end) { free(attrn); free(ename); ename = NULL; rc = -1; break; }
                 p++;
                 while (p < end && (s[p] == ' ' || s[p] == '\t')) p++;
                 char q = (p < end) ? s[p] : '"';
-                if (q != '"' && q != '\'') { free(attrn); free(ename); rc = -1; break; }
+                if (q != '"' && q != '\'') { free(attrn); free(ename); ename = NULL; rc = -1; break; }
                 p++;
                 size_t av = p;
                 while (p < end && s[p] != q) p++;
-                if (p <= av) { free(attrn); free(ename); rc = -1; break; } /* empty value */
+                if (p <= av) { free(attrn); free(ename); ename = NULL; rc = -1; break; } /* empty value */
                 char *attrv = dup_range(s + av, s + p);
-                if (!attrv) { free(attrn); free(ename); rc = -1; break; }
+                if (!attrv) { free(attrn); free(ename); ename = NULL; rc = -1; break; }
                 info.attr_name[info.attr_count] = trim_inplace(attrn);
                 info.attr_val[info.attr_count] = trim_inplace(attrv);
                 info.attr_count++;
@@ -158,7 +180,7 @@ int wubuxml_parse(const uint8_t *data, size_t len,
                 if (sp == scap) {
                     scap = scap ? scap * 2 : 8;
                     char **ns = realloc(stack, scap * sizeof *ns);
-                    if (!ns) { free(ename); rc = -1; break; }
+                    if (!ns) { free(ename); ename = NULL; rc = -1; break; }
                     stack = ns;
                 }
                 stack[sp++] = ename;
@@ -205,7 +227,13 @@ int wubuxml_parse(const uint8_t *data, size_t len,
     }
     FLUSH_TEXT();
 
-    /* emit END for any still-open elements */
+    /* Any still-open element at EOF means the document is NOT well-formed
+     * (unclosed tag). Reject it rather than emitting synthetic closes —
+     * silently "closing" unclosed elements is how malformed structure hides
+     * (ws05#0884). */
+    if (rc == 0 && sp > 0) {
+        rc = -1;
+    }
     if (rc == 0) {
         while (sp > 0 && rc == 0) {
             char *nm = stack[--sp];
@@ -215,6 +243,15 @@ int wubuxml_parse(const uint8_t *data, size_t len,
             free(nm);
         }
     } else {
+        /* error path (rc != 0): free everything still owned. ename is NULL
+         * once pushed to the stack or freed on an error break, so freeing a
+         * non-NULL ename is always safe; stored attr buffers from a partially
+         * parsed tag are owned by `info` and must be released here. */
+        if (ename) free(ename);
+        for (int k = 0; k < info.attr_count; k++) {
+            free((void *)info.attr_name[k]);
+            free((void *)info.attr_val[k]);
+        }
         for (size_t k = 0; k < sp; k++) free(stack[k]);
     }
     free(stack);

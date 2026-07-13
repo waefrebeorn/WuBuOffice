@@ -6,6 +6,7 @@
  * Clean-room, from-scratch (SLERM): no third-party spreadsheet code. */
 
 #include "word_internal.h"
+#include <stdlib.h>
 
 wubuword_doc *wubuword_create(void) {
     wubuword_doc *d = calloc(1, sizeof *d);

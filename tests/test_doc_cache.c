@@ -24,11 +24,12 @@ static wubumodel_doc *make_doc(const char *txt) {
     return d;
 }
 
-static void file_stat(long *mt, long long *sz) {
+static int file_stat(long *mt, long long *sz) {
     struct stat st;
-    CHECK(stat(PATH, &st) == 0, "stat temp file");
+    if (stat(PATH, &st) != 0) return 1;
     *mt = (long)st.st_mtime;
     *sz = (long long)st.st_size;
+    return 0;
 }
 
 int main(void) {
@@ -42,7 +43,7 @@ int main(void) {
     CHECK(c, "cache create");
 
     long mt; long long sz;
-    file_stat(&mt, &sz);
+    CHECK(file_stat(&mt, &sz) == 0, "stat temp file");
 
     wubumodel_doc *d1 = make_doc("hello");
     CHECK(doc_cache_put(c, PATH, mt, sz, d1) == 0, "put d1 with real key");
@@ -62,7 +63,7 @@ int main(void) {
     CHECK(doc_cache_get(c, PATH) == NULL, "changed file -> stale entry dropped");
 
     /* re-put with the new key */
-    file_stat(&mt, &sz);
+    CHECK(file_stat(&mt, &sz) == 0, "stat temp file");
     wubumodel_doc *d2 = make_doc("world");
     CHECK(doc_cache_put(c, PATH, mt, sz, d2) == 0, "re-put d2 with new key");
     CHECK(doc_cache_get(c, PATH) == d2, "re-put hit");

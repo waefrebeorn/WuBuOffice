@@ -337,7 +337,7 @@ int main(void) {
     {
         wubuval cv; memset(&cv,0,sizeof cv);
         /* evaluate A1; should detect cycle and return #CYCLE! */
-        wubucell_ref r = { -1, 1, 1, 0,0,0 };
+        wubucell_ref r = { -1, 1, 1, 0,0,0, "" };
         formula_resolve(NULL, &r, &cv);
         int ok = (cv.kind == WV_ERR && cv.err == WERR_CYCLE);
         if (!ok) printf("  FAIL cycle: kind=%d err=%d (want CYCLE)\n", cv.kind, cv.err);
@@ -352,7 +352,7 @@ int main(void) {
     fcell c3 = { .col=3, .row=1, .state=0 }; wubuval_set_str(&c3.v, "=B1+1"); FGRID[FGRID_N++] = c3;
     {
         wubuval cv; memset(&cv,0,sizeof cv);
-        wubucell_ref r = { -1, 3, 1, 0,0,0 };
+        wubucell_ref r = { -1, 3, 1, 0,0,0, "" };
         formula_resolve(NULL, &r, &cv);
         int ok = (cv.kind == WV_NUM && fabs(cv.num - 7) < 1e-9);
         if (!ok) printf("  FAIL chain: kind=%d num=%g (want 7)\n", cv.kind, cv.num);

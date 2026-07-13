@@ -112,7 +112,27 @@ int main(void) {
                " START w:tbl START w:tr START w:tc START w:p START w:r START w:t TEXT END w:t END w:r END w:p END w:tc END w:tr END w:tbl"
                " END w:body")) return 1;
 
-    printf("wubuxml_parser: closing-tag event order + nesting + entities PASSED "
+    /* 6) MALFORMED input MUST be rejected (rc != 0), not silently parsed.
+     * A deferred/misordered close is exactly how the ws05#0884 load-drop
+     * bug stayed hidden, so the parser must fail closed on bad structure. */
+    if (wubuxml_parse((const uint8_t *)"<a><b></a></b>", 16, record, NULL) == 0) {
+        fprintf(stderr, "FAIL %s:%d mismatched close accepted\n", __FILE__, __LINE__);
+        return 1;
+    }
+    if (wubuxml_parse((const uint8_t *)"<a><b><c>", 9, record, NULL) == 0) {
+        fprintf(stderr, "FAIL %s:%d unclosed tags accepted\n", __FILE__, __LINE__);
+        return 1;
+    }
+    if (wubuxml_parse((const uint8_t *)"<a></b>", 7, record, NULL) == 0) {
+        fprintf(stderr, "FAIL %s:%d close-without-open accepted\n", __FILE__, __LINE__);
+        return 1;
+    }
+    if (wubuxml_parse((const uint8_t *)"</a>", 4, record, NULL) == 0) {
+        fprintf(stderr, "FAIL %s:%d bare close accepted\n", __FILE__, __LINE__);
+        return 1;
+    }
+
+    printf("wubuxml_parser: closing-tag event order + nesting + entities + malformed-rejection PASSED "
            "(ws05#0884 regression)\n");
     return 0;
 }
