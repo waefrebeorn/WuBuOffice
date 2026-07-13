@@ -32,8 +32,8 @@ int wubuzip_bitw_align(wubuzip_bitwriter *w);
 /* Append a whole byte unaligned (used for stored-block length fields). */
 int wubuzip_bitw_byte(wubuzip_bitwriter *w, uint8_t b);
 
-/* Finalize: flush + null-terminate the growable buffer. On success *out/*out_len
- * own the buffer (caller frees with free()). Returns 0 / -1. */
+/* Finalize: flush + null-terminate the growable buffer. On success *out and
+ * *out_len own the buffer (caller frees with free()). Returns 0 / -1. */
 int wubuzip_bitw_finish(wubuzip_bitwriter *w, uint8_t **out, size_t *out_len);
 
 #ifdef __cplusplus

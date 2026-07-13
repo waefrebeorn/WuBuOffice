@@ -3,6 +3,10 @@
 
 #include <string.h>
 
+/* Compute canonical codes from the FIXED Huffman code *lengths* defined by
+ * RFC 1951 3.2.6 (via wubuzip_fixed_litlen / wubuzip_fixed_dist). The fixed
+ * code uses specific, non-optimal lengths; we must not re-derive lengths with
+ * a Huffman optimizer -- only assign canonical codes from the given lengths. */
 static void build_codes(const uint8_t *lengths, int n,
                         uint16_t *code, uint8_t *len) {
     int cnt[16], offs[16];
@@ -12,8 +16,6 @@ static void build_codes(const uint8_t *lengths, int n,
     offs[1] = 0;
     for (int i = 1; i < 15; i++) offs[i + 1] = offs[i] + cnt[i];
 
-    /* canonical codes: within each length, codes are consecutive; the first
-     * code for length L is the previous first code shifted left one bit. */
     uint16_t c[16];
     c[0] = 0;
     for (int i = 1; i <= 15; i++) c[i] = (uint16_t)((c[i - 1] + cnt[i - 1]) << 1);
