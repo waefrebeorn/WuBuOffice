@@ -71,6 +71,20 @@ typedef void (*wubumodel_change_cb)(wubumodel_doc *doc, wubumodel_id node,
 int wubumodel_on_change(wubumodel_doc *doc, wubumodel_change_cb cb, void *user);
 void wubumodel_emit_change(wubumodel_doc *doc, wubumodel_id node);
 
+/* ---- tree containment (parent/child) ---- */
+/* Append child to parent's child list (parent owns the link). Both must belong
+ * to the same doc. Returns 0 ok, -1 on error. */
+int wubumodel_node_append(wubumodel_doc *doc, wubumodel_node *parent,
+                          wubumodel_node *child);
+wubumodel_node *wubumodel_node_first_child(const wubumodel_node *parent);
+wubumodel_node *wubumodel_node_next_sibling(const wubumodel_node *node);
+
+/* ---- OOXML I/O (minimal, from-scratch) ---- */
+/* Serialize the model to a .docx package (WordprocessingML). `path` is the
+ * output file. Returns 0 ok, -1 on error. Emits one SECTION as one logical
+ * section; BLOCK/PARAGRAPH/RUN map to w:p/w:r/w:t. */
+int wubumodel_write_docx(const wubumodel_doc *doc, const char *path);
+
 #ifdef __cplusplus
 }
 #endif

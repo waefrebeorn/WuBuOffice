@@ -34,6 +34,9 @@ struct wubumodel_node {
     char *text;                 /* valid for RUN */
     wubumodel_style *style;     /* shared, may be NULL */
     struct wubumodel_node *next;/* bucket chain in doc->nodes */
+    struct wubumodel_node *parent;     /* back-link (weak) */
+    struct wubumodel_node *first_child;/* head of child list */
+    struct wubumodel_node *next_sibling;/* next in parent's child list */
 };
 
 #define WUBUMODEL_BUCKETS 1024

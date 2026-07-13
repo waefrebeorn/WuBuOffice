@@ -177,3 +177,22 @@ void wubumodel_emit_change(wubumodel_doc *doc, wubumodel_id node) {
     for (obs *o = doc->observers; o; o = o->next)
         o->cb(doc, node, o->user);
 }
+
+/* ---- tree containment ---- */
+int wubumodel_node_append(wubumodel_doc *doc, wubumodel_node *parent,
+                          wubumodel_node *child) {
+    if (!doc || !parent || !child) return -1;
+    /* child must already be registered in this doc (created via node_create) */
+    if (!node_lookup(doc, child->id)) return -1;
+    if (child->parent) return -1; /* already attached elsewhere */
+    child->parent = parent;
+    child->next_sibling = parent->first_child;
+    parent->first_child = child; /* newest first; iteration reverses */
+    return 0;
+}
+wubumodel_node *wubumodel_node_first_child(const wubumodel_node *parent) {
+    return parent ? parent->first_child : NULL;
+}
+wubumodel_node *wubumodel_node_next_sibling(const wubumodel_node *node) {
+    return node ? node->next_sibling : NULL;
+}
