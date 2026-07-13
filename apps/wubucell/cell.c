@@ -4,11 +4,14 @@
 #include <string.h>
 #include <math.h>
 
+typedef enum { C_STR, C_NUM, C_FORM } cell_kind;
+
 typedef struct {
     int col, row;
-    int is_num;
+    cell_kind kind;
     double num;
-    char *text;
+    char *text;        /* inline string OR formula text */
+    double cached;     /* cached value for formulas */
 } cell_t;
 
 typedef struct {
@@ -18,6 +21,7 @@ typedef struct {
 
 struct wubucell_book {
     sheet_t *sheets; size_t n, cap;
+    int use_sst;       /* shared-string-table mode */
 };
 
 wubucell_book *wubucell_create(void) { return calloc(1, sizeof(wubucell_book)); }
@@ -39,39 +43,66 @@ int wubucell_sheet(wubucell_book *b, const char *name) {
     return (int)b->n;
 }
 
-static void set_cell(sheet_t *s, int col, int row, int is_num, double num, const char *text) {
+void wubucell_use_shared_strings(wubucell_book *b, int enable) { b->use_sst = enable; }
+
+static void set_cell(wubucell_book *b, int sheet, int col, int row,
+                     cell_kind kind, double num, const char *text, double cached) {
+    sheet_t *s = book_sheet(b, sheet); if (!s) return;
     if (s->n == s->cap) {
         s->cap = s->cap ? s->cap * 2 : 16;
         s->cells = realloc(s->cells, s->cap * sizeof(*s->cells));
     }
     cell_t *c = &s->cells[s->n++];
-    c->col = col; c->row = row; c->is_num = is_num; c->num = num;
+    c->col = col; c->row = row; c->kind = kind; c->num = num;
     c->text = text ? strdup(text) : NULL;
+    c->cached = cached;
 }
 
 void wubucell_cell_s(wubucell_book *b, int sheet, int col, int row, const char *text) {
-    sheet_t *s = book_sheet(b, sheet); if (!s) return;
-    set_cell(s, col, row, 0, 0, text);
+    set_cell(b, sheet, col, row, C_STR, 0, text, 0);
 }
 void wubucell_cell_n(wubucell_book *b, int sheet, int col, int row, double num) {
-    sheet_t *s = book_sheet(b, sheet); if (!s) return;
-    set_cell(s, col, row, 1, num, NULL);
+    set_cell(b, sheet, col, row, C_NUM, num, NULL, 0);
+}
+void wubucell_cell_f(wubucell_book *b, int sheet, int col, int row, const char *formula, double cached) {
+    set_cell(b, sheet, col, row, C_FORM, cached, formula, cached);
 }
 
 static void col_letter(int col, char *out) {
-    /* 1->A, 26->Z, 27->AA */
     int n = col; char tmp[8]; int k = 0;
     while (n > 0) { int r = (n - 1) % 26; tmp[k++] = (char)('A' + r); n = (n - 1) / 26; }
     for (int i = 0; i < k; i++) out[i] = tmp[k - 1 - i];
     out[k] = '\0';
 }
 
-static char *render_sheet(const sheet_t *s) {
-    char *b = NULL; size_t n = 0; FILE *m = open_memstream(&b, &n);
+/* --- shared string table (deduplicated) --- */
+typedef struct { char *s; int idx; } sst_ent;
+typedef struct { sst_ent *e; size_t n, cap; } sst_t;
+
+static int sst_add(sst_t *t, const char *s) {
+    for (size_t i = 0; i < t->n; i++)
+        if (strcmp(t->e[i].s, s) == 0) return t->e[i].idx;
+    if (t->n == t->cap) {
+        t->cap = t->cap ? t->cap * 2 : 16;
+        t->e = realloc(t->e, t->cap * sizeof(*t->e));
+    }
+    t->e[t->n].s = strdup(s);
+    t->e[t->n].idx = (int)t->n;
+    return (int)t->n++;
+}
+
+static void xml_escape(FILE *m, const char *t) {
+    for (; t && *t; t++) {
+        switch (*t) { case '&': fputs("&amp;", m); break; case '<': fputs("&lt;", m); break;
+                      case '>': fputs("&gt;", m); break; default: fputc(*t, m); }
+    }
+}
+
+static char *render_sheet(const sheet_t *s, const wubucell_book *b, sst_t *sst) {
+    char *out = NULL; size_t n = 0; FILE *m = open_memstream(&out, &n);
     fprintf(m, "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n");
     fprintf(m, "<worksheet xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\">\n");
     fprintf(m, "<sheetData>\n");
-    /* group cells by row */
     int maxrow = 0;
     for (size_t i = 0; i < s->n; i++) if (s->cells[i].row > maxrow) maxrow = s->cells[i].row;
     for (int r = 1; r <= maxrow; r++) {
@@ -81,23 +112,24 @@ static char *render_sheet(const sheet_t *s) {
             if (c->row != r) continue;
             char cl[16]; col_letter(c->col, cl);
             char ref[32]; snprintf(ref, sizeof ref, "%s%d", cl, r);
-            if (c->is_num) fprintf(m, "<c r=\"%s\"><v>%.10g</v></c>\n", ref, c->num);
-            else {
+            if (c->kind == C_NUM)
+                fprintf(m, "<c r=\"%s\"><v>%.12g</v></c>\n", ref, c->num);
+            else if (c->kind == C_FORM)
+                fprintf(m, "<c r=\"%s\"><f>%s</f><v>%.12g</v></c>\n", ref, c->text ? c->text : "", c->cached);
+            else if (b->use_sst) {
+                int si = sst_add(sst, c->text ? c->text : "");
+                fprintf(m, "<c r=\"%s\" t=\"s\"><v>%d</v></c>\n", ref, si);
+            } else {
                 fprintf(m, "<c r=\"%s\" t=\"inlineStr\"><is><t xml:space=\"preserve\">", ref);
-                /* minimal escape */
-                const char *t = c->text;
-                for (; t && *t; t++) {
-                    switch (*t) { case '&': fputs("&amp;", m); break; case '<': fputs("&lt;", m); break; case '>': fputs("&gt;", m); break; default: fputc(*t, m); }
-                }
+                xml_escape(m, c->text);
                 fprintf(m, "</t></is></c>\n");
             }
         }
         fprintf(m, "</row>\n");
     }
-    fprintf(m, "</sheetData>\n");
-    fprintf(m, "</worksheet>\n");
+    fprintf(m, "</sheetData>\n</worksheet>\n");
     fflush(m); fclose(m);
-    return b;
+    return out;
 }
 
 int wubucell_assemble(wubucell_book *b, const char *outpath) {
@@ -107,11 +139,14 @@ int wubucell_assemble(wubucell_book *b, const char *outpath) {
     wubuoxml_add_default_type(pkg, "rels", "application/vnd.openxmlformats-package.relationships+xml");
     wubuoxml_add_default_type(pkg, "xml", "application/xml");
     wubuoxml_add_override(pkg, "/xl/workbook.xml", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml");
+    wubuoxml_add_override(pkg, "/xl/styles.xml", "application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml");
     for (size_t i = 0; i < b->n; i++) {
         char path[64];
         snprintf(path, sizeof path, "/xl/worksheets/sheet%d.xml", (int)(i + 1));
         wubuoxml_add_override(pkg, path, "application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml");
     }
+    if (b->use_sst)
+        wubuoxml_add_override(pkg, "/xl/sharedStrings.xml", "application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml");
     wubuoxml_add_relationship(pkg, "", "xl/workbook.xml",
         "http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument");
 
@@ -119,39 +154,79 @@ int wubucell_assemble(wubucell_book *b, const char *outpath) {
     {
         char *bb = NULL; size_t bn = 0; FILE *m = open_memstream(&bb, &bn);
         fprintf(m, "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n");
-        fprintf(m, "<workbook xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\">\n");
-        fprintf(m, "<sheets>\n");
+        fprintf(m, "<workbook xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\">\n<sheets>\n");
         for (size_t i = 0; i < b->n; i++)
-            fprintf(m, "  <sheet name=\"%s\" sheetId=\"%zu\" r:id=\"rId%zu\"/>\n",
-                    b->sheets[i].name, i + 1, i + 1);
-        fprintf(m, "</sheets>\n");
-        fprintf(m, "</workbook>\n");
+            fprintf(m, "  <sheet name=\"%s\" sheetId=\"%zu\" r:id=\"rId%zu\"/>\n", b->sheets[i].name, i + 1, i + 1);
+        fprintf(m, "</sheets>\n</workbook>\n");
         fflush(m); fclose(m);
         wubuoxml_add_part(pkg, "xl/workbook.xml", bb, bn);
         free(bb);
     }
-    /* xl/_rels/workbook.xml.rels : one worksheet relationship per sheet */
+    /* xl/_rels/workbook.xml.rels */
     {
         char *sp = NULL; size_t sn = 0; FILE *m = open_memstream(&sp, &sn);
         fprintf(m, "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n");
         fprintf(m, "<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\">\n");
+        size_t rid = 1;
         for (size_t i = 0; i < b->n; i++)
-            fprintf(m, "  <Relationship Id=\"rId%zu\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet\" Target=\"worksheets/sheet%zu.xml\"/>\n",
-                    i + 1, i + 1);
+            fprintf(m, "  <Relationship Id=\"rId%zu\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet\" Target=\"worksheets/sheet%zu.xml\"/>\n", rid++, i + 1);
+        fprintf(m, "  <Relationship Id=\"rId%zu\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles\" Target=\"styles.xml\"/>\n", rid++);
+        if (b->use_sst)
+            fprintf(m, "  <Relationship Id=\"rId%zu\" Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/sharedStrings\" Target=\"sharedStrings.xml\"/>\n", rid++);
         fprintf(m, "</Relationships>\n");
         fflush(m); fclose(m);
         wubuoxml_add_part(pkg, "xl/_rels/workbook.xml.rels", sp, sn);
         free(sp);
     }
+    /* styles.xml (a couple of real cell formats) */
+    {
+        static const char *styles =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
+            "<styleSheet xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\">"
+            "<fonts count=\"2\"><font><sz val=\"11\"/><name val=\"Calibri\"/></font>"
+            "<font><b/><sz val=\"11\"/><name val=\"Calibri\"/></font></fonts>"
+            "<fills count=\"2\"><fill><patternFill patternType=\"none\"/></fill>"
+            "<fill><patternFill patternType=\"gray125\"/></fill></fills>"
+            "<borders count=\"1\"><border/></borders>"
+            "<cellStyleXfs count=\"1\"><xf numFmtId=\"0\" fontId=\"0\" fillId=\"0\" borderId=\"0\"/></cellStyleXfs>"
+            "<cellXfs count=\"2\">"
+            "<xf numFmtId=\"0\" fontId=\"0\" fillId=\"0\" borderId=\"0\" xfId=\"0\"/>"
+            "<xf numFmtId=\"0\" fontId=\"1\" fillId=\"0\" borderId=\"0\" xfId=\"0\" applyFont=\"1\"/>"
+            "</cellXfs></styleSheet>\n";
+        wubuoxml_add_part(pkg, "xl/styles.xml", styles, strlen(styles));
+    }
+    /* sharedStrings.xml (only in SST mode) */
+    sst_t sst = {0};
+    if (b->use_sst) {
+        for (size_t i = 0; i < b->n; i++)
+            for (size_t j = 0; j < b->sheets[i].n; j++) {
+                const cell_t *c = &b->sheets[i].cells[j];
+                if (c->kind == C_STR) sst_add(&sst, c->text ? c->text : "");
+            }
+        char *sb = NULL; size_t sn = 0; FILE *m = open_memstream(&sb, &sn);
+        fprintf(m, "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n");
+        fprintf(m, "<sst xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" count=\"%zu\" uniqueCount=\"%zu\">\n", sst.n, sst.n);
+        for (size_t i = 0; i < sst.n; i++) {
+            fprintf(m, "<si><t xml:space=\"preserve\">");
+            xml_escape(m, sst.e[i].s);
+            fprintf(m, "</t></si>\n");
+        }
+        fprintf(m, "</sst>\n");
+        fflush(m); fclose(m);
+        wubuoxml_add_part(pkg, "xl/sharedStrings.xml", sb, sn);
+        free(sb);
+    }
     /* worksheets */
     for (size_t i = 0; i < b->n; i++) {
-        char *sxml = render_sheet(&b->sheets[i]);
+        char *sxml = render_sheet(&b->sheets[i], b, &sst);
         char path[64];
         snprintf(path, sizeof path, "xl/worksheets/sheet%d.xml", (int)(i + 1));
         wubuoxml_add_part(pkg, path, sxml, strlen(sxml));
         free(sxml);
     }
     int rc = wubuoxml_finalize(pkg);
+    for (size_t i = 0; i < sst.n; i++) free(sst.e[i].s);
+    free(sst.e);
     fclose(out);
     return rc;
 }

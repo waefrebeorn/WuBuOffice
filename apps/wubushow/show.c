@@ -28,6 +28,27 @@ static void xml_escape(FILE *m, const char *t) {
     }
 }
 
+/* Emit body text as one or more paragraphs, splitting on '\n'. Each paragraph
+ * gets a bullet run so the slide reads like a real outline. */
+static void render_body(FILE *m, const char *body) {
+    const char *p = body ? body : "";
+    const char *line = p;
+    while (*line) {
+        const char *nl = strchr(line, '\n');
+        size_t len = nl ? (size_t)(nl - line) : strlen(line);
+        fprintf(m, "<a:p><a:pPr><a:buFont typeface=\"Arial\"/><a:buChar char=\"•\"/></a:pPr><a:r><a:t>");
+        /* emit exactly `len` chars of the current line (manual escape) */
+        for (size_t i = 0; i < len; i++) {
+            char c = line[i];
+            switch (c) { case '&': fputs("&amp;", m); break; case '<': fputs("&lt;", m); break;
+                          case '>': fputs("&gt;", m); break; default: fputc(c, m); }
+        }
+        fprintf(m, "</a:t></a:r></a:p>\n");
+        if (!nl) break;
+        line = nl + 1;
+    }
+}
+
 static char *render_slide(const slide_t *s, int idx) {
     (void)idx; /* reserved for future per-slide numbering */
     char *b = NULL; size_t n = 0; FILE *m = open_memstream(&b, &n);
@@ -40,11 +61,11 @@ static char *render_slide(const slide_t *s, int idx) {
     fprintf(m, "<p:spPr/><p:txBody><a:bodyPr/><a:lstStyle/><a:p><a:r><a:t>");
     xml_escape(m, s->title);
     fprintf(m, "</a:t></a:r></a:p></p:txBody></p:sp>\n");
-    /* body */
+    /* body (one or more bullet paragraphs) */
     fprintf(m, "<p:sp><p:nvSpPr><p:cNvPr id=\"3\" name=\"Body\"/><p:cNvSpPr><a:spLocks noGrp=\"1\"/></p:cNvSpPr><p:nvPr/></p:nvSpPr>\n");
-    fprintf(m, "<p:spPr/><p:txBody><a:bodyPr/><a:lstStyle/><a:p><a:r><a:t>");
-    xml_escape(m, s->body);
-    fprintf(m, "</a:t></a:r></a:p></p:txBody></p:sp>\n");
+    fprintf(m, "<p:spPr/><p:txBody><a:bodyPr/><a:lstStyle/>\n");
+    render_body(m, s->body);
+    fprintf(m, "</p:txBody></p:sp>\n");
     fprintf(m, "</p:spTree></p:cSld>\n");
     fprintf(m, "<p:clrMapOvr><a:overrideClrMapping masterClrMapping=\"1\"/></p:clrMapOvr>\n");
     fprintf(m, "</p:sld>\n");

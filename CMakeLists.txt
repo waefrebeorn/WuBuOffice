@@ -57,6 +57,10 @@ add_library(wuburead_app OBJECT apps/wuburead/main.c)
 target_include_directories(wuburead_app PRIVATE src/wubuoxml src/wubuzip src/wubuxml)
 target_link_libraries(wuburead_app PRIVATE wubuoxml)
 
+add_library(wubuedit_app OBJECT apps/wubuedit/edit.c)
+target_include_directories(wubuedit_app PRIVATE src/wubuoxml apps/wubuword)
+target_link_libraries(wubuedit_app PRIVATE wubuoxml wubuword_app)
+
 # --- standalone executables ---
 add_executable(wubuword $<TARGET_OBJECTS:wubuword_app> apps/wubuword/entry.c)
 target_link_libraries(wubuword PRIVATE wubuoxml wubuxml)
@@ -66,13 +70,16 @@ add_executable(wubushow $<TARGET_OBJECTS:wubushow_app> apps/wubushow/entry.c)
 target_link_libraries(wubushow PRIVATE wubuoxml)
 add_executable(wuburead $<TARGET_OBJECTS:wuburead_app> apps/wuburead/entry.c)
 target_link_libraries(wuburead PRIVATE wubuoxml)
+add_executable(wubuedit $<TARGET_OBJECTS:wubuedit_app> apps/wubuedit/entry.c)
+target_link_libraries(wubuedit PRIVATE wubuoxml wubuword_app)
 
 # --- unified CLI ---
 add_executable(wubuoffice apps/wubuoffice/main.c
   $<TARGET_OBJECTS:wubuword_app>
   $<TARGET_OBJECTS:wubucell_app>
   $<TARGET_OBJECTS:wubushow_app>
-  $<TARGET_OBJECTS:wuburead_app>)
+  $<TARGET_OBJECTS:wuburead_app>
+  $<TARGET_OBJECTS:wubuedit_app>)
 target_link_libraries(wubuoffice PRIVATE wubuoxml wubuxml)
 
 # --- tests ---
@@ -89,3 +96,8 @@ add_executable(test_reader tests/test_reader.c)
 target_link_libraries(test_reader PRIVATE wubuoxml wubuword_app)
 target_include_directories(test_reader PRIVATE src/wubuoxml src/wubuxml apps/wubuword)
 add_test(NAME reader_roundtrip COMMAND test_reader)
+
+add_executable(test_edit tests/test_edit.c)
+target_link_libraries(test_edit PRIVATE wubuoxml wubuword_app wubuedit_app)
+target_include_directories(test_edit PRIVATE src/wubuoxml src/wubuxml apps/wubuword apps/wubuedit)
+add_test(NAME edit_roundtrip COMMAND test_edit)
