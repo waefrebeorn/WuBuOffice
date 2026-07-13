@@ -1,8 +1,12 @@
 /* load_async.c — background document loader (ws07#1334).
  * A single worker thread drains the queue, running each wubumodel_load_fn
- * off the caller's thread. Results are collected and the done callbacks
- * fire on load_async_join()'s thread (the UI thread), so they may
- * touch UI state without extra locking. Native pthreads, no Electron. */
+ * off the caller's thread. Completion callbacks fire on load_async_join()'s
+ * thread (the UI thread), so they may touch UI state without extra
+ * locking. Native pthreads, no Electron.
+ *
+ * Correctness: join() BLOCKS until every queued job has finished
+ * (tracked by `pending`), and the callback fires on the joining
+ * thread. A done condition-variable avoids a lost-wakeup race. */
 
 #include "load_async.h"
 #include <stdlib.h>
@@ -22,9 +26,11 @@ typedef struct la_job {
 struct load_async {
     pthread_mutex_t lock;
     pthread_cond_t  cond;     /* signaled when a job is queued */
+    pthread_cond_t  done_cv;  /* signaled when a job completes */
     pthread_t worker;
     int stop;                 /* set on destroy */
     int alive;                /* worker running */
+    int pending;              /* queued + in-flight jobs (join waits for 0) */
     la_job *head, *tail;     /* queue */
     la_job *done_head;         /* completed, awaiting join-callback */
 };
@@ -57,6 +63,8 @@ static void *la_worker(void *arg) {
         pthread_mutex_lock(&la->lock);
         j->next = la->done_head;
         la->done_head = j;
+        la->pending--;                 /* this job is now finished */
+        pthread_cond_signal(&la->done_cv);
         pthread_mutex_unlock(&la->lock);
     }
     return NULL;
@@ -67,10 +75,13 @@ load_async *load_async_create(void) {
     if (!la) return NULL;
     pthread_mutex_init(&la->lock, NULL);
     pthread_cond_init(&la->cond, NULL);
+    pthread_cond_init(&la->done_cv, NULL);
     la->stop = 0;
+    la->pending = 0;
     if (pthread_create(&la->worker, NULL, la_worker, la) != 0) {
         pthread_mutex_destroy(&la->lock);
         pthread_cond_destroy(&la->cond);
+        pthread_cond_destroy(&la->done_cv);
         free(la);
         return NULL;
     }
@@ -106,6 +117,7 @@ void load_async_destroy(load_async *la) {
     }
     pthread_mutex_destroy(&la->lock);
     pthread_cond_destroy(&la->cond);
+    pthread_cond_destroy(&la->done_cv);
     free(la);
 }
 
@@ -125,6 +137,7 @@ int load_async_queue(load_async *la, const char *path,
     j->next = NULL;
     if (la->tail) la->tail->next = j; else la->head = j;
     la->tail = j;
+    la->pending++;
     pthread_cond_signal(&la->cond);
     pthread_mutex_unlock(&la->lock);
     return 0;
@@ -134,15 +147,20 @@ void load_async_join(load_async *la) {
     if (!la) return;
     for (;;) {
         pthread_mutex_lock(&la->lock);
+        /* Wait until all queued jobs have completed. */
+        while (la->pending > 0) {
+            pthread_cond_wait(&la->done_cv, &la->lock);
+        }
         /* Pull one completed job off the done list. */
         la_job *j = la->done_head;
         if (j) la->done_head = j->next;
         pthread_mutex_unlock(&la->lock);
         if (!j) break;
 
-        /* Fire on THIS (joining / UI) thread. */
+        /* Fire on THIS (joining / UI) thread. Ownership of j->doc
+         * transfers to the callback (it must destroy it), matching the
+         * contract used by the cache/loader integration. */
         if (j->done) j->done(j->path, j->doc, j->user);
-        if (j->doc) wubumodel_doc_destroy(j->doc);
         free(j->path);
         free(j);
     }

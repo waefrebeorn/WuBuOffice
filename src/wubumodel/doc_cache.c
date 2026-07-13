@@ -38,15 +38,14 @@ static size_t dc_hash(const char *s) {
     return h % DC_BUCKETS;
 }
 
-/* Return mtime+size for `path` (0,0 if stat fails). */
+/* Return mtime+size for `path` (0,0 if stat fails or file absent). */
 static void dc_stat(const char *path, long *mtime, long long *size) {
     struct stat st;
+    *mtime = 0;          /* init: absent/missing file -> (0,0) */
+    *size  = 0;
     if (stat(path, &st) == 0) {
         *mtime = (long)st.st_mtime;
         *size  = (long long)st.st_size;
-    } else {
-        *mtime = 0;
-        *size  = 0;
     }
 }
 

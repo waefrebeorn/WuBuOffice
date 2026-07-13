@@ -79,11 +79,21 @@ int wubumodel_node_append(wubumodel_doc *doc, wubumodel_node *parent,
 wubumodel_node *wubumodel_node_first_child(const wubumodel_node *parent);
 wubumodel_node *wubumodel_node_next_sibling(const wubumodel_node *node);
 
+/* First top-level node of `doc` (a SECTION/BLOCK/etc.), or NULL if empty.
+ * Walk the tree from here with node_first_child / node_next_sibling. */
+wubumodel_node *wubumodel_doc_root(const wubumodel_doc *doc);
+
 /* ---- OOXML I/O (minimal, from-scratch) ---- */
 /* Serialize the model to a .docx package (WordprocessingML). `path` is the
  * output file. Returns 0 ok, -1 on error. Emits one SECTION as one logical
  * section; BLOCK/PARAGRAPH/RUN map to w:p/w:r/w:t. */
 int wubumodel_write_docx(const wubumodel_doc *doc, const char *path);
+
+/* Load a .docx package into the model (v1: reconstructs text into a
+ * SECTION->PARAGRAPH->RUN tree). Returns 0 ok (ownership of *out passes
+ * to the caller) or -1 on error (*out is NULL). No external deps:
+ * from-scratch ZIP read + our own DEFLATE (ws07#1338). */
+int wubumodel_load_docx(const char *path, wubumodel_doc **out);
 
 #ifdef __cplusplus
 }

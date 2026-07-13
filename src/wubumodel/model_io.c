@@ -6,6 +6,8 @@
 #define _POSIX_C_SOURCE 200809L
 #include "model_internal.h"
 #include "../wubuoxml/package.h"
+#include "../wubuoxml/reader.h"
+#include "../wubuoxml/docx_text.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -102,7 +104,67 @@ int wubumodel_write_docx(const wubumodel_doc *doc, const char *path) {
     if (rc == 0 && wubuoxml_add_part(pkg, "word/document.xml", body, blen) != 0) rc = -1;
     if (rc == 0 && wubuoxml_finalize(pkg) != 0) rc = -1;
     free(body);
-    /* wubuoxml_finalize closes the underlying FILE? If not, we fclose. */
-    fclose(fp);
+    /* wubuoxml_finalize closes the underlying FILE; we do NOT fclose. */
     return rc;
+}
+
+/* ---- OOXML load (ws05#0885 round-trip; feeds doc_cache + load_async) ---- */
+
+static uint8_t *read_file(const char *path, size_t *out_len) {
+    FILE *fp = fopen(path, "rb");
+    if (!fp) return NULL;
+    if (fseek(fp, 0, SEEK_END) != 0) { fclose(fp); return NULL; }
+    long sz = ftell(fp);
+    if (sz < 0) { fclose(fp); return NULL; }
+    if (fseek(fp, 0, SEEK_SET) != 0) { fclose(fp); return NULL; }
+    uint8_t *buf = malloc((size_t)sz ? (size_t)sz : 1);
+    if (!buf) { fclose(fp); return NULL; }
+    size_t got = fread(buf, 1, (size_t)sz, fp);
+    fclose(fp);
+    if (got != (size_t)sz) { free(buf); return NULL; }
+    *out_len = (size_t)sz;
+    return buf;
+}
+
+int wubumodel_load_docx(const char *path, wubumodel_doc **out) {
+    if (!path || !out) return -1;
+    *out = NULL;
+
+    size_t len = 0;
+    uint8_t *data = read_file(path, &len);
+    if (!data) return -1;
+
+    wubuoxml_package pkg;
+    if (wubuoxml_read(data, len, &pkg) != 0) {
+        free(data);
+        return -1;
+    }
+
+    const wubuoxml_part *doc = wubuoxml_part_find(&pkg, "word/document.xml");
+    char *text = NULL;
+    if (doc && wubuoxml_docx_text(doc->bytes, doc->len, &text) != 0) {
+        text = NULL; /* no text is not a hard error */
+    }
+    free(data);
+
+    wubumodel_doc *d = wubumodel_doc_create();
+    if (!d) {
+        free(text);
+        wubuoxml_free(&pkg);
+        return -1;
+    }
+    /* Reconstruct a faithful-enough tree: one SECTION -> one PARAGRAPH ->
+     * one RUN holding the extracted text. v1 scope; richer structure
+     * (multiple paragraphs / tables) is layered later. */
+    wubumodel_node *sec = wubumodel_node_create(d, WUBUMODEL_SECTION);
+    wubumodel_node *par = wubumodel_node_create(d, WUBUMODEL_PARAGRAPH);
+    wubumodel_node *run = wubumodel_node_create(d, WUBUMODEL_RUN);
+    wubumodel_run_set_text(run, text ? text : "");
+    free(text);
+    wubumodel_node_append(d, par, run);
+    wubumodel_node_append(d, sec, par);
+
+    wubuoxml_free(&pkg);
+    *out = d;
+    return 0;
 }

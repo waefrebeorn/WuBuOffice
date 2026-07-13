@@ -196,3 +196,14 @@ wubumodel_node *wubumodel_node_first_child(const wubumodel_node *parent) {
 wubumodel_node *wubumodel_node_next_sibling(const wubumodel_node *node) {
     return node ? node->next_sibling : NULL;
 }
+
+/* Return the first top-level node of the document (a SECTION/BLOCK/etc.),
+ * or NULL if the doc is empty. Used by readers/serializers to walk the
+ * tree starting from the root. O(1): scans the node buckets. */
+wubumodel_node *wubumodel_doc_root(const wubumodel_doc *doc) {
+    if (!doc) return NULL;
+    for (size_t b = 0; b < WUBUMODEL_BUCKETS; b++)
+        for (wubumodel_node *n = doc->nodes[b]; n; n = n->next)
+            if (!n->parent) return n;
+    return NULL;
+}

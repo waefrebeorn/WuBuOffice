@@ -171,6 +171,10 @@ target_link_libraries(test_cold_start PRIVATE wubumodel)
 add_test(NAME cold_start COMMAND test_cold_start)
 add_test(NAME model_io COMMAND test_model_io)
 
+add_executable(test_model_io_roundtrip tests/test_model_io_roundtrip.c)
+target_link_libraries(test_model_io_roundtrip PRIVATE wubumodel)
+add_test(NAME model_io_roundtrip COMMAND test_model_io_roundtrip)
+
 add_executable(test_reader tests/test_reader.c)
 target_link_libraries(test_reader PRIVATE wubuoxml wubuword_app)
 target_include_directories(test_reader PRIVATE src/wubuoxml src/wubuxml apps/wubuword)
