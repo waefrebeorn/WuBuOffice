@@ -88,7 +88,9 @@ add_library(wubuoxml STATIC
   src/wubuoxml/package.c
   src/wubuoxml/rels_path.c
   src/wubuoxml/reader.c
-  src/wubuoxml/docx_text.c)
+  src/wubuoxml/docx_text.c
+  src/wubuoxml/docx_document.c
+  src/wubuxml/parser.c)
 target_include_directories(wubuoxml PUBLIC src/wubuoxml)
 target_link_libraries(wubuoxml PUBLIC wubuzip)
 
@@ -169,11 +171,15 @@ add_test(NAME deflate_roundtrip COMMAND test_deflate_roundtrip)
 add_executable(test_cold_start tests/test_cold_start.c)
 target_link_libraries(test_cold_start PRIVATE wubumodel)
 add_test(NAME cold_start COMMAND test_cold_start)
-add_test(NAME model_io COMMAND test_model_io)
 
 add_executable(test_model_io_roundtrip tests/test_model_io_roundtrip.c)
 target_link_libraries(test_model_io_roundtrip PRIVATE wubumodel)
 add_test(NAME model_io_roundtrip COMMAND test_model_io_roundtrip)
+
+add_executable(test_wubuxml_parser tests/test_wubuxml_parser.c)
+target_link_libraries(test_wubuxml_parser PRIVATE wubuoxml)
+target_include_directories(test_wubuxml_parser PRIVATE src/wubuxml)
+add_test(NAME wubuxml_parser COMMAND test_wubuxml_parser)
 
 add_executable(test_reader tests/test_reader.c)
 target_link_libraries(test_reader PRIVATE wubuoxml wubuword_app)

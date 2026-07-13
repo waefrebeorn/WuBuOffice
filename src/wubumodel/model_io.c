@@ -8,6 +8,7 @@
 #include "../wubuoxml/package.h"
 #include "../wubuoxml/reader.h"
 #include "../wubuoxml/docx_text.h"
+#include "../wubuoxml/docx_document.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -34,15 +35,20 @@ static void emit_xml_text(char **dst, size_t *cap, size_t *len, const char *s) {
 }
 
 /* Recursively serialize the node tree into WordprocessingML body.
- * SECTION/BLOCK are pure grouping (no element); PARAGRAPH -> <w:p>; RUN -> <w:r>. */
-static void serialize_node(wubumodel_node *n, char **dst, size_t *cap, size_t *len) {
+ * SECTION/BLOCK are pure grouping (no element); PARAGRAPH -> <w:p>;
+ * RUN -> <w:r>/<w:t>; TABLE -> <w:tbl>, its CELL children ->
+ * <w:tr> (rows), those CELL children -> <w:tc> (cells) holding
+ * a nested <w:p>. `tbl` tracks table nesting depth so a CELL is
+ * emitted as the right element. */
+static void serialize_node(wubumodel_node *n, char **dst, size_t *cap,
+                           size_t *len, int tbl) {
     if (!n) return;
     switch (n->kind) {
         case WUBUMODEL_PARAGRAPH: {
             if (*len + 8 > *cap) { *cap = (*len + 512); *dst = realloc(*dst, *cap); }
             memcpy(*dst + *len, "<w:p>", 5); *len += 5;
             for (wubumodel_node *c = n->first_child; c; c = c->next_sibling)
-                serialize_node(c, dst, cap, len);
+                serialize_node(c, dst, cap, len, tbl);
             if (*len + 9 > *cap) { *cap = (*len + 512); *dst = realloc(*dst, *cap); }
             memcpy(*dst + *len, "</w:p>", 6); *len += 6;
             break;
@@ -58,11 +64,41 @@ static void serialize_node(wubumodel_node *n, char **dst, size_t *cap, size_t *l
             memcpy(*dst + *len, close, clen); *len += clen;
             break;
         }
+        case WUBUMODEL_TABLE: {
+            if (*len + 9 > *cap) { *cap = (*len + 512); *dst = realloc(*dst, *cap); }
+            memcpy(*dst + *len, "<w:tbl>", 7); *len += 7;
+            for (wubumodel_node *c = n->first_child; c; c = c->next_sibling)
+                serialize_node(c, dst, cap, len, 1);   /* children = rows */
+            if (*len + 10 > *cap) { *cap = (*len + 512); *dst = realloc(*dst, *cap); }
+            memcpy(*dst + *len, "</w:tbl>", 8); *len += 8;
+            break;
+        }
+        case WUBUMODEL_CELL: {
+            if (tbl == 1) {   /* a row: emit <w:tr> */
+                if (*len + 7 > *cap) { *cap = (*len + 512); *dst = realloc(*dst, *cap); }
+                memcpy(*dst + *len, "<w:tr>", 6); *len += 6;
+                for (wubumodel_node *c = n->first_child; c; c = c->next_sibling)
+                    serialize_node(c, dst, cap, len, 2);   /* children = cells */
+                if (*len + 8 > *cap) { *cap = (*len + 512); *dst = realloc(*dst, *cap); }
+                memcpy(*dst + *len, "</w:tr>", 7); *len += 7;
+            } else if (tbl == 2) {   /* a cell: emit <w:tc> */
+                if (*len + 7 > *cap) { *cap = (*len + 512); *dst = realloc(*dst, *cap); }
+                memcpy(*dst + *len, "<w:tc>", 6); *len += 6;
+                for (wubumodel_node *c = n->first_child; c; c = c->next_sibling)
+                    serialize_node(c, dst, cap, len, 2);   /* nested para/run */
+                if (*len + 8 > *cap) { *cap = (*len + 512); *dst = realloc(*dst, *cap); }
+                memcpy(*dst + *len, "</w:tc>", 7); *len += 7;
+            } else {   /* a CELL used outside a table: treat as grouping */
+                for (wubumodel_node *c = n->first_child; c; c = c->next_sibling)
+                    serialize_node(c, dst, cap, len, tbl);
+            }
+            break;
+        }
         default:
-            /* DOC/SECTION/BLOCK/CELL/SHAPE/CHART/TABLE/FIELD/LINK: grouping or
+            /* DOC/SECTION/BLOCK/SHAPE/CHART/FIELD/LINK: grouping or
              * not yet represented in v1 docx output; recurse children. */
             for (wubumodel_node *c = n->first_child; c; c = c->next_sibling)
-                serialize_node(c, dst, cap, len);
+                serialize_node(c, dst, cap, len, tbl);
             break;
     }
 }
@@ -79,11 +115,31 @@ int wubumodel_write_docx(const wubumodel_doc *doc, const char *path) {
     body = calloc(1, hlen + 256);
     if (!body) return -1;
     memcpy(body, hdr, hlen); blen = hlen;
-    /* serialize top-level nodes (SECTION/BLOCK/PARAGRAPH) */
+    /* serialize top-level nodes in CREATION order (by id), not bucket
+     * order, so output is deterministic + matches authoring order. */
+    wubumodel_node **top = NULL;
+    size_t ntop = 0, tcap = 0;
     for (size_t b = 0; b < WUBUMODEL_BUCKETS; b++)
         for (wubumodel_node *n = doc->nodes[b]; n; n = n->next)
-            if (!n->parent) /* top-level nodes */
-                serialize_node(n, &body, &bcap, &blen);
+            if (!n->parent) {
+                if (ntop == tcap) {
+                    tcap = tcap ? tcap * 2 : 16;
+                    wubumodel_node **nt = realloc(top, tcap * sizeof *nt);
+                    if (!nt) { free(top); free(body); return -1; }
+                    top = nt;
+                }
+                top[ntop++] = n;
+            }
+    /* insertion sort by id (small N) */
+    for (size_t a = 1; a < ntop; a++) {
+        wubumodel_node *key = top[a];
+        size_t j = a;
+        while (j > 0 && top[j - 1]->id > key->id) { top[j] = top[j - 1]; j--; }
+        top[j] = key;
+    }
+    for (size_t a = 0; a < ntop; a++)
+        serialize_node(top[a], &body, &bcap, &blen, 0);
+    free(top);
     const char *ftr = "</w:body></w:document>";
     size_t flen = strlen(ftr);
     if (blen + flen + 1 > bcap) { bcap = blen + flen + 16; body = realloc(body, bcap); }
@@ -141,29 +197,28 @@ int wubumodel_load_docx(const char *path, wubumodel_doc **out) {
     }
 
     const wubuoxml_part *doc = wubuoxml_part_find(&pkg, "word/document.xml");
-    char *text = NULL;
-    if (doc && wubuoxml_docx_text(doc->bytes, doc->len, &text) != 0) {
-        text = NULL; /* no text is not a hard error */
+    if (!doc) {
+        free(data);
+        wubuoxml_free(&pkg);
+        return -1;   /* no document part -> not a docx we understand */
     }
-    free(data);
 
     wubumodel_doc *d = wubumodel_doc_create();
     if (!d) {
-        free(text);
+        free(data);
         wubuoxml_free(&pkg);
         return -1;
     }
-    /* Reconstruct a faithful-enough tree: one SECTION -> one PARAGRAPH ->
-     * one RUN holding the extracted text. v1 scope; richer structure
-     * (multiple paragraphs / tables) is layered later. */
-    wubumodel_node *sec = wubumodel_node_create(d, WUBUMODEL_SECTION);
-    wubumodel_node *par = wubumodel_node_create(d, WUBUMODEL_PARAGRAPH);
-    wubumodel_node *run = wubumodel_node_create(d, WUBUMODEL_RUN);
-    wubumodel_run_set_text(run, text ? text : "");
-    free(text);
-    wubumodel_node_append(d, par, run);
-    wubumodel_node_append(d, sec, par);
 
+    /* Structural map: document.xml -> SECTION/(PARAGRAPH|TABLE)/... */
+    if (wubuoxml_docx_to_model(doc->bytes, doc->len, d) != 0) {
+        wubumodel_doc_destroy(d);
+        free(data);
+        wubuoxml_free(&pkg);
+        return -1;
+    }
+
+    free(data);
     wubuoxml_free(&pkg);
     *out = d;
     return 0;

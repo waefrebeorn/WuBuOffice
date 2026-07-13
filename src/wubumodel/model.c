@@ -186,8 +186,16 @@ int wubumodel_node_append(wubumodel_doc *doc, wubumodel_node *parent,
     if (!node_lookup(doc, child->id)) return -1;
     if (child->parent) return -1; /* already attached elsewhere */
     child->parent = parent;
-    child->next_sibling = parent->first_child;
-    parent->first_child = child; /* newest first; iteration reverses */
+    /* append at the TAIL so iteration (first_child -> next_sibling)
+     * preserves creation / authoring order (not reversed). */
+    if (parent->first_child == NULL) {
+        parent->first_child = child;
+    } else {
+        wubumodel_node *last = parent->first_child;
+        while (last->next_sibling) last = last->next_sibling;
+        last->next_sibling = child;
+    }
+    child->next_sibling = NULL;
     return 0;
 }
 wubumodel_node *wubumodel_node_first_child(const wubumodel_node *parent) {
