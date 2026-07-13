@@ -67,7 +67,7 @@ target_link_libraries(wubuoxml PUBLIC wubuzip)
 
 # --- app object libraries (shared between standalone exe and unified CLI) ---
 add_library(wubuword_app OBJECT
-  apps/wubuword/main.c apps/wubuword/word.c apps/wubuword/assemble.c)
+  apps/wubuword/main.c apps/wubuword/word_doc.c apps/wubuword/word_table.c apps/wubuword/assemble.c)
 target_include_directories(wubuword_app PRIVATE src/wubuoxml src/wubuxml apps/wubuword)
 target_link_libraries(wubuword_app PRIVATE wubuoxml wubuxml)
 
@@ -75,7 +75,7 @@ add_library(wubucell_app OBJECT apps/wubucell/main.c apps/wubucell/cell_model.c 
 target_include_directories(wubucell_app PRIVATE src/wubuoxml apps/wubucell src/wubuformula)
 target_link_libraries(wubucell_app PRIVATE wubuoxml wubuformula)
 
-add_library(wubushow_app OBJECT apps/wubushow/main.c apps/wubushow/show.c)
+add_library(wubushow_app OBJECT apps/wubushow/main.c apps/wubushow/show_model.c apps/wubushow/show_io.c)
 target_include_directories(wubushow_app PRIVATE src/wubuoxml apps/wubushow)
 target_link_libraries(wubushow_app PRIVATE wubuoxml)
 
