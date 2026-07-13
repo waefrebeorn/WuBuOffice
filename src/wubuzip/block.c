@@ -19,6 +19,22 @@ const uint8_t wubuzip_dist_extra[30] = {
     0,0,0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13
 };
 
+int wubuzip_len_sym(int len) {
+    for (int k = 0; k < 29; k++) {
+        int hi = wubuzip_len_base[k] + (1 << wubuzip_len_extra[k]) - 1;
+        if (len >= wubuzip_len_base[k] && len <= hi) return k;
+    }
+    return 28; /* clamp to longest length code */
+}
+
+int wubuzip_dist_sym(int dist) {
+    for (int k = 0; k < 30; k++) {
+        int hi = wubuzip_dist_base[k] + (1 << wubuzip_dist_extra[k]) - 1;
+        if (dist >= wubuzip_dist_base[k] && dist <= hi) return k;
+    }
+    return 29; /* clamp to longest distance code */
+}
+
 int wubuzip_buf_put(wubuzip_buf *b, uint8_t c) {
     if (b->len == b->cap) {
         b->cap = b->cap ? b->cap * 2 : 4096;

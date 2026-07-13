@@ -8,9 +8,14 @@
 extern "C" {
 #endif
 
-/* Raw DEFLATE encoder (RFC 1951), fixed-Huffman blocks. Produces a stream with
- * NO zlib wrapper, suitable for embedding directly inside a ZIP "method 8"
- * member or a .gz payload. The companion wubuzip_inflate() decodes it.
+/* Raw DEFLATE encoder (RFC 1951). Produces a stream with NO zlib wrapper,
+ * suitable for embedding directly inside a ZIP "method 8" member or a .gz
+ * payload. The companion wubuzip_inflate() decodes it.
+ *
+ * The encoder is fully self-contained (from-scratch, no external compressors):
+ * it performs greedy+lazy LZ77 matching and emits the cheapest of STORED,
+ * FIXED-Huffman, or DYNAMIC-Huffman blocks, splitting large inputs into
+ * multiple 32 KB blocks.
  *
  * Returns 0 on success and transfers ownership of *out (caller frees with
  * free()). Returns -1 on allocation failure. */

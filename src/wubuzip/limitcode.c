@@ -1,3 +1,12 @@
+/* WuBuOffice -- wubuzip/limitcode
+ * Length-limited Huffman code-length generator (package-merge algorithm).
+ *
+ * Clean-room, from-scratch (SLERM): no zlib source, no third-party code.
+ * System libz is used ONLY by the test suite as a format-validation oracle.
+ *
+ * Produces code lengths <= maxlen for a given symbol frequency table, which
+ * DEFLATE dynamic blocks require (RFC 1951 caps Huffman code lengths at 15). */
+
 #include "limitcode.h"
 
 #include <stdlib.h>

@@ -65,17 +65,9 @@ static size_t cost_tokens(const wubuzip_lz_tok *tok, size_t ntok,
         if (tok[i].kind == 0) {
             bits += lit_len[tok[i].lit];
         } else {
-            int lsym = 0;
-            for (int k = 0; k < 29; k++) {
-                int hi = wubuzip_len_base[k] + (1 << wubuzip_len_extra[k]) - 1;
-                if (tok[i].len >= wubuzip_len_base[k] && tok[i].len <= hi) { lsym = 257 + k; break; }
-            }
-            bits += lit_len[lsym] + wubuzip_len_extra[lsym];
-            int dsym = 0;
-            for (int k = 0; k < 30; k++) {
-                int hi = wubuzip_dist_base[k] + (1 << wubuzip_dist_extra[k]) - 1;
-                if (tok[i].dist >= wubuzip_dist_base[k] && tok[i].dist <= hi) { dsym = k; break; }
-            }
+            int lsym = 257 + wubuzip_len_sym((int)tok[i].len);
+            bits += lit_len[lsym] + wubuzip_len_extra[lsym - 257];
+            int dsym = wubuzip_dist_sym((int)tok[i].dist);
             bits += dist_len[dsym] + wubuzip_dist_extra[dsym];
         }
     }
@@ -122,19 +114,11 @@ static int emit_block(wubuzip_bitwriter *w, const uint8_t *in, size_t s, size_t 
             if (tok[i].kind == 0) {
                 if (put_code(w, lc[tok[i].lit], ll[tok[i].lit]) != 0) goto fail;
             } else {
-                int lsym = 0;
-                for (int k = 0; k < 29; k++) {
-                    int hi = wubuzip_len_base[k] + (1 << wubuzip_len_extra[k]) - 1;
-                    if (tok[i].len >= wubuzip_len_base[k] && tok[i].len <= hi) { lsym = 257 + k; break; }
-                }
+                int lsym = 257 + wubuzip_len_sym((int)tok[i].len);
                 if (put_code(w, lc[lsym], ll[lsym]) != 0) goto fail;
                 if (wubuzip_len_extra[lsym - 257])
                     if (wubuzip_bitw_put(w, (uint32_t)(tok[i].len - wubuzip_len_base[lsym - 257]), wubuzip_len_extra[lsym - 257]) != 0) goto fail;
-                int dsym = 0;
-                for (int k = 0; k < 30; k++) {
-                    int hi = wubuzip_dist_base[k] + (1 << wubuzip_dist_extra[k]) - 1;
-                    if (tok[i].dist >= wubuzip_dist_base[k] && tok[i].dist <= hi) { dsym = k; break; }
-                }
+                int dsym = wubuzip_dist_sym((int)tok[i].dist);
                 if (put_code(w, dc[dsym], dl[dsym]) != 0) goto fail;
                 if (wubuzip_dist_extra[dsym])
                     if (wubuzip_bitw_put(w, (uint32_t)(tok[i].dist - wubuzip_dist_base[dsym]), wubuzip_dist_extra[dsym]) != 0) goto fail;
@@ -224,19 +208,11 @@ static int emit_block(wubuzip_bitwriter *w, const uint8_t *in, size_t s, size_t 
             if (tok[i].kind == 0) {
                 if (put_code(w, lcode[tok[i].lit], llen[tok[i].lit]) != 0) goto fail;
             } else {
-                int lsym = 0;
-                for (int k = 0; k < 29; k++) {
-                    int hi = wubuzip_len_base[k] + (1 << wubuzip_len_extra[k]) - 1;
-                    if (tok[i].len >= wubuzip_len_base[k] && tok[i].len <= hi) { lsym = 257 + k; break; }
-                }
+                int lsym = 257 + wubuzip_len_sym((int)tok[i].len);
                 if (put_code(w, lcode[lsym], llen[lsym]) != 0) goto fail;
                 if (wubuzip_len_extra[lsym - 257])
                     if (wubuzip_bitw_put(w, (uint32_t)(tok[i].len - wubuzip_len_base[lsym - 257]), wubuzip_len_extra[lsym - 257]) != 0) goto fail;
-                int dsym = 0;
-                for (int k = 0; k < 30; k++) {
-                    int hi = wubuzip_dist_base[k] + (1 << wubuzip_dist_extra[k]) - 1;
-                    if (tok[i].dist >= wubuzip_dist_base[k] && tok[i].dist <= hi) { dsym = k; break; }
-                }
+                int dsym = wubuzip_dist_sym((int)tok[i].dist);
                 if (put_code(w, dcode[dsym], dlen[dsym]) != 0) goto fail;
                 if (wubuzip_dist_extra[dsym])
                     if (wubuzip_bitw_put(w, (uint32_t)(tok[i].dist - wubuzip_dist_base[dsym]), wubuzip_dist_extra[dsym]) != 0) goto fail;

@@ -1,3 +1,13 @@
+/* WuBuOffice -- wubuzip/lz77
+ * Greedy + lazy LZ77 matcher for the DEFLATE encoder.
+ *
+ * Clean-room, from-scratch (SLERM): no zlib source, no third-party code.
+ * System libz is used ONLY by the test suite as a format-validation oracle.
+ *
+ * Finds (length, distance) tokens over a 3-byte hash-chain window. Lazy
+ * evaluation delays emitting a literal when a longer match is available at the
+ * next position, improving compression at little cost. */
+
 #include "lz77.h"
 
 #include <stdlib.h>

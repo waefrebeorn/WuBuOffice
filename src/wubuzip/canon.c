@@ -1,3 +1,13 @@
+/* WuBuOffice -- wubuzip/canon
+ * Canonical Huffman code assignment (RFC 1951 3.2.2).
+ *
+ * Clean-room, from-scratch (SLERM): no zlib source, no third-party code.
+ * System libz is used ONLY by the test suite as a format-validation oracle.
+ *
+ * Given per-symbol code lengths (already chosen by the caller -- e.g. optimal
+ * for dynamic blocks, or the RFC-fixed lengths for fixed blocks), assign the
+ * canonical codes. Used by both fixed and dynamic block emission. */
+
 #include "canon.h"
 
 #include <stdlib.h>

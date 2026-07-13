@@ -15,6 +15,12 @@ extern const uint8_t  wubuzip_len_extra[29];
 extern const uint16_t wubuzip_dist_base[30];
 extern const uint8_t  wubuzip_dist_extra[30];
 
+/* Map a match length (3..258) to its literal/length code index (0..28). */
+int wubuzip_len_sym(int len);
+
+/* Map a match distance (1..32768) to its distance code index (0..29). */
+int wubuzip_dist_sym(int dist);
+
 /* Decode a single block into `out` (growable buffer). `br` is the bit reader,
  * `lh`/`dh` the literal/length and distance Huffman tables. Returns 0 on
  * end-of-block, -1 on error. */
