@@ -59,9 +59,29 @@ target_link_libraries(wubuformula PUBLIC m)
 # --- wubumodel: WS11 unified object model (shared substrate for all apps) ---
 add_library(wubumodel STATIC
   src/wubumodel/model.c
-  src/wubumodel/model_io.c)
+  src/wubumodel/model_io.c
+  src/wubumodel/doc_cache.c
+  src/wubumodel/load_async.c)
 target_include_directories(wubumodel PUBLIC src/wubumodel)
-target_link_libraries(wubumodel PRIVATE wubuoxml)
+target_link_libraries(wubumodel PRIVATE wubuoxml pthread)
+
+# ws07#1339: this is a NATIVE office suite. Reject Electron / JVM / any
+# bundled web runtime at configure time so a dependency can never silently
+# pull one in. Native C11 + pthreads only.
+if(DEFINED ENV{ELECTRON})
+  message(FATAL_ERROR "WuBuOffice is native-only: ELECTRON is not allowed "
+          "(ws07#1339). Build with plain CMake, no Electron toolchain.")
+endif()
+if(DEFINED ENV{WUBOFFICE_ALLOW_JVM})
+  message(WARNING "WUBOFFICE_ALLOW_JVM set: linking a JVM is permitted only for "
+          "explicit server-side tooling, never the document apps (ws07#1339).")
+endif()
+find_library(JVM_LIB jvm)
+if(JVM_LIB AND NOT WUBOFFICE_ALLOW_JVM)
+  message(FATAL_ERROR "libjvm found on the link path and WUBOFFICE_ALLOW_JVM is "
+          "not set. WuBuOffice document apps must not link the JVM (ws07#1339). "
+          "Set -DWUBOFFICE_ALLOW_JVM=ON only for server-side tooling.")
+endif()
 
 # --- wubuoxml: OPC package writer + reader (built on wubuzip) ---
 add_library(wubuoxml STATIC
@@ -133,6 +153,14 @@ add_test(NAME formula COMMAND test_formula)
 add_executable(test_model tests/test_model.c)
 target_link_libraries(test_model PRIVATE wubumodel)
 add_test(NAME model COMMAND test_model)
+
+add_executable(test_doc_cache tests/test_doc_cache.c)
+target_link_libraries(test_doc_cache PRIVATE wubumodel)
+add_test(NAME doc_cache COMMAND test_doc_cache)
+
+add_executable(test_load_async tests/test_load_async.c)
+target_link_libraries(test_load_async PRIVATE wubumodel)
+add_test(NAME load_async COMMAND test_load_async)
 
 add_executable(test_model_io tests/test_model_io.c)
 target_link_libraries(test_model_io PRIVATE wubumodel wubuoxml)
