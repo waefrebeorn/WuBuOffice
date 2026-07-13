@@ -7,6 +7,7 @@
 #include "value.h"
 #include "eval.h"
 #include "funcs.h"
+#include "registry.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -298,6 +299,24 @@ int main(void) {
     wubuval_set_num(&gj, 30); grid_set(4,3,&gj);
     fails += !check_num("AVERAGEIF(D1:D3, \">15\")", 25, 1e-9);  /* (20+30)/2 */
     fails += !check_num("AVERAGEIF(D1:D3, 10)", 10, 1e-9);
+    /* The newly-split stat / multi-criteria / logical / text-join functions */
+    fails += !check_num("MEDIAN(3,1,2)", 2, 1e-9);
+    fails += !check_num("MEDIAN(10,20,30,40)", 25, 1e-9);
+    fails += !check_num("MODE(1,2,2,3)", 2, 1e-9);
+    fails += !check_num("STDEV(2,4,4,4,5,5,7,9)", 2.1381, 1e-3);
+    fails += !check_num("VAR(2,4,4,4,5,5,7,9)", 4.5714, 1e-3);
+    fails += !check_num("LARGE(D1:D3, 1)", 30, 1e-9);   /* D1:D3={10,20,30} */
+    fails += !check_num("SMALL(D1:D3, 2)", 20, 1e-9);
+    fails += !check_num("SUMPRODUCT(D1:D3, D1:D3)", 10*10+20*20+30*30, 1e-9);
+    fails += !check_num("SUMIFS(D1:D3, D1:D3, \">15\")", 50, 1e-9);  /* 20+30 */
+    fails += !check_num("COUNTIFS(D1:D3, \">15\")", 2, 1e-9);
+    fails += !check_num("IFS(0, 100, 1, 200)", 200, 1e-9);
+    fails += !check_num("SWITCH(2, 1, 10, 2, 20, 99)", 20, 1e-9);
+    fails += !check_str("TEXTJOIN(\"-\", 1, \"a\", \"b\", \"c\")", "a-b-c");
+    fails += !check_str("CONCAT(\"foo\", \"bar\")", "foobar");
+    fails += !check_num("WEEKDAY(DATE(2026,7,13))", 2, 1e-9);   /* 2026-07-13 is a Monday (type1=Sun..Sat -> 2) */
+    fails += !check_num("EDATE(DATE(2026,1,15), 1)", 46068, 1e-9); /* 2026-02-15 */
+    fails += !check_num("EOMONTH(DATE(2026,2,10), 0)", 46081, 1e-9); /* last day of Feb 2026 = 2026-02-28 */
 
 
     /* nested formula referencing cells (rebuild the A1:A3/B1 grid that the

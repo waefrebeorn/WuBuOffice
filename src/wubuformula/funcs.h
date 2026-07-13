@@ -10,7 +10,7 @@ extern "C" {
 /* Per-range-argument geometry: when argument i was a RANGE reference, the
  * evaluator resolves it into a row-major grid `grid` (rows*cols values,
  * owned by the evaluator; callee must NOT free) with the given dimensions.
- * `cols[i] < 0` means argument i was NOT a range (use `args[i]`/`flat`). */
+ * `cols <= 0` means argument i was NOT a range (use `args[i]`/`flat`). */
 typedef struct {
     const wubuval *grid; /* row-major, length rows*cols (or NULL if not a range) */
     int rows, cols;
@@ -31,11 +31,16 @@ typedef void (*wubu_func_impl)(const wubuval *args, int nargs,
                                const wubu_func_range *ranges, wubuval *out);
 
 /* Look up a function by name (case-insensitive). Returns the impl, or NULL if
- * unknown (caller should produce #NAME?). */
+ * unknown (caller should produce #NAME?). Registration is lazy. */
 wubu_func_impl wubu_func_lookup(const char *name);
 
 /* Number of registered functions (for diagnostics/tests). */
 int wubu_func_count(void);
+
+/* Ensure all built-in functions are registered (idempotent). Called lazily by
+ * wubu_func_lookup / wubu_func_count; exposed for callers that want to force
+ * it (declared here so every translation unit that includes funcs.h sees it). */
+void wubu_formula_register_all(void);
 
 #ifdef __cplusplus
 }

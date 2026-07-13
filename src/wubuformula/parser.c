@@ -14,20 +14,12 @@
  */
 
 #include "parser.h"
+#include "value_util.h"
 
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 #include <stdio.h>
-
-static int strcasecmp_local(const char *a, const char *b) {
-    while (*a && *b) {
-        int ca = tolower((unsigned char)*a), cb = tolower((unsigned char)*b);
-        if (ca != cb) return ca - cb;
-        a++; b++;
-    }
-    return tolower((unsigned char)*a) - tolower((unsigned char)*b);
-}
 
 typedef struct {
     wubu_lexer L;
@@ -88,8 +80,8 @@ static ast *parse_primary(parser *p) {
     }
     if (t->kind == T_IDENT) {
         /* boolean literal or function call */
-        if (strcasecmp_local(t->text, "TRUE") == 0) { wubu_lexer_next(&p->L); return ast_bool(1); }
-        if (strcasecmp_local(t->text, "FALSE") == 0) { wubu_lexer_next(&p->L); return ast_bool(0); }
+        if (wubu_strcasecmp(t->text, "TRUE") == 0) { wubu_lexer_next(&p->L); return ast_bool(1); }
+        if (wubu_strcasecmp(t->text, "FALSE") == 0) { wubu_lexer_next(&p->L); return ast_bool(0); }
         /* function call */
         char *fname = strdup(t->text);
         wubu_lexer_next(&p->L);

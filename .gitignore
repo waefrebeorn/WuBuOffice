@@ -6,3 +6,5 @@ build-*/
 *.xlsx
 *.pptx
 .DS_Store
+build/
+buildd/

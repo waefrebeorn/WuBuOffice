@@ -7,6 +7,7 @@
 
 #include "eval.h"
 #include "parser.h"
+#include "registry.h"
 
 #include <stdlib.h>
 #include <string.h>

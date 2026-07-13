@@ -39,12 +39,21 @@ target_include_directories(wubuxml PUBLIC src/wubuxml)
 # --- wubuformula: from-scratch formula engine (lexer/parser/AST/evaluator/functions) ---
 add_library(wubuformula STATIC
   src/wubuformula/value.c
+  src/wubuformula/value_util.c
   src/wubuformula/lexer.c
   src/wubuformula/ast.c
   src/wubuformula/parser.c
-  src/wubuformula/funcs.c
-  src/wubuformula/eval.c)
-target_include_directories(wubuformula PUBLIC src/wubuformula)
+  src/wubuformula/eval.c
+  src/wubuformula/functions/registry.c
+  src/wubuformula/functions/logic.c
+  src/wubuformula/functions/math.c
+  src/wubuformula/functions/text.c
+  src/wubuformula/functions/lookup.c
+  src/wubuformula/functions/datefin.c
+  src/wubuformula/functions/stat.c)
+target_include_directories(wubuformula PUBLIC
+  src/wubuformula
+  src/wubuformula/functions)
 target_link_libraries(wubuformula PUBLIC m)
 
 # --- wubuoxml: OPC package writer + reader (built on wubuzip) ---
@@ -62,7 +71,7 @@ add_library(wubuword_app OBJECT
 target_include_directories(wubuword_app PRIVATE src/wubuoxml src/wubuxml apps/wubuword)
 target_link_libraries(wubuword_app PRIVATE wubuoxml wubuxml)
 
-add_library(wubucell_app OBJECT apps/wubucell/main.c apps/wubucell/cell.c apps/wubucell/style.c)
+add_library(wubucell_app OBJECT apps/wubucell/main.c apps/wubucell/cell_model.c apps/wubucell/cell_eval.c apps/wubucell/cell_io.c apps/wubucell/style.c)
 target_include_directories(wubucell_app PRIVATE src/wubuoxml apps/wubucell src/wubuformula)
 target_link_libraries(wubucell_app PRIVATE wubuoxml wubuformula)
 
@@ -111,6 +120,7 @@ add_test(NAME inflate COMMAND test_inflate)
 
 add_executable(test_formula tests/test_formula.c)
 target_link_libraries(test_formula PRIVATE wubuformula)
+target_include_directories(test_formula PRIVATE src/wubuformula/functions)
 add_test(NAME formula COMMAND test_formula)
 
 add_executable(test_reader tests/test_reader.c)
