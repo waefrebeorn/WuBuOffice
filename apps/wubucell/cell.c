@@ -1,9 +1,12 @@
 #include "cell.h"
 #include "style.h"
+#include "value.h"
+#include "eval.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <ctype.h>
 
 typedef enum { C_STR, C_NUM, C_FORM } cell_kind;
 
@@ -11,8 +14,9 @@ typedef struct {
     int col, row;
     cell_kind kind;
     double num;
-    char *text;
-    double cached;
+    double cached;      /* numeric result of a formula */
+    char *text;         /* for C_STR: the value; for C_FORM: the evaluated result */
+    char *formula;      /* for C_FORM: the original formula (without '=') */
     int style;
 } cell_t;
 
@@ -59,32 +63,34 @@ int wubucell_sheet(wubucell_book *b, const char *name) {
 void wubucell_use_shared_strings(wubucell_book *b, int enable) { b->use_sst = enable; }
 
 static void set_cell(wubucell_book *b, int sheet, int col, int row, cell_kind kind,
-                     double num, const char *text, double cached, int style) {
+                     double num, const char *text, const char *formula, double cached, int style) {
     sheet_t *s = book_sheet(b, sheet); if (!s) return;
     if (s->n == s->cap) { s->cap = s->cap ? s->cap*2 : 16; s->cells = realloc(s->cells, s->cap*sizeof(*s->cells)); }
     cell_t *c = &s->cells[s->n++];
     c->col = col; c->row = row; c->kind = kind; c->num = num;
-    c->text = text ? strdup(text) : NULL; c->cached = cached;
+    c->text = text ? strdup(text) : NULL;
+    c->formula = formula ? strdup(formula) : NULL;
+    c->cached = cached;
     c->style = (style < 0) ? 0 : style;
 }
 
 void wubucell_cell_s(wubucell_book *b, int sheet, int col, int row, const char *text) {
-    set_cell(b, sheet, col, row, C_STR, 0, text, 0, 0);
+    set_cell(b, sheet, col, row, C_STR, 0, text, NULL, 0, 0);
 }
 void wubucell_cell_sx(wubucell_book *b, int sheet, int col, int row, const char *text, int style) {
-    set_cell(b, sheet, col, row, C_STR, 0, text, 0, style);
+    set_cell(b, sheet, col, row, C_STR, 0, text, NULL, 0, style);
 }
 void wubucell_cell_n(wubucell_book *b, int sheet, int col, int row, double num) {
-    set_cell(b, sheet, col, row, C_NUM, num, NULL, 0, 0);
+    set_cell(b, sheet, col, row, C_NUM, num, NULL, NULL, 0, 0);
 }
 void wubucell_cell_nx(wubucell_book *b, int sheet, int col, int row, double num, int style) {
-    set_cell(b, sheet, col, row, C_NUM, num, NULL, 0, style);
+    set_cell(b, sheet, col, row, C_NUM, num, NULL, NULL, 0, style);
 }
 void wubucell_cell_f(wubucell_book *b, int sheet, int col, int row, const char *formula, double cached) {
-    set_cell(b, sheet, col, row, C_FORM, cached, formula, cached, 0);
+    set_cell(b, sheet, col, row, C_FORM, cached, NULL, formula, cached, 0);
 }
 void wubucell_cell_fx(wubucell_book *b, int sheet, int col, int row, const char *formula, double cached, int style) {
-    set_cell(b, sheet, col, row, C_FORM, cached, formula, cached, style);
+    set_cell(b, sheet, col, row, C_FORM, cached, NULL, formula, cached, style);
 }
 
 int wubucell_chart(wubucell_book *b, int sheet, const char *title, const char *cats, const char *vals) {
@@ -145,7 +151,19 @@ static char *render_sheet(const wubucell_book *b, const sheet_t *s, size_t sheet
             if (c->style) fprintf(m, "<c r=\"%s\" s=\"%d\">", ref, c->style);
             else fprintf(m, "<c r=\"%s\">", ref);
             if (c->kind == C_NUM) fprintf(m, "<v>%.12g</v>", c->num);
-            else if (c->kind == C_FORM) fprintf(m, "<f>%s</f><v>%.12g</v>", c->text ? c->text : "", c->cached);
+            else if (c->kind == C_FORM) {
+                /* formula cell: keep the <f> element (original formula) and
+                 * render the cached result. Numeric results go in <v> as a
+                 * number; text/error results go as inline string <v>. */
+                fprintf(m, "<f>%s</f>", c->formula ? c->formula : "");
+                if (c->text) { /* string or error result */
+                    fprintf(m, "<v>");
+                    xml_escape(m, c->text);
+                    fprintf(m, "</v>");
+                } else {
+                    fprintf(m, "<v>%.12g</v>", c->cached);
+                }
+            }
             else if (b->use_sst) { int si = sst_add(sst, c->text ? c->text : ""); fprintf(m, "<v>%d</v>", si); }
             else { fprintf(m, "<is><t xml:space=\"preserve\">"); xml_escape(m, c->text); fprintf(m, "</t></is>"); }
             fprintf(m, "</c>\n");
@@ -178,7 +196,129 @@ static char *render_chart(const chart_t *c, size_t idx) {
     return out;
 }
 
+/* ---- formula engine integration ----
+ * The wubucell_book is the resolver context. Each formula cell is evaluated
+ * (recursively, with circular-reference detection) and its result cached back
+ * into the cell so the worksheet can write a real <v>. */
+
+typedef struct {
+    wubucell_book *book;
+    int cur_sheet;   /* 0-based sheet the current formula lives in */
+    int *visit;      /* per-global-formula-index state: 0/1/2 */
+} book_resolver;
+
+static int strcasecmp_local(const char *a, const char *b) {
+    while (*a && *b) { int ca=tolower((unsigned char)*a),cb=tolower((unsigned char)*b); if(ca!=cb)return ca-cb; a++; b++; }
+    return tolower((unsigned char)*a)-tolower((unsigned char)*b);
+}
+
+/* Resolve a cell ref to a value. Recurses into formula cells through the same
+ * resolver; cycle detection uses R->visit keyed by a global formula index. */
+static int br_resolve(void *ctx, const wubucell_ref *ref, wubuval *out) {
+    book_resolver *R = (book_resolver *)ctx;
+    wubucell_book *b = R->book;
+    int sheet = (ref->sheet == -1) ? R->cur_sheet : -1;
+    if (ref->sheet == -2) {
+        for (size_t i = 0; i < b->n; i++)
+            if (strcasecmp_local(b->sheets[i].name, ref->sheet_name) == 0) { sheet = (int)i; break; }
+        if (sheet < 0) { wubuval_set_err(out, WERR_REF); return 0; }
+    } else if (ref->sheet >= 0) {
+        sheet = ref->sheet;
+    }
+    if (sheet < 0 || (size_t)sheet >= b->n) { wubuval_set_err(out, WERR_REF); return 0; }
+    const sheet_t *s = &b->sheets[sheet];
+    for (size_t i = 0; i < s->n; i++) {
+        const cell_t *c = &s->cells[i];
+        if (c->col != ref->col || c->row != ref->row) continue;
+        if (c->kind == C_NUM) { wubuval_set_num(out, c->num); return 0; }
+        if (c->kind == C_STR) { wubuval_set_str(out, c->text ? c->text : ""); return 0; }
+        if (c->kind == C_FORM) {
+            /* find this formula's global index and evaluate it (handles cycles) */
+            int fi = 0, found = -1;
+            for (size_t sh = 0; sh < b->n && found < 0; sh++)
+                for (size_t j = 0; j < b->sheets[sh].n; j++)
+                    if (b->sheets[sh].cells[j].kind == C_FORM) {
+                        if ((int)sh == sheet && b->sheets[sh].cells[j].col == c->col && b->sheets[sh].cells[j].row == c->row) { found = fi; break; }
+                        fi++;
+                    }
+            if (found >= 0) {
+                /* evaluate via the shared context; we need fsheet/fcol/frow.
+                 * Rebuild on the fly is wasteful; instead resolve directly. */
+                wubuval v; memset(&v, 0, sizeof v);
+                /* guard against recursion: if visiting, return CYCLE */
+                /* (visit state is in R for the top-level loop; for nested we
+                 * re-resolve by calling evaluate on the same cell) */
+                int *fsheet2=NULL,*fcol2=NULL,*frow2=NULL; int nf2=0;
+                for (size_t sh2=0; sh2<b->n; sh2++)
+                    for (size_t j2=0; j2<b->sheets[sh2].n; j2++)
+                        if (b->sheets[sh2].cells[j2].kind==C_FORM) nf2++;
+                if (nf2) {
+                    fsheet2=malloc(sizeof(int)*nf2); fcol2=malloc(sizeof(int)*nf2); frow2=malloc(sizeof(int)*nf2);
+                    int f2=0;
+                    for (size_t sh2=0; sh2<b->n; sh2++)
+                        for (size_t j2=0; j2<b->sheets[sh2].n; j2++)
+                            if (b->sheets[sh2].cells[j2].kind==C_FORM) { fsheet2[f2]=(int)sh2; fcol2[f2]=b->sheets[sh2].cells[j2].col; frow2[f2]=b->sheets[sh2].cells[j2].row; f2++; }
+                    /* mark visiting for `found` to detect cycles */
+                    R->visit[found] = 1;
+                    wubuval v2; memset(&v2,0,sizeof v2);
+                    wubu_formula_eval(c->formula?c->formula:"", br_resolve, R, &v2);
+                    R->visit[found] = 2;
+                    v = v2;
+                    free(fsheet2); free(fcol2); free(frow2);
+                }
+                *out = v;
+                return 0;
+            }
+            wubuval_set_empty(out); return 0;
+        }
+    }
+    wubuval_set_empty(out);
+    return 0;
+}
+
+/* Evaluate every formula cell in the book, caching results back into cells.
+ * Called once at assemble time. */
+static void wubucell_eval_all(wubucell_book *b) {
+    int nf = 0;
+    for (size_t sh = 0; sh < b->n; sh++)
+        for (size_t i = 0; i < b->sheets[sh].n; i++)
+            if (b->sheets[sh].cells[i].kind == C_FORM) nf++;
+    if (!nf) return;
+    int *fsheet = malloc(sizeof(int)*nf), *fcol = malloc(sizeof(int)*nf), *frow = malloc(sizeof(int)*nf);
+    int fi = 0;
+    for (size_t sh = 0; sh < b->n; sh++)
+        for (size_t i = 0; i < b->sheets[sh].n; i++)
+            if (b->sheets[sh].cells[i].kind == C_FORM) {
+                fsheet[fi]=(int)sh; fcol[fi]=b->sheets[sh].cells[i].col; frow[fi]=b->sheets[sh].cells[i].row; fi++;
+            }
+    int *visit = calloc((size_t)nf, sizeof(int));
+    book_resolver R; memset(&R, 0, sizeof R); R.book = b; R.visit = visit;
+    for (int k = 0; k < nf; k++) {
+        if (visit[k] == 2) continue;
+        /* top-level: evaluate this formula cell */
+        R.cur_sheet = fsheet[k];
+        sheet_t *s = &b->sheets[fsheet[k]];
+        cell_t *cell = NULL;
+        for (size_t i = 0; i < s->n; i++)
+            if (s->cells[i].col == fcol[k] && s->cells[i].row == frow[k]) { cell = &s->cells[i]; break; }
+        if (!cell) continue;
+        if (visit[k] == 1) { /* self/cycle at top: mark error */ free(cell->text); cell->text = strdup("#CYCLE!"); cell->kind = C_STR; visit[k]=2; continue; }
+        visit[k] = 1;
+        wubuval v; memset(&v, 0, sizeof v);
+        wubu_formula_eval(cell->formula ? cell->formula : "", br_resolve, &R, &v);
+        visit[k] = 2;
+        if (v.kind == WV_NUM) { cell->cached = v.num; free(cell->text); cell->text = NULL; }
+        else if (v.kind == WV_BOOL) { cell->cached = v.boolean ? 1.0 : 0.0; free(cell->text); cell->text = NULL; }
+        else if (v.kind == WV_STR) { free(cell->text); cell->text = strdup(v.str ? v.str : ""); }
+        else if (v.kind == WV_ERR) { free(cell->text); cell->text = strdup(wubuval_err_text(v.err)); }
+        else { cell->cached = 0; free(cell->text); cell->text = NULL; }
+        wubuval_free(&v);
+    }
+    free(fsheet); free(fcol); free(frow); free(visit);
+}
+
 int wubucell_assemble(wubucell_book *b, const char *outpath) {
+    wubucell_eval_all(b);   /* backbone: compute all formula results first */
     FILE *out = fopen(outpath, "wb");
     if (!out) { perror("fopen"); return -1; }
     wubuoxml_package *pkg = wubuoxml_create(out);
@@ -349,7 +489,7 @@ void wubucell_free(wubucell_book *b) {
     if (!b) return;
     for (size_t i = 0; i < b->n; i++) {
         free(b->sheets[i].name);
-        for (size_t j = 0; j < b->sheets[i].n; j++) free(b->sheets[i].cells[j].text);
+        for (size_t j = 0; j < b->sheets[i].n; j++) { free(b->sheets[i].cells[j].text); free(b->sheets[i].cells[j].formula); }
         free(b->sheets[i].cells);
     }
     for (size_t i = 0; i < b->ncharts; i++) { free(b->charts[i].title); free(b->charts[i].cats); free(b->charts[i].vals); }

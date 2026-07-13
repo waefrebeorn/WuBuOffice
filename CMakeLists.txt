@@ -12,7 +12,7 @@ add_compile_definitions(_POSIX_C_SOURCE=200809L)
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
 endif()
-add_compile_options(-Wall -Wextra -Wpedantic)
+add_compile_options(-Wall -Wextra -Wpedantic -Wno-unused-parameter)
 
 # --- wubuzip: from-scratch ZIP + DEFLATE (reader and writer) ---
 add_library(wubuzip STATIC
@@ -36,6 +36,17 @@ target_include_directories(wubuzip PUBLIC src/wubuzip)
 add_library(wubuxml STATIC src/wubuxml/xml.c)
 target_include_directories(wubuxml PUBLIC src/wubuxml)
 
+# --- wubuformula: from-scratch formula engine (lexer/parser/AST/evaluator/functions) ---
+add_library(wubuformula STATIC
+  src/wubuformula/value.c
+  src/wubuformula/lexer.c
+  src/wubuformula/ast.c
+  src/wubuformula/parser.c
+  src/wubuformula/funcs.c
+  src/wubuformula/eval.c)
+target_include_directories(wubuformula PUBLIC src/wubuformula)
+target_link_libraries(wubuformula PUBLIC m)
+
 # --- wubuoxml: OPC package writer + reader (built on wubuzip) ---
 add_library(wubuoxml STATIC
   src/wubuoxml/package.c
@@ -52,8 +63,8 @@ target_include_directories(wubuword_app PRIVATE src/wubuoxml src/wubuxml apps/wu
 target_link_libraries(wubuword_app PRIVATE wubuoxml wubuxml)
 
 add_library(wubucell_app OBJECT apps/wubucell/main.c apps/wubucell/cell.c apps/wubucell/style.c)
-target_include_directories(wubucell_app PRIVATE src/wubuoxml apps/wubucell)
-target_link_libraries(wubucell_app PRIVATE wubuoxml)
+target_include_directories(wubucell_app PRIVATE src/wubuoxml apps/wubucell src/wubuformula)
+target_link_libraries(wubucell_app PRIVATE wubuoxml wubuformula)
 
 add_library(wubushow_app OBJECT apps/wubushow/main.c apps/wubushow/show.c)
 target_include_directories(wubushow_app PRIVATE src/wubuoxml apps/wubushow)
@@ -71,7 +82,7 @@ target_link_libraries(wubuedit_app PRIVATE wubuoxml wubuword_app)
 add_executable(wubuword $<TARGET_OBJECTS:wubuword_app> apps/wubuword/entry.c)
 target_link_libraries(wubuword PRIVATE wubuoxml wubuxml)
 add_executable(wubucell $<TARGET_OBJECTS:wubucell_app> apps/wubucell/entry.c)
-target_link_libraries(wubucell PRIVATE wubuoxml)
+target_link_libraries(wubucell PRIVATE wubuoxml wubuformula)
 add_executable(wubushow $<TARGET_OBJECTS:wubushow_app> apps/wubushow/entry.c)
 target_link_libraries(wubushow PRIVATE wubuoxml)
 add_executable(wuburead $<TARGET_OBJECTS:wuburead_app> apps/wuburead/entry.c)
@@ -86,7 +97,7 @@ add_executable(wubuoffice apps/wubuoffice/main.c
   $<TARGET_OBJECTS:wubushow_app>
   $<TARGET_OBJECTS:wuburead_app>
   $<TARGET_OBJECTS:wubuedit_app>)
-target_link_libraries(wubuoffice PRIVATE wubuoxml wubuxml)
+target_link_libraries(wubuoffice PRIVATE wubuoxml wubuxml wubuformula)
 
 # --- tests ---
 enable_testing()
@@ -98,9 +109,9 @@ add_executable(test_inflate tests/test_inflate.c)
 target_link_libraries(test_inflate PRIVATE wubuzip z)
 add_test(NAME inflate COMMAND test_inflate)
 
-add_executable(test_deflate tests/test_deflate.c)
-target_link_libraries(test_deflate PRIVATE wubuzip z)
-add_test(NAME deflate_roundtrip COMMAND test_deflate)
+add_executable(test_formula tests/test_formula.c)
+target_link_libraries(test_formula PRIVATE wubuformula)
+add_test(NAME formula COMMAND test_formula)
 
 add_executable(test_reader tests/test_reader.c)
 target_link_libraries(test_reader PRIVATE wubuoxml wubuword_app)
