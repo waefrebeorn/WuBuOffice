@@ -254,6 +254,51 @@ int main(void) {
     fails += !check_str("PROPER(\"hello world\")", "Hello World");
     fails += !check_str("REPLACE(\"abcdef\",2,3,\"XYZ\")", "aXYZef");
 
+    /* ---- date / financial / lookup (INDEX/MATCH/CHOOSE) ---- */
+    fails += !check_num("DATE(2000,1,1)", 36526, 1e-9);
+    fails += !check_num("DATE(2026,7,13)", 46216, 1e-9);
+    fails += !check_num("DATE(1900,3,1)", 61, 1e-9);     /* 1900 leap-bug shift */
+    fails += !check_num("YEAR(DATE(2026,7,13))", 2026, 1e-9);
+    fails += !check_num("MONTH(DATE(2026,7,13))", 7, 1e-9);
+    fails += !check_num("DAY(DATE(2026,7,13))", 13, 1e-9);
+    fails += !check_num("DATE(YEAR(DATE(2026,7,13)),MONTH(DATE(2026,7,13)),DAY(DATE(2026,7,13)))", 46216, 1e-9); /* round-trip */
+    /* TODAY/NOW: just a sane serial in a plausible range (>= 45000) */
+    {
+        wubuval v; memset(&v,0,sizeof v);
+        wubu_formula_eval("TODAY()", grid_resolve, NULL, &v);
+        int ok = (v.kind==WV_NUM && v.num >= 45000);
+        if (!ok) printf("  FAIL TODAY: kind=%d num=%g\n", v.kind, v.num);
+        fails += !ok; wubuval_free(&v);
+        wubuval w; memset(&w,0,sizeof w);
+        wubu_formula_eval("NOW()", grid_resolve, NULL, &w);
+        ok = (w.kind==WV_NUM && w.num >= 45000);
+        if (!ok) printf("  FAIL NOW: kind=%d num=%g\n", w.kind, w.num);
+        fails += !ok; wubuval_free(&w);
+    }
+    /* PMT: 5%/yr, 10 yrs, $1000 pv -> monthly payment (rate/12, nper*12) */
+    fails += !check_num("PMT(0.05/12, 10*12, 1000)", -10.6066, 1e-3);
+    fails += !check_num("FV(0.05/12, 10*12, -100)", 15528.2, 1.0);  /* save 100/mo 10y @5% */
+    /* CHOOSE */
+    fails += !check_num("CHOOSE(2, 10, 20, 30)", 20, 1e-9);
+    fails += !check_num("CHOOSE(1, 10, 20, 30)", 10, 1e-9);
+    /* INDEX / MATCH need a range resolver; reuse GRID as a table at E1:E3 */
+    GRID_N = 0;
+    wubuval gi; memset(&gi,0,sizeof gi);
+    wubuval_set_num(&gi, 100); grid_set(5,1,&gi);  /* E1 */
+    wubuval_set_num(&gi, 200); grid_set(5,2,&gi);  /* E2 */
+    wubuval_set_num(&gi, 300); grid_set(5,3,&gi);  /* E3 */
+    fails += !check_num("INDEX(E1:E3, 2)", 200, 1e-9);
+    fails += !check_num("MATCH(300, E1:E3)", 3, 1e-9);
+    fails += !check_num("INDEX(E1:E3, MATCH(200, E1:E3))", 200, 1e-9);
+    /* AVERAGEIF over D1:D3 = {10,20,30} */
+    GRID_N = 0;
+    wubuval gj; memset(&gj,0,sizeof gj);
+    wubuval_set_num(&gj, 10); grid_set(4,1,&gj);
+    wubuval_set_num(&gj, 20); grid_set(4,2,&gj);
+    wubuval_set_num(&gj, 30); grid_set(4,3,&gj);
+    fails += !check_num("AVERAGEIF(D1:D3, \">15\")", 25, 1e-9);  /* (20+30)/2 */
+    fails += !check_num("AVERAGEIF(D1:D3, 10)", 10, 1e-9);
+
 
     /* nested formula referencing cells (rebuild the A1:A3/B1 grid that the
      * earlier cell-reference tests populated, since the lookup block above

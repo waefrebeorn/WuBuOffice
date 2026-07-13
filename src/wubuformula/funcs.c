@@ -11,6 +11,7 @@
 #include <math.h>
 #include <ctype.h>
 #include <stdio.h>
+#include <time.h>
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -554,6 +555,159 @@ static void f_replace(const wubuval *a, int na, const wubuval *flat, int fn, con
     wubuval_set_str(out, s); free(s); free(owned);
 }
 
+/* ---- date & time (Excel serial: days since 1899-12-30) ---- */
+/* Excel's "1900 date system" erroneously treats 1900 as a leap year (the
+ * Lotus 1-2-3 compatibility bug): serial 60 = the phantom 1900-02-29, and
+ * every date from 1900-03-01 onward is shifted +1 vs. the true Gregorian
+ * calendar. We compute the pure-Gregorian serial then apply that +1 shift. */
+static long excel_serial(int y, int m, int d) {
+    if (m < 1 || m > 12 || d < 1) return 0;
+    if (y == 1900 && m == 2 && d == 29) return 60; /* the phantom leap day */
+    if (y == 1900 && m == 2 && d > 29) d = 29;      /* clamp impossible day */
+    /* pure-Gregorian Julian Day Number (Fliegel & Van Flandern) */
+    int a = (14 - m) / 12;
+    int yy = y + 4800 - a;
+    int mm = m + 12 * a - 3;
+    long jdn = d + (153 * mm + 2) / 5 + 365 * yy + yy / 4 - yy / 100 + yy / 400 - 32045;
+    long greg = jdn - 2415020L; /* 1900-01-01 -> serial 1 */
+    if (greg >= 60) greg += 1;  /* Excel's 1900 leap bug shift */
+    return greg;
+}
+static void serial_to_ymd(long s, int *y, int *m, int *d) {
+    long g = (s >= 61) ? s - 1 : s; /* undo the leap-bug shift */
+    long jdn = g + 2415020L;
+    /* invert JDN to Y/M/D (Fliegel & Van Flandern) */
+    long a = jdn + 32044;
+    long b = (4 * a + 3) / 146097;
+    long c = a - (146097 * b) / 4;
+    long dd = (4 * c + 3) / 1461;
+    long e = c - (1461 * dd) / 4;
+    long mm = (5 * e + 2) / 153;
+    *d = (int)(e - (153 * mm + 2) / 5 + 1);
+    *m = (int)(mm + 3 - 12 * (mm / 10));
+    *y = (int)(100 * b + dd - 4800 + (mm / 10));
+}
+static void f_date(const wubuval *a, int na, const wubuval *flat, int fn, const wubu_func_range *ranges, wubuval *out) {
+    (void)flat; (void)fn; (void)ranges;
+    int ok1,ok2,ok3; int y=(int)to_num(&a[0],&ok1), m=(int)to_num(&a[1],&ok2), d=(int)to_num(&a[2],&ok3);
+    if (!ok1||!ok2||!ok3) { wubuval_set_err(out, WERR_VALUE); return; }
+    wubuval_set_num(out, (double)excel_serial(y, m, d));
+}
+static void f_year(const wubuval *a, int na, const wubuval *flat, int fn, const wubu_func_range *ranges, wubuval *out) {
+    (void)flat; (void)fn; (void)ranges;
+    int ok; long s=(long)to_num(&a[0],&ok); if(!ok){wubuval_set_err(out,WERR_VALUE);return;}
+    int y,m,d; serial_to_ymd(s,&y,&m,&d); wubuval_set_num(out,(double)y);
+}
+static void f_month(const wubuval *a, int na, const wubuval *flat, int fn, const wubu_func_range *ranges, wubuval *out) {
+    (void)flat; (void)fn; (void)ranges;
+    int ok; long s=(long)to_num(&a[0],&ok); if(!ok){wubuval_set_err(out,WERR_VALUE);return;}
+    int y,m,d; serial_to_ymd(s,&y,&m,&d); wubuval_set_num(out,(double)m);
+}
+static void f_day(const wubuval *a, int na, const wubuval *flat, int fn, const wubu_func_range *ranges, wubuval *out) {
+    (void)flat; (void)fn; (void)ranges;
+    int ok; long s=(long)to_num(&a[0],&ok); if(!ok){wubuval_set_err(out,WERR_VALUE);return;}
+    int y,m,d; serial_to_ymd(s,&y,&m,&d); wubuval_set_num(out,(double)d);
+}
+static void f_today(const wubuval *a, int na, const wubuval *flat, int fn, const wubu_func_range *ranges, wubuval *out) {
+    (void)a;(void)na;(void)flat;(void)fn;(void)ranges;
+    /* current date as serial (no time component) */
+    time_t t = time(NULL); struct tm *lt = localtime(&t);
+    wubuval_set_num(out, (double)excel_serial(lt->tm_year + 1900, lt->tm_mon + 1, lt->tm_mday));
+}
+static void f_now(const wubuval *a, int na, const wubuval *flat, int fn, const wubu_func_range *ranges, wubuval *out) {
+    (void)a;(void)na;(void)flat;(void)fn;(void)ranges;
+    time_t t = time(NULL); struct tm *lt = localtime(&t);
+    double serial = (double)excel_serial(lt->tm_year + 1900, lt->tm_mon + 1, lt->tm_mday);
+    double frac = (lt->tm_hour * 3600 + lt->tm_min * 60 + lt->tm_sec) / 86400.0;
+    wubuval_set_num(out, serial + frac);
+}
+
+/* ---- financial ---- */
+static void f_pmt(const wubuval *a, int na, const wubuval *flat, int fn, const wubu_func_range *ranges, wubuval *out) {
+    (void)flat; (void)fn; (void)ranges;
+    if (na < 3) { wubuval_set_err(out, WERR_VALUE); return; }
+    int o1,o2,o3; double rate=to_num(&a[0],&o1), nper=to_num(&a[1],&o2), pv=to_num(&a[2],&o3);
+    if (!o1||!o2||!o3) { wubuval_set_err(out,WERR_VALUE); return; }
+    double fv = (na>=4)?to_num(&a[3],&(int){0}):0.0;
+    double type = (na>=5)?to_num(&a[4],&(int){0}):0.0;
+    double pmt;
+    if (rate == 0) pmt = -(pv + fv) / nper;
+    else {
+        double f = pow(1+rate, nper);
+        /* standard closed form: pmt = -(fv*f + pv) / ((1/rate - type)*(1 - 1/f)) */
+        pmt = -(fv * f + pv) / ((1.0/rate - type) * (1.0 - 1.0/f));
+    }
+    wubuval_set_num(out, pmt);
+}
+static void f_fv(const wubuval *a, int na, const wubuval *flat, int fn, const wubu_func_range *ranges, wubuval *out) {
+    (void)flat; (void)fn; (void)ranges;
+    if (na < 3) { wubuval_set_err(out, WERR_VALUE); return; }
+    int o1,o2,o3; double rate=to_num(&a[0],&o1), nper=to_num(&a[1],&o2), pmt=to_num(&a[2],&o3);
+    if (!o1||!o2||!o3) { wubuval_set_err(out,WERR_VALUE); return; }
+    double pv = (na>=4)?to_num(&a[3],&(int){0}):0.0;
+    double type = (na>=5)?to_num(&a[4],&(int){0}):0.0;
+    double f = (rate == 0) ? 1.0 : pow(1+rate, nper);
+    double fv = -(pv * f + pmt * (1 + rate * type) * (f - 1) / (rate == 0 ? 1 : rate));
+    wubuval_set_num(out, fv);
+}
+
+/* ---- INDEX / MATCH over a real range ---- */
+static void f_index(const wubuval *a, int na, const wubuval *flat, int fn, const wubu_func_range *ranges, wubuval *out) {
+    (void)flat; (void)fn;
+    const wubu_func_range *t = &ranges[0];
+    if (!t->grid || t->cols < 1) { wubuval_set_err(out, WERR_VALUE); return; }
+    int row = (na >= 2) ? (int)to_num(&a[1], &(int){0}) : 1;
+    int col = (na >= 3 && na > 2) ? (int)to_num(&a[2], &(int){0}) : 1;
+    if (na < 2) { wubuval_set_err(out, WERR_VALUE); return; }
+    if (row < 1 || row > t->rows || col < 1 || col > t->cols) { wubuval_set_err(out, WERR_REF); return; }
+    wubuval_copy(out, &t->grid[(row - 1) * t->cols + (col - 1)]);
+}
+static void f_match(const wubuval *a, int na, const wubuval *flat, int fn, const wubu_func_range *ranges, wubuval *out) {
+    (void)flat; (void)fn;
+    if (na < 2) { wubuval_set_err(out, WERR_VALUE); return; }
+    const wubu_func_range *t = &ranges[1]; /* second arg is the lookup array */
+    if (!t->grid || t->rows * t->cols < 1) { wubuval_set_err(out, WERR_VALUE); return; }
+    /* single row or single column expected; we scan row-major and return the
+     * 1-based position (row*cols+col in 1-based terms across the flat array). */
+    int n = t->rows * t->cols;
+    for (int i = 0; i < n; i++) {
+        int ok; double d = to_num(&t->grid[i], &ok);
+        int match = 0;
+        if (ok && a[0].kind == WV_NUM) match = (d == to_num(&a[0], &(int){0}));
+        else if (a[0].kind == WV_STR) {
+            const char *s = to_str(&a[0]);
+            if (t->grid[i].kind == WV_STR) match = (strcasecmp_local(t->grid[i].str ? t->grid[i].str : "", s ? s : "") == 0);
+        }
+        if (match) { wubuval_set_num(out, (double)(i + 1)); return; }
+    }
+    wubuval_set_err(out, WERR_NA);
+}
+
+/* ---- AVERAGEIF / CHOOSE ---- */
+static void f_averageif(const wubuval *a, int na, const wubuval *flat, int fn, const wubu_func_range *ranges, wubuval *out) {
+    (void)flat; (void)fn;
+    if (na < 2) { wubuval_set_err(out, WERR_VALUE); return; }
+    const wubu_func_range *cr = &ranges[0];
+    if (!cr->grid || cr->rows < 1 || cr->cols < 1) { wubuval_set_err(out, WERR_VALUE); return; }
+    const wubu_func_range *sr = (na >= 3) ? &ranges[2] : cr;
+    double sum = 0; int c = 0;
+    for (int i = 0; i < cr->rows * cr->cols; i++) {
+        if (match_criteria(&cr->grid[i], &a[1])) {
+            int ri = i / cr->cols, ci = i % cr->cols;
+            const wubuval *sv = (na >= 3 && sr->grid) ? &sr->grid[ri * sr->cols + ci] : &cr->grid[i];
+            int ok; double d = to_num(sv, &ok); if (ok) { sum += d; c++; }
+        }
+    }
+    wubuval_set_num(out, c ? sum / c : 0.0);
+}
+static void f_choose(const wubuval *a, int na, const wubuval *flat, int fn, const wubu_func_range *ranges, wubuval *out) {
+    (void)flat; (void)fn; (void)ranges;
+    if (na < 2) { wubuval_set_err(out, WERR_VALUE); return; }
+    int idx = (int)to_num(&a[0], &(int){0});
+    if (idx < 1 || idx > na - 1) { wubuval_set_err(out, WERR_VALUE); return; }
+    wubuval_copy(out, &a[idx]); /* a[0] is index; a[1..] are choices */
+}
+
 /* ---- registration ---- */
 typedef struct { const char *name; wubu_func_impl fn; } fent;
 static const fent TABLE[] = {
@@ -571,6 +725,11 @@ static const fent TABLE[] = {
     {"PROPER", f_proper}, {"REPLACE", f_replace},
     {"VLOOKUP", f_vlookup}, {"HLOOKUP", f_hlookup},
     {"SUMIF", f_sumif}, {"COUNTIF", f_countif},
+    {"INDEX", f_index}, {"MATCH", f_match},
+    {"AVERAGEIF", f_averageif}, {"CHOOSE", f_choose},
+    {"DATE", f_date}, {"TODAY", f_today}, {"NOW", f_now},
+    {"YEAR", f_year}, {"MONTH", f_month}, {"DAY", f_day},
+    {"PMT", f_pmt}, {"FV", f_fv},
     {NULL, NULL}
 };
 
