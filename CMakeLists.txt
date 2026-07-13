@@ -5,9 +5,8 @@ set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS OFF)
 
-# Expose POSIX functions (strdup, open_memstream) without relying on GNU
-# extensions — every TU needs this so pointer-returning POSIX calls are not
-# implicitly truncated to int under -std=c11.
+# Expose POSIX functions (strdup, open_memstream) under -std=c11 so pointer-
+# returning POSIX calls are not implicitly truncated to int.
 add_compile_definitions(_POSIX_C_SOURCE=200809L)
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -15,26 +14,78 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 add_compile_options(-Wall -Wextra -Wpedantic)
 
-# --- libraries ---
-add_library(wubuzip STATIC src/wubuzip/zip.c)
+# --- wubuzip: from-scratch ZIP + DEFLATE (reader and writer) ---
+add_library(wubuzip STATIC
+  src/wubuzip/crc.c
+  src/wubuzip/zip.c
+  src/wubuzip/reader.c
+  src/wubuzip/bit.c
+  src/wubuzip/huffman.c
+  src/wubuzip/fixed.c
+  src/wubuzip/block.c
+  src/wubuzip/inflate.c)
 target_include_directories(wubuzip PUBLIC src/wubuzip)
 
+# --- wubuxml: streaming XML writer ---
 add_library(wubuxml STATIC src/wubuxml/xml.c)
 target_include_directories(wubuxml PUBLIC src/wubuxml)
 
-add_library(wubuoxml STATIC src/wubuoxml/package.c)
+# --- wubuoxml: OPC package writer + reader (built on wubuzip) ---
+add_library(wubuoxml STATIC
+  src/wubuoxml/package.c
+  src/wubuoxml/rels_path.c
+  src/wubuoxml/reader.c
+  src/wubuoxml/docx_text.c)
 target_include_directories(wubuoxml PUBLIC src/wubuoxml)
-target_link_libraries(wubuoxml PUBLIC wubuzip)  # package.c includes wubuzip/zip.h
+target_link_libraries(wubuoxml PUBLIC wubuzip)
 
-# --- apps ---
-add_executable(wubuword apps/wubuword/main.c)
+# --- app object libraries (shared between standalone exe and unified CLI) ---
+add_library(wubuword_app OBJECT
+  apps/wubuword/main.c apps/wubuword/word.c apps/wubuword/assemble.c)
+target_include_directories(wubuword_app PRIVATE src/wubuoxml src/wubuxml apps/wubuword)
+target_link_libraries(wubuword_app PRIVATE wubuoxml wubuxml)
+
+add_library(wubucell_app OBJECT apps/wubucell/main.c apps/wubucell/cell.c)
+target_include_directories(wubucell_app PRIVATE src/wubuoxml apps/wubucell)
+target_link_libraries(wubucell_app PRIVATE wubuoxml)
+
+add_library(wubushow_app OBJECT apps/wubushow/main.c apps/wubushow/show.c)
+target_include_directories(wubushow_app PRIVATE src/wubuoxml apps/wubushow)
+target_link_libraries(wubushow_app PRIVATE wubuoxml)
+
+add_library(wuburead_app OBJECT apps/wuburead/main.c)
+target_include_directories(wuburead_app PRIVATE src/wubuoxml src/wubuzip src/wubuxml)
+target_link_libraries(wuburead_app PRIVATE wubuoxml)
+
+# --- standalone executables ---
+add_executable(wubuword $<TARGET_OBJECTS:wubuword_app> apps/wubuword/entry.c)
 target_link_libraries(wubuword PRIVATE wubuoxml wubuxml)
-# wubuword's main.c includes headers from wubuoxml & wubuxml dirs:
-target_include_directories(wubuword PRIVATE
-  src/wubuoxml src/wubuxml)
+add_executable(wubucell $<TARGET_OBJECTS:wubucell_app> apps/wubucell/entry.c)
+target_link_libraries(wubucell PRIVATE wubuoxml)
+add_executable(wubushow $<TARGET_OBJECTS:wubushow_app> apps/wubushow/entry.c)
+target_link_libraries(wubushow PRIVATE wubuoxml)
+add_executable(wuburead $<TARGET_OBJECTS:wuburead_app> apps/wuburead/entry.c)
+target_link_libraries(wuburead PRIVATE wubuoxml)
+
+# --- unified CLI ---
+add_executable(wubuoffice apps/wubuoffice/main.c
+  $<TARGET_OBJECTS:wubuword_app>
+  $<TARGET_OBJECTS:wubucell_app>
+  $<TARGET_OBJECTS:wubushow_app>
+  $<TARGET_OBJECTS:wuburead_app>)
+target_link_libraries(wubuoffice PRIVATE wubuoxml wubuxml)
 
 # --- tests ---
 enable_testing()
 add_executable(test_wubuzip tests/test_wubuzip.c)
 target_link_libraries(test_wubuzip PRIVATE wubuzip)
 add_test(NAME wubuzip_crc COMMAND test_wubuzip)
+
+add_executable(test_inflate tests/test_inflate.c)
+target_link_libraries(test_inflate PRIVATE wubuzip z)
+add_test(NAME inflate COMMAND test_inflate)
+
+add_executable(test_reader tests/test_reader.c)
+target_link_libraries(test_reader PRIVATE wubuoxml wubuword_app)
+target_include_directories(test_reader PRIVATE src/wubuoxml src/wubuxml apps/wubuword)
+add_test(NAME reader_roundtrip COMMAND test_reader)

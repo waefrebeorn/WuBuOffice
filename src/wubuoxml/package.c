@@ -2,6 +2,7 @@
 #define _POSIX_C_SOURCE 200809L
 #endif
 #include "package.h"
+#include "rels_path.h"
 #include "../wubuzip/zip.h"
 
 #include <stdlib.h>
@@ -75,22 +76,8 @@ int wubuoxml_add_part(wubuoxml_package *p, const char *path, const void *data, s
     return wubuzip_add(p->z, path, data, (uint32_t)size);
 }
 
-/* Build the rels part path for a given source. source == "" -> "_rels/.rels". */
-static char *rels_path_for(const char *source) {
-    if (!source || source[0] == '\0') return strdup("_rels/.rels");
-    const char *slash = strrchr(source, '/');
-    size_t dirlen = slash ? (size_t)(slash - source) + 1 : 0;
-    size_t baselen = slash ? strlen(slash + 1) : strlen(source);
-    size_t need = dirlen + 6 /* "_rels/" */ + baselen + 5 /* .rels */ + 1;
-    char *buf = malloc(need);
-    char *q = buf;
-    if (dirlen) { memcpy(q, source, dirlen); q += dirlen; }
-    memcpy(q, "_rels/", 6); q += 6;
-    memcpy(q, slash ? slash + 1 : source, baselen); q += baselen;
-    memcpy(q, ".rels", 5); q += 5;
-    *q = '\0';
-    return buf;
-}
+/* Build the rels part path for a given source. source == "" -> "_rels/.rels".
+ * Implemented in rels_path.c and shared with the reader. */
 
 int wubuoxml_finalize(wubuoxml_package *p) {
     /* 1) [Content_Types].xml */
@@ -117,7 +104,7 @@ int wubuoxml_finalize(wubuoxml_package *p) {
             if (strcmp(p->rl[j].source, src) == 0) { handled = 1; break; }
         if (handled) continue;
 
-        char *rpath = rels_path_for(src);
+        char *rpath = wubuoxml_rels_path_for(src);
         char *buf = NULL; size_t len = 0; FILE *m = open_memstream(&buf, &len);
         fputs("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n", m);
         fputs("<Relationships xmlns=\"http://schemas.openxmlformats.org/package/2006/relationships\">\n", m);

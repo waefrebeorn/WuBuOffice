@@ -1,7 +1,9 @@
 #include "zip.h"
+#include "crc.h"
 
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 struct wubuzip_writer {
     FILE *out;
@@ -15,27 +17,12 @@ struct wubuzip_writer {
     size_t cap;
 };
 
-/* ---- CRC-32 (IEEE 802.3, reflected, poly 0xEDB88320) ---- */
-static uint32_t crc_table[256];
-static int crc_ready = 0;
-
-static void build_crc(void) {
-    for (uint32_t i = 0; i < 256u; i++) {
-        uint32_t c = i;
-        for (int k = 0; k < 8; k++)
-            c = (c & 1u) ? (0xEDB88320u ^ (c >> 1)) : (c >> 1);
-        crc_table[i] = c;
-    }
-    crc_ready = 1;
-}
-
-uint32_t wubuzip_crc32(const void *data, size_t len) {
-    if (!crc_ready) build_crc();
-    const unsigned char *p = (const unsigned char *)data;
-    uint32_t c = 0xFFFFFFFFu;
-    for (size_t i = 0; i < len; i++)
-        c = crc_table[(c ^ p[i]) & 0xFFu] ^ (c >> 8);
-    return c ^ 0xFFFFFFFFu;
+static void putle16(uint8_t *b, uint16_t v) { b[0] = (uint8_t)(v & 0xFF); b[1] = (uint8_t)((v >> 8) & 0xFF); }
+static void putle32(uint8_t *b, uint32_t v) {
+    b[0] = (uint8_t)(v & 0xFF);
+    b[1] = (uint8_t)((v >> 8) & 0xFF);
+    b[2] = (uint8_t)((v >> 16) & 0xFF);
+    b[3] = (uint8_t)((v >> 24) & 0xFF);
 }
 
 wubuzip_writer *wubuzip_create(FILE *out) {
@@ -43,14 +30,6 @@ wubuzip_writer *wubuzip_create(FILE *out) {
     if (!z) return NULL;
     z->out = out;
     return z;
-}
-
-static void putle16(uint8_t *b, uint16_t v) { b[0] = (uint8_t)(v & 0xFF); b[1] = (uint8_t)((v >> 8) & 0xFF); }
-static void putle32(uint8_t *b, uint32_t v) {
-    b[0] = (uint8_t)(v & 0xFF);
-    b[1] = (uint8_t)((v >> 8) & 0xFF);
-    b[2] = (uint8_t)((v >> 16) & 0xFF);
-    b[3] = (uint8_t)((v >> 24) & 0xFF);
 }
 
 int wubuzip_add(wubuzip_writer *z, const char *name, const void *data, uint32_t size) {
