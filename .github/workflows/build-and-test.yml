@@ -1,0 +1,31 @@
+name: build-and-test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  native-c11:
+    name: Native C11 build + ctest (no Electron / JVM)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure (Release, native-only)
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build -j "$(nproc)"
+
+      - name: Test (ctest, all)
+        run: ctest --test-dir build --output-on-failure
+
+      # Regression guard for ws05#0884: a malformed/deferred XML close
+      # used to silently drop paragraphs + tables on .docx load. The
+      # wubuxml_parser + model_io_roundtrip tests fail if it ever returns.
+      - name: DOCX round-trip smoke (wubuword -> wuburead)
+        run: |
+          ./build/wubuword /tmp/ci.docx
+          ./build/wuburead /tmp/ci.docx | grep -q "DOCX TEXT"
