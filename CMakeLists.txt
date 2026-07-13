@@ -45,7 +45,7 @@ add_library(wubuword_app OBJECT
 target_include_directories(wubuword_app PRIVATE src/wubuoxml src/wubuxml apps/wubuword)
 target_link_libraries(wubuword_app PRIVATE wubuoxml wubuxml)
 
-add_library(wubucell_app OBJECT apps/wubucell/main.c apps/wubucell/cell.c)
+add_library(wubucell_app OBJECT apps/wubucell/main.c apps/wubucell/cell.c apps/wubucell/style.c)
 target_include_directories(wubucell_app PRIVATE src/wubuoxml apps/wubucell)
 target_link_libraries(wubucell_app PRIVATE wubuoxml)
 

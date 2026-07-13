@@ -10,24 +10,40 @@ extern "C" {
 
 /* SpreadsheetML (xlsx) builder: one workbook with N worksheets, cells as
  * inline strings or numbers. Serialized to payloads and assembled into a
- * valid .xlsx by wubucell_assemble(). */
+ * valid .xlsx by wubucell_assemble(). Supports a full style registry
+ * (fonts/fills/borders/number-formats) and embedded charts. */
 
 typedef struct wubucell_book wubucell_book;
+struct wubucell_style;   /* defined in style.h */
 
 wubucell_book *wubucell_create(void);
 void wubucell_free(wubucell_book *b);
 
+/* Access the shared style registry (so callers can define fonts/fills/etc).
+ * The registry is created lazily on first access. */
+struct wubucell_style *wubucell_styles(wubucell_book *b);
+
 /* Add a worksheet; returns a 1-based sheet index used by wubucell_cell(). */
 int wubucell_sheet(wubucell_book *b, const char *name);
 
-/* Set a cell. `col`/'row' are 1-based.
- *  - wubucell_cell_s : inline string
+/* Set a cell. `col`/'row' are 1-based. `style` is a cellXfs index from the
+ * style registry (0 = default). Pass -1 for default.
+ *  - wubucell_cell_s : inline/shared string
  *  - wubucell_cell_n : numeric
  *  - wubucell_cell_f : formula (text is the formula, e.g. "A1+A2"; stored in
  *                       the <f> element; optional cached value `cached`). */
 void wubucell_cell_s(wubucell_book *b, int sheet, int col, int row, const char *text);
+void wubucell_cell_sx(wubucell_book *b, int sheet, int col, int row, const char *text, int style);
 void wubucell_cell_n(wubucell_book *b, int sheet, int col, int row, double num);
+void wubucell_cell_nx(wubucell_book *b, int sheet, int col, int row, double num, int style);
 void wubucell_cell_f(wubucell_book *b, int sheet, int col, int row, const char *formula, double cached);
+void wubucell_cell_fx(wubucell_book *b, int sheet, int col, int row, const char *formula, double cached, int style);
+
+/* Add a bar chart to a sheet referencing a cell range. `title` may be NULL.
+ * cats = "Sheet1!A2:A5" style range of category labels, vals = numeric range.
+ * Returns a 1-based chart index (used only for bookkeeping). */
+int wubucell_chart(wubucell_book *b, int sheet, const char *title,
+                   const char *cats, const char *vals);
 
 /* Use a shared string table instead of inline strings (the real Excel
  * default; smaller for repeated text). Off by default. */
