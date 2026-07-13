@@ -162,9 +162,13 @@ add_executable(test_load_async tests/test_load_async.c)
 target_link_libraries(test_load_async PRIVATE wubumodel)
 add_test(NAME load_async COMMAND test_load_async)
 
-add_executable(test_model_io tests/test_model_io.c)
-target_link_libraries(test_model_io PRIVATE wubumodel wubuoxml)
-target_include_directories(test_model_io PRIVATE src/wubumodel src/wubuoxml)
+add_executable(test_deflate_roundtrip tests/test_deflate_roundtrip.c)
+target_link_libraries(test_deflate_roundtrip PRIVATE wubuzip)
+add_test(NAME deflate_roundtrip COMMAND test_deflate_roundtrip)
+
+add_executable(test_cold_start tests/test_cold_start.c)
+target_link_libraries(test_cold_start PRIVATE wubumodel)
+add_test(NAME cold_start COMMAND test_cold_start)
 add_test(NAME model_io COMMAND test_model_io)
 
 add_executable(test_reader tests/test_reader.c)
