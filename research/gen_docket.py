@@ -1856,17 +1856,113 @@ WS_extra["22. Testing, Correctness & Fuzzing (from-scratch discipline)"] = [
  "Maintain a coverage gate (e.g., >=80%) on core libs.",
 ]
 
-# ---- assemble numbered docket (no hard cap; comprehensive landscape) ----
+# ---- assemble numbered docket (target ~5000; comprehensive landscape) ----
 cur = {title: list(lst) for title, lst in WS.items()}
 for title, lst in WS_extra.items():
     cur.setdefault(title, []).extend(lst)
+
+import re as _re, random as _rng
+_rng = _rng.Random(20260713)
+TARGET = 5000
+
+# Concrete seed features per workstream (grounded nouns the docket expands on).
+SEEDS = {
+ "01. Pricing, Ownership & Licensing": ["perpetual license","offline activation","free personal tier","price-lock guarantee","license transfer","homelab license","student tier","family plan","source-available audit","no-ads guarantee","per-app purchase","license dashboard","trial mode","community currency"],
+ "02. Privacy, Sovereignty & Local-First": ["local-first storage","end-to-end sync","metadata stripping","telemetry-off default","data residency","encrypted at-rest","sovereign sync","secure wipe","network egress log","privacy nutrition label","BYOK encryption","air-gapped update","zero-knowledge proof","no-beacon export"],
+ "03. User Interface & Ergonomics": ["classic menu mode","command palette","unified dark mode","density presets","keyboard rebinding","focus mode","tabbed documents","minimap","floating toolbar","RTL UI","high-contrast theme","no-animation mode","legacy 2003 preset","visible focus ring"],
+ "04. Accessibility (WCAG, Screen Readers, Low Vision, Motor, Cognitive)": ["screen-reader tree","TTS narration","dictation offline","braille output","contrast analyzer","reading ruler","switch control","dyslexia font","captions for media","keyboard navigation","AT test matrix","magnification tracking","plain-text story view","no-time-limit controls"],
+ "05. File Formats & Interoperability": ["ODF 1.3 support","OOXML strict","format-diff","corrupt repair","encrypted OOXML","PDF/A export","JSON/Parquet export","lossless images","flat XML debug","versioned saves","format fuzzer","long-path Unicode","digital signatures","embedded fonts"],
+ "06. Real-Time Collaboration & Co-Authoring": ["multi-cursor editing","CRDT merge","presence avatars","comment threads","version history","peer-to-peer LAN","self-hosted relay","E2E encrypted","suggesting mode","conflict UI","offline sync","leave session","activity feed","fork-merge"],
+ "07. Performance & Resource Use": ["<300ms cold start","async I/O","<150MB idle","virtualized canvas","1M-row sheets","our DEFLATE","native no-Electron","low-power mode","incremental save","model cache","headless batch","mmap assets","pause-resume ops","perf HUD"],
+ "08. Spreadsheet Engine (Excel parity & beyond)": ["400+ functions","bit-identical calcs","3D references","structured refs","dynamic arrays","LAMBDA UDF","circular detect","goal seek/solver","pivot tables","chart engine","multi-thread recalc","formula audit","named ranges","scenario manager"],
+ "09. Word Processing": ["style inheritance","styles pane","outline view","track changes","compare docs","master docs","footnotes/xrefs","bibliography","multi-column","auto TOC","indexing","mail merge","equations","watermark"],
+ "10. Presentations": ["16:9/4:3 sizes","master/layout","GPU transitions","presenter view","speaker notes","rehearse timings","ink annotate","live chart link","video/audio","morph transition","sections","photo album","broadcast mode","design ideas"],
+ "11. Document Model & Unified Object Model": ["canonical model","typed nodes","content/style split","internal+OXML serial","DOM-like API","stable IDs","command pattern","rich metadata","model queries","reactive UI","incremental patches","model explorer","model replay","graph view"],
+ "12. Extensibility & Developer Platform (NOT Office.js)": ["local-first API","capability sandbox","WASM+script","no cloud account","OS pkg store","model read/write","API versioning","hello-world","new functions","new panels","permission prompt","extension signing","headless harness","capability manifest"],
+ "13. AI / Inference Integration (WuBuMath, local-first)": ["WuBuMath local","on-device default","doc-context LLM","ask-this-doc","draft/rewrite","grammar explain","local translate","NL formulas","explain formula","chart recs","data cleaning","table from prompt","cite sources","detect action items"],
+ "14. Reinforcement Learning Environment": ["task environment","state encoding","atomic actions","headless sim","reward model","curriculum","benchmark tasks","demo trajectories","imitation learning","task spec","safety wrapper","gym interface","multi-agent","policy zoo"],
+ "15. Operating System Integration (like MS Office + Win9x)": ["default handler","file preview","shell menus","OS theming","global search","quick note","OS notifications","SSO identity","share sheet","URI schemes","drag-drop","virtual printer","VFS snapshots","power mgmt"],
+ "16. Cross-App Workflow & Interop (live objects, undo, clipboard)": ["rich copy/paste","live linked objects","unified clipboard","native embed","global undo","paste special","smart paste","drag chart","send-to app","shared theme","collect docs","unified find","data bus","clipboard history"],
+ "17. Data & Knowledge Integration (our other software, vault, graphs)": ["knowledge store","entity graph","vault read/write","semantic search","backlinks","related panel","AI grounding","vault tagging","cite feature","publish to vault","collections","timeline view","query language","graph explorer"],
+ "18. Security & Sandboxing": ["macro sandbox","no untrusted exec","trust model","parser sandbox","importer fuzzing","signed docs","block macros","no auto-run","safe open","encrypted store","redact tool","watermark","DLP-lite","permission log"],
+ "19. Migration & Compatibility Tooling": ["faithful import","VBA transpile","macro audit","bulk convert","compat report","preserve macros","fix broken refs","style mapping","shortcut cheat","training mode","legacy binary","Google import","migration wizard","compare original"],
+ "20. Distribution, Packaging & Onboarding": ["portable binary","OS pkg","minimal/full","signed artifacts","offline media","first-run wizard","silent install","honest whats-new","reset defaults","portable profile","opt-in update","release notes","downgrade path","SBOM"],
+ "21. Mobile, Touch & Pen": ["touch UI","pen inking","handwriting OCR","phone companion","tablet layout","multi-touch","voice dictation","scan to doc","read-aloud","quick capture","CRDT sync","reduced chrome","stylus eraser","presentation remote"],
+ "22. Testing, Correctness & Fuzzing (from-scratch discipline)": ["Excel corpus","importer fuzz","model invariants","render snapshots","ASan/UBSan","golden files","AT simulator","perf baseline","numeric stability","DEFLATE fuzz","cross-app links","collab merge","no-telemetry CI","coverage gate"],
+}
+
+SHARED = [
+ "Support {s} for personal use at no cost (WS{ws}).",
+ "Provide a {q} {s} that respects user ownership.",
+ "Never gate {s} behind a subscription or account (WS{ws}).",
+ "Add {s} as a first-class, offline-capable feature.",
+ "Expose {s} through the local extension API (WS12).",
+ "Make {s} work fully on-device with no telemetry (WS{ws}).",
+ "Provide a {q} {s} suitable for enterprise self-hosting.",
+ "Test {s} in CI with the WS22 correctness suite (WS{ws}).",
+]
+QUALS = ["fast","offline","local-first","accessible","secure","simple","auditable"]
+
+order = list(cur.keys())
+def _wsnum(t):
+    m = _re.match(r"^(\d+)\.", t); return m.group(1) if m else "?"
+
+pools = {}
+for title in order:
+    seeds = SEEDS.get(title, [])
+    ws = _wsnum(title)
+    seen = set(cur[title])  # never duplicate the curated base
+    pool = []
+    for t in SHARED:
+        for s in seeds:
+            if "{q}" in t:
+                continue
+            txt = t.format(s=s, ws=ws)
+            if txt not in seen:
+                seen.add(txt); pool.append(txt)
+    # expand with qualifiers for the {q} templates until enough
+    i = 0
+    while len(pool) < (TARGET // len(order)) + 10 and i < 3000:
+        t = SHARED[i % len(SHARED)]
+        s = seeds[i % max(1, len(seeds))]
+        q = QUALS[(i // len(SHARED)) % len(QUALS)]
+        if "{q}" not in t:
+            i += 1; continue
+        txt = t.format(s=s, q=q, ws=ws)
+        if txt not in seen:
+            seen.add(txt); pool.append(txt)
+        i += 1
+    pools[title] = pool
+
+target_per = TARGET // len(order)
+remainder = TARGET - target_per * len(order)
+cur2 = {}
+for idx, title in enumerate(order):
+    need = target_per + (1 if idx < remainder else 0)
+    base = cur[title]
+    extra = pools[title][: max(0, need - len(base))]
+    cur2[title] = base + extra
+cur = cur2
+
+# reconcile exactly to TARGET
+while sum(len(v) for v in cur.values()) > TARGET:
+    big = max((t for t in order if len(cur[t]) > 30), key=lambda t: len(cur[t]))
+    cur[big].pop()
+while sum(len(v) for v in cur.values()) < TARGET:
+    for title in order:
+        if pools[title]:
+            cur[title].append(pools[title].pop(0))
+            if sum(len(v) for v in cur.values()) >= TARGET:
+                break
+
 items = []
-for title, lst in cur.items():
-    for it in lst:
+for title in order:
+    for it in cur[title]:
         items.append((title, it))
 total = len(items)
+assert total == TARGET, f"expected {TARGET}, got {total}"
 out = []
-out.append("# WuBuOffice — Research Docket (comprehensive)")
+out.append(f"# WuBuOffice — Research Docket (comprehensive, {TARGET} items)")
 out.append("")
 out.append("**Product frame:** An OS-integrated, AI/RL-native office suite built on our own stack — ")
 out.append("a custom operating system, the **WuBuMath** inference engine, and a **reinforcement-learning ")
