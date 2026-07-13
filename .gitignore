@@ -1,0 +1,8 @@
+build/
+build-*/
+*.o
+*.a
+*.docx
+*.xlsx
+*.pptx
+.DS_Store
