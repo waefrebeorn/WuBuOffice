@@ -168,3 +168,31 @@ char *cell_render_chart(const chart_t *c, size_t idx) {
     fflush(m); fclose(m);
     return out;
 }
+
+/* --- read-back accessors (public API in cell.h) --- */
+
+int wubucell_sheet_count(const wubucell_book *b) {
+    return (int)(b ? b->n : 0);
+}
+
+int wubucell_get(const wubucell_book *b, int sheet, int col, int row,
+                 wubucell_ckind *kind, const char **text, double *num, double *cached) {
+    if (!b) return -1;
+    const sheet_t *s = cell_book_sheet((wubucell_book *)b, sheet);
+    if (!s) return -1;
+    for (size_t i = 0; i < s->n; i++) {
+        const cell_t *c = &s->cells[i];
+        if (c->col == col && c->row == row) {
+            if (kind) {
+                if (c->kind == C_STR) *kind = WUBUCELL_STR;
+                else if (c->kind == C_NUM) *kind = WUBUCELL_NUM;
+                else *kind = WUBUCELL_FORM;
+            }
+            if (text) *text = c->text;
+            if (num) *num = c->num;
+            if (cached) *cached = c->cached;
+            return 0;
+        }
+    }
+    return -1;   /* no cell at that slot */
+}

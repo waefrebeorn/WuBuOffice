@@ -141,3 +141,16 @@ void wubushow_free(wubushow_pres *p) {
     free(p->slides);
     free(p);
 }
+
+/* --- read-back accessors (public API in show.h) --- */
+
+int wubushow_slide_count(const wubushow_pres *p) {
+    return (int)(p ? p->n : 0);
+}
+
+int wubushow_slide_get(const wubushow_pres *p, int idx, const char **out_title, const char **out_body) {
+    if (!p || idx < 0 || (size_t)idx >= p->n) return -1;
+    if (out_title) *out_title = p->slides[idx].title;
+    if (out_body)  *out_body  = p->slides[idx].body;
+    return 0;
+}

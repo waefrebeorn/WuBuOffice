@@ -49,6 +49,19 @@ int wubucell_chart(wubucell_book *b, int sheet, const char *title,
  * default; smaller for repeated text). Off by default. */
 void wubucell_use_shared_strings(wubucell_book *b, int enable);
 
+/* --- read-back accessors (for round-trip verification and callers that load
+ * an existing .xlsx). A `wubucell_book` returned by wubucell_read exposes its
+ * sheets and cells through these opaque-but-inspectable accessors; no internal
+ * header is required. */
+typedef enum { WUBUCELL_STR, WUBUCELL_NUM, WUBUCELL_FORM } wubucell_ckind;
+
+int  wubucell_sheet_count(const wubucell_book *b);
+/* Cell lookup by 1-based sheet/col/row. Returns 0 if a cell exists there
+ * (filling *kind, *text, *num, *cached), non-zero if the slot is empty.
+ * `text` points at internal storage and is valid until the book is freed. */
+int  wubucell_get(const wubucell_book *b, int sheet, int col, int row,
+                  wubucell_ckind *kind, const char **text, double *num, double *cached);
+
 /* Assemble .xlsx at outpath. Returns 0 on success. */
 int wubucell_assemble(wubucell_book *b, const char *outpath);
 

@@ -55,22 +55,19 @@ def main():
         try:
             import openpyxl
         except Exception:
-            print("openpyxl unavailable -> SKIP value check");
-            # well-formedness still validated above
+            print("openpyxl unavailable -> SKIP value check")
             if errors:
                 print("\n".join(errors)); return 1
             print("CONFORMANT (well-formed; value oracle skipped)"); return 0
         wb = openpyxl.load_workbook(path, data_only=True)
         if not wb.sheetnames:
-            errors.append("openpyxl: no sheets"); 
+            errors.append("openpyxl: no sheets")
         else:
             ws = wb[wb.sheetnames[0]]
-            # ensure we can read cell values without error
             try:
                 _ = [c.value for row in ws.iter_rows() for c in row]
             except Exception as e:
                 errors.append(f"openpyxl read error: {e}")
-            # concrete fidelity checks (the conformance file is deterministic)
             expected = {
                 ("A", 1): "Item", ("B", 1): "Cost",
                 ("A", 2): "Engine", ("B", 2): 1200.5,
@@ -86,6 +83,35 @@ def main():
                 else:
                     if got != want:
                         errors.append(f"cell {col}{row}: want {want!r}, got {got!r}")
+
+    # pptx-specific: load with python-pptx (external oracle) and check slides
+    if path.endswith(".pptx"):
+        try:
+            import pptx
+        except Exception:
+            print("python-pptx unavailable -> SKIP value check")
+            if errors:
+                print("\n".join(errors)); return 1
+            print("CONFORMANT (well-formed; value oracle skipped)"); return 0
+        prs = pptx.Presentation(path)
+        if not prs.slides:
+            errors.append("python-pptx: no slides")
+        else:
+            first = prs.slides[0]
+            titles, bodies = [], []
+            for sh in first.shapes:
+                if sh.has_text_frame:
+                    for para in sh.text_frame.paragraphs:
+                        t = "".join(r.text for r in para.runs)
+                        if t: (titles if not titles else bodies).append(t)
+            if not titles:
+                errors.append("pptx slide1: no title text")
+            elif "Conformance Slide" not in titles[0]:
+                errors.append(f"pptx slide1 title: want 'Conformance Slide', got {titles[0]!r}")
+            if not bodies:
+                errors.append("pptx slide1: no body text")
+            elif "First bullet." not in bodies[0]:
+                errors.append(f"pptx slide1 body: want bullet text, got {bodies[0]!r}")
 
     if errors:
         print("\n".join(errors)); return 1

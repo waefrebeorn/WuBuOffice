@@ -22,6 +22,14 @@ int wubushow_slide(wubushow_pres *p, const char *title, const char *body);
 /* Assemble .pptx at outpath. Returns 0 on success. */
 int wubushow_assemble(wubushow_pres *p, const char *outpath);
 
+/* --- read-back accessors (for round-trip verification and callers that load
+ * an existing .pptx). The presentation is opaque; inspect it through these. */
+int  wubushow_slide_count(const wubushow_pres *p);
+/* Returns 0 and fills out-title/out-body (pointers into internal storage,
+ * valid until the presentation is freed) for slide idx (0-based). Non-zero if
+ * the index is out of range. */
+int  wubushow_slide_get(const wubushow_pres *p, int idx, const char **out_title, const char **out_body);
+
 #ifdef __cplusplus
 }
 #endif

@@ -113,7 +113,7 @@ add_library(wubucell_app OBJECT apps/wubucell/main.c apps/wubucell/cell_model.c 
 target_include_directories(wubucell_app PRIVATE src/wubuoxml src/wubuxml apps/wubucell src/wubuformula)
 target_link_libraries(wubucell_app PRIVATE wubuoxml wubuxml wubuformula)
 
-add_library(wubushow_app OBJECT apps/wubushow/main.c apps/wubushow/show_model.c apps/wubushow/show_io.c)
+add_library(wubushow_app OBJECT apps/wubushow/main.c apps/wubushow/show_model.c apps/wubushow/show_io.c apps/wubushow/show_read.c)
 target_include_directories(wubushow_app PRIVATE src/wubuoxml apps/wubushow)
 target_link_libraries(wubushow_app PRIVATE wubuoxml)
 
@@ -122,8 +122,8 @@ target_include_directories(wuburead_app PRIVATE src/wubuoxml src/wubuzip src/wub
 target_link_libraries(wuburead_app PRIVATE wubuoxml)
 
 add_library(wubuedit_app OBJECT apps/wubuedit/edit.c apps/wubuedit/docmodel.c)
-target_include_directories(wubuedit_app PRIVATE src/wubuoxml src/wubuxml apps/wubuword)
-target_link_libraries(wubuedit_app PRIVATE wubuoxml wubuword_app)
+target_include_directories(wubuedit_app PRIVATE src/wubuoxml src/wubuxml apps/wubuword apps/wubucell apps/wubushow)
+target_link_libraries(wubuedit_app PRIVATE wubuoxml wubuword_app wubucell_app wubushow_app)
 
 # --- standalone executables ---
 add_executable(wubuword $<TARGET_OBJECTS:wubuword_app> apps/wubuword/entry.c)
@@ -135,7 +135,7 @@ target_link_libraries(wubushow PRIVATE wubuoxml)
 add_executable(wuburead $<TARGET_OBJECTS:wuburead_app> apps/wuburead/entry.c)
 target_link_libraries(wuburead PRIVATE wubuoxml)
 add_executable(wubuedit $<TARGET_OBJECTS:wubuedit_app> apps/wubuedit/entry.c)
-target_link_libraries(wubuedit PRIVATE wubuoxml wubuword_app)
+target_link_libraries(wubuedit PRIVATE wubuoxml wubuword_app wubucell_app wubushow_app)
 
 # --- unified CLI ---
 add_executable(wubuoffice apps/wubuoffice/main.c
@@ -201,8 +201,8 @@ target_include_directories(test_extract PRIVATE src/wubuoxml src/wubuxml apps/wu
 add_test(NAME extract COMMAND test_extract)
 
 add_executable(test_edit tests/test_edit.c)
-target_link_libraries(test_edit PRIVATE wubuoxml wubuword_app wubuedit_app)
-target_include_directories(test_edit PRIVATE src/wubuoxml src/wubuxml apps/wubuword apps/wubuedit)
+target_link_libraries(test_edit PRIVATE wubuoxml wubuword_app wubucell_app wubushow_app wubuedit_app)
+target_include_directories(test_edit PRIVATE src/wubuoxml src/wubuxml apps/wubuword apps/wubucell apps/wubushow apps/wubuedit)
 add_test(NAME edit_roundtrip COMMAND test_edit)
 
 add_executable(test_conformance tests/test_conformance.c)

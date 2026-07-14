@@ -16,7 +16,7 @@ static void usage(const char *prog) {
         "  cell  [out.xlsx]                       generate a .xlsx workbook\n"
         "  show  [out.pptx]                       generate a .pptx deck\n"
         "  read  <file.docx|xlsx|pptx>            read + extract text from any OOXML\n"
-        "  edit  <in.docx> [out.docx]             round-trip re-write (text preserved)\n",
+        "  edit  <in.docx|xlsx|pptx> [out.<ext>]  round-trip re-write (structure preserved)\n",
         prog);
 }
 
