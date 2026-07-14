@@ -140,7 +140,7 @@ target_include_directories(wubuodf_app PRIVATE src/wubuoxml src/wubuxml src/wubu
 target_link_libraries(wubuodf_app PRIVATE wubuoxml wubuxml wubuzip)
 
 # wubuconv: unified format conversion across the full matrix
-add_library(wubuconv_app OBJECT apps/wubuconv/conv_map.c)
+add_library(wubuconv_app OBJECT apps/wubuconv/conv_map.c apps/wubuconv/conv_bridge.c)
 target_include_directories(wubuconv_app PRIVATE src/wubuoxml src/wubuxml src/wubuzip src/wubucfb apps/wubuword apps/wubuedit apps/wubucell apps/wubushow apps/wubudoc apps/wubuodf apps/wubulegacy apps/wubupdf apps/wubuconv)
 target_link_libraries(wubuconv_app PRIVATE wubuoxml wubuxml wubuzip wubucfb)
 
