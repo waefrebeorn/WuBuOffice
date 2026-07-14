@@ -176,7 +176,7 @@ int wubulegacy_read_xls(const char *path, wubucell_book **out) {
 
         switch (type) {
         case R_BOUNDSHEET: {
-            /* [lbPlyPos u32][visibility u8][type u8][name: short XLUnicode] */
+            /* [lbPlyPos u32][visibility u8][type u8][name: ShortXLUnicode] */
             if (len >= 8) {
                 uint8_t cch = d[6];
                 uint8_t gr  = d[7];

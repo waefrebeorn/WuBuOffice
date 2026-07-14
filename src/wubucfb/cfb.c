@@ -86,9 +86,10 @@ static uint8_t *read_mini_chain(const wubucfb *c, uint32_t start, size_t size, s
         if (s >= c->minifat_n) break;
         if (++guard > c->minifat_n + 1) break;
         size_t off = (size_t)s * c->mini_size;
-        if (off + c->mini_size > c->mini_stream_len) break;
+        if (off >= c->mini_stream_len) break;       /* allow a partial final mini-sector */
         size_t take = c->mini_size;
         if (cur + take > size) take = size - cur;
+        if (off + take > c->mini_stream_len) take = c->mini_stream_len - off;
         memcpy(buf + cur, c->mini_stream + off, take);
         cur += take;
         s = c->minifat[s];

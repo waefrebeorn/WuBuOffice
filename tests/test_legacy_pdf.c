@@ -110,6 +110,65 @@ int main(void) {
         wubuedit_docmodel_free(&d);
     }
 
+    /* ---------- Gate 3: .xls / .doc / .ppt writers via independent oracles ---------- */
+    {
+        /* Build a workbook with two sheets, strings + numbers. */
+        wubucell_book *b = wubucell_create();
+        int s1 = wubucell_sheet(b, "Budget");
+        wubucell_cell_s(b, s1, 1, 1, "Item"); wubucell_cell_s(b, s1, 2, 1, "Qty"); wubucell_cell_s(b, s1, 3, 1, "Price");
+        wubucell_cell_n(b, s1, 1, 2, 19.99); wubucell_cell_n(b, s1, 1, 3, 1200.5);
+        int s2 = wubucell_sheet(b, "Notes");
+        wubucell_cell_s(b, s2, 1, 1, "Second sheet string");
+        wubucell_cell_n(b, s2, 1, 2, 42);
+
+        if (wubulegacy_write_xls(b, "/tmp/legtest/wout.xls") != 0 || !file_exists("/tmp/legtest/wout.xls")) {
+            printf("FAIL xls write\n"); fail = 1;
+        } else {
+            snprintf(cmd, sizeof cmd, "%s %s check_xls /tmp/legtest/wout.xls 'Budget' 'Notes' 'Item' '1200.5' 'Second sheet string'", PY, LEGACY_ORACLE);
+            int o = run(cmd);
+            if (o == 2) { printf("(xls write oracle skipped: xlrd unavailable)\n"); skipped = 1; }
+            else if (o != 0) { printf("FAIL xls write oracle (rc=%d)\n", o); fail = 1; }
+            else printf("xls writer (xlrd oracle) OK: sheets+strings+numbers\n");
+        }
+        wubucell_free(b);
+
+        /* Build a dm_doc with headings + paragraphs. */
+        dm_doc d; memset(&d, 0, sizeof d);
+        d.cap = 8; d.blocks = calloc(d.cap, sizeof *d.blocks);
+        d.blocks[d.n].kind = DM_BLOCK_PARA; d.blocks[d.n].para.style = strdup("Title");
+        d.blocks[d.n].para.text = strdup("Angel Coder Report"); d.n++;
+        d.blocks[d.n].kind = DM_BLOCK_PARA; d.blocks[d.n].para.text = strdup("This is the first paragraph of the report."); d.n++;
+        d.blocks[d.n].kind = DM_BLOCK_PARA; d.blocks[d.n].para.style = strdup("Heading1");
+        d.blocks[d.n].para.text = strdup("Section Two"); d.n++;
+        d.blocks[d.n].kind = DM_BLOCK_PARA; d.blocks[d.n].para.text = strdup("Second section body with the keyword walrus."); d.n++;
+
+        if (wubulegacy_write_doc(&d, "/tmp/legtest/wout.doc") != 0 || !file_exists("/tmp/legtest/wout.doc")) {
+            printf("FAIL doc write\n"); fail = 1;
+        } else {
+            snprintf(cmd, sizeof cmd, "%s %s check_doc /tmp/legtest/wout.doc 'Angel Coder Report' 'first paragraph' 'Section Two' 'walrus'", PY, LEGACY_ORACLE);
+            int o = run(cmd);
+            if (o == 2) { printf("(doc write oracle skipped: olefile unavailable)\n"); skipped = 1; }
+            else if (o != 0) { printf("FAIL doc write oracle (rc=%d)\n", o); fail = 1; }
+            else printf("doc writer (FIB/CLX oracle) OK: full text recovered\n");
+        }
+        wubuedit_docmodel_free(&d);
+
+        /* Build a presentation. */
+        wubushow_pres *p = wubushow_create();
+        wubushow_slide(p, "Slide One Title", "Bullet on slide one.");
+        wubushow_slide(p, "Slide Two Title", "Second slide body text.");
+        if (wubulegacy_write_ppt(p, "/tmp/legtest/wout.ppt") != 0 || !file_exists("/tmp/legtest/wout.ppt")) {
+            printf("FAIL ppt write\n"); fail = 1;
+        } else {
+            snprintf(cmd, sizeof cmd, "%s %s check_ppt /tmp/legtest/wout.ppt 'Slide One Title' 'Bullet on slide one' 'Slide Two Title' 'Second slide body text'", PY, LEGACY_ORACLE);
+            int o = run(cmd);
+            if (o == 2) { printf("(ppt write oracle skipped: olefile unavailable)\n"); skipped = 1; }
+            else if (o != 0) { printf("FAIL ppt write oracle (rc=%d)\n", o); fail = 1; }
+            else printf("ppt writer (record-walk oracle) OK: all slide text recovered\n");
+        }
+        wubushow_free(p);
+    }
+
     /* ---------- Best-effort: genuine Microsoft CFB samples on the host ---------- */
     {
         const char *doc = "/mnt/c/Windows/System32/MSDRM/MsoIrmProtector.doc";

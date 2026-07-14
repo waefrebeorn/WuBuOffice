@@ -20,7 +20,7 @@ static void usage(const char *prog) {
         "  edit  <in.docx|xlsx|pptx> [out.<ext>]  round-trip re-write (structure preserved)\n"
         "  convert <in> <out>                     convert ANY supported format to ANY other\n"
         "         supported in:  docx xlsx pptx csv tsv md odt ods odp fodt fods fodp doc xls ppt\n"
-        "         supported out: docx xlsx pptx csv tsv md html rtf odt ods odp fodt fods fodp pdf epub json\n",
+        "         supported out: docx xlsx pptx csv tsv md html rtf odt ods odp fodt fods fodp doc xls ppt pdf epub json\n",
         prog);
 }
 

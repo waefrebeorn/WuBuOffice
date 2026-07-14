@@ -43,9 +43,9 @@ Microsoft binaries. All three legacy readers sit on it.
 
 | Format | Ext | Read | Write | Notes |
 |--------|-----|:----:|:-----:|-------|
-| Legacy Excel | `.xls` | ✅ | ⭕ | BIFF8: SST (+CONTINUE splits), BOUNDSHEET, LABELSST/LABEL, NUMBER, RK, MULRK, FORMULA. Validated by xlwt/xlrd. → `wubucell_book`. |
-| Legacy Word | `.doc` | ✅ | ⭕ | FIB + complex piece table (CLX/PlcPcd), CP1252/UTF-16 pieces, CR paragraph split. Verified on real MS `.doc`. → `dm_doc`. |
-| Legacy PowerPoint | `.ppt` | ✅ | ⭕ | Recursive record tree; TextChars/TextBytes atoms per Slide container (master-text fallback). Verified on real MS `.ppt`. → `wubushow_pres`. |
+| Legacy Excel | `.xls` | ✅ | ✅ | BIFF8 (Word/LibreOffice-compatible): BOF (globals+worksheet, full 16-byte header), BOUNDSHEET (backpatched lbPlyPos), DIMENSIONS (32-bit rows), LABEL (inline UTF-16), NUMBER (IEEE-754). Wrapped in a real MS-CFB container (mini-stream + MiniFAT). Reader validated by xlwt; writer validated by xlrd. → `wubucell_book`. |
+| Legacy Word | `.doc` | ✅ | ✅ | Word-97 binary: 0x200-byte FIB + 16-bit Unicode text + CLX/Pcdt piece table in the 0Table stream. Reader uses the complex piece table; writer emits one fully-Unicode piece. Verified on real MS `.doc`; writer validated by an independent FIB/CLX parser. → `dm_doc`. |
+| Legacy PowerPoint | `.ppt` | ✅ | ✅ | PowerPoint binary: DocumentContainer + SlideContainers (8-byte record headers, ver/instance + type + 32-bit length), SlideAtom + TextHeader + TextChars atoms. Wrapped in a real MS-CFB container. Reader and writer validated by an independent record-walk. → `wubushow_pres`. |
 
 ## Tier 4 — Fixed-layout & adjacent
 
@@ -60,9 +60,9 @@ Microsoft binaries. All three legacy readers sit on it.
 `wubuoffice convert <in> <out>` bridges **any** supported format to **any**
 other. Three canonical models are the interchange pivot:
 
-- **TEXT** (`dm_doc`) ← docx / md / html / rtf / odt / fodt / **doc** · → docx / md / html / rtf / odt / fodt / **pdf** / **epub**
-- **SHEET** (`wubucell_book`) ← xlsx / csv / tsv / ods / fods / **xls** · → xlsx / csv / tsv / ods / fods
-- **SHOW** (`wubushow_pres`) ← pptx / odp / fodp / **ppt** · → pptx / odp / fodp
+- **TEXT** (`dm_doc`) ← docx / md / html / rtf / odt / fodt / **doc** · → docx / md / html / rtf / odt / fodt / **pdf** / **epub** / **doc**
+- **SHEET** (`wubucell_book`) ← xlsx / csv / tsv / ods / fods / **xls** · → xlsx / csv / tsv / ods / fods / **xls**
+- **SHOW** (`wubushow_pres`) ← pptx / odp / fodp / **ppt** · → pptx / odp / fodp / **ppt**
 
 Cross-family bridges: sheet→text (table), show→text (title + bullet body),
 text→sheet (flatten), text→show (heading per slide). JSON dumps any model.

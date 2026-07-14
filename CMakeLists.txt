@@ -45,8 +45,8 @@ target_include_directories(wubuzip PUBLIC src/wubuzip)
 add_library(wubuxml STATIC src/wubuxml/xml.c)
 target_include_directories(wubuxml PUBLIC src/wubuxml)
 
-# --- wubucfb: MS-CFB / OLE2 compound-file container reader (legacy substrate) ---
-add_library(wubucfb STATIC src/wubucfb/cfb.c)
+# --- wubucfb: MS-CFB / OLE2 compound-file container reader + writer (legacy substrate) ---
+add_library(wubucfb STATIC src/wubucfb/cfb.c src/wubucfb/cfb_write.c)
 target_include_directories(wubucfb PUBLIC src/wubucfb)
 
 # --- wubuformula: from-scratch formula engine (lexer/parser/AST/evaluator/functions) ---
@@ -144,8 +144,10 @@ add_library(wubuconv_app OBJECT apps/wubuconv/conv_map.c)
 target_include_directories(wubuconv_app PRIVATE src/wubuoxml src/wubuxml src/wubuzip src/wubucfb apps/wubuword apps/wubuedit apps/wubucell apps/wubushow apps/wubudoc apps/wubuodf apps/wubulegacy apps/wubupdf apps/wubuconv)
 target_link_libraries(wubuconv_app PRIVATE wubuoxml wubuxml wubuzip wubucfb)
 
-# wubulegacy: readers for legacy binary Office (.doc/.xls/.ppt) over MS-CFB
-add_library(wubulegacy_app OBJECT apps/wubulegacy/xls_biff.c apps/wubulegacy/doc_bin.c apps/wubulegacy/ppt_bin.c)
+# wubulegacy: readers + writers for legacy binary Office (.doc/.xls/.ppt) over MS-CFB
+add_library(wubulegacy_app OBJECT
+  apps/wubulegacy/xls_biff.c apps/wubulegacy/doc_bin.c apps/wubulegacy/ppt_bin.c
+  apps/wubulegacy/legacy_xls_write.c apps/wubulegacy/legacy_doc_write.c apps/wubulegacy/legacy_ppt_write.c)
 target_include_directories(wubulegacy_app PRIVATE src/wubucfb apps/wubulegacy apps/wubucell apps/wubushow apps/wubuedit src/wubuoxml)
 target_link_libraries(wubulegacy_app PRIVATE wubucfb)
 
