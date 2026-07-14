@@ -124,12 +124,15 @@ int main(void) {
     }
 
     /* ---- ODF round trips + odfpy oracle ---- */
-    struct { const char *in, *out, *kind; } odf[] = {
-        {"/tmp/convtest/in.docx", "/tmp/convtest/d2odt.odt", "document"},
-        {"/tmp/convtest/in.xlsx", "/tmp/convtest/x2ods.ods", "spreadsheet"},
-        {"/tmp/convtest/in.pptx", "/tmp/convtest/p2odp.odp", "presentation"},
-        {"/tmp/convtest/in.odt",  "/tmp/convtest/odt2docx.docx", "document"},
-        {NULL, NULL, NULL}
+    struct { const char *in, *out; int foreign; } odf[] = {
+        {"/tmp/convtest/in.docx", "/tmp/convtest/d2odt.odt", 0},
+        {"/tmp/convtest/in.xlsx", "/tmp/convtest/x2ods.ods", 0},
+        {"/tmp/convtest/in.pptx", "/tmp/convtest/p2odp.odp", 0},
+        /* foreign-input leg: in.odt is produced only by odfpy (see producer
+         * call above). When odfpy is absent the file doesn't exist; skip this
+         * single leg instead of failing (mirrors the odfpy-validation skip). */
+        {"/tmp/convtest/in.odt",  "/tmp/convtest/odt2docx.docx", 1},
+        {NULL, NULL, 0}
     };
     /* produce odt input with odfpy if available, to test foreign->our chain.
      * Use the same oracle producer that test_odf relies on (venv python). */
@@ -143,6 +146,7 @@ int main(void) {
     }
 
     for (int i = 0; odf[i].in; i++) {
+        if (odf[i].foreign && !file_exists(odf[i].in)) { skipped = 1; continue; }
         if (wubuconv_convert(odf[i].in, odf[i].out) != 0) { printf("FAIL convert %s->%s\n", odf[i].in, odf[i].out); fail = 1; }
     }
     /* validate ODF outputs + foreign input read with odfpy */
