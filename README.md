@@ -11,6 +11,17 @@ Every byte is written by us in C11. **No forks, no vendored upstream code, zero
 runtime dependencies** beyond POSIX. (The only external link is `zlib`, used
 *only* inside the inflate test as an independent oracle.)
 
+## Sister projects
+
+- **[WuBuPad](https://github.com/waefrebeorn/WuBuPad)** — the clean C11
+  **code editor** built the same way: a ground-up, fork-free alternative to
+  Notepad++. It shares WuBuOffice's engineering standard (opaque structs, no
+  god headers, reuse-never-duplicate, sanitizer-gated). Its headless core
+  (piece-table buffer, C/JSON lexers, document model with undo/redo +
+  cursor/selection) is the editor engine WuBuOffice's in-app editing will
+  reuse. Reference clone of Notepad++ lives in `ref/` for feature parity only;
+  no code is copied.
+
 ## What works
 
 | Layer | Status | Description |
