@@ -19,7 +19,8 @@ static void usage(const char *prog) {
         "  read  <file.docx|xlsx|pptx>            read + extract text from any OOXML\n"
         "  edit  <in.docx|xlsx|pptx> [out.<ext>]  round-trip re-write (structure preserved)\n"
         "  convert <in> <out>                     convert ANY supported format to ANY other\n"
-        "         supported: docx xlsx pptx csv tsv md html rtf odt ods odp json\n",
+        "         supported in:  docx xlsx pptx csv tsv md odt ods odp doc xls ppt\n"
+        "         supported out: docx xlsx pptx csv tsv md html rtf odt ods odp pdf json\n",
         prog);
 }
 

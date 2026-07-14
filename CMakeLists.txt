@@ -45,6 +45,10 @@ target_include_directories(wubuzip PUBLIC src/wubuzip)
 add_library(wubuxml STATIC src/wubuxml/xml.c)
 target_include_directories(wubuxml PUBLIC src/wubuxml)
 
+# --- wubucfb: MS-CFB / OLE2 compound-file container reader (legacy substrate) ---
+add_library(wubucfb STATIC src/wubucfb/cfb.c)
+target_include_directories(wubucfb PUBLIC src/wubucfb)
+
 # --- wubuformula: from-scratch formula engine (lexer/parser/AST/evaluator/functions) ---
 add_library(wubuformula STATIC
   src/wubuformula/value.c
@@ -137,8 +141,17 @@ target_link_libraries(wubuodf_app PRIVATE wubuoxml wubuxml wubuzip)
 
 # wubuconv: unified format conversion across the full matrix
 add_library(wubuconv_app OBJECT apps/wubuconv/conv_map.c)
-target_include_directories(wubuconv_app PRIVATE src/wubuoxml src/wubuxml src/wubuzip apps/wubuword apps/wubuedit apps/wubucell apps/wubushow apps/wubudoc apps/wubuodf apps/wubuconv)
-target_link_libraries(wubuconv_app PRIVATE wubuoxml wubuxml wubuzip)
+target_include_directories(wubuconv_app PRIVATE src/wubuoxml src/wubuxml src/wubuzip src/wubucfb apps/wubuword apps/wubuedit apps/wubucell apps/wubushow apps/wubudoc apps/wubuodf apps/wubulegacy apps/wubupdf apps/wubuconv)
+target_link_libraries(wubuconv_app PRIVATE wubuoxml wubuxml wubuzip wubucfb)
+
+# wubulegacy: readers for legacy binary Office (.doc/.xls/.ppt) over MS-CFB
+add_library(wubulegacy_app OBJECT apps/wubulegacy/xls_biff.c apps/wubulegacy/doc_bin.c apps/wubulegacy/ppt_bin.c)
+target_include_directories(wubulegacy_app PRIVATE src/wubucfb apps/wubulegacy apps/wubucell apps/wubushow apps/wubuedit src/wubuoxml)
+target_link_libraries(wubulegacy_app PRIVATE wubucfb)
+
+# wubupdf: minimal PDF/1.7 writer over the TEXT model (dm_doc)
+add_library(wubupdf_app OBJECT apps/wubupdf/pdf_text.c apps/wubupdf/pdf_write.c)
+target_include_directories(wubupdf_app PRIVATE apps/wubupdf apps/wubuedit)
 
 # --- standalone executables ---
 add_executable(wubuword $<TARGET_OBJECTS:wubuword_app> apps/wubuword/entry.c)
@@ -161,8 +174,10 @@ add_executable(wubuoffice apps/wubuoffice/main.c
   $<TARGET_OBJECTS:wubuedit_app>
   $<TARGET_OBJECTS:wubudoc_app>
   $<TARGET_OBJECTS:wubuodf_app>
+  $<TARGET_OBJECTS:wubulegacy_app>
+  $<TARGET_OBJECTS:wubupdf_app>
   $<TARGET_OBJECTS:wubuconv_app>)
-target_link_libraries(wubuoffice PRIVATE wubuoxml wubuxml wubuzip wubuformula)
+target_link_libraries(wubuoffice PRIVATE wubuoxml wubuxml wubuzip wubuformula wubucfb)
 
 # --- tests ---
 enable_testing()
@@ -268,10 +283,21 @@ target_include_directories(test_odf PRIVATE apps/wubuodf apps/wubuedit apps/wubu
 target_compile_definitions(test_odf PRIVATE ODF_ORACLE="${CMAKE_CURRENT_SOURCE_DIR}/tests/conformance/odf_oracle.py")
 add_test(NAME odf COMMAND test_odf)
 
-add_executable(test_convert tests/test_convert.c $<TARGET_OBJECTS:wubuconv_app> $<TARGET_OBJECTS:wubuodf_app> $<TARGET_OBJECTS:wubudoc_app>)
-target_link_libraries(test_convert PRIVATE wubuword_app wubuedit_app wubucell_app wubushow_app wubuoxml wubuxml wubuzip wubuformula)
-target_include_directories(test_convert PRIVATE apps/wubuconv apps/wubuodf apps/wubudoc apps/wubuedit apps/wubucell apps/wubushow src/wubuoxml src/wubuxml src/wubuzip)
+add_executable(test_convert tests/test_convert.c $<TARGET_OBJECTS:wubuconv_app> $<TARGET_OBJECTS:wubuodf_app> $<TARGET_OBJECTS:wubudoc_app> $<TARGET_OBJECTS:wubulegacy_app> $<TARGET_OBJECTS:wubupdf_app>)
+target_link_libraries(test_convert PRIVATE wubuword_app wubuedit_app wubucell_app wubushow_app wubuoxml wubuxml wubuzip wubuformula wubucfb)
+target_include_directories(test_convert PRIVATE apps/wubuconv apps/wubuodf apps/wubudoc apps/wubuedit apps/wubucell apps/wubushow apps/wubulegacy apps/wubupdf src/wubuoxml src/wubuxml src/wubuzip src/wubucfb)
 target_compile_definitions(test_convert PRIVATE
     WUBUOFFICE_BIN="${CMAKE_CURRENT_BINARY_DIR}/wubuoffice"
     ODF_ORACLE_SCRIPT="${CMAKE_CURRENT_SOURCE_DIR}/tests/conformance/odf_oracle.py")
 add_test(NAME convert COMMAND test_convert)
+
+# Legacy binary readers (.doc/.xls/.ppt) + PDF writer, validated by the
+# independent xlwt/xlrd + pypdf/pdfminer oracles. SKIPs cleanly if absent.
+add_executable(test_legacy_pdf tests/test_legacy_pdf.c
+  $<TARGET_OBJECTS:wubulegacy_app> $<TARGET_OBJECTS:wubupdf_app>
+  $<TARGET_OBJECTS:wubucell_app> $<TARGET_OBJECTS:wubushow_app>
+  $<TARGET_OBJECTS:wubuword_app> $<TARGET_OBJECTS:wubuedit_app>)
+target_link_libraries(test_legacy_pdf PRIVATE wubucfb wubuoxml wubuxml wubuzip wubuformula)
+target_include_directories(test_legacy_pdf PRIVATE apps/wubulegacy apps/wubupdf apps/wubucell apps/wubushow apps/wubuedit src/wubucfb src/wubuoxml src/wubuxml)
+target_compile_definitions(test_legacy_pdf PRIVATE LEGACY_ORACLE="${CMAKE_CURRENT_SOURCE_DIR}/tests/conformance/legacy_oracle.py")
+add_test(NAME legacy_pdf COMMAND test_legacy_pdf)

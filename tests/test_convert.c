@@ -22,7 +22,7 @@ static int run(const char *cmd) {
 static int file_exists(const char *p) { FILE *f = fopen(p, "rb"); if (f) { fclose(f); return 1; } return 0; }
 
 int main(void) {
-    system("rm -rf /tmp/convtest && mkdir -p /tmp/convtest");
+    if (system("rm -rf /tmp/convtest && mkdir -p /tmp/convtest") != 0) { /* non-fatal */ }
     int fail = 0, skipped = 0;
 
     const char *ORACLE = getenv("WUBU_CONFORMANCE_PYTHON"); if (!ORACLE) ORACLE = "python3";
@@ -97,6 +97,8 @@ int main(void) {
         {"/tmp/convtest/in.pptx", "/tmp/convtest/p2json.json"},
         {"/tmp/convtest/in.md",   "/tmp/convtest/m2docx.docx"},
         {"/tmp/convtest/in.md",   "/tmp/convtest/m2pptx.pptx"},
+        {"/tmp/convtest/in.md",   "/tmp/convtest/m2pdf.pdf"},
+        {"/tmp/convtest/in.docx", "/tmp/convtest/d2pdf.pdf"},
         {NULL, NULL}
     };
     for (int i = 0; cross[i].in; i++) {

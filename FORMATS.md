@@ -36,17 +36,21 @@ Legend: ✅ done · 🔨 in progress · ⬜ planned · ⭕ out of scope (for now
 
 ## Tier 3 — Legacy binary (hard; MS-CFB / BIFF)
 
+Container: `src/wubucfb` — clean-room MS-CFB / OLE2 reader (header, DIFAT, FAT,
+directory, MiniFAT + mini-stream). Byte-verified against `olefile` on genuine
+Microsoft binaries. All three legacy readers sit on it.
+
 | Format | Ext | Read | Write | Notes |
 |--------|-----|:----:|:-----:|-------|
-| Legacy Word | `.doc` | ⬜ | ⭕ | MS-CFB compound file + Word binary stream. Read-only aim. |
-| Legacy Excel | `.xls` | ⬜ | ⭕ | BIFF8 records inside CFB. Read-only aim. |
-| Legacy PowerPoint | `.ppt` | ⬜ | ⭕ | PPT binary inside CFB. Read-only aim. |
+| Legacy Excel | `.xls` | ✅ | ⭕ | BIFF8: SST (+CONTINUE splits), BOUNDSHEET, LABELSST/LABEL, NUMBER, RK, MULRK, FORMULA. Validated by xlwt/xlrd. → `wubucell_book`. |
+| Legacy Word | `.doc` | ✅ | ⭕ | FIB + complex piece table (CLX/PlcPcd), CP1252/UTF-16 pieces, CR paragraph split. Verified on real MS `.doc`. → `dm_doc`. |
+| Legacy PowerPoint | `.ppt` | ✅ | ⭕ | Recursive record tree; TextChars/TextBytes atoms per Slide container (master-text fallback). Verified on real MS `.ppt`. → `wubushow_pres`. |
 
 ## Tier 4 — Fixed-layout & adjacent
 
 | Format | Ext | Read | Write | Notes |
 |--------|-----|:----:|:-----:|-------|
-| PDF | `.pdf` | ⭕ | ⬜ | Write a minimal PDF from the doc model (text runs). |
+| PDF | `.pdf` | ⭕ | ✅ | `src/wubupdf`-style writer over `dm_doc`: PDF/1.7, Helvetica/Helvetica-Bold with AFM metrics, WinAnsi encoding, word-wrap + auto-pagination, headings/bold/tables. Validated by pypdf + pdfminer. |
 | EPUB | `.epub` | ⬜ | ⬜ | ZIP + XHTML; reuses HTML export + OPF packaging. |
 | Plain text | `.txt` | ✅* | ⬜ | *extraction exists via wuburead; add clean writer. |
 
@@ -55,9 +59,9 @@ Legend: ✅ done · 🔨 in progress · ⬜ planned · ⭕ out of scope (for now
 `wubuoffice convert <in> <out>` bridges **any** supported format to **any**
 other. Three canonical models are the interchange pivot:
 
-- **TEXT** (`dm_doc`) ← docx / md / html / rtf / odt
-- **SHEET** (`wubucell_book`) ← xlsx / csv / tsv / ods
-- **SHOW** (`wubushow_pres`) ← pptx / odp
+- **TEXT** (`dm_doc`) ← docx / md / html / rtf / odt / **doc** · → docx / md / html / rtf / odt / **pdf**
+- **SHEET** (`wubucell_book`) ← xlsx / csv / tsv / ods / **xls**
+- **SHOW** (`wubushow_pres`) ← pptx / odp / **ppt**
 
 Cross-family bridges: sheet→text (table), show→text (title + bullet body),
 text→sheet (flatten), text→show (heading per slide). JSON dumps any model.
@@ -65,10 +69,12 @@ text→sheet (flatten), text→show (heading per slide). JSON dumps any model.
 ## Engine reuse map
 
 - `wubuzip` — ZIP container for OOXML, ODF, EPUB.
+- `wubucfb` — MS-CFB / OLE2 container behind legacy `.doc` / `.xls` / `.ppt`.
 - `wubuxml` — SAX + writer for all XML-based formats.
-- `wubucell_book` — the spreadsheet model behind xlsx / ods / csv / tsv.
-- doc model (`wubuword`/`docmodel`) — behind docx / odt / md / rtf / html.
-- `wubushow_pres` — behind pptx / odp.
+- `wubucell_book` — the spreadsheet model behind xlsx / ods / csv / tsv / xls.
+- doc model (`wubuword`/`docmodel`) — behind docx / odt / md / rtf / html / doc / pdf.
+- `wubushow_pres` — behind pptx / odp / ppt.
+- `wubupdf` — fixed-layout PDF serializer over the doc model.
 - `wubuconv` — the format-agnostic conversion engine (matrix dispatch).
 
 One model per document class, many serializers. That's how we get supremacy
