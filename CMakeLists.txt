@@ -125,9 +125,9 @@ add_library(wubuedit_app OBJECT apps/wubuedit/edit.c apps/wubuedit/docmodel.c)
 target_include_directories(wubuedit_app PRIVATE src/wubuoxml src/wubuxml apps/wubuword apps/wubucell apps/wubushow)
 target_link_libraries(wubuedit_app PRIVATE wubuoxml wubuword_app wubucell_app wubushow_app)
 
-# wubudoc: Markdown + HTML serializers over the document model (docx <-> md/html)
-add_library(wubudoc_app OBJECT apps/wubudoc/doc_md.c)
-target_include_directories(wubudoc_app PRIVATE src/wubuoxml src/wubuxml apps/wubuword apps/wubuedit apps/wubudoc)
+# wubudoc: Markdown + HTML + RTF + JSON serializers over all models
+add_library(wubudoc_app OBJECT apps/wubudoc/doc_md.c apps/wubudoc/doc_rtf.c apps/wubudoc/model_json.c)
+target_include_directories(wubudoc_app PRIVATE src/wubuoxml src/wubuxml apps/wubuword apps/wubuedit apps/wubudoc apps/wubucell apps/wubushow)
 target_link_libraries(wubudoc_app PRIVATE wubuoxml wubuxml)
 
 # --- standalone executables ---
@@ -243,3 +243,8 @@ add_executable(test_md tests/test_md.c $<TARGET_OBJECTS:wubudoc_app>)
 target_link_libraries(test_md PRIVATE wubuword_app wubuedit_app wubuoxml wubuxml wubucell_app wubushow_app wubuformula)
 target_include_directories(test_md PRIVATE apps/wubudoc apps/wubuword apps/wubuedit src/wubuoxml src/wubuxml)
 add_test(NAME md COMMAND test_md)
+
+add_executable(test_rtf_json tests/test_rtf_json.c $<TARGET_OBJECTS:wubudoc_app>)
+target_link_libraries(test_rtf_json PRIVATE wubuword_app wubuedit_app wubucell_app wubushow_app wubuoxml wubuxml wubuformula)
+target_include_directories(test_rtf_json PRIVATE apps/wubudoc apps/wubuword apps/wubuedit apps/wubucell apps/wubushow src/wubuoxml src/wubuxml)
+add_test(NAME rtf_json COMMAND test_rtf_json)

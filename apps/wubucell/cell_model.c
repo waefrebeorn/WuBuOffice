@@ -206,7 +206,9 @@ int wubucell_get(const wubucell_book *b, int sheet, int col, int row,
                 else if (c->kind == C_NUM) *kind = WUBUCELL_NUM;
                 else *kind = WUBUCELL_FORM;
             }
-            if (text) *text = c->text;
+            /* For a formula cell, expose the formula string (the numeric result
+             * is available separately via `cached`); for str/num expose text. */
+            if (text) *text = (c->kind == C_FORM && c->formula) ? c->formula : c->text;
             if (num) *num = c->num;
             if (cached) *cached = c->cached;
             return 0;

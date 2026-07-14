@@ -115,11 +115,12 @@ int wubudoc_read_md(const char *path, wubuword_doc **out) {
             wubuword_para(d, style, bold, body);
             free(body);
         } else if (t[0] == '-' || (t[0] == '*' && t[1] == ' ')) {
-            /* bullet list item: emit "• text" as a normal paragraph */
+            /* bullet list item: emit "• text" as a normal paragraph.
+             * Prefix is 3 UTF-8 bytes (U+2022) + a space = 4, plus NUL = 5. */
             char *txt = lstrip(t + 1);
-            char *body = malloc(strlen(txt) + 4);
             char *tmp = strdup(txt);
             int bold = strip_bold(tmp);
+            char *body = malloc(strlen(tmp) + 5);
             sprintf(body, "\xE2\x80\xA2 %s", tmp);   /* U+2022 bullet */
             wubuword_para(d, NULL, bold, body);
             free(body); free(tmp);

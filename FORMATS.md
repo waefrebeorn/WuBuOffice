@@ -22,8 +22,8 @@ Legend: ✅ done · 🔨 in progress · ⬜ planned · ⭕ out of scope (for now
 | Tab-separated values | `.tsv` | ✅ | ✅ | Same engine as CSV, tab delimiter. |
 | Markdown | `.md` | ✅ | ✅ | Headings, bold, bullet lists, tables ↔ doc model. |
 | HTML | `.html` | ✅ (export) | ✅ | Semantic HTML5 from the doc model (h1-3, p, strong, table). |
-| Rich Text Format | `.rtf` | ⬜ | 🔨 | WordprocessingML's ancestor; write first. |
-| JSON | `.json` | ⬜ | 🔨 | Lossless dump of each model for pipelines. |
+| Rich Text Format | `.rtf` | ⬜ | ✅ | RTF 1.x from doc model: headings, bold, tables, UTF-8 via \uN escapes. |
+| JSON | `.json` | ⬜ | ✅ | Lossless JSON of all three models (doc/workbook/presentation). |
 
 ## Tier 2 — OpenDocument (ODF / ISO 26300)
 
