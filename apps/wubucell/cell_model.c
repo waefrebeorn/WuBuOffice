@@ -114,13 +114,21 @@ char *cell_render_sheet(const wubucell_book *b, const sheet_t *s, size_t sheet_i
             if (c->row != r) continue;
             char cl[16]; cell_col_letter(c->col, cl);
             char ref[32]; snprintf(ref, sizeof ref, "%s%d", cl, r);
-            /* Shared-string cells MUST carry t="s" so the <v> index is read
-             * as a shared-string reference (not a literal number). The style
-             * attribute (s=) is independent and may co-occur. */
+            /* Cell type attribute rules (OOXML SpreadsheetML):
+             *  - shared-string cells MUST carry t="s" so the <v> index is read
+             *    as a shared-string reference (not a literal number).
+             *  - inline-string cells (default non-shared mode) MUST carry
+             *    t="inlineStr"; without it the cell defaults to t="n" (number)
+             *    and conformant readers (openpyxl, Excel) drop the <is> text.
+             *  - numbers and formulas use the default t="n" (attribute omitted).
+             * The style attribute (s=) is independent and may co-occur. */
             if (c->kind == C_STR && b->use_sst) {
                 if (c->style) fprintf(m, "<c r=\"%s\" s=\"%d\" t=\"s\">", ref, c->style);
                 else fprintf(m, "<c r=\"%s\" t=\"s\">", ref);
-            } else {
+            } else if (c->kind == C_STR) { /* inline string (default mode) */
+                if (c->style) fprintf(m, "<c r=\"%s\" s=\"%d\" t=\"inlineStr\">", ref, c->style);
+                else fprintf(m, "<c r=\"%s\" t=\"inlineStr\">", ref);
+            } else { /* number or formula: default numeric type */
                 if (c->style) fprintf(m, "<c r=\"%s\" s=\"%d\">", ref, c->style);
                 else fprintf(m, "<c r=\"%s\">", ref);
             }

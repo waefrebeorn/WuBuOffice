@@ -109,9 +109,9 @@ add_library(wubuword_app OBJECT
 target_include_directories(wubuword_app PRIVATE src/wubuoxml src/wubuxml apps/wubuword)
 target_link_libraries(wubuword_app PRIVATE wubuoxml wubuxml)
 
-add_library(wubucell_app OBJECT apps/wubucell/main.c apps/wubucell/cell_model.c apps/wubucell/cell_eval.c apps/wubucell/cell_io.c apps/wubucell/style.c)
-target_include_directories(wubucell_app PRIVATE src/wubuoxml apps/wubucell src/wubuformula)
-target_link_libraries(wubucell_app PRIVATE wubuoxml wubuformula)
+add_library(wubucell_app OBJECT apps/wubucell/main.c apps/wubucell/cell_model.c apps/wubucell/cell_eval.c apps/wubucell/cell_io.c apps/wubucell/style.c apps/wubucell/cell_read.c)
+target_include_directories(wubucell_app PRIVATE src/wubuoxml src/wubuxml apps/wubucell src/wubuformula)
+target_link_libraries(wubucell_app PRIVATE wubuoxml wubuxml wubuformula)
 
 add_library(wubushow_app OBJECT apps/wubushow/main.c apps/wubushow/show_model.c apps/wubushow/show_io.c)
 target_include_directories(wubushow_app PRIVATE src/wubuoxml apps/wubushow)
@@ -204,6 +204,17 @@ add_executable(test_edit tests/test_edit.c)
 target_link_libraries(test_edit PRIVATE wubuoxml wubuword_app wubuedit_app)
 target_include_directories(test_edit PRIVATE src/wubuoxml src/wubuxml apps/wubuword apps/wubuedit)
 add_test(NAME edit_roundtrip COMMAND test_edit)
+
+add_executable(test_conformance tests/test_conformance.c)
+target_link_libraries(test_conformance PRIVATE wubuoxml wubuword_app wubucell_app wubushow_app)
+target_include_directories(test_conformance PRIVATE src/wubuoxml src/wubuxml apps/wubuword apps/wubucell apps/wubushow)
+target_compile_definitions(test_conformance PRIVATE CONFORMANCE_SCRIPT="${CMAKE_CURRENT_SOURCE_DIR}/tests/conformance/validate.py")
+add_test(NAME conformance COMMAND test_conformance)
+
+add_executable(test_cell_read tests/test_cell_read.c)
+target_link_libraries(test_cell_read PRIVATE wubucell_app wubuoxml wubuxml wubuformula)
+target_include_directories(test_cell_read PRIVATE apps/wubucell src/wubuoxml src/wubuxml src/wubuformula src/wubuformula/functions)
+add_test(NAME cell_read COMMAND test_cell_read)
 
 add_executable(test_cell_cycle tests/test_cell_cycle.c)
 target_link_libraries(test_cell_cycle PRIVATE wubucell_app wubuformula)
