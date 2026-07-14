@@ -181,6 +181,14 @@ add_executable(wubuoffice apps/wubuoffice/main.c
   $<TARGET_OBJECTS:wubuconv_app>)
 target_link_libraries(wubuoffice PRIVATE wubuoxml wubuxml wubuzip wubuformula wubucfb)
 
+# --- wubufont: clean-room SFNT/TrueType parser + SVG font emitter ---
+add_library(wubufont STATIC src/wubufont/wubufont.c)
+target_include_directories(wubufont PUBLIC src/wubufont)
+
+# wubufont CLI: sfnt (ttf/otf) -> SVG <font> document
+add_executable(wubufont_cli apps/wubufont/main.c)
+target_link_libraries(wubufont_cli PRIVATE wubufont)
+
 # --- tests ---
 enable_testing()
 add_executable(test_wubuzip tests/test_wubuzip.c)
@@ -327,3 +335,8 @@ target_link_libraries(test_flat_epub PRIVATE wubuoxml wubuxml wubuzip wubuformul
 target_include_directories(test_flat_epub PRIVATE apps/wubuodf apps/wubudoc apps/wubucell apps/wubushow apps/wubuword apps/wubuedit src/wubuoxml src/wubuxml src/wubuzip)
 target_compile_definitions(test_flat_epub PRIVATE FLAT_EPUB_ORACLE="${CMAKE_CURRENT_SOURCE_DIR}/tests/conformance/flat_epub_oracle.py")
 add_test(NAME flat_epub COMMAND test_flat_epub)
+
+# wubufont: SFNT/TrueType parser + SVG font emitter (validates a real system font).
+add_executable(test_wubufont tests/test_wubufont.c)
+target_link_libraries(test_wubufont PRIVATE wubufont)
+add_test(NAME wubufont COMMAND test_wubufont)

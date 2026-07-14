@@ -11,3 +11,6 @@ buildd/
 
 # ctest artifacts
 Testing/
+
+# stray generated artifact (empty 'model' file emitted by model tooling)
+/model
