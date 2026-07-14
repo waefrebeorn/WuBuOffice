@@ -175,6 +175,24 @@ int wubucell_sheet_count(const wubucell_book *b) {
     return (int)(b ? b->n : 0);
 }
 
+const char *wubucell_sheet_name(const wubucell_book *b, int sheet) {
+    if (!b || sheet < 1 || (size_t)sheet > b->n) return NULL;
+    return b->sheets[sheet - 1].name;
+}
+
+int wubucell_sheet_dims(const wubucell_book *b, int sheet, int *max_col, int *max_row) {
+    if (!b || sheet < 1 || (size_t)sheet > b->n) return -1;
+    const sheet_t *s = &b->sheets[sheet - 1];
+    int mc = 0, mr = 0;
+    for (size_t i = 0; i < s->n; i++) {
+        if (s->cells[i].col > mc) mc = s->cells[i].col;
+        if (s->cells[i].row > mr) mr = s->cells[i].row;
+    }
+    if (max_col) *max_col = mc;
+    if (max_row) *max_row = mr;
+    return 0;
+}
+
 int wubucell_get(const wubucell_book *b, int sheet, int col, int row,
                  wubucell_ckind *kind, const char **text, double *num, double *cached) {
     if (!b) return -1;

@@ -109,7 +109,7 @@ add_library(wubuword_app OBJECT
 target_include_directories(wubuword_app PRIVATE src/wubuoxml src/wubuxml apps/wubuword)
 target_link_libraries(wubuword_app PRIVATE wubuoxml wubuxml)
 
-add_library(wubucell_app OBJECT apps/wubucell/main.c apps/wubucell/cell_model.c apps/wubucell/cell_eval.c apps/wubucell/cell_io.c apps/wubucell/style.c apps/wubucell/cell_read.c)
+add_library(wubucell_app OBJECT apps/wubucell/main.c apps/wubucell/cell_model.c apps/wubucell/cell_eval.c apps/wubucell/cell_io.c apps/wubucell/style.c apps/wubucell/cell_read.c apps/wubucell/cell_csv.c)
 target_include_directories(wubucell_app PRIVATE src/wubuoxml src/wubuxml apps/wubucell src/wubuformula)
 target_link_libraries(wubucell_app PRIVATE wubuoxml wubuxml wubuformula)
 
@@ -124,6 +124,11 @@ target_link_libraries(wuburead_app PRIVATE wubuoxml)
 add_library(wubuedit_app OBJECT apps/wubuedit/edit.c apps/wubuedit/docmodel.c)
 target_include_directories(wubuedit_app PRIVATE src/wubuoxml src/wubuxml apps/wubuword apps/wubucell apps/wubushow)
 target_link_libraries(wubuedit_app PRIVATE wubuoxml wubuword_app wubucell_app wubushow_app)
+
+# wubudoc: Markdown + HTML serializers over the document model (docx <-> md/html)
+add_library(wubudoc_app OBJECT apps/wubudoc/doc_md.c)
+target_include_directories(wubudoc_app PRIVATE src/wubuoxml src/wubuxml apps/wubuword apps/wubuedit apps/wubudoc)
+target_link_libraries(wubudoc_app PRIVATE wubuoxml wubuxml)
 
 # --- standalone executables ---
 add_executable(wubuword $<TARGET_OBJECTS:wubuword_app> apps/wubuword/entry.c)
@@ -228,3 +233,13 @@ add_executable(test_cell_cycle tests/test_cell_cycle.c)
 target_link_libraries(test_cell_cycle PRIVATE wubucell_app wubuformula)
 target_include_directories(test_cell_cycle PRIVATE apps/wubucell src/wubuformula src/wubuformula/functions)
 add_test(NAME cell_cycle COMMAND test_cell_cycle)
+
+add_executable(test_csv tests/test_csv.c)
+target_link_libraries(test_csv PRIVATE wubucell_app wubuoxml wubuxml wubuformula)
+target_include_directories(test_csv PRIVATE apps/wubucell src/wubuoxml src/wubuxml src/wubuformula src/wubuformula/functions)
+add_test(NAME csv COMMAND test_csv)
+
+add_executable(test_md tests/test_md.c $<TARGET_OBJECTS:wubudoc_app>)
+target_link_libraries(test_md PRIVATE wubuword_app wubuedit_app wubuoxml wubuxml wubucell_app wubushow_app wubuformula)
+target_include_directories(test_md PRIVATE apps/wubudoc apps/wubuword apps/wubuedit src/wubuoxml src/wubuxml)
+add_test(NAME md COMMAND test_md)

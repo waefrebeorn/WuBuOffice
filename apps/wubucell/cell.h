@@ -56,6 +56,11 @@ void wubucell_use_shared_strings(wubucell_book *b, int enable);
 typedef enum { WUBUCELL_STR, WUBUCELL_NUM, WUBUCELL_FORM } wubucell_ckind;
 
 int  wubucell_sheet_count(const wubucell_book *b);
+/* Name of a 1-based sheet index (internal storage; NULL if out of range). */
+const char *wubucell_sheet_name(const wubucell_book *b, int sheet);
+/* Extent of a 1-based sheet: the max col/row that hold a cell (0 if empty).
+ * Returns 0 on success, non-zero if the sheet index is out of range. */
+int  wubucell_sheet_dims(const wubucell_book *b, int sheet, int *max_col, int *max_row);
 /* Cell lookup by 1-based sheet/col/row. Returns 0 if a cell exists there
  * (filling *kind, *text, *num, *cached), non-zero if the slot is empty.
  * `text` points at internal storage and is valid until the book is freed. */
