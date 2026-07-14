@@ -119,16 +119,21 @@ static int on_event(wubuxml_event evt, const wubuxml_info *info, void *user) {
             row = atoi(p);
             sheet_t *sh = cell_book_sheet(st->book, st->sheet_idx);
             if (sh) {
-                if (strcmp(st->cell_t, "s") == 0 && st->vbuf) {
+                int have_v = (st->v_len > 0);   /* <v> present AND non-empty */
+                int have_f = (st->f_len > 0);   /* <f> present AND non-empty */
+                if (strcmp(st->cell_t, "s") == 0 && have_v) {
                     int idx = atoi(st->vbuf);
                     const char *s = (idx >= 0 && (size_t)idx < st->sst->n) ? st->sst->e[idx].s : "";
                     wubucell_cell_s(st->book, st->sheet_idx, col, row, s);
                 } else if (strcmp(st->cell_t, "inlineStr") == 0 || strcmp(st->cell_t, "str") == 0 || st->in_is) {
-                    wubucell_cell_s(st->book, st->sheet_idx, col, row, st->vbuf ? st->vbuf : "");
-                } else if (st->fbuf && st->fbuf[0]) {
-                    double cached = st->vbuf ? atof(st->vbuf) : 0.0;
+                    wubucell_cell_s(st->book, st->sheet_idx, col, row, have_v ? st->vbuf : "");
+                } else if (have_f) {
+                    /* Formula cell. Foreign producers (openpyxl) often omit the
+                     * cached <v>; store what we have and let cell_eval_all()
+                     * recompute the real result after the whole book loads. */
+                    double cached = have_v ? atof(st->vbuf) : 0.0;
                     wubucell_cell_f(st->book, st->sheet_idx, col, row, st->fbuf, cached);
-                } else if (st->vbuf && st->vbuf[0]) {
+                } else if (have_v) {
                     wubucell_cell_n(st->book, st->sheet_idx, col, row, atof(st->vbuf));
                 }
             }
@@ -276,6 +281,13 @@ int wubucell_read(const char *path, wubucell_book **out) {
     /* free shared-string table */
     for (size_t i = 0; i < sst.n; i++) free(sst.e[i].s);
     free(sst.e);
+
+    /* Recompute formula results. Foreign producers (openpyxl, LibreOffice in
+     * some modes) omit or blank the cached <v> for formula cells; evaluating
+     * through our own engine gives correct values instead of trusting theirs.
+     * This is "control of destiny": our read of a formula never depends on the
+     * other tool having written a cache. */
+    cell_eval_all(b);
 
     wubuoxml_free(&pkg);
     free(data);

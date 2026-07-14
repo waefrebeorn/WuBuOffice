@@ -211,6 +211,14 @@ target_include_directories(test_conformance PRIVATE src/wubuoxml src/wubuxml app
 target_compile_definitions(test_conformance PRIVATE CONFORMANCE_SCRIPT="${CMAKE_CURRENT_SOURCE_DIR}/tests/conformance/validate.py")
 add_test(NAME conformance COMMAND test_conformance)
 
+# Robustness gate: read files produced by INDEPENDENT tools (openpyxl,
+# python-pptx). SKIPs cleanly if those optional libs are absent.
+add_executable(test_foreign tests/test_foreign.c)
+target_link_libraries(test_foreign PRIVATE wubuoxml wubuword_app wubucell_app wubushow_app)
+target_include_directories(test_foreign PRIVATE src/wubuoxml src/wubuxml apps/wubuword apps/wubucell apps/wubushow)
+target_compile_definitions(test_foreign PRIVATE FOREIGN_SCRIPT="${CMAKE_CURRENT_SOURCE_DIR}/tests/conformance/produce_foreign.py")
+add_test(NAME foreign_read COMMAND test_foreign)
+
 add_executable(test_cell_read tests/test_cell_read.c)
 target_link_libraries(test_cell_read PRIVATE wubucell_app wubuoxml wubuxml wubuformula)
 target_include_directories(test_cell_read PRIVATE apps/wubucell src/wubuoxml src/wubuxml src/wubuformula src/wubuformula/functions)

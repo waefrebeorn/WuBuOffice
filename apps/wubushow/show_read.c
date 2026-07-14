@@ -110,12 +110,26 @@ static int slide_on_event(wubuxml_event evt, const wubuxml_info *info, void *use
 
     if (evt == WUBUXML_EVT_START) {
         if (strcmp(name, "p:cNvPr") == 0) {
+            /* Fallback signal: our own writer names the title shape "Title"
+             * (with an empty <p:nvPr/>, no placeholder). Match a "Title"
+             * prefix so producer variants like "Title 1" are caught too. */
             for (int a = 0; a < info->attr_count; a++) {
                 if (strcmp(info->attr_name[a], "name") == 0) {
-                    if (strcmp(info->attr_val[a], "Title") == 0) st->shape = SP_TITLE;
+                    if (strncmp(info->attr_val[a], "Title", 5) == 0) st->shape = SP_TITLE;
                     else st->shape = SP_BODY;   /* any non-title text shape is body */
                 }
             }
+        } else if (strcmp(name, "p:ph") == 0) {
+            /* Authoritative signal (foreign producers: python-pptx, PowerPoint,
+             * LibreOffice): the placeholder type. type="title"/"ctrTitle" is the
+             * slide title; anything else (body, subTitle, idx-only) is body. */
+            const char *type = NULL;
+            for (int a = 0; a < info->attr_count; a++)
+                if (strcmp(info->attr_name[a], "type") == 0) type = info->attr_val[a];
+            if (type && (strcmp(type, "title") == 0 || strcmp(type, "ctrTitle") == 0))
+                st->shape = SP_TITLE;
+            else
+                st->shape = SP_BODY;
         } else if (strcmp(name, "a:t") == 0) {
             st->in_t = 1;
         }
