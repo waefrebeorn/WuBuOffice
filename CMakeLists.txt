@@ -14,6 +14,15 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 add_compile_options(-Wall -Wextra -Wpedantic -Wno-unused-parameter)
 
+# Optional AddressSanitizer + UndefinedBehaviorSanitizer build. Enables the
+# leak/UB gate used by the CI "sanitizer" job. Off by default so the normal
+# build stays fast and dependency-free.
+option(WITH_SANITIZER "Build with -fsanitize=address,undefined (leak/UB gate)" OFF)
+if(WITH_SANITIZER)
+  add_compile_options(-fsanitize=address,undefined -fno-sanitize-recover=all -g -O1)
+  add_link_options(-fsanitize=address,undefined -fno-sanitize-recover=all)
+endif()
+
 # --- wubuzip: from-scratch ZIP + DEFLATE (reader and writer) ---
 add_library(wubuzip STATIC
   src/wubuzip/crc.c
