@@ -34,6 +34,11 @@ int wubudoc_write_md(const dm_doc *d, const char *path);
 /* Export a parsed document model to a standalone HTML file. Returns 0 on ok. */
 int wubudoc_write_html(const dm_doc *d, const char *path);
 
+/* Render just the <body> inner (X)HTML markup for `d` into a fresh malloc'd
+ * string (caller frees). `xhtml` non-zero => XML-conformant self-closing tags
+ * for EPUB. Shared by the .html writer and the EPUB packager. */
+char *wubudoc_render_html_body(const dm_doc *d, int xhtml);
+
 #ifdef __cplusplus
 }
 #endif

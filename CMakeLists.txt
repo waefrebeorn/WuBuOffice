@@ -130,12 +130,12 @@ target_include_directories(wubuedit_app PRIVATE src/wubuoxml src/wubuxml apps/wu
 target_link_libraries(wubuedit_app PRIVATE wubuoxml wubuword_app wubucell_app wubushow_app)
 
 # wubudoc: Markdown + HTML + RTF + JSON serializers over all models
-add_library(wubudoc_app OBJECT apps/wubudoc/doc_md.c apps/wubudoc/doc_rtf.c apps/wubudoc/model_json.c)
-target_include_directories(wubudoc_app PRIVATE src/wubuoxml src/wubuxml apps/wubuword apps/wubuedit apps/wubudoc apps/wubucell apps/wubushow)
-target_link_libraries(wubudoc_app PRIVATE wubuoxml wubuxml)
+add_library(wubudoc_app OBJECT apps/wubudoc/doc_md.c apps/wubudoc/doc_rtf.c apps/wubudoc/model_json.c apps/wubudoc/epub.c)
+target_include_directories(wubudoc_app PRIVATE src/wubuoxml src/wubuxml src/wubuzip apps/wubuword apps/wubuedit apps/wubudoc apps/wubucell apps/wubushow)
+target_link_libraries(wubudoc_app PRIVATE wubuoxml wubuxml wubuzip)
 
 # wubuodf: OpenDocument (odt/ods/odp) read + write over the same three models
-add_library(wubuodf_app OBJECT apps/wubuodf/odf_pkg.c apps/wubuodf/odf_text.c apps/wubuodf/odf_sheet.c apps/wubuodf/odf_pres.c)
+add_library(wubuodf_app OBJECT apps/wubuodf/odf_pkg.c apps/wubuodf/odf_body.c apps/wubuodf/odf_text.c apps/wubuodf/odf_sheet.c apps/wubuodf/odf_pres.c apps/wubuodf/odf_flat.c)
 target_include_directories(wubuodf_app PRIVATE src/wubuoxml src/wubuxml src/wubuzip apps/wubuword apps/wubuedit apps/wubucell apps/wubushow apps/wubuodf)
 target_link_libraries(wubuodf_app PRIVATE wubuoxml wubuxml wubuzip)
 
@@ -301,3 +301,14 @@ target_link_libraries(test_legacy_pdf PRIVATE wubucfb wubuoxml wubuxml wubuzip w
 target_include_directories(test_legacy_pdf PRIVATE apps/wubulegacy apps/wubupdf apps/wubucell apps/wubushow apps/wubuedit src/wubucfb src/wubuoxml src/wubuxml)
 target_compile_definitions(test_legacy_pdf PRIVATE LEGACY_ORACLE="${CMAKE_CURRENT_SOURCE_DIR}/tests/conformance/legacy_oracle.py")
 add_test(NAME legacy_pdf COMMAND test_legacy_pdf)
+
+# Flat ODF (.fodt/.fods/.fodp) round trips + EPUB writer, validated by a stdlib
+# XML oracle (flat) and EbookLib (epub, SKIPs cleanly if absent).
+add_executable(test_flat_epub tests/test_flat_epub.c
+  $<TARGET_OBJECTS:wubuodf_app> $<TARGET_OBJECTS:wubudoc_app>
+  $<TARGET_OBJECTS:wubucell_app> $<TARGET_OBJECTS:wubushow_app>
+  $<TARGET_OBJECTS:wubuword_app> $<TARGET_OBJECTS:wubuedit_app>)
+target_link_libraries(test_flat_epub PRIVATE wubuoxml wubuxml wubuzip wubuformula)
+target_include_directories(test_flat_epub PRIVATE apps/wubuodf apps/wubudoc apps/wubucell apps/wubushow apps/wubuword apps/wubuedit src/wubuoxml src/wubuxml src/wubuzip)
+target_compile_definitions(test_flat_epub PRIVATE FLAT_EPUB_ORACLE="${CMAKE_CURRENT_SOURCE_DIR}/tests/conformance/flat_epub_oracle.py")
+add_test(NAME flat_epub COMMAND test_flat_epub)

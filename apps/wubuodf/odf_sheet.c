@@ -1,7 +1,8 @@
 /* odf_sheet.c -- OpenDocument Spreadsheet (.ods) writer + reader. See odf.h.
- * Clean-room C11. Model: wubucell_book. */
+ * Clean-room C11. Model: wubucell_book. Body XML from shared odf_body. */
 
 #include "odf.h"
+#include "odf_body.h"
 #include "../../src/wubuxml/parser.h"
 #include "../../src/wubuoxml/reader.h"
 
@@ -9,76 +10,18 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* ---- growable buffer + escaping ---- */
-typedef struct { char *s; size_t n, cap; } sbuf;
-static void sb_putn(sbuf *b, const char *p, size_t n) {
-    if (b->n + n + 1 > b->cap) { while (b->n + n + 1 > b->cap) b->cap = b->cap ? b->cap * 2 : 1024; b->s = realloc(b->s, b->cap); }
-    memcpy(b->s + b->n, p, n); b->n += n; b->s[b->n] = '\0';
-}
-static void sb_puts(sbuf *b, const char *s) { sb_putn(b, s, strlen(s)); }
-static void sb_esc(sbuf *b, const char *s) {
-    for (const char *p = s ? s : ""; *p; p++) {
-        switch (*p) {
-            case '&': sb_puts(b, "&amp;"); break;
-            case '<': sb_puts(b, "&lt;"); break;
-            case '>': sb_puts(b, "&gt;"); break;
-            default: sb_putn(b, p, 1);
-        }
-    }
-}
-
 /* ---- writer ---- */
 
 int wubuodf_write_ods(const wubucell_book *bk, const char *path) {
     if (!bk) return -1;
-    sbuf b = {0};
-    sb_puts(&b,
+    odf_sbuf b = {0};
+    odf_sb_puts(&b,
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-        "<office:document-content "
-        "xmlns:office=\"urn:oasis:names:tc:opendocument:xmlns:office:1.0\" "
-        "xmlns:table=\"urn:oasis:names:tc:opendocument:xmlns:table:1.0\" "
-        "xmlns:text=\"urn:oasis:names:tc:opendocument:xmlns:text:1.0\" "
-        "office:version=\"1.3\">\n"
-        "<office:body><office:spreadsheet>\n");
-
-    int ns = wubucell_sheet_count(bk);
-    for (int s = 1; s <= ns; s++) {
-        sb_puts(&b, "<table:table table:name=\"");
-        sb_esc(&b, wubucell_sheet_name(bk, s));
-        sb_puts(&b, "\">\n");
-        int mc = 0, mr = 0; wubucell_sheet_dims(bk, s, &mc, &mr);
-        char col[96];
-        snprintf(col, sizeof col, "<table:table-column table:number-columns-repeated=\"%d\"/>\n", mc > 0 ? mc : 1);
-        sb_puts(&b, col);
-        for (int r = 1; r <= mr; r++) {
-            sb_puts(&b, "<table:table-row>\n");
-            for (int c = 1; c <= mc; c++) {
-                wubucell_ckind k; const char *t = NULL; double num = 0, cached = 0;
-                if (wubucell_get(bk, s, c, r, &k, &t, &num, &cached) != 0) {
-                    sb_puts(&b, "<table:table-cell/>\n");
-                    continue;
-                }
-                char buf[128];
-                if (k == WUBUCELL_STR) {
-                    sb_puts(&b, "<table:table-cell office:value-type=\"string\"><text:p>");
-                    sb_esc(&b, t ? t : "");
-                    sb_puts(&b, "</text:p></table:table-cell>\n");
-                } else if (k == WUBUCELL_NUM) {
-                    snprintf(buf, sizeof buf, "<table:table-cell office:value-type=\"float\" office:value=\"%g\"><text:p>%g</text:p></table:table-cell>\n", num, num);
-                    sb_puts(&b, buf);
-                } else { /* formula: ODF prefixes with "of:=" */
-                    sb_puts(&b, "<table:table-cell office:value-type=\"float\" table:formula=\"of:=");
-                    sb_esc(&b, t ? t : "");
-                    snprintf(buf, sizeof buf, "\" office:value=\"%g\"><text:p>%g</text:p></table:table-cell>\n", cached, cached);
-                    sb_puts(&b, buf);
-                }
-            }
-            sb_puts(&b, "</table:table-row>\n");
-        }
-        sb_puts(&b, "</table:table>\n");
-    }
-
-    sb_puts(&b, "</office:spreadsheet></office:body>\n</office:document-content>\n");
+        "<office:document-content ");
+    odf_sb_puts(&b, WUBUODF_NS_ALL);
+    odf_sb_puts(&b, " office:version=\"1.3\">\n");
+    wubuodf_emit_sheet_body(&b, bk);
+    odf_sb_puts(&b, "</office:document-content>\n");
     int rc = wubuodf_assemble(path, "application/vnd.oasis.opendocument.spreadsheet", b.s, b.n);
     free(b.s);
     return rc;
@@ -176,14 +119,20 @@ int wubuodf_read_ods(const char *path, wubucell_book **out) {
     const wubuoxml_part *content = wubuoxml_part_find(&pkg, "content.xml");
     int rc = -1;
     wubucell_book *bk = wubucell_create();
-    if (content && bk) {
-        ods_state st; memset(&st, 0, sizeof st);
-        st.book = bk;
-        rc = wubuxml_parse(content->bytes, content->len, ods_ev, &st);
-        free(st.txt); free(st.formula);
-    }
+    if (content && bk) rc = wubuodf_parse_sheet_xml(content->bytes, content->len, bk);
     wubuoxml_free(&pkg);
     free(data);
     if (rc == 0) *out = bk; else wubucell_free(bk);
+    return rc;
+}
+
+/* Shared XML-bytes entry: run the ODS SAX handler over `bytes` into `bk`.
+ * Used by the packaged reader (content.xml) and the flat .fods reader. */
+int wubuodf_parse_sheet_xml(const uint8_t *bytes, size_t len, wubucell_book *bk) {
+    if (!bk || !bytes) return -1;
+    ods_state st; memset(&st, 0, sizeof st);
+    st.book = bk;
+    int rc = wubuxml_parse(bytes, len, ods_ev, &st);
+    free(st.txt); free(st.formula);
     return rc;
 }

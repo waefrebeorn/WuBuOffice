@@ -24,6 +24,7 @@ Legend: ✅ done · 🔨 in progress · ⬜ planned · ⭕ out of scope (for now
 | HTML | `.html` | ⬜ | ✅ | Semantic HTML5 from the doc model (h1-3, p, strong, table). |
 | Rich Text Format | `.rtf` | ⬜ | ✅ | RTF 1.x from doc model: headings, bold, tables, UTF-8 via \uN escapes. |
 | JSON | `.json` | ⬜ | ✅ | Lossless JSON of all three models (doc/workbook/presentation). |
+| EPUB (source) | `.epub` | ⬜ | — | Write-only for now; readers reuse the doc model + XHTML. |
 
 ## Tier 2 — OpenDocument (ODF / ISO 26300)
 
@@ -32,7 +33,7 @@ Legend: ✅ done · 🔨 in progress · ⬜ planned · ⭕ out of scope (for now
 | OpenDocument Text | `.odt` | ✅ | ✅ | ZIP + `content.xml`; `text:p`, `text:h`, tables. Validated by odfpy. |
 | OpenDocument Spreadsheet | `.ods` | ✅ | ✅ | `table:table` / `table:table-row` / `table:table-cell`. Validated by odfpy. |
 | OpenDocument Presentation | `.odp` | ✅ | ✅ | `draw:page` + `draw:frame`/`text:p`. Validated by odfpy. |
-| OpenDocument Flat XML | `.fodt/.fods/.fodp` | ⬜ | ⬜ | Single-file XML variants. |
+| OpenDocument Flat XML | `.fodt/.fods/.fodp` | ✅ | ✅ | Single-file `<office:document>` XML: same body emitters + SAX handlers as the packaged formats (zero duplicated logic). Validated as well-formed `office:document` with correct inner root + text. |
 
 ## Tier 3 — Legacy binary (hard; MS-CFB / BIFF)
 
@@ -51,7 +52,7 @@ Microsoft binaries. All three legacy readers sit on it.
 | Format | Ext | Read | Write | Notes |
 |--------|-----|:----:|:-----:|-------|
 | PDF | `.pdf` | ⭕ | ✅ | `src/wubupdf`-style writer over `dm_doc`: PDF/1.7, Helvetica/Helvetica-Bold with AFM metrics, WinAnsi encoding, word-wrap + auto-pagination, headings/bold/tables. Validated by pypdf + pdfminer. |
-| EPUB | `.epub` | ⬜ | ⬜ | ZIP + XHTML; reuses HTML export + OPF packaging. |
+| EPUB | `.epub` | ⭕ | ✅ | EPUB 3 (+ EPUB2 NCX) over `dm_doc`: ZIP container (`mimetype` stored first), XHTML chapters split at H1/Title, OPF package + nav + toc.ncx. Reuses `wubuzip` + the doc-model HTML body renderer. Validated by EbookLib. |
 | Plain text | `.txt` | ✅* | ⬜ | *extraction exists via wuburead; add clean writer. |
 
 ## Unified conversion
@@ -59,9 +60,9 @@ Microsoft binaries. All three legacy readers sit on it.
 `wubuoffice convert <in> <out>` bridges **any** supported format to **any**
 other. Three canonical models are the interchange pivot:
 
-- **TEXT** (`dm_doc`) ← docx / md / html / rtf / odt / **doc** · → docx / md / html / rtf / odt / **pdf**
-- **SHEET** (`wubucell_book`) ← xlsx / csv / tsv / ods / **xls**
-- **SHOW** (`wubushow_pres`) ← pptx / odp / **ppt**
+- **TEXT** (`dm_doc`) ← docx / md / html / rtf / odt / fodt / **doc** · → docx / md / html / rtf / odt / fodt / **pdf** / **epub**
+- **SHEET** (`wubucell_book`) ← xlsx / csv / tsv / ods / fods / **xls** · → xlsx / csv / tsv / ods / fods
+- **SHOW** (`wubushow_pres`) ← pptx / odp / fodp / **ppt** · → pptx / odp / fodp
 
 Cross-family bridges: sheet→text (table), show→text (title + bullet body),
 text→sheet (flatten), text→show (heading per slide). JSON dumps any model.
@@ -71,9 +72,10 @@ text→sheet (flatten), text→show (heading per slide). JSON dumps any model.
 - `wubuzip` — ZIP container for OOXML, ODF, EPUB.
 - `wubucfb` — MS-CFB / OLE2 container behind legacy `.doc` / `.xls` / `.ppt`.
 - `wubuxml` — SAX + writer for all XML-based formats.
-- `wubucell_book` — the spreadsheet model behind xlsx / ods / csv / tsv / xls.
-- doc model (`wubuword`/`docmodel`) — behind docx / odt / md / rtf / html / doc / pdf.
-- `wubushow_pres` — behind pptx / odp / ppt.
+- `wubucell_book` — the spreadsheet model behind xlsx / ods / csv / tsv / xls / fods.
+- doc model (`wubuword`/`docmodel`) — behind docx / odt / fodt / md / rtf / html / doc / pdf / epub.
+- `wubushow_pres` — behind pptx / odp / fodp / ppt.
+- `wubuodf`/`odf_body` — shared body emitters + SAX handlers for packaged AND flat ODF (one source of truth per doc class).
 - `wubupdf` — fixed-layout PDF serializer over the doc model.
 - `wubuconv` — the format-agnostic conversion engine (matrix dispatch).
 

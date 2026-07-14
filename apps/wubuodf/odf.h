@@ -38,6 +38,17 @@ int wubuodf_read_odt(const char *path, dm_doc *out);
 int wubuodf_read_ods(const char *path, wubucell_book **out);
 int wubuodf_read_odp(const char *path, wubushow_pres **out);
 
+/* ---- flat ODF (single self-contained XML: .fodt/.fods/.fodp) ---- */
+/* Same three document models, serialized as one <office:document> XML file
+ * (no ZIP). Writers reuse the shared body emitters; readers reuse the same SAX
+ * handlers as the packaged readers, run directly over the whole file. */
+int wubuodf_write_fodt(const dm_doc *d, const char *path);
+int wubuodf_write_fods(const wubucell_book *b, const char *path);
+int wubuodf_write_fodp(const wubushow_pres *p, const char *path);
+int wubuodf_read_fodt(const char *path, dm_doc *out);
+int wubuodf_read_fods(const char *path, wubucell_book **out);
+int wubuodf_read_fodp(const char *path, wubushow_pres **out);
+
 /* ---- shared package helper (used by all three writers) ---- */
 /* Assemble an ODF zip at `path`: writes mimetype (stored), content.xml
  * (deflated), a minimal styles.xml/meta.xml, and META-INF/manifest.xml.

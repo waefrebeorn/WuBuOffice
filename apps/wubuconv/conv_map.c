@@ -28,6 +28,7 @@
 #include "../wubudoc/doc_md.h"
 #include "../wubudoc/doc_rtf.h"
 #include "../wubudoc/model_json.h"
+#include "../wubudoc/epub.h"
 #include "../wubuodf/odf.h"
 #include "../wubulegacy/legacy.h"
 #include "../wubupdf/pdf.h"
@@ -76,6 +77,7 @@ static int read_text(const char *in, const char *ext, dm_doc *out) {
     }
     if (ext_is(ext, "md"))  return read_md_text(in, out);
     if (ext_is(ext, "odt")) return wubuodf_read_odt(in, out);
+    if (ext_is(ext, "fodt")) return wubuodf_read_fodt(in, out);
     if (ext_is(ext, "doc")) return wubulegacy_read_doc(in, out);
     return -1;
 }
@@ -89,6 +91,7 @@ static int read_sheet(const char *in, const char *ext, wubucell_book **out) {
         return wubucell_read_csv(in, delim, out);
     }
     if (ext_is(ext, "ods"))  return wubuodf_read_ods(in, out);
+    if (ext_is(ext, "fods")) return wubuodf_read_fods(in, out);
     if (ext_is(ext, "xls"))  return wubulegacy_read_xls(in, out);
     return -1;
 }
@@ -98,6 +101,7 @@ static int read_sheet(const char *in, const char *ext, wubucell_book **out) {
 static int read_show(const char *in, const char *ext, wubushow_pres **out) {
     if (ext_is(ext, "pptx")) return wubushow_read(in, out);
     if (ext_is(ext, "odp"))  return wubuodf_read_odp(in, out);
+    if (ext_is(ext, "fodp")) return wubuodf_read_fodp(in, out);
     if (ext_is(ext, "ppt"))  return wubulegacy_read_ppt(in, out);
     return -1;
 }
@@ -113,7 +117,9 @@ static int write_text(const char *out, const char *ext, dm_doc *d) {
     if (ext_is(ext, "html")) return dm_doc_write_html(d, out);
     if (ext_is(ext, "rtf"))  return wubudoc_write_rtf(d, out);
     if (ext_is(ext, "odt"))  return wubuodf_write_odt(d, out);
+    if (ext_is(ext, "fodt")) return wubuodf_write_fodt(d, out);
     if (ext_is(ext, "pdf"))  return wubupdf_write(d, out);
+    if (ext_is(ext, "epub")) return wubudoc_write_epub(d, out);
     if (ext_is(ext, "json")) return wubudoc_write_doc_json(d, out);
     return -1;
 }
@@ -126,6 +132,7 @@ static int write_sheet(const char *out, const char *ext, wubucell_book *b) {
         return wubucell_write_csv(b, 1, delim, out);
     }
     if (ext_is(ext, "ods"))  return wubuodf_write_ods(b, out);
+    if (ext_is(ext, "fods")) return wubuodf_write_fods(b, out);
     if (ext_is(ext, "json")) return wubudoc_write_book_json(b, out);
     return -1;
 }
@@ -134,6 +141,7 @@ static int write_sheet(const char *out, const char *ext, wubucell_book *b) {
 static int write_show(const char *out, const char *ext, wubushow_pres *p) {
     if (ext_is(ext, "pptx")) return wubushow_assemble(p, out);
     if (ext_is(ext, "odp"))  return wubuodf_write_odp(p, out);
+    if (ext_is(ext, "fodp")) return wubuodf_write_fodp(p, out);
     if (ext_is(ext, "json")) return wubudoc_write_pres_json(p, out);
     return -1;
 }
@@ -382,20 +390,22 @@ int wubuconv_convert(const char *in_path, const char *out_path) {
     /* classify families */
     enum { NONE, TEXT, SHEET, SHOW } infam = NONE, outfam = NONE;
     if (ext_is(inext, "docx") || ext_is(inext, "md") || ext_is(inext, "rtf") ||
-        ext_is(inext, "html") || ext_is(inext, "odt") || ext_is(inext, "doc")) infam = TEXT;
+        ext_is(inext, "html") || ext_is(inext, "odt") || ext_is(inext, "fodt") ||
+        ext_is(inext, "doc")) infam = TEXT;
     else if (ext_is(inext, "xlsx") || ext_is(inext, "csv") || ext_is(inext, "tsv") ||
-             ext_is(inext, "ods") || ext_is(inext, "xls")) infam = SHEET;
-    else if (ext_is(inext, "pptx") || ext_is(inext, "odp") || ext_is(inext, "ppt")) infam = SHOW;
+             ext_is(inext, "ods") || ext_is(inext, "fods") || ext_is(inext, "xls")) infam = SHEET;
+    else if (ext_is(inext, "pptx") || ext_is(inext, "odp") || ext_is(inext, "fodp") ||
+             ext_is(inext, "ppt")) infam = SHOW;
 
     if (ext_is(outext, "docx") || ext_is(outext, "md") || ext_is(outext, "html") ||
-        ext_is(outext, "rtf") || ext_is(outext, "odt") || ext_is(outext, "pdf") ||
-        ext_is(outext, "json")) {
+        ext_is(outext, "rtf") || ext_is(outext, "odt") || ext_is(outext, "fodt") ||
+        ext_is(outext, "pdf") || ext_is(outext, "epub") || ext_is(outext, "json")) {
         /* json is emitted in the input family's model (doc/book/pres) */
         if (ext_is(outext, "json")) outfam = infam;
         else outfam = TEXT;
     } else if (ext_is(outext, "xlsx") || ext_is(outext, "csv") || ext_is(outext, "tsv") ||
-               ext_is(outext, "ods")) outfam = SHEET;
-    else if (ext_is(outext, "pptx") || ext_is(outext, "odp")) outfam = SHOW;
+               ext_is(outext, "ods") || ext_is(outext, "fods")) outfam = SHEET;
+    else if (ext_is(outext, "pptx") || ext_is(outext, "odp") || ext_is(outext, "fodp")) outfam = SHOW;
     else outfam = NONE;
 
     int rc = -1;

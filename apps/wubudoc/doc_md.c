@@ -219,62 +219,82 @@ int wubudoc_write_md(const dm_doc *d, const char *path) {
     return 0;
 }
 
-/* ---- HTML export ---- */
+/* ---- HTML / XHTML export ---- */
 
-static void html_escape(FILE *f, const char *s) {
+/* Growable byte buffer for building (X)HTML body markup in memory, so the same
+ * block-walk feeds both the standalone .html writer and the EPUB packager. */
+typedef struct { char *s; size_t n, cap; } hbuf;
+static void hb_putn(hbuf *b, const char *p, size_t n) {
+    if (b->n + n + 1 > b->cap) { while (b->n + n + 1 > b->cap) b->cap = b->cap ? b->cap * 2 : 1024; b->s = realloc(b->s, b->cap); }
+    memcpy(b->s + b->n, p, n); b->n += n; b->s[b->n] = '\0';
+}
+static void hb_puts(hbuf *b, const char *s) { hb_putn(b, s, strlen(s)); }
+static void hb_esc(hbuf *b, const char *s) {
     for (; s && *s; s++) {
         switch (*s) {
-            case '&': fputs("&amp;", f); break;
-            case '<': fputs("&lt;", f); break;
-            case '>': fputs("&gt;", f); break;
-            case '"': fputs("&quot;", f); break;
-            default: fputc(*s, f);
+            case '&': hb_puts(b, "&amp;"); break;
+            case '<': hb_puts(b, "&lt;"); break;
+            case '>': hb_puts(b, "&gt;"); break;
+            case '"': hb_puts(b, "&quot;"); break;
+            default: hb_putn(b, s, 1);
         }
     }
 }
 
-int wubudoc_write_html(const dm_doc *d, const char *path) {
-    if (!d) return -1;
-    FILE *f = fopen(path, "wb");
-    if (!f) return -1;
-
-    fputs("<!DOCTYPE html>\n<html>\n<head>\n<meta charset=\"utf-8\">\n", f);
-    fputs("<title>WuBuOffice document</title>\n</head>\n<body>\n", f);
-
+/* Render just the <body> inner markup for `d` into a fresh malloc'd string.
+ * `xhtml` non-zero closes void/empty tags XML-style (needed for EPUB's XHTML).
+ * Returns NULL on failure; caller frees. Single source of truth for the block
+ * walk shared by wubudoc_write_html and wubudoc_write_epub. */
+char *wubudoc_render_html_body(const dm_doc *d, int xhtml) {
+    if (!d) return NULL;
+    hbuf b = {0};
+    const char *tbl_open = xhtml ? "<table border=\"1\">\n" : "<table border=\"1\">\n";
     for (size_t i = 0; i < d->n; i++) {
-        const dm_block *b = &d->blocks[i];
-        if (b->kind == DM_BLOCK_PARA) {
-            const char *style = b->para.style;
-            const char *txt = b->para.text ? b->para.text : "";
+        const dm_block *bl = &d->blocks[i];
+        if (bl->kind == DM_BLOCK_PARA) {
+            const char *style = bl->para.style;
+            const char *txt = bl->para.text ? bl->para.text : "";
             const char *tag = NULL;
             if (style) {
                 if (strcmp(style, "Heading1") == 0 || strcmp(style, "Title") == 0) tag = "h1";
                 else if (strcmp(style, "Heading2") == 0) tag = "h2";
                 else if (strcmp(style, "Heading3") == 0) tag = "h3";
             }
-            if (tag) { fprintf(f, "<%s>", tag); html_escape(f, txt); fprintf(f, "</%s>\n", tag); }
-            else if (b->para.bold) { fputs("<p><strong>", f); html_escape(f, txt); fputs("</strong></p>\n", f); }
-            else { fputs("<p>", f); html_escape(f, txt); fputs("</p>\n", f); }
+            if (tag) { hb_puts(&b, "<"); hb_puts(&b, tag); hb_puts(&b, ">"); hb_esc(&b, txt); hb_puts(&b, "</"); hb_puts(&b, tag); hb_puts(&b, ">\n"); }
+            else if (bl->para.bold) { hb_puts(&b, "<p><strong>"); hb_esc(&b, txt); hb_puts(&b, "</strong></p>\n"); }
+            else { hb_puts(&b, "<p>"); hb_esc(&b, txt); hb_puts(&b, "</p>\n"); }
         } else {
-            const dm_table *t = &b->table;
-            fputs("<table border=\"1\">\n", f);
+            const dm_table *t = &bl->table;
+            hb_puts(&b, tbl_open);
             for (size_t r = 0; r < t->rows; r++) {
-                fputs("<tr>", f);
+                hb_puts(&b, "<tr>");
                 for (size_t c = 0; c < t->cols; c++) {
                     dm_para *cell = t->cells[r * t->cols + c];
                     const char *cd = (cell && cell->text) ? cell->text : "";
                     int th = (r == 0) || (cell && cell->bold);
-                    fputs(th ? "<th>" : "<td>", f);
-                    html_escape(f, cd);
-                    fputs(th ? "</th>" : "</td>", f);
+                    hb_puts(&b, th ? "<th>" : "<td>");
+                    hb_esc(&b, cd);
+                    hb_puts(&b, th ? "</th>" : "</td>");
                 }
-                fputs("</tr>\n", f);
+                hb_puts(&b, "</tr>\n");
             }
-            fputs("</table>\n", f);
+            hb_puts(&b, "</table>\n");
         }
     }
+    return b.s ? b.s : strdup("");
+}
 
+int wubudoc_write_html(const dm_doc *d, const char *path) {
+    if (!d) return -1;
+    char *body = wubudoc_render_html_body(d, 0);
+    if (!body) return -1;
+    FILE *f = fopen(path, "wb");
+    if (!f) { free(body); return -1; }
+    fputs("<!DOCTYPE html>\n<html>\n<head>\n<meta charset=\"utf-8\">\n", f);
+    fputs("<title>WuBuOffice document</title>\n</head>\n<body>\n", f);
+    fputs(body, f);
     fputs("</body>\n</html>\n", f);
     fclose(f);
+    free(body);
     return 0;
 }

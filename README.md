@@ -25,11 +25,12 @@ runtime dependencies** beyond POSIX. (The only external link is `zlib`, used
 | `wubushow` | ✅ working | PresentationML: multi-slide, title + multi-paragraph body, theme/master/layout |
 | `wubuedit` | ✅ working | **Structure-preserving** round-trip: parses word/document.xml into a model (paragraph style, bold runs, tables) and re-emits it — structure survives the reader+writer loop |
 | `wubudoc` | ✅ working | Markdown (read+write), HTML + RTF export, lossless JSON of all three models |
-| `wubuodf` | ✅ working | **OpenDocument** `.odt` / `.ods` / `.odp` read+write (validated by odfpy) |
-| `wubucfb` | ✅ working | **MS-CFB / OLE2** compound-file container reader (byte-verified vs olefile on real MS binaries) |
+| `wubuodf` | ✅ working | **OpenDocument** `.odt` / `.ods` / `.odp` + flat `.fodt` / `.fods` / `.fodp` read+write (validated by odfpy / stdlib XML) |
+| `wubupdf` | ✅ working | **PDF 1.7** writer over the doc model (pypdf + pdfminer validated) |
+| `wubuzip` | ✅ working | **ZIP container** + DEFLATE (BIT/huffman/fixed/block/inflate), also powers EPUB |
+| `wubudoc` | ✅ working | **EPUB 3** writer over the doc model (EbookLib validated) — chapters split at H1/Title, OPF + nav + NCX |
 | `wubulegacy` | ✅ working | **Legacy binary** readers: `.xls` (BIFF8, validated by xlwt/xlrd), `.doc` (FIB + piece table), `.ppt` (record atoms) |
-| `wubupdf` | ✅ working | **PDF/1.7 writer** over the doc model: Helvetica AFM metrics, WinAnsi, word-wrap + pagination (validated by pypdf + pdfminer) |
-| `wubuconv` | ✅ working | **Unified conversion**: any supported format → any other (docx/xlsx/pptx/csv/tsv/md/html/rtf/odt/ods/odp/doc/xls/ppt/pdf/json) |
+| `wubuconv` | ✅ working | **Unified conversion**: any supported format → any other (docx/xlsx/pptx/csv/tsv/md/html/rtf/odt/ods/odp/fodt/fods/fodp/doc/xls/ppt/pdf/epub/json) |
 
 All three writers emit files that open in Microsoft Word / Excel /
 PowerPoint and LibreOffice. The reader decodes **real deflate-compressed
@@ -63,8 +64,8 @@ Requires a C11 compiler (tested: gcc 13.3, clang). POSIX `open_memstream` /
 # standalone binaries also exist: wubuword, wubucell, wubushow, wuburead, wubuedit
 ```
 
-Supported by `convert` — in: `docx xlsx pptx csv tsv md odt ods odp doc xls ppt`;
-out: `docx xlsx pptx csv tsv md html rtf odt ods odp pdf json`.
+Supported by `convert` — in: `docx xlsx pptx csv tsv md odt ods odp fodt fods fodp doc xls ppt`;
+out: `docx xlsx pptx csv tsv md html rtf odt ods odp fodt fods fodp pdf epub json`.
 Cross-family bridges: sheet→doc (as a table), show→doc (title + bullet body),
 text→sheet (flatten), text→show (one slide per heading). JSON dumps any model.
 
@@ -80,14 +81,14 @@ apps/wubucell/      SpreadsheetML builder + .xlsx assembler
 apps/wubushow/      PresentationML builder + .pptx assembler
 apps/wuburead/      OPC reader CLI
 apps/wubuedit/      round-trip re-writer
-apps/wubudoc/       Markdown + HTML + RTF + JSON serializers over all models
-apps/wubuodf/       OpenDocument (.odt/.ods/.odp) read + write
+apps/wubudoc/       Markdown + HTML + RTF + JSON serializers over all models; EPUB 3 writer
+apps/wubuodf/       OpenDocument (.odt/.ods/.odp) + flat (.fodt/.fods/.fodp) read+write; odf_body shared emitters/SAX
 apps/wubulegacy/    legacy binary readers (.xls/.doc/.ppt) over MS-CFB
 apps/wubupdf/       PDF/1.7 writer over the doc model
 apps/wubuconv/      unified format conversion across the full matrix
 apps/wubuoffice/    unified CLI dispatch (word/cell/show/read/edit/convert)
 docs/               ARCHITECTURE.md, SLERM.md, FORMATS.md
-tests/              ctest suite (crc, inflate, reader, edit, csv, md, rtf/json, odf, convert, foreign, legacy_pdf)
+tests/              ctest suite (crc, inflate, reader, edit, csv, md, rtf/json, odf, convert, foreign, legacy_pdf, flat_epub)
 ```
 
 See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the module boundaries and

@@ -1,7 +1,8 @@
 /* odf_pres.c -- OpenDocument Presentation (.odp) writer + reader. See odf.h.
- * Clean-room C11. Model: wubushow_pres. */
+ * Clean-room C11. Model: wubushow_pres. Body XML from shared odf_body. */
 
 #include "odf.h"
+#include "odf_body.h"
 #include "../../src/wubuxml/parser.h"
 #include "../../src/wubuoxml/reader.h"
 
@@ -9,83 +10,16 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct { char *s; size_t n, cap; } sbuf;
-static void sb_putn(sbuf *b, const char *p, size_t n) {
-    if (b->n + n + 1 > b->cap) { while (b->n + n + 1 > b->cap) b->cap = b->cap ? b->cap * 2 : 1024; b->s = realloc(b->s, b->cap); }
-    memcpy(b->s + b->n, p, n); b->n += n; b->s[b->n] = '\0';
-}
-static void sb_puts(sbuf *b, const char *s) { sb_putn(b, s, strlen(s)); }
-static void sb_esc(sbuf *b, const char *s) {
-    for (const char *p = s ? s : ""; *p; p++) {
-        switch (*p) {
-            case '&': sb_puts(b, "&amp;"); break;
-            case '<': sb_puts(b, "&lt;"); break;
-            case '>': sb_puts(b, "&gt;"); break;
-            default: sb_putn(b, p, 1);
-        }
-    }
-}
-
-/* Emit each line of `body` as its own text:p inside the frame. */
-static void emit_body(sbuf *b, const char *body) {
-    const char *p = body ? body : "";
-    const char *start = p;
-    for (;; p++) {
-        if (*p == '\n' || *p == '\0') {
-            sb_puts(b, "<text:p>");
-            /* escape [start,p) */
-            for (const char *q = start; q < p; q++) {
-                switch (*q) {
-                    case '&': sb_puts(b, "&amp;"); break;
-                    case '<': sb_puts(b, "&lt;"); break;
-                    case '>': sb_puts(b, "&gt;"); break;
-                    default: sb_putn(b, q, 1);
-                }
-            }
-            sb_puts(b, "</text:p>");
-            if (*p == '\0') break;
-            start = p + 1;
-        }
-    }
-}
-
 int wubuodf_write_odp(const wubushow_pres *pres, const char *path) {
     if (!pres) return -1;
-    sbuf b = {0};
-    sb_puts(&b,
+    odf_sbuf b = {0};
+    odf_sb_puts(&b,
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-        "<office:document-content "
-        "xmlns:office=\"urn:oasis:names:tc:opendocument:xmlns:office:1.0\" "
-        "xmlns:draw=\"urn:oasis:names:tc:opendocument:xmlns:drawing:1.0\" "
-        "xmlns:presentation=\"urn:oasis:names:tc:opendocument:xmlns:presentation:1.0\" "
-        "xmlns:text=\"urn:oasis:names:tc:opendocument:xmlns:text:1.0\" "
-        "xmlns:svg=\"urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0\" "
-        "office:version=\"1.3\">\n"
-        "<office:body><office:presentation>\n");
-
-    int ns = wubushow_slide_count(pres);
-    for (int i = 0; i < ns; i++) {
-        const char *title = NULL, *body = NULL;
-        wubushow_slide_get(pres, i, &title, &body);
-        sb_puts(&b, "<draw:page draw:name=\"");
-        char nm[32]; snprintf(nm, sizeof nm, "Slide%d", i + 1); sb_puts(&b, nm);
-        sb_puts(&b, "\">\n");
-        /* title frame */
-        sb_puts(&b, "<draw:frame presentation:class=\"title\" "
-                    "svg:width=\"20cm\" svg:height=\"3cm\" svg:x=\"2cm\" svg:y=\"1cm\">"
-                    "<draw:text-box><text:p>");
-        sb_esc(&b, title ? title : "");
-        sb_puts(&b, "</text:p></draw:text-box></draw:frame>\n");
-        /* body frame */
-        sb_puts(&b, "<draw:frame presentation:class=\"outline\" "
-                    "svg:width=\"20cm\" svg:height=\"12cm\" svg:x=\"2cm\" svg:y=\"5cm\">"
-                    "<draw:text-box>");
-        emit_body(&b, body);
-        sb_puts(&b, "</draw:text-box></draw:frame>\n");
-        sb_puts(&b, "</draw:page>\n");
-    }
-
-    sb_puts(&b, "</office:presentation></office:body>\n</office:document-content>\n");
+        "<office:document-content ");
+    odf_sb_puts(&b, WUBUODF_NS_ALL);
+    odf_sb_puts(&b, " office:version=\"1.3\">\n");
+    wubuodf_emit_pres_body(&b, pres);
+    odf_sb_puts(&b, "</office:document-content>\n");
     int rc = wubuodf_assemble(path, "application/vnd.oasis.opendocument.presentation", b.s, b.n);
     free(b.s);
     return rc;
@@ -169,14 +103,20 @@ int wubuodf_read_odp(const char *path, wubushow_pres **out) {
     const wubuoxml_part *content = wubuoxml_part_find(&pkg, "content.xml");
     int rc = -1;
     wubushow_pres *pres = wubushow_create();
-    if (content && pres) {
-        odp_state st; memset(&st, 0, sizeof st);
-        st.pres = pres;
-        rc = wubuxml_parse(content->bytes, content->len, odp_ev, &st);
-        free(st.title); free(st.body); free(st.para);
-    }
+    if (content && pres) rc = wubuodf_parse_pres_xml(content->bytes, content->len, pres);
     wubuoxml_free(&pkg);
     free(data);
     if (rc == 0) *out = pres; else wubushow_free(pres);
+    return rc;
+}
+
+/* Shared XML-bytes entry: run the ODP SAX handler over `bytes` into `pres`.
+ * Used by the packaged reader (content.xml) and the flat .fodp reader. */
+int wubuodf_parse_pres_xml(const uint8_t *bytes, size_t len, wubushow_pres *pres) {
+    if (!pres || !bytes) return -1;
+    odp_state st; memset(&st, 0, sizeof st);
+    st.pres = pres;
+    int rc = wubuxml_parse(bytes, len, odp_ev, &st);
+    free(st.title); free(st.body); free(st.para);
     return rc;
 }

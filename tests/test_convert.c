@@ -99,11 +99,28 @@ int main(void) {
         {"/tmp/convtest/in.md",   "/tmp/convtest/m2pptx.pptx"},
         {"/tmp/convtest/in.md",   "/tmp/convtest/m2pdf.pdf"},
         {"/tmp/convtest/in.docx", "/tmp/convtest/d2pdf.pdf"},
+        {"/tmp/convtest/in.docx", "/tmp/convtest/d2fodt.fodt"},
+        {"/tmp/convtest/in.xlsx", "/tmp/convtest/x2fods.fods"},
+        {"/tmp/convtest/in.pptx", "/tmp/convtest/p2fodp.fodp"},
+        {"/tmp/convtest/in.md",   "/tmp/convtest/m2epub.epub"},
         {NULL, NULL}
     };
     for (int i = 0; cross[i].in; i++) {
         if (wubuconv_convert(cross[i].in, cross[i].out) != 0) { printf("FAIL convert %s->%s\n", cross[i].in, cross[i].out); fail = 1; }
         else if (!file_exists(cross[i].out)) { printf("FAIL missing %s\n", cross[i].out); fail = 1; }
+    }
+
+    /* ---- flat-ODF read-back: the .fod? files produced above must re-read ---- */
+    struct { const char *in, *out; } flatback[] = {
+        {"/tmp/convtest/d2fodt.fodt", "/tmp/convtest/fodt2md.md"},
+        {"/tmp/convtest/x2fods.fods", "/tmp/convtest/fods2csv.csv"},
+        {"/tmp/convtest/p2fodp.fodp", "/tmp/convtest/fodp2md.md"},
+        {NULL, NULL}
+    };
+    for (int i = 0; flatback[i].in; i++) {
+        if (!file_exists(flatback[i].in)) { printf("FAIL flat source missing %s\n", flatback[i].in); fail = 1; continue; }
+        if (wubuconv_convert(flatback[i].in, flatback[i].out) != 0) { printf("FAIL convert %s->%s\n", flatback[i].in, flatback[i].out); fail = 1; }
+        else if (!file_exists(flatback[i].out)) { printf("FAIL missing %s\n", flatback[i].out); fail = 1; }
     }
 
     /* ---- ODF round trips + odfpy oracle ---- */

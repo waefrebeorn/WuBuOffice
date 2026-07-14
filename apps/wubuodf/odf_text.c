@@ -1,7 +1,9 @@
 /* odf_text.c -- OpenDocument Text (.odt) writer + reader. See odf.h.
- * Clean-room C11. Model: dm_doc. */
+ * Clean-room C11. Model: dm_doc. Body XML is emitted by the shared odf_body
+ * module (single source of truth, also used by the flat .fodt writer). */
 
 #include "odf.h"
+#include "odf_body.h"
 #include "../../src/wubuxml/parser.h"
 #include "../../src/wubuoxml/reader.h"
 
@@ -9,84 +11,18 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* ---- shared: XML escaping into a growable buffer ---- */
-
-typedef struct { char *s; size_t n, cap; } sbuf;
-static void sb_putn(sbuf *b, const char *p, size_t n) {
-    if (b->n + n + 1 > b->cap) { while (b->n + n + 1 > b->cap) b->cap = b->cap ? b->cap * 2 : 1024; b->s = realloc(b->s, b->cap); }
-    memcpy(b->s + b->n, p, n); b->n += n; b->s[b->n] = '\0';
-}
-static void sb_puts(sbuf *b, const char *s) { sb_putn(b, s, strlen(s)); }
-static void sb_esc(sbuf *b, const char *s) {
-    for (const char *p = s ? s : ""; *p; p++) {
-        switch (*p) {
-            case '&': sb_puts(b, "&amp;"); break;
-            case '<': sb_puts(b, "&lt;"); break;
-            case '>': sb_puts(b, "&gt;"); break;
-            default: sb_putn(b, p, 1);
-        }
-    }
-}
-
-/* map a WordprocessingML style name to an ODF outline level (0 = body). */
-static int heading_level(const char *style) {
-    if (!style) return 0;
-    if (strcmp(style, "Title") == 0 || strcmp(style, "Heading1") == 0) return 1;
-    if (strcmp(style, "Heading2") == 0) return 2;
-    if (strcmp(style, "Heading3") == 0) return 3;
-    return 0;
-}
-
 /* ---- writer ---- */
 
 int wubuodf_write_odt(const dm_doc *d, const char *path) {
     if (!d) return -1;
-    sbuf b = {0};
-    sb_puts(&b,
+    odf_sbuf b = {0};
+    odf_sb_puts(&b,
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-        "<office:document-content "
-        "xmlns:office=\"urn:oasis:names:tc:opendocument:xmlns:office:1.0\" "
-        "xmlns:text=\"urn:oasis:names:tc:opendocument:xmlns:text:1.0\" "
-        "xmlns:table=\"urn:oasis:names:tc:opendocument:xmlns:table:1.0\" "
-        "office:version=\"1.3\">\n"
-        "<office:body><office:text>\n");
-
-    for (size_t i = 0; i < d->n; i++) {
-        const dm_block *bl = &d->blocks[i];
-        if (bl->kind == DM_BLOCK_PARA) {
-            int lvl = heading_level(bl->para.style);
-            const char *txt = bl->para.text ? bl->para.text : "";
-            if (lvl) {
-                char tag[64];
-                snprintf(tag, sizeof tag, "<text:h text:outline-level=\"%d\">", lvl);
-                sb_puts(&b, tag); sb_esc(&b, txt); sb_puts(&b, "</text:h>\n");
-            } else {
-                sb_puts(&b, "<text:p>");
-                if (bl->para.bold) { sb_puts(&b, "<text:span text:style-name=\"Bold\">"); sb_esc(&b, txt); sb_puts(&b, "</text:span>"); }
-                else sb_esc(&b, txt);
-                sb_puts(&b, "</text:p>\n");
-            }
-        } else {
-            const dm_table *t = &bl->table;
-            sb_puts(&b, "<table:table>\n");
-            char col[96];
-            snprintf(col, sizeof col, "<table:table-column table:number-columns-repeated=\"%zu\"/>\n", t->cols);
-            sb_puts(&b, col);
-            for (size_t r = 0; r < t->rows; r++) {
-                sb_puts(&b, "<table:table-row>\n");
-                for (size_t c = 0; c < t->cols; c++) {
-                    dm_para *cell = t->cells[r * t->cols + c];
-                    sb_puts(&b, "<table:table-cell office:value-type=\"string\"><text:p>");
-                    sb_esc(&b, (cell && cell->text) ? cell->text : "");
-                    sb_puts(&b, "</text:p></table:table-cell>\n");
-                }
-                sb_puts(&b, "</table:table-row>\n");
-            }
-            sb_puts(&b, "</table:table>\n");
-        }
-    }
-
-    sb_puts(&b, "</office:text></office:body>\n</office:document-content>\n");
+        "<office:document-content ");
+    odf_sb_puts(&b, WUBUODF_NS_ALL);
+    odf_sb_puts(&b, " office:version=\"1.3\">\n");
+    wubuodf_emit_text_body(&b, d);
+    odf_sb_puts(&b, "</office:document-content>\n");
 
     int rc = wubuodf_assemble(path, "application/vnd.oasis.opendocument.text", b.s, b.n);
     free(b.s);
@@ -229,14 +165,20 @@ int wubuodf_read_odt(const char *path, dm_doc *out) {
     if (wubuoxml_read(data, (size_t)sz, &pkg) != 0) { free(data); return -1; }
     const wubuoxml_part *content = wubuoxml_part_find(&pkg, "content.xml");
     int rc = -1;
-    if (content) {
-        odt_state st; memset(&st, 0, sizeof st);
-        st.doc = out;
-        rc = wubuxml_parse(content->bytes, content->len, odt_ev, &st);
-        free(st.txt); free(st.cell_txt);
-        if (st.cells) { for (size_t k = 0; k < st.ncells; k++) free(st.cells[k].text); free(st.cells); }
-    }
+    if (content) rc = wubuodf_parse_text_xml(content->bytes, content->len, out);
     wubuoxml_free(&pkg);
     free(data);
+    return rc;
+}
+
+/* Shared XML-bytes entry: run the ODT SAX handler over `bytes`. Used by both
+ * the packaged reader (content.xml) and the flat .fodt reader (whole file). */
+int wubuodf_parse_text_xml(const uint8_t *bytes, size_t len, dm_doc *out) {
+    if (!out || !bytes) return -1;
+    odt_state st; memset(&st, 0, sizeof st);
+    st.doc = out;
+    int rc = wubuxml_parse(bytes, len, odt_ev, &st);
+    free(st.txt); free(st.cell_txt);
+    if (st.cells) { for (size_t k = 0; k < st.ncells; k++) free(st.cells[k].text); free(st.cells); }
     return rc;
 }
