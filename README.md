@@ -23,7 +23,7 @@ runtime dependencies** beyond POSIX. (The only external link is `zlib`, used
 | `wubuword` | ✅ working | WordprocessingML: headings, bold, tables, `.docx` assembly |
 | `wubucell` | ✅ working | SpreadsheetML: multi-sheet, shared strings, numbers, **formulas**, styles |
 | `wubushow` | ✅ working | PresentationML: multi-slide, title + multi-paragraph body, theme/master/layout |
-| `wubuedit` | ✅ working | Round-trip re-writer: docx in → docx out, text preserved |
+| `wubuedit` | ✅ working | **Structure-preserving** round-trip: parses word/document.xml into a model (paragraph style, bold runs, tables) and re-emits it — structure survives the reader+writer loop |
 
 All three writers emit files that open in Microsoft Word / Excel /
 PowerPoint and LibreOffice. The reader decodes **real deflate-compressed

@@ -121,8 +121,8 @@ add_library(wuburead_app OBJECT apps/wuburead/main.c)
 target_include_directories(wuburead_app PRIVATE src/wubuoxml src/wubuzip src/wubuxml)
 target_link_libraries(wuburead_app PRIVATE wubuoxml)
 
-add_library(wubuedit_app OBJECT apps/wubuedit/edit.c)
-target_include_directories(wubuedit_app PRIVATE src/wubuoxml apps/wubuword)
+add_library(wubuedit_app OBJECT apps/wubuedit/edit.c apps/wubuedit/docmodel.c)
+target_include_directories(wubuedit_app PRIVATE src/wubuoxml src/wubuxml apps/wubuword)
 target_link_libraries(wubuedit_app PRIVATE wubuoxml wubuword_app)
 
 # --- standalone executables ---

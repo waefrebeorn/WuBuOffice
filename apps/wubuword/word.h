@@ -20,8 +20,11 @@ void wubuword_free(wubuword_doc *d);
  * `bold` nonzero makes the run bold. */
 void wubuword_para(wubuword_doc *d, const char *style, int bold, const char *text);
 
-/* Begin/end a table. Call wubuword_cell() between begin and end to fill rows. */
+/* Begin/end a table. Call wubuword_cell() between begin and end to fill rows.
+ * Each row is started with wubuword_row() (call it before the cells of a row;
+ * it closes the previous row if one is open). */
 void wubuword_table_begin(wubuword_doc *d);
+void wubuword_row(wubuword_doc *d);
 void wubuword_cell(wubuword_doc *d, int bold, const char *text);
 void wubuword_table_end(wubuword_doc *d);
 

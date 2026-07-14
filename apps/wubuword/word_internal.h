@@ -14,6 +14,7 @@ struct wubuword_doc {
     FILE *m;          /* memstream we own; closed on render */
     char *buf; size_t len;
     int in_table;
+    int in_tr;        /* inside a <w:tr> (row open, awaiting cells) */
     int opened;       /* body/document opened */
 };
 

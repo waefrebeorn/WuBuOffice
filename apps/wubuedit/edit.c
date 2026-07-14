@@ -1,4 +1,5 @@
 #include "edit.h"
+#include "docmodel.h"
 #include "../wubuoxml/reader.h"
 #include "../wubuoxml/docx_text.h"
 #include "word.h"
@@ -8,10 +9,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* Read `in_path`, pull the document text out of word/document.xml (if any),
- * and write a fresh .docx containing that text as a single body paragraph.
- * This is a real reader->writer round trip that proves the OPC read path and
- * the WordprocessingML write path agree on the content. */
+/* Structure-preserving round-trip: parse word/document.xml into a model, then
+ * re-emit it through the WordprocessingML writer. Paragraph style, bold runs
+ * and tables survive the reader+writer loop (unlike the old text-only path). */
 int wubuedit_roundtrip(const char *in_path, const char *out_path) {
     FILE *f = fopen(in_path, "rb");
     if (!f) { perror("fopen"); return -1; }
@@ -27,47 +27,46 @@ int wubuedit_roundtrip(const char *in_path, const char *out_path) {
         return -1;
     }
 
-    /* Prefer word/document.xml; fall back to the first part that has a <w:t>. */
     const wubuoxml_part *doc = wubuoxml_part_find(&pkg, "word/document.xml");
-    char *txt = NULL;
-    if (doc) {
-        wubuoxml_docx_text(doc->bytes, doc->len, &txt);
-    } else {
-        for (size_t i = 0; i < wubuoxml_part_count(&pkg); i++) {
-            const wubuoxml_part *pt = wubuoxml_part_at(&pkg, i);
-            if (wubuoxml_docx_text(pt->bytes, pt->len, &txt) == 0 && txt && txt[0]) break;
-            free(txt); txt = NULL;
-        }
+    if (!doc) {
+        fprintf(stderr, "wubuedit: no word/document.xml\n");
+        wubuoxml_free(&pkg); free(data);
+        return -1;
     }
 
+    dm_doc model;
+    if (wubuedit_docmodel_parse(doc->bytes, doc->len, &model) != 0) {
+        wubuoxml_free(&pkg); free(data);
+        return -1;
+    }
     wubuoxml_free(&pkg);
     free(data);
 
-    if (!txt) txt = strdup("");
-
     wubuword_doc *d = wubuword_create();
-    wubuword_para(d, "Title", 1, "WuBuEdit Round-Trip");
-    /* split extracted text on newlines into paragraphs */
-    const char *p = txt;
-    const char *line = p;
-    while (*line) {
-        const char *nl = strchr(line, '\n');
-        size_t len = nl ? (size_t)(nl - line) : strlen(line);
-        char *buf = malloc(len + 1);
-        memcpy(buf, line, len); buf[len] = '\0';
-        wubuword_para(d, NULL, 0, buf);
-        free(buf);
-        if (!nl) break;
-        line = nl + 1;
+    for (size_t i = 0; i < model.n; i++) {
+        dm_block *b = &model.blocks[i];
+        if (b->kind == DM_BLOCK_PARA) {
+            wubuword_para(d, b->para.style, b->para.bold, b->para.text ? b->para.text : "");
+        } else if (b->kind == DM_BLOCK_TABLE) {
+            wubuword_table_begin(d);
+            for (size_t r = 0; r < b->table.rows; r++) {
+                wubuword_row(d);
+                for (size_t c = 0; c < b->table.cols; c++) {
+                    dm_para *cell = b->table.cells[r * b->table.cols + c];
+                    const char *t = cell ? (cell->text ? cell->text : "") : "";
+                    wubuword_cell(d, cell ? cell->bold : 0, t);
+                }
+            }
+            wubuword_table_end(d);
+        }
     }
-    if (txt[0] == '\0') wubuword_para(d, NULL, 0, "(no extractable text)");
 
     size_t dlen = 0;
     char *docxml = wubuword_render(d, &dlen);
     wubuword_free(d);
     int rc = wubuword_assemble(out_path, docxml, dlen);
     free(docxml);
-    free(txt);
+    wubuedit_docmodel_free(&model);
     return rc;
 }
 
