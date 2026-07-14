@@ -20,14 +20,18 @@ runtime dependencies** beyond POSIX. (The only external link is `zlib`, used
 | `wubuxml` | ✅ working | Streaming, well-formed XML writer with correct escaping |
 | `wubuoxml` | ✅ working | OPC writer **+ reader** — `[Content_Types].xml`, `.rels` graphs, text extraction |
 | `wuburead` | ✅ working | **Full OOXML read-back**: docx paragraph/run text, xlsx cells (shared-string + inline-string resolution, formula cached values) as TSV, pptx slide text. Dispatches by detected part type. |
-| `wubuword` | ✅ working | WordprocessingML: headings, bold, tables, `.docx` assembly |
+|| `wubuword` | ✅ working | WordprocessingML: headings, bold, tables, `.docx` assembly |
 | `wubucell` | ✅ working | SpreadsheetML: multi-sheet, shared strings, numbers, **formulas**, styles |
 | `wubushow` | ✅ working | PresentationML: multi-slide, title + multi-paragraph body, theme/master/layout |
 | `wubuedit` | ✅ working | **Structure-preserving** round-trip: parses word/document.xml into a model (paragraph style, bold runs, tables) and re-emits it — structure survives the reader+writer loop |
+| `wubudoc` | ✅ working | Markdown (read+write), HTML + RTF export, lossless JSON of all three models |
+| `wubuodf` | ✅ working | **OpenDocument** `.odt` / `.ods` / `.odp` read+write (validated by odfpy) |
+| `wubuconv` | ✅ working | **Unified conversion**: any supported format → any other (docx/xlsx/pptx/csv/tsv/md/html/rtf/odt/ods/odp/json) |
 
 All three writers emit files that open in Microsoft Word / Excel /
 PowerPoint and LibreOffice. The reader decodes **real deflate-compressed
-(method 8)** parts — not just the store-mode files the writer emits.
+(method 8)** parts — not just the store-mode files the writer emits. ODF files
+are read and written by the independent **odfpy** library in CI.
 
 ## Build
 
@@ -49,14 +53,14 @@ Requires a C11 compiler (tested: gcc 13.3, clang). POSIX `open_memstream` /
 ./build/wubuoffice show  out.pptx          # slide deck
 ./build/wubuoffice read  file.docx         # dump parts + extract text
 ./build/wubuoffice edit  in.docx out.docx  # round-trip re-write
+./build/wubuoffice convert in.xlsx out.odt # any format -> any other
 
 # standalone binaries also exist: wubuword, wubucell, wubushow, wuburead, wubuedit
 ```
 
-`wubuoffice cell` demonstrates the deepened spreadsheet: a **shared-string
-table** (the real Excel default), a numeric cell, and a **formula** cell
-(`=B2+B3` with a cached value). `wubuoffice show` emits multi-paragraph bullet
-slides.
+Supported by `convert`: `docx xlsx pptx csv tsv md html rtf odt ods odp json`.
+Cross-family bridges: sheet→doc (as a table), show→doc (title + bullet body),
+text→sheet (flatten), text→show (one slide per heading). JSON dumps any model.
 
 ## Layout
 
@@ -69,9 +73,12 @@ apps/wubucell/      SpreadsheetML builder + .xlsx assembler
 apps/wubushow/      PresentationML builder + .pptx assembler
 apps/wuburead/      OPC reader CLI
 apps/wubuedit/      round-trip re-writer
-apps/wubuoffice/    unified CLI dispatch
-docs/               ARCHITECTURE.md, SLERM.md
-tests/              ctest suite (crc, inflate, reader_roundtrip, edit_roundtrip)
+apps/wubudoc/       Markdown + HTML + RTF + JSON serializers over all models
+apps/wubuodf/       OpenDocument (.odt/.ods/.odp) read + write
+apps/wubuconv/      unified format conversion across the full matrix
+apps/wubuoffice/    unified CLI dispatch (word/cell/show/read/edit/convert)
+docs/               ARCHITECTURE.md, SLERM.md, FORMATS.md
+tests/              ctest suite (crc, inflate, reader, edit, csv, md, rtf/json, odf, convert, foreign)
 ```
 
 See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the module boundaries and

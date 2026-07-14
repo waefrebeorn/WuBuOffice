@@ -21,7 +21,7 @@ Legend: ✅ done · 🔨 in progress · ⬜ planned · ⭕ out of scope (for now
 | Comma-separated values | `.csv` | ✅ | ✅ | RFC 4180: quoting, embedded commas/newlines/quotes. Maps to `wubucell_book`. |
 | Tab-separated values | `.tsv` | ✅ | ✅ | Same engine as CSV, tab delimiter. |
 | Markdown | `.md` | ✅ | ✅ | Headings, bold, bullet lists, tables ↔ doc model. |
-| HTML | `.html` | ✅ (export) | ✅ | Semantic HTML5 from the doc model (h1-3, p, strong, table). |
+| HTML | `.html` | ⬜ | ✅ | Semantic HTML5 from the doc model (h1-3, p, strong, table). |
 | Rich Text Format | `.rtf` | ⬜ | ✅ | RTF 1.x from doc model: headings, bold, tables, UTF-8 via \uN escapes. |
 | JSON | `.json` | ⬜ | ✅ | Lossless JSON of all three models (doc/workbook/presentation). |
 
@@ -29,9 +29,9 @@ Legend: ✅ done · 🔨 in progress · ⬜ planned · ⭕ out of scope (for now
 
 | Format | Ext | Read | Write | Notes |
 |--------|-----|:----:|:-----:|-------|
-| OpenDocument Text | `.odt` | ⬜ | ⬜ | ZIP + `content.xml`; `text:p`, `text:h`, tables. |
-| OpenDocument Spreadsheet | `.ods` | ⬜ | ⬜ | `table:table` / `table:table-row` / `table:table-cell`. |
-| OpenDocument Presentation | `.odp` | ⬜ | ⬜ | `draw:page` + `draw:frame`/`text:p`. |
+| OpenDocument Text | `.odt` | ✅ | ✅ | ZIP + `content.xml`; `text:p`, `text:h`, tables. Validated by odfpy. |
+| OpenDocument Spreadsheet | `.ods` | ✅ | ✅ | `table:table` / `table:table-row` / `table:table-cell`. Validated by odfpy. |
+| OpenDocument Presentation | `.odp` | ✅ | ✅ | `draw:page` + `draw:frame`/`text:p`. Validated by odfpy. |
 | OpenDocument Flat XML | `.fodt/.fods/.fodp` | ⬜ | ⬜ | Single-file XML variants. |
 
 ## Tier 3 — Legacy binary (hard; MS-CFB / BIFF)
@@ -50,13 +50,26 @@ Legend: ✅ done · 🔨 in progress · ⬜ planned · ⭕ out of scope (for now
 | EPUB | `.epub` | ⬜ | ⬜ | ZIP + XHTML; reuses HTML export + OPF packaging. |
 | Plain text | `.txt` | ✅* | ⬜ | *extraction exists via wuburead; add clean writer. |
 
+## Unified conversion
+
+`wubuoffice convert <in> <out>` bridges **any** supported format to **any**
+other. Three canonical models are the interchange pivot:
+
+- **TEXT** (`dm_doc`) ← docx / md / html / rtf / odt
+- **SHEET** (`wubucell_book`) ← xlsx / csv / tsv / ods
+- **SHOW** (`wubushow_pres`) ← pptx / odp
+
+Cross-family bridges: sheet→text (table), show→text (title + bullet body),
+text→sheet (flatten), text→show (heading per slide). JSON dumps any model.
+
 ## Engine reuse map
 
 - `wubuzip` — ZIP container for OOXML, ODF, EPUB.
 - `wubuxml` — SAX + writer for all XML-based formats.
-- `wubucell_book` — the spreadsheet model behind xlsx / ods / csv.
+- `wubucell_book` — the spreadsheet model behind xlsx / ods / csv / tsv.
 - doc model (`wubuword`/`docmodel`) — behind docx / odt / md / rtf / html.
 - `wubushow_pres` — behind pptx / odp.
+- `wubuconv` — the format-agnostic conversion engine (matrix dispatch).
 
 One model per document class, many serializers. That's how we get supremacy
 without N² code.

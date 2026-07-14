@@ -130,6 +130,16 @@ add_library(wubudoc_app OBJECT apps/wubudoc/doc_md.c apps/wubudoc/doc_rtf.c apps
 target_include_directories(wubudoc_app PRIVATE src/wubuoxml src/wubuxml apps/wubuword apps/wubuedit apps/wubudoc apps/wubucell apps/wubushow)
 target_link_libraries(wubudoc_app PRIVATE wubuoxml wubuxml)
 
+# wubuodf: OpenDocument (odt/ods/odp) read + write over the same three models
+add_library(wubuodf_app OBJECT apps/wubuodf/odf_pkg.c apps/wubuodf/odf_text.c apps/wubuodf/odf_sheet.c apps/wubuodf/odf_pres.c)
+target_include_directories(wubuodf_app PRIVATE src/wubuoxml src/wubuxml src/wubuzip apps/wubuword apps/wubuedit apps/wubucell apps/wubushow apps/wubuodf)
+target_link_libraries(wubuodf_app PRIVATE wubuoxml wubuxml wubuzip)
+
+# wubuconv: unified format conversion across the full matrix
+add_library(wubuconv_app OBJECT apps/wubuconv/conv_map.c)
+target_include_directories(wubuconv_app PRIVATE src/wubuoxml src/wubuxml src/wubuzip apps/wubuword apps/wubuedit apps/wubucell apps/wubushow apps/wubudoc apps/wubuodf apps/wubuconv)
+target_link_libraries(wubuconv_app PRIVATE wubuoxml wubuxml wubuzip)
+
 # --- standalone executables ---
 add_executable(wubuword $<TARGET_OBJECTS:wubuword_app> apps/wubuword/entry.c)
 target_link_libraries(wubuword PRIVATE wubuoxml wubuxml)
@@ -148,8 +158,11 @@ add_executable(wubuoffice apps/wubuoffice/main.c
   $<TARGET_OBJECTS:wubucell_app>
   $<TARGET_OBJECTS:wubushow_app>
   $<TARGET_OBJECTS:wuburead_app>
-  $<TARGET_OBJECTS:wubuedit_app>)
-target_link_libraries(wubuoffice PRIVATE wubuoxml wubuxml wubuformula)
+  $<TARGET_OBJECTS:wubuedit_app>
+  $<TARGET_OBJECTS:wubudoc_app>
+  $<TARGET_OBJECTS:wubuodf_app>
+  $<TARGET_OBJECTS:wubuconv_app>)
+target_link_libraries(wubuoffice PRIVATE wubuoxml wubuxml wubuzip wubuformula)
 
 # --- tests ---
 enable_testing()
@@ -248,3 +261,17 @@ add_executable(test_rtf_json tests/test_rtf_json.c $<TARGET_OBJECTS:wubudoc_app>
 target_link_libraries(test_rtf_json PRIVATE wubuword_app wubuedit_app wubucell_app wubushow_app wubuoxml wubuxml wubuformula)
 target_include_directories(test_rtf_json PRIVATE apps/wubudoc apps/wubuword apps/wubuedit apps/wubucell apps/wubushow src/wubuoxml src/wubuxml)
 add_test(NAME rtf_json COMMAND test_rtf_json)
+
+add_executable(test_odf tests/test_odf.c $<TARGET_OBJECTS:wubuodf_app>)
+target_link_libraries(test_odf PRIVATE wubuword_app wubuedit_app wubucell_app wubushow_app wubuoxml wubuxml wubuzip wubuformula)
+target_include_directories(test_odf PRIVATE apps/wubuodf apps/wubuedit apps/wubucell apps/wubushow src/wubuoxml src/wubuxml src/wubuzip)
+target_compile_definitions(test_odf PRIVATE ODF_ORACLE="${CMAKE_CURRENT_SOURCE_DIR}/tests/conformance/odf_oracle.py")
+add_test(NAME odf COMMAND test_odf)
+
+add_executable(test_convert tests/test_convert.c $<TARGET_OBJECTS:wubuconv_app> $<TARGET_OBJECTS:wubuodf_app> $<TARGET_OBJECTS:wubudoc_app>)
+target_link_libraries(test_convert PRIVATE wubuword_app wubuedit_app wubucell_app wubushow_app wubuoxml wubuxml wubuzip wubuformula)
+target_include_directories(test_convert PRIVATE apps/wubuconv apps/wubuodf apps/wubudoc apps/wubuedit apps/wubucell apps/wubushow src/wubuoxml src/wubuxml src/wubuzip)
+target_compile_definitions(test_convert PRIVATE
+    WUBUOFFICE_BIN="${CMAKE_CURRENT_BINARY_DIR}/wubuoffice"
+    ODF_ORACLE_SCRIPT="${CMAKE_CURRENT_SOURCE_DIR}/tests/conformance/odf_oracle.py")
+add_test(NAME convert COMMAND test_convert)
