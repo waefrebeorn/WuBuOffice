@@ -33,6 +33,7 @@
 #include "../wubuodf/odf.h"
 #include "../wubulegacy/legacy.h"
 #include "../wubupdf/pdf.h"
+#include "../wuburead/readers.h"
 #include "../wubuoxml/reader.h"
 #include "../wubuxml/parser.h"
 
@@ -79,7 +80,10 @@ static int read_text(const char *in, const char *ext, dm_doc *out) {
     if (ext_is(ext, "md"))  return read_md_text(in, out);
     if (ext_is(ext, "odt")) return wubuodf_read_odt(in, out);
     if (ext_is(ext, "fodt")) return wubuodf_read_fodt(in, out);
-    if (ext_is(ext, "doc")) return wubulegacy_read_doc(in, out);
+    if (ext_is(ext, "doc"))  return wubulegacy_read_doc(in, out);
+    if (ext_is(ext, "rtf"))  return wuburead_rtf(in, out);
+    if (ext_is(ext, "html")) return wuburead_html(in, out);
+    if (ext_is(ext, "epub")) return wuburead_epub(in, out);
     return -1;
 }
 
@@ -198,8 +202,8 @@ int wubuconv_convert(const char *in_path, const char *out_path) {
     /* classify families */
     enum { NONE, TEXT, SHEET, SHOW } infam = NONE, outfam = NONE;
     if (ext_is(inext, "docx") || ext_is(inext, "md") || ext_is(inext, "rtf") ||
-        ext_is(inext, "html") || ext_is(inext, "odt") || ext_is(inext, "fodt") ||
-        ext_is(inext, "doc")) infam = TEXT;
+        ext_is(inext, "html") || ext_is(inext, "epub") || ext_is(inext, "odt") ||
+        ext_is(inext, "fodt") || ext_is(inext, "doc")) infam = TEXT;
     else if (ext_is(inext, "xlsx") || ext_is(inext, "csv") || ext_is(inext, "tsv") ||
              ext_is(inext, "ods") || ext_is(inext, "fods") || ext_is(inext, "xls")) infam = SHEET;
     else if (ext_is(inext, "pptx") || ext_is(inext, "odp") || ext_is(inext, "fodp") ||

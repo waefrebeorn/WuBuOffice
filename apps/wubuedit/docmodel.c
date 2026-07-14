@@ -26,6 +26,31 @@ static int dm_block_add(dm_doc *d, dm_block **out) {
     return 0;
 }
 
+int wubuedit_docmodel_add_para(dm_doc *d, const char *style, int bold, const char *text) {
+    dm_block *b;
+    if (dm_block_add(d, &b) != 0) return -1;
+    b->kind = DM_BLOCK_PARA;
+    b->para.style = style ? strdup(style) : NULL;
+    b->para.text  = text  ? strdup(text)  : NULL;
+    b->para.bold  = bold;
+    return 0;
+}
+
+int wubuedit_docmodel_add_table(dm_doc *d, dm_para **cells, size_t rows, size_t cols) {
+    if (rows == 0 || cols == 0) { free(cells); return 0; }
+    dm_block *b;
+    if (dm_block_add(d, &b) != 0) { free(cells); return -1; }
+    b->kind = DM_BLOCK_TABLE;
+    b->table.rows = rows;
+    b->table.cols = cols;
+    size_t ncells = rows * cols;
+    b->table.cells = calloc(ncells, sizeof(dm_para *));
+    if (!b->table.cells) { free(cells); return -1; }
+    for (size_t i = 0; i < ncells; i++) b->table.cells[i] = cells ? cells[i] : NULL;
+    free(cells);   /* take ownership of the caller's row-major array */
+    return 0;
+}
+
 /* ---- SAX state ------------------------------------------------------- */
 typedef enum { S_TOP, S_TBL, S_TR, S_TC } dm_cur;
 

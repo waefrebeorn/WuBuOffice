@@ -121,9 +121,9 @@ add_library(wubushow_app OBJECT apps/wubushow/main.c apps/wubushow/show_model.c 
 target_include_directories(wubushow_app PRIVATE src/wubuoxml apps/wubushow)
 target_link_libraries(wubushow_app PRIVATE wubuoxml)
 
-add_library(wuburead_app OBJECT apps/wuburead/main.c)
-target_include_directories(wuburead_app PRIVATE src/wubuoxml src/wubuzip src/wubuxml)
-target_link_libraries(wuburead_app PRIVATE wubuoxml)
+add_library(wuburead_app OBJECT apps/wuburead/main.c apps/wuburead/read_rtf.c apps/wuburead/read_html.c apps/wuburead/read_epub.c)
+target_include_directories(wuburead_app PRIVATE src/wubuoxml src/wubuzip src/wubuxml apps/wubuedit)
+target_link_libraries(wuburead_app PRIVATE wubuoxml wubuxml wubuzip wubuedit_app)
 
 add_library(wubuedit_app OBJECT apps/wubuedit/edit.c apps/wubuedit/docmodel.c)
 target_include_directories(wubuedit_app PRIVATE src/wubuoxml src/wubuxml apps/wubuword apps/wubucell apps/wubushow)
@@ -141,8 +141,8 @@ target_link_libraries(wubuodf_app PRIVATE wubuoxml wubuxml wubuzip)
 
 # wubuconv: unified format conversion across the full matrix
 add_library(wubuconv_app OBJECT apps/wubuconv/conv_map.c apps/wubuconv/conv_bridge.c)
-target_include_directories(wubuconv_app PRIVATE src/wubuoxml src/wubuxml src/wubuzip src/wubucfb apps/wubuword apps/wubuedit apps/wubucell apps/wubushow apps/wubudoc apps/wubuodf apps/wubulegacy apps/wubupdf apps/wubuconv)
-target_link_libraries(wubuconv_app PRIVATE wubuoxml wubuxml wubuzip wubucfb)
+target_include_directories(wubuconv_app PRIVATE src/wubuoxml src/wubuxml src/wubuzip src/wubucfb apps/wubuword apps/wubuedit apps/wubucell apps/wubushow apps/wubudoc apps/wubuodf apps/wubulegacy apps/wubupdf apps/wubuconv apps/wuburead)
+target_link_libraries(wubuconv_app PRIVATE wubuoxml wubuxml wubuzip wubucfb wuburead_app)
 
 # wubulegacy: readers + writers for legacy binary Office (.doc/.xls/.ppt) over MS-CFB
 add_library(wubulegacy_app OBJECT
@@ -163,7 +163,7 @@ target_link_libraries(wubucell PRIVATE wubuoxml wubuformula)
 add_executable(wubushow $<TARGET_OBJECTS:wubushow_app> apps/wubushow/entry.c)
 target_link_libraries(wubushow PRIVATE wubuoxml)
 add_executable(wuburead $<TARGET_OBJECTS:wuburead_app> apps/wuburead/entry.c)
-target_link_libraries(wuburead PRIVATE wubuoxml)
+target_link_libraries(wuburead PRIVATE wubuoxml wubuxml wubuzip wubuedit_app wubuword_app wubucell_app wubushow_app)
 add_executable(wubuedit $<TARGET_OBJECTS:wubuedit_app> apps/wubuedit/entry.c)
 target_link_libraries(wubuedit PRIVATE wubuoxml wubuword_app wubucell_app wubushow_app)
 
@@ -285,13 +285,26 @@ target_include_directories(test_odf PRIVATE apps/wubuodf apps/wubuedit apps/wubu
 target_compile_definitions(test_odf PRIVATE ODF_ORACLE="${CMAKE_CURRENT_SOURCE_DIR}/tests/conformance/odf_oracle.py")
 add_test(NAME odf COMMAND test_odf)
 
-add_executable(test_convert tests/test_convert.c $<TARGET_OBJECTS:wubuconv_app> $<TARGET_OBJECTS:wubuodf_app> $<TARGET_OBJECTS:wubudoc_app> $<TARGET_OBJECTS:wubulegacy_app> $<TARGET_OBJECTS:wubupdf_app>)
+add_executable(test_convert tests/test_convert.c $<TARGET_OBJECTS:wubuconv_app> $<TARGET_OBJECTS:wubuodf_app> $<TARGET_OBJECTS:wubudoc_app> $<TARGET_OBJECTS:wubulegacy_app> $<TARGET_OBJECTS:wubupdf_app> $<TARGET_OBJECTS:wuburead_app>)
 target_link_libraries(test_convert PRIVATE wubuword_app wubuedit_app wubucell_app wubushow_app wubuoxml wubuxml wubuzip wubuformula wubucfb)
 target_include_directories(test_convert PRIVATE apps/wubuconv apps/wubuodf apps/wubudoc apps/wubuedit apps/wubucell apps/wubushow apps/wubulegacy apps/wubupdf src/wubuoxml src/wubuxml src/wubuzip src/wubucfb)
 target_compile_definitions(test_convert PRIVATE
     WUBUOFFICE_BIN="${CMAKE_CURRENT_BINARY_DIR}/wubuoffice"
     ODF_ORACLE_SCRIPT="${CMAKE_CURRENT_SOURCE_DIR}/tests/conformance/odf_oracle.py")
 add_test(NAME convert COMMAND test_convert)
+
+# Reverse-direction readers (rtf/html/epub -> dm_doc) round-trip.
+add_executable(test_readers tests/test_readers.c
+  $<TARGET_OBJECTS:wuburead_app> $<TARGET_OBJECTS:wubuconv_app>
+  $<TARGET_OBJECTS:wubuword_app> $<TARGET_OBJECTS:wubuedit_app>
+  $<TARGET_OBJECTS:wubudoc_app> $<TARGET_OBJECTS:wubuodf_app>
+  $<TARGET_OBJECTS:wubulegacy_app> $<TARGET_OBJECTS:wubupdf_app>)
+target_link_libraries(test_readers PRIVATE wubuoxml wubuxml wubuzip wubucfb wubuformula wubuedit_app
+  wubuword_app wubucell_app wubushow_app)
+target_include_directories(test_readers PRIVATE
+  apps/wuburead apps/wubuconv apps/wubuword apps/wubuedit apps/wubudoc
+  apps/wubuodf apps/wubulegacy apps/wubupdf src/wubuoxml src/wubuxml src/wubuzip src/wubucfb)
+add_test(NAME readers COMMAND test_readers)
 
 # Legacy binary readers (.doc/.xls/.ppt) + PDF writer, validated by the
 # independent xlwt/xlrd + pypdf/pdfminer oracles. SKIPs cleanly if absent.

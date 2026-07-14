@@ -44,6 +44,19 @@ typedef struct {
  * Returns 0 on success (may be an empty doc) or -1 on alloc failure. */
 int wubuedit_docmodel_parse(const uint8_t *xml, size_t len, dm_doc *out);
 
+/* ---- dm_doc construction API (for readers that build the model directly) ----
+ * All text-family readers (docx, md, rtf, html, epub) build dm_doc through
+ * these, so the block-array growth and ownership rules live in ONE place. */
+
+/* Append a fresh paragraph block. `style`/`text` are copied (either may be
+ * NULL). `bold` sets the paragraph bold flag. Returns 0 on success, -1 oom. */
+int wubuedit_docmodel_add_para(dm_doc *d, const char *style, int bold, const char *text);
+
+/* Begin a table block. Call wubuedit_docmodel_table_row once per row, passing
+ * `cells` (row-major, length `cols`); the cells are taken ownership of (the
+ * caller's dm_para* pointers need not be retained). Returns 0, -1 oom. */
+int wubuedit_docmodel_add_table(dm_doc *d, dm_para **cells, size_t rows, size_t cols);
+
 /* Free a model built by wubuedit_docmodel_parse (safe to call on zeroed/partial). */
 void wubuedit_docmodel_free(dm_doc *d);
 
