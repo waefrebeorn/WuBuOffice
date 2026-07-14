@@ -45,17 +45,31 @@ static int scan_ref(wubu_lexer *L, wubu_token *t) {
         else i = L->pos; /* not a sheet qualifier */
     }
     /* optional $ + column letters */
-    int col = 0, have_col = 0;
+    long col = 0, have_col = 0;
     if (i < L->len && L->src[i] == '$') i++;
     size_t cs = i;
     while (i < L->len && isalpha((unsigned char)L->src[i])) i++;
-    if (i > cs) { have_col = 1; for (size_t k = cs; k < i; k++) col = col * 26 + (toupper((unsigned char)L->src[k]) - 'A' + 1); }
+    if (i > cs) {
+        have_col = 1;
+        for (size_t k = cs; k < i; k++) {
+            /* accumulate base-26 column index; saturate to avoid int overflow
+             * (UB) on pathological inputs like "ABCDEFGH...". */
+            long d = col * 26 + (toupper((unsigned char)L->src[k]) - 'A' + 1);
+            col = (d < col) ? 0x7fffffffL : d;
+        }
+    }
     /* optional $ + row digits */
-    int row = 0, have_row = 0;
+    long row = 0, have_row = 0;
     if (i < L->len && L->src[i] == '$') i++;
     size_t rs = i;
     while (i < L->len && isdigit((unsigned char)L->src[i])) i++;
-    if (i > rs) { have_row = 1; for (size_t k = rs; k < i; k++) row = row * 10 + (L->src[k] - '0'); }
+    if (i > rs) {
+        have_row = 1;
+        for (size_t k = rs; k < i; k++) {
+            long d = row * 10 + (L->src[k] - '0');
+            row = (d < row) ? 0x7fffffffL : d;
+        }
+    }
     if (!have_col && !have_row) return 0;
     /* A1-style refs require a row; column-only tokens ("A") are identifiers. */
     if (!have_row) return 0;

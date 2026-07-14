@@ -111,6 +111,7 @@ static void f_right(const wubuval *a, int na, const wubuval *flat, int fn, const
 }
 static void f_mid(const wubuval *a, int na, const wubuval *flat, int fn, const wubu_func_range *ranges, wubuval *out) {
     (void)flat; (void)fn; (void)ranges;
+    if (na < 2) { wubuval_set_err(out, WERR_VALUE); return; }
     char *t = val_to_text(&a[0]);
     int start = (int)wubu_to_num(&a[1], &(int){0}); /* 1-based */
     int len = (na >= 3) ? (int)wubu_to_num(&a[2], &(int){0}) : (int)strlen(t);
@@ -180,6 +181,7 @@ static void f_rept(const wubuval *a, int na, const wubuval *flat, int fn, const 
 }
 static void f_exact(const wubuval *a, int na, const wubuval *flat, int fn, const wubu_func_range *ranges, wubuval *out) {
     (void)flat; (void)fn; (void)ranges;
+    if (na < 2) { wubuval_set_err(out, WERR_VALUE); return; }
     char *x = val_to_text(&a[0]); char *y = val_to_text(&a[1]);
     wubuval_set_bool(out, strcmp(x, y) == 0);
     free(x); free(y);
@@ -210,6 +212,7 @@ static void f_substitute(const wubuval *a, int na, const wubuval *flat, int fn, 
 }
 static void f_find(const wubuval *a, int na, const wubuval *flat, int fn, const wubu_func_range *ranges, wubuval *out) {
     (void)flat; (void)fn; (void)ranges;
+    if (na < 2) { wubuval_set_err(out, WERR_VALUE); return; }
     const char *nd = (a[0].kind == WV_STR) ? a[0].str : "";
     char *t = val_to_text(&a[1]);
     int pos = str_find(t, nd, 0);
@@ -218,6 +221,7 @@ static void f_find(const wubuval *a, int na, const wubuval *flat, int fn, const 
 }
 static void f_search(const wubuval *a, int na, const wubuval *flat, int fn, const wubu_func_range *ranges, wubuval *out) {
     (void)flat; (void)fn; (void)ranges;
+    if (na < 2) { wubuval_set_err(out, WERR_VALUE); return; }
     const char *nd = (a[0].kind == WV_STR) ? a[0].str : "";
     char *t = val_to_text(&a[1]);
     int pos = str_find(t, nd, 1);
@@ -240,6 +244,7 @@ static void f_proper(const wubuval *a, int na, const wubuval *flat, int fn, cons
 }
 static void f_replace(const wubuval *a, int na, const wubuval *flat, int fn, const wubu_func_range *ranges, wubuval *out) {
     (void)flat; (void)fn; (void)ranges;
+    if (na < 2) { wubuval_set_err(out, WERR_VALUE); return; }
     char *t = val_to_text(&a[0]);
     int start = (int)wubu_to_num(&a[1], &(int){0}); /* 1-based */
     int len = (na >= 3) ? (int)wubu_to_num(&a[2], &(int){0}) : 0;

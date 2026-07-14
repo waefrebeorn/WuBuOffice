@@ -90,12 +90,14 @@ static void f_int(const wubuval *a, int na, const wubuval *flat, int fn, const w
 }
 static void f_mod(const wubuval *a, int na, const wubuval *flat, int fn, const wubu_func_range *ranges, wubuval *out) {
     (void)flat; (void)fn; (void)ranges;
+    if (na < 2) { wubuval_set_err(out, WERR_VALUE); return; }
     int ok1, ok2; double x = wubu_to_num(&a[0], &ok1), y = wubu_to_num(&a[1], &ok2);
     if (!ok1 || !ok2 || y == 0) { wubuval_set_err(out, y == 0 ? WERR_DIV0 : WERR_VALUE); return; }
     wubuval_set_num(out, fmod(x, y));
 }
 static void f_power(const wubuval *a, int na, const wubuval *flat, int fn, const wubu_func_range *ranges, wubuval *out) {
     (void)flat; (void)fn; (void)ranges;
+    if (na < 2) { wubuval_set_err(out, WERR_VALUE); return; }
     int ok1, ok2; double x = wubu_to_num(&a[0], &ok1), y = wubu_to_num(&a[1], &ok2);
     if (!ok1 || !ok2) { wubuval_set_err(out, WERR_VALUE); return; }
     wubuval_set_num(out, pow(x, y));
@@ -108,12 +110,14 @@ static void f_sqrt(const wubuval *a, int na, const wubuval *flat, int fn, const 
 }
 static void f_ceiling(const wubuval *a, int na, const wubuval *flat, int fn, const wubu_func_range *ranges, wubuval *out) {
     (void)flat; (void)fn; (void)ranges;
+    if (na < 2) { wubuval_set_err(out, WERR_VALUE); return; }
     int ok1, ok2; double x = wubu_to_num(&a[0], &ok1), m = wubu_to_num(&a[1], &ok2);
     if (!ok1 || !ok2 || m == 0) { wubuval_set_err(out, m == 0 ? WERR_DIV0 : WERR_VALUE); return; }
     wubuval_set_num(out, ceil(x / m) * m);
 }
 static void f_floor(const wubuval *a, int na, const wubuval *flat, int fn, const wubu_func_range *ranges, wubuval *out) {
     (void)flat; (void)fn; (void)ranges;
+    if (na < 2) { wubuval_set_err(out, WERR_VALUE); return; }
     int ok1, ok2; double x = wubu_to_num(&a[0], &ok1), m = wubu_to_num(&a[1], &ok2);
     if (!ok1 || !ok2 || m == 0) { wubuval_set_err(out, m == 0 ? WERR_DIV0 : WERR_VALUE); return; }
     wubuval_set_num(out, floor(x / m) * m);

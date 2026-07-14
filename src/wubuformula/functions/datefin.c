@@ -81,6 +81,7 @@ static long eomonth_serial(long s, int months) {
 
 static void f_date(const wubuval *a, int na, const wubuval *flat, int fn, const wubu_func_range *ranges, wubuval *out) {
     (void)flat; (void)fn; (void)ranges;
+    if (na < 3) { wubuval_set_err(out, WERR_VALUE); return; }
     int ok1,ok2,ok3; int y=(int)wubu_to_num(&a[0],&ok1), m=(int)wubu_to_num(&a[1],&ok2), d=(int)wubu_to_num(&a[2],&ok3);
     if (!ok1||!ok2||!ok3) { wubuval_set_err(out, WERR_VALUE); return; }
     wubuval_set_num(out, (double)excel_serial(y, m, d));

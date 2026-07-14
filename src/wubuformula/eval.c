@@ -37,7 +37,7 @@ static int gather_range(const wubucell_range *r, wubuformula_resolver resolve, v
     int c0 = r->a.col, c1 = r->b.col, r0 = r->a.row, r1 = r->b.row;
     if (c1 < c0) { int t = c0; c0 = c1; c1 = t; }
     if (r1 < r0) { int t = r0; r0 = r1; r1 = t; }
-    int cap = 8, n = 0; wubuval *arr = malloc(sizeof *arr * cap);
+    int cap = 8, n = 0; wubuval *arr = calloc((size_t)cap, sizeof *arr);
     for (int rr = r0; rr <= r1; rr++) {
         for (int cc = c0; cc <= c1; cc++) {
             wubucell_ref ref = (cc == r->a.col && rr == r->a.row) ? r->a : r->b;
@@ -49,8 +49,11 @@ static int gather_range(const wubucell_range *r, wubuformula_resolver resolve, v
             wubuval v; memset(&v, 0, sizeof v);
             int rc = resolve(ctx, &ref, &v);
             if (rc != 0) { wubuval_free(&v); continue; }
-            if (n == cap) { cap *= 2; arr = realloc(arr, sizeof *arr * cap); }
-            arr[n++] = v;
+            if (n == cap) { cap *= 2; arr = realloc(arr, sizeof *arr * (size_t)cap); }
+            /* take OWNERSHIP of the value (deep copy) so the array does not
+             * alias the resolver's internal buffer; otherwise freeing arr[i]
+             * later would free memory still owned by the grid (use-after-free). */
+            wubuval_copy(&arr[n++], &v);
         }
     }
     *out = arr; *nout = n;
