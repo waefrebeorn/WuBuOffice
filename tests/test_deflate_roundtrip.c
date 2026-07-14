@@ -21,7 +21,7 @@ static int roundtrip(const char *text) {
     if (wubuzip_inflate(cmp, cmp_len, &out, &out_len, 0) != 0) {
         free(cmp); return -2;
     }
-    int ok = (out_len == in_len) && memcmp(out, in, in_len) == 0;
+    int ok = (out_len == in_len) && (in_len == 0 || memcmp(out, in, in_len) == 0);
     free(cmp); free(out);
     return ok ? 0 : -3;
 }

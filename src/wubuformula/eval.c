@@ -54,6 +54,10 @@ static int gather_range(const wubucell_range *r, wubuformula_resolver resolve, v
              * alias the resolver's internal buffer; otherwise freeing arr[i]
              * later would free memory still owned by the grid (use-after-free). */
             wubuval_copy(&arr[n++], &v);
+            /* release the resolver's own copy of v (which may hold a strdup'd
+             * string); the next loop iteration's memset would otherwise orphan
+             * it. */
+            wubuval_free(&v);
         }
     }
     *out = arr; *nout = n;
@@ -75,6 +79,10 @@ static int eval_func(const ast *n, wubuformula_resolver resolve, void *ctx, wubu
                     if (flat_n == flat_cap) { flat_cap *= 2; flat = realloc(flat, sizeof(wubuval) * flat_cap); }
                     wubuval_copy(&flat[flat_n++], &ra[k]);
                 }
+                /* ra's elements were deep-copied into flat (strdup'd strings
+                 * included); release ra's own string buffers before freeing
+                 * the array, otherwise string cells leak. */
+                for (int k = 0; k < rn; k++) wubuval_free(&ra[k]);
                 free(ra);
             }
         } else {

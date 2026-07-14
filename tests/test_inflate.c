@@ -16,7 +16,7 @@ static int roundtrip(const char *text) {
     if (wubuzip_inflate(cbuf + 2, clen - 2, &out, &out_len, 0) != 0) {
         free(cbuf); return 2;
     }
-    int ok = (out_len == strlen(text)) && memcmp(out, text, out_len) == 0;
+    int ok = (out_len == strlen(text)) && (out_len == 0 || memcmp(out, text, out_len) == 0);
     if (!ok) printf("MISMATCH: got %zu bytes '%.*s'\n", out_len, (int)out_len, out);
     free(out); free(cbuf);
     return ok ? 0 : 3;

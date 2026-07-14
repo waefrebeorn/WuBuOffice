@@ -45,6 +45,7 @@ static int record(wubuxml_event evt, const wubuxml_info *info, void *u) {
 static int expect(const char *spec) {
     int want[MAX_EVT], nwant = 0;
     const char *names[MAX_EVT];
+    char *owned[MAX_EVT]; for (int i=0;i<MAX_EVT;i++) owned[i]=NULL;  /* freed at end of expect() */
     char buf[64];
     const char *p = spec;
     while (*p) {
@@ -62,12 +63,13 @@ static int expect(const char *spec) {
             while (*p && *p != ' ') buf[i++] = *p++;
             buf[i] = 0;
             if (*p == ' ') p++;
-            names[nwant] = (*buf && strcmp(buf, "-") != 0) ? strdup(buf) : NULL;
+            names[nwant] = (*buf && strcmp(buf, "-") != 0) ? (owned[nwant] = strdup(buf)) : NULL;
         } else {
             names[nwant] = NULL;
         }
         nwant++;
     }
+    int rc = 0;
     CHECK(g_n == nwant, "event count");
     for (int i = 0; i < nwant; i++) {
         CHECK(g_kind[i] == want[i], "event kind order");
@@ -75,7 +77,8 @@ static int expect(const char *spec) {
             CHECK(g_name[i] && strcmp(g_name[i], names[i]) == 0, "event name");
         }
     }
-    return 0;
+    for (int i = 0; i < nwant; i++) free((void *)owned[i]);
+    return rc;
 }
 
 static int run(const char *xml) {

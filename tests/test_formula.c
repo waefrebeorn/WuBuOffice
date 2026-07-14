@@ -23,6 +23,13 @@ typedef struct { int col, row; wubuval v; } cell_slot;
 static cell_slot GRID[1024];
 static int GRID_N = 0;
 
+/* formula-aware resolver's persistent grid (declared early so grid_reset can
+ * see it). Cell text starting with '=' is a formula; evaluated recursively
+ * with cycle detection via a "visiting" set keyed by col,row. */
+typedef struct { int col, row; int state; wubuval v; } fcell; /* state 0=clean 1=visiting 2=done */
+static fcell FGRID[1024];
+static int FGRID_N = 0;
+
 static void grid_set(int col, int row, const wubuval *v) {
     for (int i = 0; i < GRID_N; i++)
         if (GRID[i].col == col && GRID[i].row == row) { wubuval_free(&GRID[i].v); GRID[i].v = *v; if (v->kind==WV_STR&&v->str) GRID[i].v.str=strdup(v->str); return; }
@@ -30,6 +37,21 @@ static void grid_set(int col, int row, const wubuval *v) {
     if (v->kind==WV_STR&&v->str) GRID[GRID_N].v.str = strdup(v->str);
     GRID_N++;
 }
+
+/* Free every strdup'd value currently held in GRID/FGRID, then reset the slot
+ * count. Used before the test re-purposes the grid, so the previous grid's
+ * heap strings are not orphaned (LeakSanitizer would flag them). */
+static void grid_reset(void) {
+    for (int i = 0; i < GRID_N; i++)
+        if (GRID[i].v.kind == WV_STR && GRID[i].v.str) { free(GRID[i].v.str); GRID[i].v.str = NULL; }
+    for (int i = 0; i < FGRID_N; i++)
+        if (FGRID[i].v.kind == WV_STR && FGRID[i].v.str) { free(FGRID[i].v.str); FGRID[i].v.str = NULL; }
+    GRID_N = 0; FGRID_N = 0;
+}
+
+/* Free the strdup'd value strings held in the test's persistent grids so the
+ * suite is clean under LeakSanitizer. Defined below main(). */
+static void cleanup_formula_test(void);
 
 static int grid_resolve(void *ctx, const wubucell_ref *ref, wubuval *out) {
     (void)ctx;
@@ -84,9 +106,6 @@ static int check_num_x(const char *f, double expect, double tol) {
 
 /* formula-aware resolver: cell text starting with '=' is a formula; evaluates
  * it recursively with cycle detection via a "visiting" set keyed by col,row. */
-typedef struct { int col, row; int state; wubuval v; } fcell; /* state 0=clean 1=visiting 2=done */
-static fcell FGRID[1024];
-static int FGRID_N = 0;
 
 static fcell *fgrid_find(int col, int row) {
     for (int i = 0; i < FGRID_N; i++) if (FGRID[i].col==col && FGRID[i].row==row) return &FGRID[i];
@@ -105,6 +124,7 @@ static int formula_resolve(void *ctx, const wubucell_ref *ref, wubuval *out) {
         wubuval res; memset(&res, 0, sizeof res);
         int rc = wubu_formula_eval(c->v.str + 1, formula_resolve, NULL, &res);
         c->state = 2;
+        wubuval_free(&c->v);   /* release the strdup'd formula text before caching the result */
         c->v = res; /* cache */
         if (c->v.kind == WV_STR) c->v.str = strdup(c->v.str ? c->v.str : "");
         wubuval_copy(out, &c->v);
@@ -193,7 +213,7 @@ int main(void) {
     fails += !check_err("SQRT(-1)", WERR_NUM);
 
     /* cell references + ranges */
-    GRID_N = 0;
+    grid_reset();
     wubuval v; memset(&v,0,sizeof v);
     wubuval_set_num(&v, 10); grid_set(1,1,&v);   /* A1 */
     wubuval_set_num(&v, 20); grid_set(1,2,&v);   /* A2 */
@@ -222,7 +242,7 @@ int main(void) {
 
     /* ---- lookups & conditional aggregates over a real range ----
      * Build a lookup table at A10:B12 and a criteria table at D1:D3. */
-    GRID_N = 0;
+    grid_reset();
     wubuval gv; memset(&gv,0,sizeof gv);
     /* id->name table: A10=1 "apple", A11=2 "banana", A12=3 "cherry" (col B) */
     wubuval_set_num(&gv,1);  grid_set(1,10,&gv);
@@ -236,7 +256,7 @@ int main(void) {
     fails += !check_str("VLOOKUP(2,A10:B12,2)", "banana");
     fails += !check_str("VLOOKUP(3,A10:B12,2)", "cherry");
     /* SUMIF / COUNTIF over D1:D3 = {10,20,30} */
-    GRID_N = 0;
+    grid_reset();
     wubuval sv2; memset(&sv2,0,sizeof sv2);
     wubuval_set_num(&sv2,10); grid_set(4,1,&sv2);
     wubuval_set_num(&sv2,20); grid_set(4,2,&sv2);
@@ -283,7 +303,7 @@ int main(void) {
     fails += !check_num("CHOOSE(2, 10, 20, 30)", 20, 1e-9);
     fails += !check_num("CHOOSE(1, 10, 20, 30)", 10, 1e-9);
     /* INDEX / MATCH need a range resolver; reuse GRID as a table at E1:E3 */
-    GRID_N = 0;
+    grid_reset();
     wubuval gi; memset(&gi,0,sizeof gi);
     wubuval_set_num(&gi, 100); grid_set(5,1,&gi);  /* E1 */
     wubuval_set_num(&gi, 200); grid_set(5,2,&gi);  /* E2 */
@@ -292,7 +312,7 @@ int main(void) {
     fails += !check_num("MATCH(300, E1:E3)", 3, 1e-9);
     fails += !check_num("INDEX(E1:E3, MATCH(200, E1:E3))", 200, 1e-9);
     /* AVERAGEIF over D1:D3 = {10,20,30} */
-    GRID_N = 0;
+    grid_reset();
     wubuval gj; memset(&gj,0,sizeof gj);
     wubuval_set_num(&gj, 10); grid_set(4,1,&gj);
     wubuval_set_num(&gj, 20); grid_set(4,2,&gj);
@@ -322,7 +342,7 @@ int main(void) {
     /* nested formula referencing cells (rebuild the A1:A3/B1 grid that the
      * earlier cell-reference tests populated, since the lookup block above
      * reset GRID_N) */
-    GRID_N = 0;
+    grid_reset();
     wubuval g3; memset(&g3,0,sizeof g3);
     wubuval_set_num(&g3, 10); grid_set(1,1,&g3);   /* A1 */
     wubuval_set_num(&g3, 20); grid_set(1,2,&g3);   /* A2 */
@@ -331,7 +351,7 @@ int main(void) {
     fails += !check_num("SUM(A1:A3)+B1*4", 80, 1e-9);
 
     /* circular reference: A1 = B1+1, B1 = A1+1 */
-    FGRID_N = 0;
+    grid_reset();
     fcell fa = { .col=1, .row=1, .state=0 }; wubuval_set_str(&fa.v, "=B1+1"); FGRID[FGRID_N++] = fa;
     fcell fb = { .col=2, .row=1, .state=0 }; wubuval_set_str(&fb.v, "=A1+1"); FGRID[FGRID_N++] = fb;
     {
@@ -346,7 +366,7 @@ int main(void) {
     }
 
     /* chained formula: A1=2, B1=A1*3, C1=B1+1 => 7 */
-    FGRID_N = 0;
+    grid_reset();
     fcell c1 = { .col=1, .row=1, .state=0 }; wubuval_set_num(&c1.v, 2); FGRID[FGRID_N++] = c1;
     fcell c2 = { .col=2, .row=1, .state=0 }; wubuval_set_str(&c2.v, "=A1*3"); FGRID[FGRID_N++] = c2;
     fcell c3 = { .col=3, .row=1, .state=0 }; wubuval_set_str(&c3.v, "=B1+1"); FGRID[FGRID_N++] = c3;
@@ -360,7 +380,17 @@ int main(void) {
         wubuval_free(&cv);
     }
 
-    if (fails) { printf("FORMULA TESTS FAILED: %d\n", fails); return 1; }
+    if (fails) { printf("FORMULA TESTS FAILED: %d\n", fails); cleanup_formula_test(); return 1; }
     printf("FORMULA TESTS OK (%d functions registered)\n", wubu_func_count());
+    cleanup_formula_test();
     return 0;
+}
+
+/* Free the strdup'd value strings held in the test's persistent grids so the
+ * suite is clean under LeakSanitizer. The grids themselves are static. */
+static void cleanup_formula_test(void) {
+    for (int i = 0; i < GRID_N; i++)
+        if (GRID[i].v.kind == WV_STR && GRID[i].v.str) { free(GRID[i].v.str); GRID[i].v.str = NULL; }
+    for (int i = 0; i < FGRID_N; i++)
+        if (FGRID[i].v.kind == WV_STR && FGRID[i].v.str) { free(FGRID[i].v.str); FGRID[i].v.str = NULL; }
 }

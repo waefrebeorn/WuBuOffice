@@ -104,17 +104,17 @@ static ast *parse_primary(parser *p) {
     }
     if (t->kind == T_REF) {
         wubucell_ref a; parse_ref_text(t->text, &a);
-        ast *first = ast_ref(&a);
         wubu_lexer_next(&p->L);
         if (p->L.tok.kind == T_COLON) {
             wubu_lexer_next(&p->L);
-            if (p->L.tok.kind != T_REF) { perr(p, "expected cell ref after ':'"); ast_free(first); return NULL; }
+            if (p->L.tok.kind != T_REF) { perr(p, "expected cell ref after ':'"); return NULL; }
             wubucell_ref b; parse_ref_text(p->L.tok.text, &b);
             ast *rng = ast_range(&a, &b);
             wubu_lexer_next(&p->L);
             return rng;
         }
-        return first;
+        /* not a range: build the single-cell ref now */
+        return ast_ref(&a);
     }
     if (t->kind == T_LPAREN) {
         wubu_lexer_next(&p->L);
@@ -227,7 +227,17 @@ ast *wubu_parse(const char *src, size_t len, char *errbuf, size_t errcap) {
     wubu_lexer_next(&p.L);
     if (p.L.err) { perr(&p, "lexer error"); return NULL; }
     ast *root = parse_expr(&p);
-    if (!root) return NULL;
-    if (p.L.tok.kind != T_EOF) { perr(&p, "trailing tokens"); ast_free(root); return NULL; }
+    if (!root) { wubu_token_free(&p.L.tok); return NULL; }
+    if (p.L.tok.kind != T_EOF) {
+        perr(&p, "trailing tokens");
+        ast_free(root);
+        wubu_token_free(&p.L.tok);
+        return NULL;
+    }
+    /* Release the lexer's final token text. The parser copies what it needs
+     * (strdup'd func names, parsed cell refs) into the AST, but the lexer's
+     * own token buffer is never transferred to the AST, so it must be freed
+     * here — otherwise every wubu_formula_eval call leaks one token buffer. */
+    wubu_token_free(&p.L.tok);
     return root;
 }

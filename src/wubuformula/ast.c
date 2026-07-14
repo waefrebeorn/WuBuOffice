@@ -21,10 +21,14 @@ ast *ast_unary(int op, ast *c) { ast *n = mk(N_UNARY); n->op = op; n->child = c;
 ast *ast_binary(int op, ast *l, ast *r) { ast *n = mk(N_BINARY); n->op = op; n->l = l; n->r = r; return n; }
 ast *ast_func(const char *name, ast **args, int nargs) {
     ast *n = mk(N_FUNC);
-    n->str = strdup(name);
+    /* Take ownership of `name`: the parser passes a heap-allocated string it
+     * no longer needs, so strdup'ing here would orphan the caller's copy. */
+    n->str = (char *)name;
     n->nargs = nargs;
-    n->args = calloc((size_t)(nargs ? nargs : 1), sizeof(ast *));
-    for (int i = 0; i < nargs; i++) n->args[i] = args[i];
+    /* Take ownership of the caller's args array (the parser always passes a
+     * heap-allocated vector). Copying here would orphan the caller's array
+     * and double the allocation cost. */
+    n->args = args;
     return n;
 }
 
