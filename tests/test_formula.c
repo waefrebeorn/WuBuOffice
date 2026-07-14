@@ -30,11 +30,15 @@ typedef struct { int col, row; int state; wubuval v; } fcell; /* state 0=clean 1
 static fcell FGRID[1024];
 static int FGRID_N = 0;
 
-static void grid_set(int col, int row, const wubuval *v) {
+/* Stores a COPY of v in the grid. For string values it TAKES OWNERSHIP of v->str
+ * (transfers the pointer, nulling the caller's copy) so there is exactly one
+ * allocation and the caller's local is safe to reuse without leaking. */
+static void grid_set(int col, int row, wubuval *v) {
     for (int i = 0; i < GRID_N; i++)
-        if (GRID[i].col == col && GRID[i].row == row) { wubuval_free(&GRID[i].v); GRID[i].v = *v; if (v->kind==WV_STR&&v->str) GRID[i].v.str=strdup(v->str); return; }
+        if (GRID[i].col == col && GRID[i].row == row) { wubuval_free(&GRID[i].v); GRID[i].v = *v; if (v->kind==WV_STR) GRID[i].v.str = v->str; v->str = NULL; return; }
     GRID[GRID_N].col = col; GRID[GRID_N].row = row; GRID[GRID_N].v = *v;
-    if (v->kind==WV_STR&&v->str) GRID[GRID_N].v.str = strdup(v->str);
+    if (v->kind==WV_STR) GRID[GRID_N].v.str = v->str;
+    v->str = NULL;
     GRID_N++;
 }
 
