@@ -114,8 +114,16 @@ char *cell_render_sheet(const wubucell_book *b, const sheet_t *s, size_t sheet_i
             if (c->row != r) continue;
             char cl[16]; cell_col_letter(c->col, cl);
             char ref[32]; snprintf(ref, sizeof ref, "%s%d", cl, r);
-            if (c->style) fprintf(m, "<c r=\"%s\" s=\"%d\">", ref, c->style);
-            else fprintf(m, "<c r=\"%s\">", ref);
+            /* Shared-string cells MUST carry t="s" so the <v> index is read
+             * as a shared-string reference (not a literal number). The style
+             * attribute (s=) is independent and may co-occur. */
+            if (c->kind == C_STR && b->use_sst) {
+                if (c->style) fprintf(m, "<c r=\"%s\" s=\"%d\" t=\"s\">", ref, c->style);
+                else fprintf(m, "<c r=\"%s\" t=\"s\">", ref);
+            } else {
+                if (c->style) fprintf(m, "<c r=\"%s\" s=\"%d\">", ref, c->style);
+                else fprintf(m, "<c r=\"%s\">", ref);
+            }
             if (c->kind == C_NUM) fprintf(m, "<v>%.12g</v>", c->num);
             else if (c->kind == C_FORM) {
                 fprintf(m, "<f>%s</f>", c->formula ? c->formula : "");

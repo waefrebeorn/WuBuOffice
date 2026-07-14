@@ -19,6 +19,7 @@ runtime dependencies** beyond POSIX. (The only external link is `zlib`, used
 | `wubuzip` inflate | ✅ working | RFC 1951 DEFLATE: store / fixed / dynamic Huffman |
 | `wubuxml` | ✅ working | Streaming, well-formed XML writer with correct escaping |
 | `wubuoxml` | ✅ working | OPC writer **+ reader** — `[Content_Types].xml`, `.rels` graphs, text extraction |
+| `wuburead` | ✅ working | **Full OOXML read-back**: docx paragraph/run text, xlsx cells (shared-string + inline-string resolution, formula cached values) as TSV, pptx slide text. Dispatches by detected part type. |
 | `wubuword` | ✅ working | WordprocessingML: headings, bold, tables, `.docx` assembly |
 | `wubucell` | ✅ working | SpreadsheetML: multi-sheet, shared strings, numbers, **formulas**, styles |
 | `wubushow` | ✅ working | PresentationML: multi-slide, title + multi-paragraph body, theme/master/layout |

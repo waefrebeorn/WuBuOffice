@@ -97,7 +97,7 @@ add_library(wubuoxml STATIC
   src/wubuoxml/package.c
   src/wubuoxml/rels_path.c
   src/wubuoxml/reader.c
-  src/wubuoxml/docx_text.c
+  src/wubuoxml/extract.c
   src/wubuoxml/docx_document.c
   src/wubuxml/parser.c)
 target_include_directories(wubuoxml PUBLIC src/wubuoxml)
@@ -194,6 +194,11 @@ add_executable(test_reader tests/test_reader.c)
 target_link_libraries(test_reader PRIVATE wubuoxml wubuword_app)
 target_include_directories(test_reader PRIVATE src/wubuoxml src/wubuxml apps/wubuword)
 add_test(NAME reader_roundtrip COMMAND test_reader)
+
+add_executable(test_extract tests/test_extract.c)
+target_link_libraries(test_extract PRIVATE wubuoxml wubuword_app wubucell_app wubushow_app)
+target_include_directories(test_extract PRIVATE src/wubuoxml src/wubuxml apps/wubuword apps/wubucell apps/wubushow)
+add_test(NAME extract COMMAND test_extract)
 
 add_executable(test_edit tests/test_edit.c)
 target_link_libraries(test_edit PRIVATE wubuoxml wubuword_app wubuedit_app)

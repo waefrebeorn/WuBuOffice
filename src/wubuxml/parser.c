@@ -153,7 +153,10 @@ int wubuxml_parse(const uint8_t *data, size_t len,
                 p++;
                 size_t av = p;
                 while (p < end && s[p] != q) p++;
-                if (p <= av) { free(attrn); free(ename); ename = NULL; rc = -1; break; } /* empty value */
+                /* A value whose closing quote was never found (scan ran to the
+                 * end of the buffer) is malformed. An empty value (name="") is
+                 * valid XML and allowed. */
+                if (p >= end) { free(attrn); free(ename); ename = NULL; rc = -1; break; }
                 char *attrv = dup_range(s + av, s + p);
                 if (!attrv) { free(attrn); free(ename); ename = NULL; rc = -1; break; }
                 info.attr_name[info.attr_count] = trim_inplace(attrn);
