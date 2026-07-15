@@ -234,7 +234,8 @@ target_link_libraries(wubufont_cli PRIVATE wubufont)
 # -> document JSON model. Dependency-free; recognizer is a pluggable slot.
 add_library(wubuocr STATIC
     src/wubuocr/image.c src/wubuocr/binarize.c src/wubuocr/layout.c
-    src/wubuocr/components.c src/wubuocr/wubuocr.c)
+    src/wubuocr/components.c src/wubuocr/wubuocr.c
+    src/wubuocr/font8x8.c src/wubuocr/recognize.c)
 target_include_directories(wubuocr PUBLIC src/wubuocr src/wubujson)
 target_link_libraries(wubuocr PUBLIC wubujson)
 
@@ -393,6 +394,11 @@ add_test(NAME wubufont COMMAND test_wubufont)
 add_executable(test_wubuocr tests/test_wubuocr.c)
 target_link_libraries(test_wubuocr PRIVATE wubuocr)
 add_test(NAME wubuocr COMMAND test_wubuocr)
+
+# wubuocr recognizer: zoning + 1-NN glyph classification (render->recognize).
+add_executable(test_wubuocr_recognize tests/test_wubuocr_recognize.c)
+target_link_libraries(test_wubuocr_recognize PRIVATE wubuocr)
+add_test(NAME wubuocr_recognize COMMAND test_wubuocr_recognize)
 
 # wubusvg: SVG ingest + regurgitate round-trip.
 add_executable(test_wubusvg tests/test_wubusvg.c)

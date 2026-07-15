@@ -74,12 +74,42 @@ with correct geometry, honestly.
 | Recursive **XY-cut** via projection profiles | `layout.{h,c}` | **reading order + multi-column (pain #1)** |
 | Connected-component glyph/word boxing | `components.{h,c}` | segmentation, table cells (pain #3) |
 | Facade → document JSON model + recognizer slot | `wubuocr.{h,c}` | structured output (pain #4, #5) |
+| **Zoning + 1-NN glyph recognizer** | `recognize.{h,c}`, `font8x8.{h,c}` | text recognition (the learned step) |
 
 XY-cut (Nagy & Seth, 1984) is the classical, deterministic layout algorithm that
 recovers reading order by recursively splitting a page along its widest
 whitespace gutter (alternating vertical/horizontal). It is exactly the
 column-aware ordering that raster OCR lacks — the deterministic ancestor of what
 DeepSeek/Nemotron learned. No training, no GPU, no dependency.
+
+## The recognizer: lightest-weight OCR classifier (zoning + 1-NN)
+
+Research (itransition/lido OCR algorithm surveys, apmonitor/towardsdatascience
+KNN-OCR writeups) converges on the same answer for *lightest-weight* recognition
+with **no neural net and no training loop**: **zoning feature extraction + a
+1-nearest-neighbour template classifier**.
+
+- **Zoning** — scale a glyph's tight ink bounding box into an N×N grid (here
+  5×5) and take each cell's ink-density → a 25-D feature vector. Cheap
+  (O(pixels), once) and scale-invariant. Zoning is the canonical lightweight OCR
+  feature.
+- **1-NN** — squared-Euclidean distance to a template vector per reference
+  glyph; return the closest. k=1 KNN is the simplest possible classifier and
+  needs no training beyond building the templates once.
+- **Templates** come from the embedded **public-domain font8x8** VGA bitmap
+  (Marcel Sondaar / IBM; C array by Daniel Hepper) — a from-scratch reference
+  glyph bank, zero training data, zero model weights, zero dependency.
+- **Confidence gate** — a distance-ratio + absolute-distance threshold rejects
+  ambiguous blobs (returns no character) so noise is **never** turned into
+  fabricated text. Geometry-only mode (no recognizer) stays honestly empty.
+
+**Honest accuracy tradeoff.** This is the *lightest* recognizer, not the most
+accurate. On glyphs rendered from the reference font it recovers **10/10 digits
+and ~75–90% of uppercase letters**; coarse 8×8 templates confuse visually
+similar glyphs (C/c case, H/U, 2/Z) — the price of a 25-float-per-class model
+with no learning. It is genuine recognition (never fabrication) and it drops
+into the same `OcrRecognizer` slot that a heavier feature-based or neural
+classifier would later occupy, without touching the deterministic pipeline.
 
 Design follows the suite standard: opaque structs, minimal includes, C11 only,
 self-contained modules, sanitizer-gated (ASan+UBSan, 0 leaks/UB/warnings),
