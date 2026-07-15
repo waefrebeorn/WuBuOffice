@@ -229,6 +229,19 @@ target_link_libraries(wubufont PUBLIC wubuzip)
 add_executable(wubufont_cli apps/wubufont/main.c)
 target_link_libraries(wubufont_cli PRIVATE wubufont)
 
+# --- wubuocr: clean-room image -> structured document digestion ---
+# Netpbm decode -> Otsu binarize -> XY-cut reading order -> connected components
+# -> document JSON model. Dependency-free; recognizer is a pluggable slot.
+add_library(wubuocr STATIC
+    src/wubuocr/image.c src/wubuocr/binarize.c src/wubuocr/layout.c
+    src/wubuocr/components.c src/wubuocr/wubuocr.c)
+target_include_directories(wubuocr PUBLIC src/wubuocr src/wubujson)
+target_link_libraries(wubuocr PUBLIC wubujson)
+
+# wubuocr CLI: image -> ocr_page / document JSON
+add_executable(wubuocr_cli apps/wubuocr/main.c)
+target_link_libraries(wubuocr_cli PRIVATE wubuocr)
+
 # --- tests ---
 enable_testing()
 add_executable(test_wubuzip tests/test_wubuzip.c)
@@ -375,6 +388,11 @@ add_test(NAME flat_epub COMMAND test_flat_epub)
 add_executable(test_wubufont tests/test_wubufont.c)
 target_link_libraries(test_wubufont PRIVATE wubufont)
 add_test(NAME wubufont COMMAND test_wubufont)
+
+# wubuocr: image -> document pipeline (Otsu, XY-cut reading order, components).
+add_executable(test_wubuocr tests/test_wubuocr.c)
+target_link_libraries(test_wubuocr PRIVATE wubuocr)
+add_test(NAME wubuocr COMMAND test_wubuocr)
 
 # wubusvg: SVG ingest + regurgitate round-trip.
 add_executable(test_wubusvg tests/test_wubusvg.c)
