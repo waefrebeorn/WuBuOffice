@@ -102,20 +102,46 @@ const OcrBlock *ocr_page_block(const OcrPage *pg, size_t i) {
     return &pg->blk[i].box;
 }
 
-/* Concatenate a block's glyph text (skipping NULL entries). Caller frees. */
+/* Concatenate a block's glyph text in reading order, inserting a space between
+ * consecutive glyphs whose horizontal gap exceeds a fraction of the typical
+ * glyph width (classic word segmentation: a wide inter-glyph gap is a space).
+ * Skips NULL (unrecognized) glyphs but still measures their geometry for gaps.
+ * Caller frees. */
 static char *block_text(const PageBlock *pb) {
+    /* median-ish reference width: use the mean glyph width as the scale. */
+    size_t sumw = 0, nw = 0;
+    for (size_t k = 0; k < pb->nglyph; k++) {
+        size_t gw = pb->glyph[k].x1 - pb->glyph[k].x0;
+        if (gw) { sumw += gw; nw++; }
+    }
+    size_t avgw = nw ? sumw / nw : 8;
+    /* a gap wider than ~55% of the average glyph width is a word break */
+    size_t space_gap = (avgw * 55) / 100;
+    if (space_gap == 0) space_gap = 1;
+
+    /* upper bound on output: all glyph text + one space between each pair + NUL */
     size_t total = 1;
     for (size_t k = 0; k < pb->nglyph; k++)
         if (pb->gtext[k]) total += strlen(pb->gtext[k]);
+    total += pb->nglyph;   /* worst case one space per glyph boundary */
+
     char *s = malloc(total);
     if (!s) return NULL;
-    s[0] = '\0';
     char *w = s;
+    int prev_emitted = 0;
+    size_t prev_x1 = 0;
     for (size_t k = 0; k < pb->nglyph; k++) {
+        /* word-break space based on geometry, before emitting this glyph */
+        if (prev_emitted && pb->glyph[k].x0 > prev_x1 &&
+            pb->glyph[k].x0 - prev_x1 >= space_gap) {
+            *w++ = ' ';
+        }
         if (pb->gtext[k]) {
             size_t l = strlen(pb->gtext[k]);
             memcpy(w, pb->gtext[k], l);
             w += l;
+            prev_emitted = 1;
+            prev_x1 = pb->glyph[k].x1;
         }
     }
     *w = '\0';
@@ -166,16 +192,73 @@ char *ocr_page_to_docmodel_json(const OcrPage *pg) {
     JVal *root = j_obj();
     j_obj_put(root, "type", j_str("document"));
     JVal *blocks = j_arr();
-    for (size_t i = 0; i < pg->nblk; i++) {
-        char *bt = block_text(&pg->blk[i]);
+
+    /* Line reconstruction: XY-cut often splits a text line into per-word blocks.
+     * Group blocks whose vertical spans overlap into one paragraph (a line),
+     * order them left-to-right, and join word texts with a single space. This
+     * turns "HELLO" "WORLD" (two blocks) back into one "HELLO WORLD" paragraph.
+     * Blocks are already in reading order, so a simple same-band grouping over
+     * the ordered list reconstructs lines correctly. */
+    size_t n = pg->nblk;
+    unsigned char *used = n ? calloc(n, 1) : NULL;
+
+    for (size_t i = 0; i < n; i++) {
+        if (used && used[i]) continue;
+        const OcrBlock *bi = &pg->blk[i].box;
+        size_t hi = bi->y1 - bi->y0;
+        size_t band = hi / 2 + 1;   /* vertical tolerance for "same line" */
+
+        /* collect indices of blocks on this line band */
+        size_t idx[64]; size_t ni = 0;
+        idx[ni++] = i;
+        for (size_t j = i + 1; j < n && ni < 64; j++) {
+            if (used && used[j]) continue;
+            const OcrBlock *bj = &pg->blk[j].box;
+            /* same line if vertical centers are within the band tolerance */
+            size_t ci = (bi->y0 + bi->y1) / 2, cj = (bj->y0 + bj->y1) / 2;
+            size_t dy = ci > cj ? ci - cj : cj - ci;
+            if (dy <= band) { idx[ni++] = j; if (used) used[j] = 1; }
+        }
+        if (used) used[i] = 1;
+
+        /* order this line's blocks left-to-right (selection sort, ni is tiny) */
+        for (size_t a = 0; a + 1 < ni; a++)
+            for (size_t b = a + 1; b < ni; b++)
+                if (pg->blk[idx[b]].box.x0 < pg->blk[idx[a]].box.x0) {
+                    size_t tmp = idx[a]; idx[a] = idx[b]; idx[b] = tmp;
+                }
+
+        /* build the line text: each block's text, joined by a space */
+        size_t total = 1;
+        char **parts = malloc(ni * sizeof *parts);
+        for (size_t a = 0; a < ni; a++) {
+            parts[a] = block_text(&pg->blk[idx[a]]);
+            total += (parts[a] ? strlen(parts[a]) : 0) + 1;
+        }
+        char *line = malloc(total);
+        char *w = line;
+        for (size_t a = 0; a < ni; a++) {
+            if (parts[a] && parts[a][0]) {
+                if (w != line) *w++ = ' ';
+                size_t l = strlen(parts[a]);
+                memcpy(w, parts[a], l);
+                w += l;
+            }
+            free(parts[a]);
+        }
+        *w = '\0';
+        free(parts);
+
         JVal *para = j_obj();
         j_obj_put(para, "kind", j_str("paragraph"));
         j_obj_put(para, "style", j_null());
         j_obj_put(para, "bold", j_bool(0));
-        j_obj_put(para, "text", j_str(bt ? bt : ""));
-        free(bt);
+        j_obj_put(para, "text", j_str(line));
+        free(line);
         j_arr_push(blocks, para);
     }
+    free(used);
+
     j_obj_put(root, "blocks", blocks);
     char *out = j_emit(root);
     j_free(root);

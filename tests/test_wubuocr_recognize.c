@@ -144,6 +144,44 @@ int main(void) {
         ocr_image_free(im);
     }
 
+    /* ---------- 6. Word segmentation: wide gap -> space ----------
+     * Render "12" then a wide gap then "34" and assert line reconstruction
+     * joins the two word-blocks with a space. Digits are used because they
+     * recognize cleanly (10/10) and never escape to quote/backslash in JSON. */
+    {
+        size_t sc = 5, gw = 8 * sc;
+        OcrImage *im = ocr_image_create(gw * 4 + 200, gw + 20);
+        render_char(im, '1', 10,            8, sc);
+        render_char(im, '2', 10 + gw + 4,   8, sc);
+        size_t x2 = 10 + 2*(gw+4) + gw*2;   /* big gap */
+        render_char(im, '3', x2,            8, sc);
+        render_char(im, '4', x2 + gw + 4,   8, sc);
+
+        OcrTemplates *t = ocr_templates_create(5);
+        OcrPage *pg = ocr_page_analyze(im, NULL, ocr_recognizer_fn(), t);
+        CK(pg != NULL, "analyze two-word line");
+        if (pg) {
+            /* Line reconstruction (docmodel) groups the two word-blocks into one
+             * paragraph and joins them with a space. Assert the space appears. */
+            char *dj = ocr_page_to_docmodel_json(pg);
+            int has_space = 0;
+            if (dj) {
+                const char *p = strstr(dj, "\"text\":\"");
+                if (p) {
+                    p += 8;
+                    const char *e = strchr(p, '"');
+                    for (const char *q = p; e && q < e; q++)
+                        if (*q == ' ') has_space = 1;
+                }
+                free(dj);
+            }
+            CK(has_space, "wide inter-glyph gap produces a word-break space");
+            ocr_page_free(pg);
+        }
+        ocr_templates_free(t);
+        ocr_image_free(im);
+    }
+
     if (fails) { printf("WUBUOCR RECOGNIZE TESTS FAILED (%d)\n", fails); return 1; }
     printf("WUBUOCR RECOGNIZE TESTS PASSED\n");
     return 0;
