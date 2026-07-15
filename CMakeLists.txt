@@ -243,6 +243,22 @@ target_link_libraries(wubuocr PUBLIC wubujson)
 add_executable(wubuocr_cli apps/wubuocr/main.c)
 target_link_libraries(wubuocr_cli PRIVATE wubuocr)
 
+# --- wubutui: native terminal UI toolkit (human GUIs) ---
+# Pure C11 render/input core (screen buffer, ANSI diff, key decode, word wrap,
+# draw primitives) + a thin POSIX termios edge (term.c). No dependency, no
+# toolkit -- consistent with the headless suite. The pure modules are unit-
+# tested without a TTY; term.c isolates the impure edge.
+add_library(wubutui STATIC
+    src/wubutui/screen.c src/wubutui/input.c
+    src/wubutui/draw.c   src/wubutui/term.c)
+target_include_directories(wubutui PUBLIC src/wubutui)
+
+# wubuview: human document viewer -- open ANY wubudoc format in a scrollable,
+# word-wrapped terminal window (docflat flattens the model to text).
+add_executable(wubuview apps/wubuview/entry.c apps/wubuview/main.c apps/wubuview/docflat.c)
+target_include_directories(wubuview PRIVATE apps/wubuview src/wubutui src/wubudoc src/wubujson)
+target_link_libraries(wubuview PRIVATE wubutui wubudoc wubujson)
+
 # --- tests ---
 enable_testing()
 add_executable(test_wubuzip tests/test_wubuzip.c)
@@ -399,6 +415,17 @@ add_test(NAME wubuocr COMMAND test_wubuocr)
 add_executable(test_wubuocr_recognize tests/test_wubuocr_recognize.c)
 target_link_libraries(test_wubuocr_recognize PRIVATE wubuocr)
 add_test(NAME wubuocr_recognize COMMAND test_wubuocr_recognize)
+
+# wubutui: pure TUI core (screen, wrap, key decode, draw) -- no TTY needed.
+add_executable(test_wubutui tests/test_wubutui.c)
+target_link_libraries(test_wubutui PRIVATE wubutui)
+add_test(NAME wubutui COMMAND test_wubutui)
+
+# wubuview: docflat model->text flattening (pure).
+add_executable(test_wubuview tests/test_wubuview.c apps/wubuview/docflat.c)
+target_include_directories(test_wubuview PRIVATE apps/wubuview src/wubujson)
+target_link_libraries(test_wubuview PRIVATE wubujson)
+add_test(NAME wubuview COMMAND test_wubuview)
 
 # wubusvg: SVG ingest + regurgitate round-trip.
 add_executable(test_wubusvg tests/test_wubusvg.c)
