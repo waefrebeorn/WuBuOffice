@@ -36,6 +36,9 @@ const JVal *j_arr_at(const JVal *arr, size_t i);
 const JVal *j_obj_get(const JVal *obj, const char *key);  /* NULL if absent */
 const char *j_obj_key_at(const JVal *obj, size_t i);     /* for iteration */
 
+/* Deep-copy a value (recursive). Caller frees with j_free. NULL on OOM. */
+JVal *j_copy(const JVal *v);
+
 /* Serialize to a malloc'd NUL-terminated string (caller frees). NULL on OOM. */
 char *j_emit(const JVal *v);
 

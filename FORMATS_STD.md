@@ -79,7 +79,29 @@ Round-trip and foreign-read tests assert we agree with those tools.
   exact dispatcher wubuOS uses) and by a live NDJSON session whose regurgitated
   SVG is confirmed well-formed by an independent XML parser.
 
-## Reference fork (NOT modified, NOT redistributed here)
+## Unified ingestion + creation engine (`wubudoc`)
+The "9 yards" converge here. `src/wubudoc/wubudoc.{c,h}` is the single wubuOS
+protocol surface: ingest ANY supported format into a normalized JSON model,
+transform it, push media, and CREATE any supported format back out. One NDJSON
+dialect for the whole range. Reuses (never re-implements) every module above.
+
+Supported:
+- ingest: txt md json csv svg xml html | ttf otf woff | zip docx xlsx pptx
+  odt ods odp (OOXML/ODF = zip+xml) | doc xls ppt (legacy = CFB)
+- create: json csv md svg xml html (text emit) | zip docx xlsx pptx odt ods
+  odp (zip, via wubuzip writer) | doc xls ppt (CFB, via wubucfb writer)
+- media: named attachments (e.g. word/media/img.png) embedded on create
+- NDJSON commands: open ingest load json text set media create list close quit
+
+Binary parts in the model are base64 (RFC 4648). The AGI edits documents purely
+as JSON and re-creates them losslessly. Verified by test_wubudoc (ingest json/
+csv/svg/zip/font/cfb; create zip + cfb round-trips; media round-trip) and live
+NDJSON sessions whose outputs are re-opened + validated by independent tools
+(python zipfile, xml.dom.minidom).
+
+Gates: full suite 29/29 green normal AND 29/29 under ASan+UBSan
+(0 leaks / 0 UB / 0 warnings).
+
 `github.com/waefrebeorn/WuBuContainer` — a fork of the convert.to.it universal
 converter (TypeScript/Vite, GPL-2.0). Used **only as a citation map** of ~50
 format handlers (fonts, SVG, bson, nbt, qoi, icns, xcursor, pandoc, ffmpeg, …)

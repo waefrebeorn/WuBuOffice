@@ -198,6 +198,17 @@ target_link_libraries(wubusvg_cli PRIVATE wubusvg)
 add_executable(wubusvg_agent apps/wubusvg/agent_main.c)
 target_link_libraries(wubusvg_agent PRIVATE wubusvg)
 
+# --- wubudoc: unified document ingestion + creation facade (wubuOS bus) ---
+add_library(wubudoc STATIC src/wubudoc/wubudoc.c)
+target_include_directories(wubudoc PUBLIC
+    src/wubudoc src/wubujson src/wubusvg src/wubufont src/wubuzip
+    src/wubucfb src/wubuxml)
+target_link_libraries(wubudoc PUBLIC wubusvg wubufont wubuzip wubucfb wubuxml wubujson)
+
+# wubudoc_agent: NDJSON agent protocol unifying the whole format range
+add_executable(wubudoc_agent apps/wubudoc/agent_main.c)
+target_link_libraries(wubudoc_agent PRIVATE wubudoc)
+
 # --- wubufont: clean-room SFNT/TrueType parser + SVG font emitter ---
 add_library(wubufont STATIC src/wubufont/wubufont.c src/wubufont/woff.c)
 target_include_directories(wubufont PUBLIC src/wubufont src/wubuzip)
@@ -363,6 +374,11 @@ add_test(NAME wubufont COMMAND test_wubufont)
 add_executable(test_wubusvg tests/test_wubusvg.c)
 target_link_libraries(test_wubusvg PRIVATE wubusvg)
 add_test(NAME wubusvg COMMAND test_wubusvg)
+
+# wubudoc agent test
+add_executable(test_wubudoc tests/test_wubudoc.c)
+target_link_libraries(test_wubudoc PRIVATE wubudoc)
+add_test(NAME wubudoc COMMAND test_wubudoc)
 
 # wubusvg agent: NDJSON protocol for wubuOS (mirrors WuBuPad agent).
 add_executable(test_wubusvg_agent tests/test_wubusvg_agent.c)

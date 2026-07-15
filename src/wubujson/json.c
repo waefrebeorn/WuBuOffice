@@ -38,6 +38,28 @@ void j_free(JVal *v) {
     free(v);
 }
 
+JVal *j_copy(const JVal *v) {
+    if (!v) return NULL;
+    switch (v->type) {
+    case J_NULL:  return j_null();
+    case J_BOOL:  return j_bool(v->u.b);
+    case J_NUM:   return j_num(v->u.n);
+    case J_STR:   return j_str(v->u.s);
+    case J_ARR: {
+        JVal *a = j_arr();
+        for (size_t i = 0; i < v->u.a.n; i++) j_arr_push(a, j_copy(v->u.a.e[i]));
+        return a;
+    }
+    case J_OBJ: {
+        JVal *o = j_obj();
+        for (size_t i = 0; i < v->u.o.n; i++)
+            j_obj_put(o, v->u.o.k[i], j_copy(v->u.o.v[i]));
+        return o;
+    }
+    }
+    return NULL;
+}
+
 void j_arr_push(JVal *arr, JVal *child) {
     if (arr->type != J_ARR) { j_free(child); return; }
     if (arr->u.a.n == arr->u.a.cap) { arr->u.a.cap = arr->u.a.cap?arr->u.a.cap*2:8; arr->u.a.e = xrealloc(arr->u.a.e, arr->u.a.cap*sizeof *arr->u.a.e); }
