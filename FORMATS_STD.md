@@ -45,7 +45,17 @@ Round-trip and foreign-read tests assert we agree with those tools.
   smaller than the sfnt (760 KB), and the CLI reads the `.woff` straight to a
   well-formed SVG (independent XML oracle).
 - Office OOXML / ODF / legacy CFB / PDF / RTF / HTML / EPUB / MD — see
-  `GAPS_*.md` and the existing test suite (26/26 green).
+  `GAPS_*.md` and the existing test suite (27/27 green).
+- **SVG ingest + regurgitate** (`src/wubusvg/`): ingests an SVG (XML) byte
+  stream into a structured element tree (reusing the dependency-free `wubuxml`
+  SAX parser) and regurgitates it back to well-formed SVG (reusing the
+  `wubuxml` writer). This is the vector-document ingestion/regurgitation
+  contract for WuBuOS: bytes in → inspectable/editable tree → bytes out.
+  Preserves nesting, attributes (source order), and entity-decoded text;
+  rejects malformed/unbalanced markup. Verified by an **idempotent round-trip**
+  (re-ingesting the regurgitated output yields a structurally identical tree)
+  and by the full cross-module chain
+  `TTF → wubufont → SVG → wubusvg (count/regurgitate) → independent XML oracle`.
 
 ## Reference fork (NOT modified, NOT redistributed here)
 `github.com/waefrebeorn/WuBuContainer` — a fork of the convert.to.it universal

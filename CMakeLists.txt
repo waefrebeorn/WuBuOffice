@@ -181,6 +181,15 @@ add_executable(wubuoffice apps/wubuoffice/main.c
   $<TARGET_OBJECTS:wubuconv_app>)
 target_link_libraries(wubuoffice PRIVATE wubuoxml wubuxml wubuzip wubuformula wubucfb)
 
+# --- wubusvg: clean-room SVG ingest + regurgitate (document engine) ---
+add_library(wubusvg STATIC src/wubusvg/wubusvg.c src/wubuxml/parser.c)
+target_include_directories(wubusvg PUBLIC src/wubusvg src/wubuxml)
+target_link_libraries(wubusvg PUBLIC wubuxml)
+
+# wubusvg CLI: ingest an SVG and regurgitate it (byte-safe round-trip)
+add_executable(wubusvg_cli apps/wubusvg/main.c)
+target_link_libraries(wubusvg_cli PRIVATE wubusvg)
+
 # --- wubufont: clean-room SFNT/TrueType parser + SVG font emitter ---
 add_library(wubufont STATIC src/wubufont/wubufont.c src/wubufont/woff.c)
 target_include_directories(wubufont PUBLIC src/wubufont src/wubuzip)
@@ -341,3 +350,8 @@ add_test(NAME flat_epub COMMAND test_flat_epub)
 add_executable(test_wubufont tests/test_wubufont.c)
 target_link_libraries(test_wubufont PRIVATE wubufont)
 add_test(NAME wubufont COMMAND test_wubufont)
+
+# wubusvg: SVG ingest + regurgitate round-trip.
+add_executable(test_wubusvg tests/test_wubusvg.c)
+target_link_libraries(test_wubusvg PRIVATE wubusvg)
+add_test(NAME wubusvg COMMAND test_wubusvg)
