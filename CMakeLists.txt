@@ -255,7 +255,7 @@ target_include_directories(wubutui PUBLIC src/wubutui)
 
 # wubuview: human document viewer -- open ANY wubudoc format in a scrollable,
 # word-wrapped terminal window (docflat flattens the model to text).
-add_executable(wubuview apps/wubuview/entry.c apps/wubuview/main.c apps/wubuview/docflat.c)
+add_executable(wubuview apps/wubuview/entry.c apps/wubuview/main.c apps/wubuview/docflat.c apps/wubuview/controller.c)
 target_include_directories(wubuview PRIVATE apps/wubuview src/wubutui src/wubudoc src/wubujson)
 target_link_libraries(wubuview PRIVATE wubutui wubudoc wubujson)
 
@@ -426,6 +426,12 @@ add_executable(test_wubuview tests/test_wubuview.c apps/wubuview/docflat.c)
 target_include_directories(test_wubuview PRIVATE apps/wubuview src/wubujson)
 target_link_libraries(test_wubuview PRIVATE wubujson)
 add_test(NAME wubuview COMMAND test_wubuview)
+
+# wubuview controller: pure event->state mapping (real app glue path)
+add_executable(test_wubuview_ctrl tests/test_wubuview_ctrl.c apps/wubuview/controller.c)
+target_include_directories(test_wubuview_ctrl PRIVATE apps/wubuview src/wubutui)
+target_link_libraries(test_wubuview_ctrl PRIVATE wubutui)
+add_test(NAME wubuview_ctrl COMMAND test_wubuview_ctrl)
 
 # wubusvg: SVG ingest + regurgitate round-trip.
 add_executable(test_wubusvg tests/test_wubusvg.c)

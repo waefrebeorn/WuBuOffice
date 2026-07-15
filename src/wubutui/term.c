@@ -31,8 +31,12 @@ TuiTerm *tui_term_enter(void) {
     raw.c_cc[VTIME] = 0;
     if (tcsetattr(t->in_fd, TCSAFLUSH, &raw) != 0) { free(t); return NULL; }
 
-    /* alt screen, clear, hide cursor */
-    const char *init = "\x1b[?1049h\x1b[2J\x1b[H\x1b[?25l";
+    /* alt screen, clear, hide cursor, then enable mouse reporting:
+     *   1000 = button press/release, 1002 = button-drag motion,
+     *   1006 = SGR extended coords (works past column 223, unambiguous).
+     * Sending both 1000 and 1002 plus 1006 gives us clicks, drags and wheel. */
+    const char *init = "\x1b[?1049h\x1b[2J\x1b[H\x1b[?25l"
+                       "\x1b[?1000h\x1b[?1002h\x1b[?1006h";
     ssize_t wr = write(t->out_fd, init, strlen(init));
     (void)wr;
     return t;
@@ -40,8 +44,9 @@ TuiTerm *tui_term_enter(void) {
 
 void tui_term_leave(TuiTerm *t) {
     if (!t) return;
-    /* show cursor, leave alt screen, reset SGR */
-    const char *fin = "\x1b[?25h\x1b[0m\x1b[?1049l";
+    /* disable mouse reporting, show cursor, leave alt screen, reset SGR */
+    const char *fin = "\x1b[?1006l\x1b[?1002l\x1b[?1000l"
+                      "\x1b[?25h\x1b[0m\x1b[?1049l";
     ssize_t wr = write(t->out_fd, fin, strlen(fin));
     (void)wr;
     tcsetattr(t->in_fd, TCSAFLUSH, &t->saved);

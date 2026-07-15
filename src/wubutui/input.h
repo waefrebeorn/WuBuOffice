@@ -37,12 +37,37 @@ typedef enum {
     TUI_KEY_HOME,
     TUI_KEY_END,
     TUI_KEY_INSERT,
-    TUI_KEY_DELETE
+    TUI_KEY_DELETE,
+    TUI_KEY_MOUSE         /* a mouse event: see the .mouse fields */
 } TuiKeyType;
+
+/* Mouse actions (old-school xterm reporting, decoded here). */
+typedef enum {
+    TUI_MOUSE_PRESS = 0,   /* a button went down */
+    TUI_MOUSE_RELEASE,     /* a button came up (SGR reports which; X10 does not) */
+    TUI_MOUSE_DRAG,        /* motion with a button held */
+    TUI_MOUSE_MOVE,        /* motion with no button (only if motion tracking on) */
+    TUI_MOUSE_WHEEL_UP,    /* wheel scrolled up */
+    TUI_MOUSE_WHEEL_DOWN   /* wheel scrolled down */
+} TuiMouseAction;
+
+/* Which button (for press/release/drag). Wheel events use WHEEL_* action. */
+typedef enum {
+    TUI_MBTN_NONE = 0,
+    TUI_MBTN_LEFT,
+    TUI_MBTN_MIDDLE,
+    TUI_MBTN_RIGHT
+} TuiMouseButton;
 
 typedef struct {
     TuiKeyType type;
     char       ch;   /* valid when type == TUI_KEY_CHAR (the raw byte) */
+    /* valid when type == TUI_KEY_MOUSE: */
+    TuiMouseAction mouse_action;
+    TuiMouseButton mouse_button;
+    size_t         mouse_x;   /* 0-based column */
+    size_t         mouse_y;   /* 0-based row    */
+    int            mouse_shift, mouse_alt, mouse_ctrl;  /* modifier flags */
 } TuiKey;
 
 /* Decode the next key from `buf` (len bytes). Writes the event to *out and

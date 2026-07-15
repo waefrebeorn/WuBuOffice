@@ -159,6 +159,119 @@ int main(void) {
         tui_screen_free(b);
     }
 
+    /* ---------- mouse decode (SGR 1006 + legacy X10) ---------- */
+    {
+        TuiKey k;
+        /* left press at (x=3,y=2) -> coords are 1-based in the report */
+        const char *seq = "\x1b[<0;3;2M";
+        size_t u = tui_key_decode(seq, strlen(seq), &k);
+        CK(u == strlen(seq) && k.type == TUI_KEY_MOUSE, "sgr left press parsed");
+        CK(k.mouse_action == TUI_MOUSE_PRESS, "sgr -> PRESS");
+        CK(k.mouse_button == TUI_MBTN_LEFT, "sgr -> LEFT button");
+        CK(k.mouse_x == 2 && k.mouse_y == 1, "sgr 1-based coords -> 0-based");
+
+        /* wheel up (cb=64) at (5,4) */
+        const char *wup = "\x1b[<64;5;4M";
+        tui_key_decode(wup, strlen(wup), &k);
+        CK(k.mouse_action == TUI_MOUSE_WHEEL_UP && k.mouse_x == 4 && k.mouse_y == 3,
+            "sgr wheel up + coords");
+
+        /* wheel down (cb=65) */
+        const char *wdn = "\x1b[<65;1;1M";
+        tui_key_decode(wdn, strlen(wdn), &k);
+        CK(k.mouse_action == TUI_MOUSE_WHEEL_DOWN, "sgr wheel down");
+
+        /* release: ends with 'm' */
+        const char *rel = "\x1b[<0;3;2m";
+        tui_key_decode(rel, strlen(rel), &k);
+        CK(k.mouse_action == TUI_MOUSE_RELEASE && k.mouse_button == TUI_MBTN_LEFT,
+            "sgr release ('m') -> RELEASE+LEFT");
+
+        /* drag (cb=32 = motion, left held at 0) at (10,20) */
+        const char *drag = "\x1b[<32;11;21M";
+        tui_key_decode(drag, strlen(drag), &k);
+        CK(k.mouse_action == TUI_MOUSE_DRAG && k.mouse_x == 10 && k.mouse_y == 20,
+            "sgr drag -> DRAG + coords");
+
+        /* shift+left: cb=4 (shift bit) */
+        const char *sh = "\x1b[<4;1;1M";
+        tui_key_decode(sh, strlen(sh), &k);
+        CK(k.mouse_shift == 1 && k.mouse_button == TUI_MBTN_LEFT, "sgr shift modifier flag");
+
+        /* legacy X10: ESC[M bxy, each biased +32. left(0)->32(' '), x=3->35('#'), y=2->34('"') */
+        const char *x10 = "\x1b[M #\"";
+        size_t xu = tui_key_decode(x10, strlen(x10), &k);
+        CK(xu == 6 && k.type == TUI_KEY_MOUSE && k.mouse_action == TUI_MOUSE_PRESS,
+            "x10 left press parsed");
+        CK(k.mouse_x == 2 && k.mouse_y == 1, "x10 coords decoded");
+
+        /* incomplete: truncated SGR (no terminator yet) */
+        const char *inc = "\x1b[<0;3;";
+        size_t iu = tui_key_decode(inc, strlen(inc), &k);
+        CK(iu == 0 && k.type == TUI_KEY_INCOMPLETE, "incomplete SGR -> INCOMPLETE");
+
+        /* caller buffers partial escapes: feed partial (0 consumed), then the
+         * full accumulated buffer decodes cleanly in one shot */
+        const char *full = "\x1b[<0;3;2M";
+        size_t a = tui_key_decode(full, 5, &k);   /* first 5 bytes: incomplete */
+        CK(a == 0 && k.type == TUI_KEY_INCOMPLETE, "partial -> 0 consumed, INCOMPLETE");
+        /* caller appends the rest and re-decodes the whole thing */
+        size_t fb = tui_key_decode(full, strlen(full), &k);
+        CK(fb == strlen(full) && k.type == TUI_KEY_MOUSE, "re-feed full -> MOUSE");
+    }
+
+    /* ---------- scrollbar geometry ---------- */
+    {
+        /* everything fits -> thumb spans the whole track */
+        TuiThumb th = tui_scrollbar_thumb(20, 10, 30, 0);
+        CK(th.start == 0 && th.len == 20, "fits: thumb == full track");
+
+        /* half content visible at top: thumb is half the track, pinned at top */
+        th = tui_scrollbar_thumb(20, 100, 50, 0);
+        CK(th.len == 10, "half: thumb = 50% track");
+        CK(th.start == 0, "half@top: thumb at top");
+
+        /* at bottom -> thumb pinned to bottom */
+        th = tui_scrollbar_thumb(20, 100, 50, 50);
+        CK(th.start + th.len == 20, "bottom: thumb pinned to end");
+
+        /* middle scroll -> thumb in the middle */
+        th = tui_scrollbar_thumb(20, 100, 50, 25);
+        CK(th.start == 5, "mid: thumb centered");
+
+        /* length never exceeds track, never zero when content > viewport */
+        th = tui_scrollbar_thumb(7, 1000, 3, 0);
+        CK(th.len >= 1 && th.len <= 7, "thumb length within [1, h]");
+    }
+
+    /* ---------- scrollbar click maps to scroll ---------- */
+    {
+        /* 20-row track, 100 lines, 50 visible. Clicking top row -> scroll 0. */
+        CK(tui_scrollbar_scroll_at(20, 100, 50, 0) == 0, "click top -> scroll 0");
+        /* clicking last row -> scroll max (50) */
+        CK(tui_scrollbar_scroll_at(20, 100, 50, 19) == 50, "click bottom -> max");
+        /* everything fits -> always 0 */
+        CK(tui_scrollbar_scroll_at(20, 10, 30, 0) == 0, "fits -> scroll 0");
+    }
+
+    /* ---------- button + hit-test ---------- */
+    {
+        CK(tui_button_width("Quit") == 8, "button width '[ Quit ]' = 8");
+        /* draw a button at (1,1) and confirm its glyphs */
+        TuiScreen *s = tui_screen_create(10, 3);
+        tui_button(s, 1, 1, "Hi", TUI_ATTR_NONE);
+        CK(tui_screen_char(s, 1, 1) == '[', "button '[' at x");
+        CK(tui_screen_char(s, 2, 1) == ' ', "button space");
+        CK(tui_screen_char(s, 3, 1) == 'H', "button label H");
+        CK(tui_screen_char(s, 6, 1) == ']', "button ']'");
+        tui_screen_free(s);
+
+        /* hit test: inside vs outside */
+        CK(tui_hit(2, 1, 1, 1, 6, 1) == 1, "hit inside button");
+        CK(tui_hit(8, 1, 1, 1, 6, 1) == 0, "hit outside button (x)");
+        CK(tui_hit(2, 5, 1, 1, 6, 1) == 0, "hit outside button (y)");
+    }
+
     if (fails) { printf("WUBUTUI TESTS FAILED (%d)\n", fails); return 1; }
     printf("WUBUTUI TESTS PASSED\n");
     return 0;

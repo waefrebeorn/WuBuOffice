@@ -123,3 +123,78 @@ size_t tui_text_wrapped(TuiScreen *s, size_t x, size_t y, size_t w, size_t h,
     tui_wrap_free(lines, n);
     return n;
 }
+
+/* --- scrollbar --- */
+
+TuiThumb tui_scrollbar_thumb(size_t h, size_t total, size_t visible, size_t scroll) {
+    TuiThumb t = { 0, h };
+    if (h == 0) { t.len = 0; return t; }
+    if (total <= visible || total == 0) { t.start = 0; t.len = h; return t; }
+
+    /* thumb length proportional to visible/total, at least 1 */
+    size_t len = (visible * h) / total;
+    if (len == 0) len = 1;
+    if (len > h) len = h;
+
+    /* thumb start proportional to scroll / max_scroll over the free track */
+    size_t max_scroll = total - visible;
+    size_t free_track = h - len;
+    size_t start = 0;
+    if (max_scroll > 0 && free_track > 0) {
+        if (scroll > max_scroll) scroll = max_scroll;
+        start = (scroll * free_track) / max_scroll;
+    }
+    /* keep the thumb pinned to the ends at the extremes */
+    if (scroll == 0) start = 0;
+    else if (scroll >= max_scroll) start = free_track;
+    if (start + len > h) start = h - len;
+
+    t.start = start;
+    t.len = len;
+    return t;
+}
+
+void tui_scrollbar(TuiScreen *s, size_t x, size_t y, size_t h,
+                   size_t total, size_t visible, size_t scroll) {
+    if (!s || h == 0) return;
+    TuiThumb th = tui_scrollbar_thumb(h, total, visible, scroll);
+    for (size_t i = 0; i < h; i++) {
+        int on_thumb = (i >= th.start && i < th.start + th.len);
+        if (on_thumb)
+            tui_screen_put(s, x, y + i, ' ', TUI_ATTR_REVERSE);
+        else
+            tui_screen_put(s, x, y + i, '|', TUI_ATTR_DIM);
+    }
+}
+
+size_t tui_scrollbar_scroll_at(size_t h, size_t total, size_t visible, size_t row) {
+    if (h == 0 || total <= visible) return 0;
+    size_t max_scroll = total - visible;
+    if (h <= 1) return 0;
+    /* map the clicked row (0..h-1) linearly onto 0..max_scroll */
+    size_t scroll = (row * max_scroll) / (h - 1);
+    if (scroll > max_scroll) scroll = max_scroll;
+    return scroll;
+}
+
+/* --- button --- */
+
+size_t tui_button_width(const char *label) {
+    return (label ? strlen(label) : 0) + 4;   /* "[ " + label + " ]" */
+}
+
+size_t tui_button(TuiScreen *s, size_t x, size_t y, const char *label, uint8_t attr) {
+    if (!label) label = "";
+    size_t w = tui_button_width(label);
+    tui_screen_put(s, x, y, '[', attr);
+    tui_screen_put(s, x + 1, y, ' ', attr);
+    tui_text(s, x + 2, y, label, attr);
+    size_t l = strlen(label);
+    tui_screen_put(s, x + 2 + l, y, ' ', attr);
+    tui_screen_put(s, x + 3 + l, y, ']', attr);
+    return w;
+}
+
+int tui_hit(size_t px, size_t py, size_t x, size_t y, size_t w, size_t h) {
+    return (px >= x && px < x + w && py >= y && py < y + h) ? 1 : 0;
+}

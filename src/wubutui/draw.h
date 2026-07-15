@@ -45,6 +45,37 @@ void   tui_wrap_free(char **lines, size_t count);
 size_t tui_text_wrapped(TuiScreen *s, size_t x, size_t y, size_t w, size_t h,
                         const char *text, size_t scroll, uint8_t attr);
 
+/* --- vertical scrollbar widget ---
+ * A proportional scrollbar in a 1-column track of height `h` at (x,y). The
+ * thumb size reflects viewport/content ratio and its position reflects
+ * `scroll`. `total` is the content line count, `visible` the viewport height.
+ * Pure geometry so it is testable: tui_scrollbar_thumb() computes the thumb's
+ * [start,len) within the track without drawing. */
+typedef struct { size_t start; size_t len; } TuiThumb;
+
+/* Compute the thumb span (0-based offset into an h-cell track, and its length)
+ * for the given content/viewport/scroll. Guarantees 1 <= len <= h and keeps the
+ * thumb visible at both ends. If everything fits (total <= visible) len == h. */
+TuiThumb tui_scrollbar_thumb(size_t h, size_t total, size_t visible, size_t scroll);
+
+/* Draw the scrollbar track ('|') with a highlighted thumb (reverse blocks). */
+void tui_scrollbar(TuiScreen *s, size_t x, size_t y, size_t h,
+                   size_t total, size_t visible, size_t scroll);
+
+/* Map a click at track-row `row` (0-based within the track) back to a scroll
+ * offset, so clicking the track jumps there. Returns a clamped scroll value. */
+size_t tui_scrollbar_scroll_at(size_t h, size_t total, size_t visible, size_t row);
+
+/* --- button widget ---
+ * A labelled clickable button: "[ Label ]" drawn at (x,y). tui_button() draws
+ * it and returns its width in cells. tui_hit() is a generic rectangle hit-test
+ * used for buttons and any other clickable region. */
+size_t tui_button_width(const char *label);
+size_t tui_button(TuiScreen *s, size_t x, size_t y, const char *label, uint8_t attr);
+
+/* Return 1 if point (px,py) lies inside the rect (x,y,w,h), else 0. */
+int tui_hit(size_t px, size_t py, size_t x, size_t y, size_t w, size_t h);
+
 #ifdef __cplusplus
 }
 #endif
