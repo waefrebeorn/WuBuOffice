@@ -152,9 +152,12 @@ static const char *kind_of_ext(const char *path) {
     if (!strcasecmp(e, "md"))  return "md";
     if (!strcasecmp(e, "json")) return "json";
     if (!strcasecmp(e, "csv")) return "csv";
+    if (!strcasecmp(e, "tsv")) return "tsv";
     if (!strcasecmp(e, "svg")) return "svg";
     if (!strcasecmp(e, "xml")) return "xml";
     if (!strcasecmp(e, "html") || !strcasecmp(e, "htm")) return "html";
+    if (!strcasecmp(e, "rtf")) return "rtf";
+    if (!strcasecmp(e, "epub")) return "epub";
     if (!strcasecmp(e, "ttf") || !strcasecmp(e, "otf")) return "font";
     if (!strcasecmp(e, "woff")) return "woff";
     if (!strcasecmp(e, "zip")) return "zip";
@@ -164,6 +167,9 @@ static const char *kind_of_ext(const char *path) {
     if (!strcasecmp(e, "odt"))  return "odt";
     if (!strcasecmp(e, "ods"))  return "ods";
     if (!strcasecmp(e, "odp"))  return "odp";
+    if (!strcasecmp(e, "fodt")) return "fodt";
+    if (!strcasecmp(e, "fods")) return "fods";
+    if (!strcasecmp(e, "fodp")) return "fodp";
     if (!strcasecmp(e, "doc")) return "doc";
     if (!strcasecmp(e, "xls")) return "xls";
     if (!strcasecmp(e, "ppt")) return "ppt";

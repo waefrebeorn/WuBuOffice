@@ -119,6 +119,32 @@ int main(void) {
         }
     }
 
+    /* --- rtf: create from a semantic model, then re-ingest via doc_open
+     *     (proves kind_of_ext routes rtf and the full ingest<->create loop) --- */
+    {
+        const char *model = "{\"type\":\"document\",\"blocks\":["
+            "{\"kind\":\"paragraph\",\"style\":null,\"bold\":0,\"text\":\"RtfRoundTrip\"}]}";
+        long jid = doc_ingest_text(s, "json", model);
+        CK(jid >= 0, "ingest model json for rtf");
+        if (jid >= 0) {
+            size_t ol = 0; uint8_t *rtf = doc_create_bytes(s, jid, "rtf", &ol);
+            CK(rtf != NULL && ol > 0, "create rtf from model");
+            if (rtf) {
+                FILE *f = fopen("/tmp/wubudoc_rt.rtf", "wb");
+                fwrite(rtf, 1, ol, f); fclose(f); free(rtf);
+                long rid = doc_open(s, "/tmp/wubudoc_rt.rtf");
+                CK(rid >= 0, "re-ingest created rtf (kind_of_ext routes rtf)");
+                if (rid >= 0) {
+                    CK(strcmp(doc_kind(s, rid), "rtf") == 0, "re-ingest kind rtf");
+                    char *mr = doc_json(s, rid);
+                    CK(mr && strstr(mr, "RtfRoundTrip") != NULL, "rtf round-trip kept text");
+                    free(mr);
+                }
+                remove("/tmp/wubudoc_rt.rtf");
+            }
+        }
+    }
+
     /* --- generic zip keeps raw parts model --- */
     {
         char tmpl[] = "/tmp/wubudoc_g_XXXXXX";
