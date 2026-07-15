@@ -19,6 +19,7 @@
 #include "cfb.h"
 #include "cfb_write.h"
 #include "xml.h"
+#include "../../apps/wubuconv/conv_map.h"   /* semantic engine (treat as media) */
 
 #include <stdlib.h>
 #include <string.h>
@@ -169,7 +170,7 @@ static const char *kind_of_ext(const char *path) {
     return NULL;
 }
 
-/* ---------- container ingestors (zip/cfb) ---------- */
+/* ---------- container ingestors (zip) ---------- */
 static JVal *ingest_zip(const uint8_t *data, size_t len) {
     wubuzip_archive z;
     if (wubuzip_open(data, len, &z) != 0) return NULL;
@@ -186,33 +187,6 @@ static JVal *ingest_zip(const uint8_t *data, size_t len) {
         j_arr_push(arr, p);
     }
     wubuzip_close(&z);
-    return arr;
-}
-
-/* CFB enumerate: read known streams by probing a small candidate list plus
- * the canonical entries. (wubucfb has by-name read; we enumerate the common
- * streams so the model is useful without a full FAT walk.) */
-static const char *CFB_STREAMS[] = {
-    "WordDocument", "1Table", "0Table", "Data", "SummaryInformation",
-    "Workbook", "Book", "PowerPoint Document", "Pictures", "Current User",
-    "EncryptedPackage", "Ebook", NULL
-};
-static JVal *ingest_cfb(const uint8_t *data, size_t len) {
-    wubucfb *c = wubucfb_open(data, len);
-    if (!c) return NULL;
-    JVal *arr = j_arr();
-    for (size_t i = 0; CFB_STREAMS[i]; i++) {
-        if (!wubucfb_has_stream(c, CFB_STREAMS[i])) continue;
-        uint8_t *bytes = NULL; size_t bl = 0;
-        if (wubucfb_read_stream(c, CFB_STREAMS[i], &bytes, &bl) != 0) continue;
-        char *b = b64_of(bytes, bl); free(bytes);
-        JVal *p = j_obj();
-        j_obj_put(p, "name", j_str(CFB_STREAMS[i]));
-        j_obj_put(p, "bytes", j_str(b ? b : ""));
-        free(b);
-        j_arr_push(arr, p);
-    }
-    wubucfb_close(c);
     return arr;
 }
 
@@ -275,8 +249,7 @@ static JVal *ingest_woff(const uint8_t *data, size_t len) {
 static JVal *build_model(const char *kind, const uint8_t *data, size_t len,
                          char **out_text) {
     JVal *m = j_obj();
-    if (!strcasecmp(kind, "txt") || !strcasecmp(kind, "md") ||
-        !strcasecmp(kind, "json") || !strcasecmp(kind, "csv") ||
+    if (!strcasecmp(kind, "txt") ||
         !strcasecmp(kind, "xml") || !strcasecmp(kind, "html") ||
         !strcasecmp(kind, "svg")) {
         char *txt = malloc(len + 1);
@@ -285,19 +258,41 @@ static JVal *build_model(const char *kind, const uint8_t *data, size_t len,
         j_obj_put(m, "text", j_str(txt));
         if (!out_text) { /* still owned by handle */ }
     }
-    else if (!strcasecmp(kind, "zip") || !strcasecmp(kind, "docx") ||
-             !strcasecmp(kind, "xlsx") || !strcasecmp(kind, "pptx") ||
-             !strcasecmp(kind, "odt") || !strcasecmp(kind, "ods") ||
-             !strcasecmp(kind, "odp")) {
+    else if (!strcasecmp(kind, "csv") || !strcasecmp(kind, "tsv") ||
+             !strcasecmp(kind, "json") ||
+             !strcasecmp(kind, "docx") || !strcasecmp(kind, "md") ||
+             !strcasecmp(kind, "rtf") || !strcasecmp(kind, "html") ||
+             !strcasecmp(kind, "epub") || !strcasecmp(kind, "odt") ||
+             !strcasecmp(kind, "fodt") || !strcasecmp(kind, "doc") ||
+             !strcasecmp(kind, "xlsx") || !strcasecmp(kind, "ods") ||
+             !strcasecmp(kind, "fods") || !strcasecmp(kind, "xls") ||
+             !strcasecmp(kind, "pptx") || !strcasecmp(kind, "odp") ||
+             !strcasecmp(kind, "fodp") || !strcasecmp(kind, "ppt")) {
+        /* Treat the file as the MEDIA it is, not the bytes it contains
+         * (WuBuContainer's "no binary waterfalls" rule). Route through the
+         * semantic engine -> a canonical model serialized as JSON. */
+        uint8_t *mj = NULL; size_t mjlen = 0;
+        if (wubuconv_convert_mem(data, len, kind, "json", &mj, &mjlen) == 0) {
+            char *js = malloc(mjlen + 1); memcpy(js, mj, mjlen); js[mjlen] = '\0';
+            free(mj);
+            JVal *model = j_parse(js, NULL);
+            if (model) j_obj_put(m, "model", model);
+            /* also keep a human text projection */
+            const JVal *blocks = j_obj_get(model, "blocks");
+            const JVal *sheets = j_obj_get(model, "sheets");
+            const JVal *slides = j_obj_get(model, "slides");
+            if (blocks || sheets || slides) {
+                /* no separate text; the model IS the content */
+            }
+            free(js);
+        }
+        /* fall back: if the semantic engine didn't handle it, leave model null
+         * and the create path will refuse (keeps the gate honest). */
+    }
+    else if (!strcasecmp(kind, "zip")) {
         JVal *parts = ingest_zip(data, len);
         if (!parts) { j_free(m); return NULL; }
         j_obj_put(m, "parts", parts);
-    }
-    else if (!strcasecmp(kind, "doc") || !strcasecmp(kind, "xls") ||
-             !strcasecmp(kind, "ppt")) {
-        JVal *streams = ingest_cfb(data, len);
-        if (!streams) { j_free(m); return NULL; }
-        j_obj_put(m, "streams", streams);
     }
     else if (!strcasecmp(kind, "font")) {
         JVal *f = ingest_font(data, len);
@@ -475,17 +470,14 @@ uint8_t *doc_create_bytes(DocSession *s, long id, const char *format, size_t *ou
         return o;
     }
 
-    /* zip-family (zip + OOXML + ODF): assemble parts into a ZIP */
-    if (!strcasecmp(format, "zip") || !strcasecmp(format, "docx") ||
-        !strcasecmp(format, "xlsx") || !strcasecmp(format, "pptx") ||
-        !strcasecmp(format, "odt") || !strcasecmp(format, "ods") ||
-        !strcasecmp(format, "odp")) {
+    /* zip: generic container of named parts (no semantic decoder) */
+    if (!strcasecmp(format, "zip")) {
         char **names = NULL; uint8_t **datas = NULL; size_t *lens = NULL; size_t n = 0;
         if (collect_parts(s, id, &names, &datas, &lens, &n) != 0) return NULL;
         /* write to a temp ZIP via the wubuzip writer */
         char tmpl[] = "/tmp/wubudoc_XXXXXX";
         int fd = mkstemp(tmpl);
-        if (fd < 0) return NULL;
+        if (fd < 0) { free(names); free(datas); free(lens); return NULL; }
         FILE *zf = fdopen(fd, "wb");
         wubuzip_writer *zw = wubuzip_create(zf);
         for (size_t i = 0; i < n; i++) {
@@ -505,24 +497,28 @@ uint8_t *doc_create_bytes(DocSession *s, long id, const char *format, size_t *ou
         return o;
     }
 
-    /* legacy CFB family (.doc/.xls/.ppt): assemble streams into a CFB */
-    if (!strcasecmp(format, "doc") || !strcasecmp(format, "xls") ||
-        !strcasecmp(format, "ppt")) {
-        char **names = NULL; uint8_t **datas = NULL; size_t *lens = NULL; size_t n = 0;
-        if (collect_parts(s, id, &names, &datas, &lens, &n) != 0) return NULL;
-        wubucfb_writer *w = wubucfb_writer_create();
-        if (!w) { return NULL; }
-        for (size_t i = 0; i < n; i++) {
-            wubucfb_writer_add(w, names[i], datas[i], lens[i]);
-            free(names[i]); free(datas[i]);
-        }
-        free(names); free(datas); free(lens);
-        uint8_t *o = NULL; size_t ol = 0;
-        int rc = wubucfb_writer_finish(w, &o, &ol);
-        wubucfb_writer_free(w);
-        if (rc != 0) return NULL;
-        *out_len = ol;
-        return o;
+    /* semantic families: route the canonical model JSON through the engine.
+     * This is where the "treat as media" depth lives -- docx/odt/rtf/html/
+     * epub/md/doc map to dm_doc, xlsx/ods/xls to wubucell_book, pptx/odp/ppt
+     * to wubushow_pres. The AGI edits the JSON model; we re-create the file. */
+    if (!strcasecmp(format, "docx") || !strcasecmp(format, "odt") ||
+        !strcasecmp(format, "fodt") || !strcasecmp(format, "rtf") ||
+        !strcasecmp(format, "html") || !strcasecmp(format, "epub") ||
+        !strcasecmp(format, "md") || !strcasecmp(format, "doc") ||
+        !strcasecmp(format, "xlsx") || !strcasecmp(format, "ods") ||
+        !strcasecmp(format, "fods") || !strcasecmp(format, "xls") ||
+        !strcasecmp(format, "pptx") || !strcasecmp(format, "odp") ||
+        !strcasecmp(format, "fodp") || !strcasecmp(format, "ppt")) {
+        const JVal *model = j_obj_get((JVal*)d->model, "model");
+        if (!model) return NULL;
+        char *mj = j_emit(model);
+        size_t mjlen = strlen(mj);
+        uint8_t *out = NULL; size_t olen = 0;
+        int rc = wubuconv_convert_mem((const uint8_t*)mj, mjlen, "json", format, &out, &olen);
+        free(mj);
+        if (rc != 0 || !out) return NULL;
+        *out_len = olen;
+        return out;
     }
 
     return NULL;

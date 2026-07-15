@@ -253,8 +253,10 @@ int wubucell_read(const char *path, wubucell_book **out) {
             if (!wubuoxml_part_find(&pkg, tgt)) break;
             snprintf(sheets[nsheets].name, sizeof sheets[nsheets].name, "Sheet%zu", i);
             sheets[nsheets].rid[0] = '\0';
-            strncpy(sheets[nsheets].target, tgt, sizeof sheets[nsheets].target - 1);
-            sheets[nsheets].target[sizeof sheets[nsheets].target - 1] = '\0';
+            { size_t tl = strlen(tgt);
+              if (tl >= sizeof sheets[nsheets].target) tl = sizeof sheets[nsheets].target - 1;
+              memcpy(sheets[nsheets].target, tgt, tl);
+              sheets[nsheets].target[tl] = '\0'; }
             nsheets++;
         }
     }

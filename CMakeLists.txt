@@ -138,11 +138,31 @@ target_link_libraries(wubudoc_app PRIVATE wubuoxml wubuxml wubuzip)
 add_library(wubuodf_app OBJECT apps/wubuodf/odf_pkg.c apps/wubuodf/odf_body.c apps/wubuodf/odf_text.c apps/wubuodf/odf_sheet.c apps/wubuodf/odf_pres.c apps/wubuodf/odf_flat.c)
 target_include_directories(wubuodf_app PRIVATE src/wubuoxml src/wubuxml src/wubuzip apps/wubuword apps/wubuedit apps/wubucell apps/wubushow apps/wubuodf)
 target_link_libraries(wubuodf_app PRIVATE wubuoxml wubuxml wubuzip)
+# wubuconv: unified format conversion (semantic models; the "treat as media"
+# engine that gives WuBuOffice its superior formatting vs binary waterfalls)
+add_library(wubuconv_app OBJECT
+  apps/wubuconv/conv_map.c apps/wubuconv/conv_bridge.c apps/wubuconv/model_from_json.c)
+target_include_directories(wubuconv_app PRIVATE
+  src/wubuoxml src/wubuxml src/wubuzip src/wubucfb apps/wubuword apps/wubuedit
+  apps/wubucell apps/wubushow apps/wubudoc apps/wubuodf apps/wubulegacy
+  apps/wubupdf apps/wubuconv apps/wuburead src/wubujson)
+target_link_libraries(wubuconv_app PUBLIC wubuoxml wubuxml wubuzip wubucfb wuburead_app wubujson)
 
-# wubuconv: unified format conversion across the full matrix
-add_library(wubuconv_app OBJECT apps/wubuconv/conv_map.c apps/wubuconv/conv_bridge.c)
-target_include_directories(wubuconv_app PRIVATE src/wubuoxml src/wubuxml src/wubuzip src/wubucfb apps/wubuword apps/wubuedit apps/wubucell apps/wubushow apps/wubudoc apps/wubuodf apps/wubulegacy apps/wubupdf apps/wubuconv apps/wuburead)
-target_link_libraries(wubuconv_app PRIVATE wubuoxml wubuxml wubuzip wubucfb wuburead_app)
+# A real static lib wrapping the conv objects, so downstream link ordering
+# (wubujson must precede the conv objects) is handled by CMake automatically.
+# It also bundles wubushow_app/wubucell_app objects because conv_map calls into
+# both (docx<->pptx bridges etc.), making wubuconv self-contained.
+add_library(wubuconv STATIC
+  $<TARGET_OBJECTS:wubuconv_app>
+  $<TARGET_OBJECTS:wubushow_app>
+  $<TARGET_OBJECTS:wubucell_app>
+  $<TARGET_OBJECTS:wubuword_app>
+  $<TARGET_OBJECTS:wubuedit_app>
+  $<TARGET_OBJECTS:wubudoc_app>
+  $<TARGET_OBJECTS:wubuodf_app>
+  $<TARGET_OBJECTS:wubulegacy_app>
+  $<TARGET_OBJECTS:wubupdf_app>)
+target_link_libraries(wubuconv PUBLIC wubuoxml wubuxml wubuzip wubucfb wuburead_app wubujson wubuformula)
 
 # wubulegacy: readers + writers for legacy binary Office (.doc/.xls/.ppt) over MS-CFB
 add_library(wubulegacy_app OBJECT
@@ -168,18 +188,8 @@ add_executable(wubuedit $<TARGET_OBJECTS:wubuedit_app> apps/wubuedit/entry.c)
 target_link_libraries(wubuedit PRIVATE wubuoxml wubuword_app wubucell_app wubushow_app)
 
 # --- unified CLI ---
-add_executable(wubuoffice apps/wubuoffice/main.c
-  $<TARGET_OBJECTS:wubuword_app>
-  $<TARGET_OBJECTS:wubucell_app>
-  $<TARGET_OBJECTS:wubushow_app>
-  $<TARGET_OBJECTS:wuburead_app>
-  $<TARGET_OBJECTS:wubuedit_app>
-  $<TARGET_OBJECTS:wubudoc_app>
-  $<TARGET_OBJECTS:wubuodf_app>
-  $<TARGET_OBJECTS:wubulegacy_app>
-  $<TARGET_OBJECTS:wubupdf_app>
-  $<TARGET_OBJECTS:wubuconv_app>)
-target_link_libraries(wubuoffice PRIVATE wubuoxml wubuxml wubuzip wubuformula wubucfb)
+add_executable(wubuoffice apps/wubuoffice/main.c)
+target_link_libraries(wubuoffice PRIVATE wubuoxml wubuxml wubuzip wubuformula wubucfb wubujson wubuconv)
 
 # --- wubujson: minimal JSON parse+emit (vendored from WuBuPad, same API) ---
 add_library(wubujson STATIC src/wubujson/json.c)
@@ -199,11 +209,12 @@ add_executable(wubusvg_agent apps/wubusvg/agent_main.c)
 target_link_libraries(wubusvg_agent PRIVATE wubusvg)
 
 # --- wubudoc: unified document ingestion + creation facade (wubuOS bus) ---
-add_library(wubudoc STATIC src/wubudoc/wubudoc.c)
+add_library(wubudoc STATIC
+    src/wubudoc/wubudoc.c)
 target_include_directories(wubudoc PUBLIC
     src/wubudoc src/wubujson src/wubusvg src/wubufont src/wubuzip
     src/wubucfb src/wubuxml)
-target_link_libraries(wubudoc PUBLIC wubusvg wubufont wubuzip wubucfb wubuxml wubujson)
+target_link_libraries(wubudoc PUBLIC wubusvg wubufont wubuzip wubucfb wubuxml wubujson wubuoxml wuburead_app wubuconv)
 
 # wubudoc_agent: NDJSON agent protocol unifying the whole format range
 add_executable(wubudoc_agent apps/wubudoc/agent_main.c)
@@ -316,14 +327,14 @@ target_link_libraries(test_rtf_json PRIVATE wubuword_app wubuedit_app wubucell_a
 target_include_directories(test_rtf_json PRIVATE apps/wubudoc apps/wubuword apps/wubuedit apps/wubucell apps/wubushow src/wubuoxml src/wubuxml)
 add_test(NAME rtf_json COMMAND test_rtf_json)
 
-add_executable(test_odf tests/test_odf.c $<TARGET_OBJECTS:wubuodf_app>)
-target_link_libraries(test_odf PRIVATE wubuword_app wubuedit_app wubucell_app wubushow_app wubuoxml wubuxml wubuzip wubuformula)
+add_executable(test_odf tests/test_odf.c)
+target_link_libraries(test_odf PRIVATE wubuword_app wubuedit_app wubucell_app wubushow_app wubuoxml wubuxml wubuzip wubuformula wubuconv)
 target_include_directories(test_odf PRIVATE apps/wubuodf apps/wubuedit apps/wubucell apps/wubushow src/wubuoxml src/wubuxml src/wubuzip)
 target_compile_definitions(test_odf PRIVATE ODF_ORACLE="${CMAKE_CURRENT_SOURCE_DIR}/tests/conformance/odf_oracle.py")
 add_test(NAME odf COMMAND test_odf)
 
-add_executable(test_convert tests/test_convert.c $<TARGET_OBJECTS:wubuconv_app> $<TARGET_OBJECTS:wubuodf_app> $<TARGET_OBJECTS:wubudoc_app> $<TARGET_OBJECTS:wubulegacy_app> $<TARGET_OBJECTS:wubupdf_app> $<TARGET_OBJECTS:wuburead_app>)
-target_link_libraries(test_convert PRIVATE wubuword_app wubuedit_app wubucell_app wubushow_app wubuoxml wubuxml wubuzip wubuformula wubucfb)
+add_executable(test_convert tests/test_convert.c)
+target_link_libraries(test_convert PRIVATE wubuword_app wubuedit_app wubucell_app wubushow_app wubuoxml wubuxml wubuzip wubuformula wubucfb wubujson wubuconv)
 target_include_directories(test_convert PRIVATE apps/wubuconv apps/wubuodf apps/wubudoc apps/wubuedit apps/wubucell apps/wubushow apps/wubulegacy apps/wubupdf src/wubuoxml src/wubuxml src/wubuzip src/wubucfb)
 target_compile_definitions(test_convert PRIVATE
     WUBUOFFICE_BIN="${CMAKE_CURRENT_BINARY_DIR}/wubuoffice"
@@ -331,13 +342,8 @@ target_compile_definitions(test_convert PRIVATE
 add_test(NAME convert COMMAND test_convert)
 
 # Reverse-direction readers (rtf/html/epub -> dm_doc) round-trip.
-add_executable(test_readers tests/test_readers.c
-  $<TARGET_OBJECTS:wuburead_app> $<TARGET_OBJECTS:wubuconv_app>
-  $<TARGET_OBJECTS:wubuword_app> $<TARGET_OBJECTS:wubuedit_app>
-  $<TARGET_OBJECTS:wubudoc_app> $<TARGET_OBJECTS:wubuodf_app>
-  $<TARGET_OBJECTS:wubulegacy_app> $<TARGET_OBJECTS:wubupdf_app>)
-target_link_libraries(test_readers PRIVATE wubuoxml wubuxml wubuzip wubucfb wubuformula wubuedit_app
-  wubuword_app wubucell_app wubushow_app)
+add_executable(test_readers tests/test_readers.c)
+target_link_libraries(test_readers PRIVATE wubuoxml wubuxml wubuzip wubucfb wubuformula wubuedit_app wubujson wubuconv)
 target_include_directories(test_readers PRIVATE
   apps/wuburead apps/wubuconv apps/wubuword apps/wubuedit apps/wubudoc
   apps/wubuodf apps/wubulegacy apps/wubupdf src/wubuoxml src/wubuxml src/wubuzip src/wubucfb)

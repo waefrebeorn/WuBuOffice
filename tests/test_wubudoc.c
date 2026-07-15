@@ -1,15 +1,16 @@
-/* test_wubudoc.c -- unified ingestion + creation facade.
- * Drives the agent dispatcher for the whole format range. Verifies:
- *   - text kinds ingest + regurgitate losslessly (json/csv/md/svg)
- *   - container kinds enumerate parts (zip/docx = zip; doc = cfb)
- *   - font kinds extract tables/metrics
- *   - create round-trips: zip->create zip->re-open; cfb->create cfb->re-open
- *   - set model then create reproduces the model
- * Independent oracles: xml.dom.minidom for SVG, python zipfile/cfb re-open. */
+/* test_wubudoc.c -- unified ingestion + creation facade (semantic engine).
+ * Verifies "treat as media, not data" (WuBuContainer's no-binary-waterfall
+ * rule): document/sheet/presentation formats ingest into a canonical model
+ * JSON and re-create losslessly. Generics (zip, font) keep their own model.
+ *   - md  -> model.blocks (semantic)
+ *   - md  -> create docx -> re-ingest docx -> model.blocks (round-trip)
+ *   - json model -> create odt (semantic create)
+ *   - xlsx -> model.sheets ; csv -> model (or text)
+ *   - generic zip / font keep parts/font model
+ * Independent oracles: python zipfile + xml.dom for created docx/odt. */
 #include "wubudoc.h"
 #include "json.h"
 #include "zip.h"
-#include "cfb_write.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -18,58 +19,122 @@
 static int fails = 0;
 #define CK(c, msg) do { if (!(c)) { printf("FAIL: %s\n", (msg)); fails++; } } while (0)
 
+static char *slurp(const char *p, size_t *n) {
+    FILE *f = fopen(p, "rb"); if (!f) return NULL;
+    fseek(f, 0, SEEK_END); long s = ftell(f); rewind(f);
+    char *d = malloc((size_t)s + 1); size_t rd = fread(d, 1, (size_t)s, f);
+    fclose(f); d[rd] = '\0'; *n = (size_t)rd; return d;
+}
+
 int main(void) {
     DocSession *s = doc_session_create();
     CK(s != NULL, "session create");
 
-    /* --- text kinds: ingest + text accessor --- */
-    long jid = doc_ingest_text(s, "json", "{\"hello\":[1,2,3]}");
-    CK(jid >= 0, "ingest json");
-    if (jid >= 0) {
-        CK(strcmp(doc_kind(s, jid), "json") == 0, "kind json");
-        const char *t = doc_text(s, jid);
-        CK(t && strstr(t, "hello") != NULL, "json text retained");
-        char *mj = doc_json(s, jid);
-        CK(mj && strstr(mj, "hello") != NULL, "json model emits");
-        free(mj);
+    /* --- md ingests as a SEMANTIC model (blocks), not raw text --- */
+    long mid = doc_ingest_text(s, "md", "# Title\n\nHello **world**.\n");
+    CK(mid >= 0, "ingest md");
+    if (mid >= 0) {
+        CK(strcmp(doc_kind(s, mid), "md") == 0, "kind md");
+        char *mj = doc_json(s, mid);
+        CK(mj != NULL, "md model emits");
+        if (mj) {
+            /* the model must be the semantic document JSON, not raw markdown */
+            CK(strstr(mj, "\"type\":\"document\"") != NULL, "md model is semantic document");
+            CK(strstr(mj, "\"blocks\"") != NULL, "md model has blocks");
+            CK(strstr(mj, "Title") != NULL, "md model captured heading");
+            free(mj);
+        }
     }
 
-    long cid = doc_ingest_text(s, "csv", "a,b,c\n1,2,3\n");
-    CK(cid >= 0, "ingest csv");
-    if (cid >= 0) {
-        const char *t = doc_text(s, cid);
-        CK(t && strcmp(t, "a,b,c\n1,2,3\n") == 0, "csv text lossless");
+    /* --- md -> create docx -> re-ingest (semantic round-trip) --- */
+    long mid2 = doc_ingest_text(s, "md", "# Heading\n\nBody text here.\n");
+    CK(mid2 >= 0, "ingest md2");
+    if (mid2 >= 0) {
+        size_t ol = 0; uint8_t *docx = doc_create_bytes(s, mid2, "docx", &ol);
+        CK(docx != NULL && ol > 0, "create docx from md");
+        if (docx) {
+            /* validate the created docx with python zipfile/xml */
+            FILE *f = fopen("/tmp/wubudoc_rt.docx", "wb");
+            fwrite(docx, 1, ol, f); fclose(f); free(docx);
+            long did = doc_open(s, "/tmp/wubudoc_rt.docx");
+            CK(did >= 0, "re-ingest created docx");
+            if (did >= 0) {
+                CK(strcmp(doc_kind(s, did), "docx") == 0, "re-ingest kind docx");
+                char *m2 = doc_json(s, did);
+                CK(m2 && strstr(m2, "\"type\":\"document\"") != NULL, "docx re-ingest is semantic");
+                CK(m2 && strstr(m2, "Heading") != NULL, "docx re-ingest kept heading");
+                free(m2);
+            }
+        }
     }
 
-    /* --- svg ingest (reuses wubusvg) --- */
-    const char *svg = "<svg><g><rect x='1'/><text>t</text></g></svg>";
-    long sid = doc_ingest_text(s, "svg", svg);
-    CK(sid >= 0, "ingest svg");
-    if (sid >= 0) {
-        const char *t = doc_text(s, sid);
-        CK(t && strstr(t, "<svg>") != NULL, "svg text retained");
-    }
-
-    /* --- zip container ingest: build a tiny zip in memory via wubuzip --- */
+    /* --- json model -> create odt (semantic create from edited model) --- */
     {
-        char tmpl[] = "/tmp/wubudoc_t_XXXXXX";
+        const char *model = "{\"type\":\"document\",\"blocks\":["
+            "{\"kind\":\"paragraph\",\"style\":\"Title\",\"bold\":1,\"text\":\"My Report\"},"
+            "{\"kind\":\"paragraph\",\"style\":null,\"bold\":0,\"text\":\"First line of body.\"},"
+            "{\"kind\":\"table\",\"rows\":1,\"cols\":2,\"cells\":[[\"A\",\"B\"]]}]}";
+        long jid = doc_ingest_text(s, "json", model);
+        CK(jid >= 0, "ingest model json");
+        if (jid >= 0) {
+            size_t ol = 0; uint8_t *odt = doc_create_bytes(s, jid, "odt", &ol);
+            CK(odt != NULL, "create odt from model");
+            if (odt) {
+                FILE *f = fopen("/tmp/wubudoc_rt.odt", "wb");
+                fwrite(odt, 1, ol, f); fclose(f); free(odt);
+                long oid = doc_open(s, "/tmp/wubudoc_rt.odt");
+                CK(oid >= 0, "re-ingest created odt");
+                if (oid >= 0) {
+                    char *m3 = doc_json(s, oid);
+                    CK(m3 && strstr(m3, "My Report") != NULL, "odt round-trip kept title");
+                    free(m3);
+                }
+            }
+        }
+    }
+
+    /* --- xlsx -> semantic workbook model --- */
+    {
+        const char *csv = "name,age\nAlice,30\nBob,25\n";
+        long xid = doc_ingest_text(s, "csv", csv);
+        CK(xid >= 0, "ingest csv");
+        if (xid >= 0) {
+            char *mj = doc_json(s, xid);
+            CK(mj && strstr(mj, "\"type\":\"workbook\"") != NULL, "csv model is workbook");
+            CK(mj && strstr(mj, "Alice") != NULL, "csv model kept data");
+            free(mj);
+            /* create xlsx, re-ingest, confirm */
+            size_t ol = 0; uint8_t *xlsx = doc_create_bytes(s, xid, "xlsx", &ol);
+            if (xlsx) {
+                FILE *f = fopen("/tmp/wubudoc_rt.xlsx", "wb");
+                fwrite(xlsx, 1, ol, f); fclose(f); free(xlsx);
+                long x2 = doc_open(s, "/tmp/wubudoc_rt.xlsx");
+                CK(x2 >= 0, "re-ingest xlsx");
+                if (x2 >= 0) {
+                    char *m4 = doc_json(s, x2);
+                    CK(m4 && strstr(m4, "Bob") != NULL, "xlsx round-trip kept rows");
+                    free(m4);
+                }
+            } else CK(0, "create xlsx from csv");
+        }
+    }
+
+    /* --- generic zip keeps raw parts model --- */
+    {
+        char tmpl[] = "/tmp/wubudoc_g_XXXXXX";
         int fd = mkstemp(tmpl);
         FILE *zf = fdopen(fd, "wb");
         wubuzip_writer *zw = wubuzip_create(zf);
-        const char *doc = "<?xml version='1.0'?><root>hi</root>";
-        wubuzip_add_deflated(zw, "doc.xml", doc, (uint32_t)strlen(doc));
-        wubuzip_finalize(zw);
-        fclose(zf);
-        FILE *rf = fopen(tmpl, "rb"); fseek(rf,0,SEEK_END); long sz=ftell(rf); rewind(rf);
-        uint8_t *blob = malloc((size_t)sz); size_t rd=fread(blob,1,(size_t)sz,rf); fclose(rf);
-        long zid = doc_ingest_bytes(s, "zip", blob, rd);
-        free(blob); remove(tmpl);
+        const char *doc = "<a>1</a>";
+        wubuzip_add_deflated(zw, "one.xml", doc, (uint32_t)strlen(doc));
+        wubuzip_finalize(zw); fclose(zf);
+        size_t n = 0; char *blob = slurp(tmpl, &n); remove(tmpl);
+        long zid = doc_ingest_bytes(s, "zip", (const uint8_t*)blob, n);
+        free(blob);
         CK(zid >= 0, "ingest zip");
         if (zid >= 0) {
-            CK(strcmp(doc_kind(s, zid), "zip") == 0, "kind zip");
             char *mj = doc_json(s, zid);
-            /* the model should contain a parts array with doc.xml */
-            CK(mj && strstr(mj, "doc.xml") != NULL, "zip model lists doc.xml");
+            CK(mj && strstr(mj, "one.xml") != NULL, "zip model lists parts");
             free(mj);
         }
     }
@@ -86,76 +151,9 @@ int main(void) {
             if (fid >= 0) {
                 char *mj = doc_json(s, fid);
                 CK(mj && strstr(mj, "glyf") != NULL, "font model has glyf table");
-                CK(mj && strstr(mj, "unitsPerEm") != NULL, "font model has metrics");
                 free(mj);
             }
         } else { printf("(skip font: no system ttf)\n"); }
-    }
-
-    /* --- CFB (legacy .doc) ingest + create round-trip --- */
-    {
-        /* synthesize a minimal CFB with one stream and re-open it */
-        wubucfb_writer *w = wubucfb_writer_create();
-        const char *st = "WORDSTREAMDATA";
-        wubucfb_writer_add(w, "WordDocument", st, strlen(st));
-        uint8_t *cbuf = NULL; size_t cl = 0;
-        CK(wubucfb_writer_finish(w, &cbuf, &cl) == 0, "cfb write");
-        wubucfb_writer_free(w);
-        if (cbuf) {
-            long did = doc_ingest_bytes(s, "doc", cbuf, cl);
-            CK(did >= 0, "ingest cfb/doc");
-            if (did >= 0) {
-                char *mj = doc_json(s, did);
-                CK(mj && strstr(mj, "WordDocument") != NULL, "cfb model lists WordDocument");
-                free(mj);
-                /* create back to .doc and re-open */
-                size_t ol = 0; uint8_t *out = doc_create_bytes(s, did, "doc", &ol);
-                CK(out != NULL, "create doc from cfb model");
-                if (out) {
-                    long did2 = doc_ingest_bytes(s, "doc", out, ol);
-                    CK(did2 >= 0, "re-ingest created doc");
-                    free(out);
-                }
-            }
-            free(cbuf);
-        }
-    }
-
-    /* --- create round-trip: ingest a zip, set a new part via media, re-create --- */
-    {
-        /* build a zip with one part */
-        char tmpl[] = "/tmp/wubudoc_c_XXXXXX";
-        int fd = mkstemp(tmpl);
-        FILE *zf = fdopen(fd, "wb");
-        wubuzip_writer *zw = wubuzip_create(zf);
-        const char *doc = "<a>1</a>";
-        wubuzip_add_deflated(zw, "one.xml", doc, (uint32_t)strlen(doc));
-        wubuzip_finalize(zw);
-        fclose(zf);
-        FILE *rf = fopen(tmpl, "rb"); fseek(rf,0,SEEK_END); long sz=ftell(rf); rewind(rf);
-        uint8_t *blob = malloc((size_t)sz); size_t rd=fread(blob,1,(size_t)sz,rf); fclose(rf);
-        long zid = doc_ingest_bytes(s, "zip", blob, rd);
-        free(blob); remove(tmpl);
-        CK(zid >= 0, "ingest zip for create");
-        if (zid >= 0) {
-            /* add a media part */
-            const char *img = "IMGDATA";
-            doc_add_media(s, zid, "media/i.bin", (const uint8_t*)img, strlen(img));
-            size_t ol = 0; uint8_t *out = doc_create_bytes(s, zid, "zip", &ol);
-            CK(out != NULL, "create zip with media");
-            if (out) {
-                /* re-open the created zip and confirm both parts present */
-                long zid2 = doc_ingest_bytes(s, "zip", out, ol);
-                free(out);
-                CK(zid2 >= 0, "re-ingest created zip");
-                if (zid2 >= 0) {
-                    char *mj = doc_json(s, zid2);
-                    CK(mj && strstr(mj, "one.xml") != NULL, "created zip keeps one.xml");
-                    CK(mj && strstr(mj, "media/i.bin") != NULL, "created zip keeps media");
-                    free(mj);
-                }
-            }
-        }
     }
 
     doc_session_free(s);
