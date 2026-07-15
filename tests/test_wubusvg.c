@@ -97,6 +97,73 @@ int main(void) {
 
     svg_free(doc);
 
+    /* ---------- editing (creation half) ---------- */
+    {
+        SvgDoc *d = svg_parse(SRC, strlen(SRC));
+        CK(d != NULL, "edit: parse base doc");
+        SvgNode *r = svg_root(d);
+
+        /* set/overwrite + remove attribute */
+        CK(svg_set_attr(r, "width", "200") == 0, "set existing attr");
+        CK(strcmp(svg_attr(r, "width"), "200") == 0, "attr overwritten");
+        CK(svg_set_attr(r, "data-agi", "wubuos") == 0, "set new attr");
+        CK(strcmp(svg_attr(r, "data-agi"), "wubuos") == 0, "new attr present");
+        CK(svg_remove_attr(r, "height") == 1, "remove existing attr");
+        CK(svg_attr(r, "height") == NULL, "removed attr gone");
+        CK(svg_remove_attr(r, "nope") == 0, "remove absent attr is 0");
+
+        /* create + append a new <rect>, then insert one at front of <g> */
+        SvgNode *g = NULL;
+        for (size_t i = 0; i < svg_child_count(r); i++)
+            if (strcmp(svg_node_name(svg_child(r, i)), "g") == 0) g = svg_child(r, i);
+        CK(g != NULL, "found <g>");
+        size_t g_before = svg_child_count(g);
+
+        SvgNode *nr = svg_new_node("rect");
+        svg_set_attr(nr, "x", "9"); svg_set_attr(nr, "class", "added");
+        CK(svg_append_child(g, nr) == 0, "append new <rect>");
+        CK(svg_child_count(g) == g_before + 1, "child count grew");
+
+        SvgNode *circ = svg_new_node("circle");
+        svg_set_attr(circ, "r", "5");
+        CK(svg_insert_child(g, 0, circ) == 0, "insert <circle> at front");
+        CK(strcmp(svg_node_name(svg_child(g, 0)), "circle") == 0, "circle is first child");
+        CK(svg_count_tag(r, "circle") == 1, "one circle in tree");
+        CK(svg_count_tag(r, "rect") == 2, "two rects now");
+
+        /* set text on a fresh node */
+        SvgNode *lbl = svg_new_node("text");
+        svg_set_text(lbl, "created by <wubuOS> & agent");
+        CK(svg_append_child(g, lbl) == 0, "append text node");
+
+        /* remove the first child (circle) */
+        CK(svg_remove_child(g, 0) == 1, "remove first child");
+        CK(svg_count_tag(r, "circle") == 0, "circle removed");
+
+        /* regurgitate the EDITED doc; must be well-formed + reflect edits */
+        char *eout = svg_regurgitate(d);
+        CK(eout != NULL, "regurgitate edited doc");
+        if (eout) {
+            CK(strstr(eout, "width=\"200\"") != NULL, "edit: width=200 in output");
+            CK(strstr(eout, "data-agi=\"wubuos\"") != NULL, "edit: new attr in output");
+            CK(strstr(eout, "&lt;wubuOS&gt; &amp; agent") != NULL, "edit: text properly escaped");
+            FILE *tf = fopen("/tmp/wubusvg_edited.svg", "wb");
+            if (tf) { fputs(eout, tf); fclose(tf); }
+            /* re-ingest the edited output: proves edits survive round-trip */
+            SvgDoc *d2 = svg_parse(eout, strlen(eout));
+            CK(d2 != NULL, "re-ingest edited output");
+            if (d2) {
+                SvgNode *r2 = svg_root(d2);
+                CK(strcmp(svg_attr(r2, "width"), "200") == 0, "edit persisted through round-trip");
+                CK(svg_attr(r2, "height") == NULL, "edit: removed root attr stays gone");
+                CK(strcmp(svg_attr(r2, "data-agi"), "wubuos") == 0, "edit: new attr persisted");
+                svg_free(d2);
+            }
+            free(eout);
+        }
+        svg_free(d);
+    }
+
     /* malformed input must be rejected, not crash */
     SvgDoc *bad = svg_parse("<svg><g></svg>", 14);
     CK(bad == NULL, "unbalanced tags rejected");

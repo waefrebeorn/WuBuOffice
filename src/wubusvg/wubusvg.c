@@ -164,3 +164,80 @@ char *svg_regurgitate(const SvgDoc *doc) {
     fclose(ms);
     return buf;  /* malloc'd by open_memstream; caller frees */
 }
+
+/* ---------- editing ---------- */
+int svg_set_attr(SvgNode *n, const char *key, const char *val) {
+    if (!n || !key) return -1;
+    for (size_t i = 0; i < n->na; i++) {
+        if (strcmp(n->akey[i], key) == 0) {
+            char *nv = xstrdup(val ? val : "");
+            free(n->aval[i]);
+            n->aval[i] = nv;
+            return 0;
+        }
+    }
+    node_add_attr(n, key, val);
+    return 0;
+}
+
+int svg_remove_attr(SvgNode *n, const char *key) {
+    if (!n || !key) return 0;
+    for (size_t i = 0; i < n->na; i++) {
+        if (strcmp(n->akey[i], key) == 0) {
+            free(n->akey[i]); free(n->aval[i]);
+            for (size_t j = i + 1; j < n->na; j++) {
+                n->akey[j-1] = n->akey[j];
+                n->aval[j-1] = n->aval[j];
+            }
+            n->na--;
+            return 1;
+        }
+    }
+    return 0;
+}
+
+SvgNode *svg_new_node(const char *name) {
+    if (!name) return NULL;
+    return node_new(name, NULL);
+}
+
+void svg_free_node(SvgNode *n) { node_free(n); }
+
+int svg_append_child(SvgNode *parent, SvgNode *kid) {
+    if (!parent || !kid) return -1;
+    kid->parent = parent;
+    node_add_kid(parent, kid);
+    return 0;
+}
+
+int svg_insert_child(SvgNode *parent, size_t i, SvgNode *kid) {
+    if (!parent || !kid) return -1;
+    if (i > parent->nk) i = parent->nk;
+    /* grow, then shift right to open a slot at i */
+    if (parent->nk == parent->kcap) {
+        parent->kcap = parent->kcap ? parent->kcap * 2 : 4;
+        parent->kids = xrealloc(parent->kids, parent->kcap * sizeof *parent->kids);
+    }
+    for (size_t j = parent->nk; j > i; j--) parent->kids[j] = parent->kids[j-1];
+    parent->kids[i] = kid;
+    parent->nk++;
+    kid->parent = parent;
+    return 0;
+}
+
+int svg_remove_child(SvgNode *parent, size_t i) {
+    if (!parent || i >= parent->nk) return 0;
+    node_free(parent->kids[i]);
+    for (size_t j = i + 1; j < parent->nk; j++) parent->kids[j-1] = parent->kids[j];
+    parent->nk--;
+    return 1;
+}
+
+int svg_set_text(SvgNode *n, const char *text) {
+    if (!n) return -1;
+    free(n->text);
+    n->text = NULL;
+    n->tlen = n->tcap = 0;
+    if (text && *text) node_add_text(n, text, strlen(text));
+    return 0;
+}

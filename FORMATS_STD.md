@@ -56,6 +56,12 @@ Round-trip and foreign-read tests assert we agree with those tools.
   (re-ingesting the regurgitated output yields a structurally identical tree)
   and by the full cross-module chain
   `TTF → wubufont → SVG → wubusvg (count/regurgitate) → independent XML oracle`.
+- **SVG editing (creation half)** added to wubusvg: `svg_set_attr`,
+  `svg_remove_attr`, `svg_new_node` + `svg_append_child` / `svg_insert_child`,
+  `svg_remove_child`, `svg_set_text`. The AGI transforms a vector document via
+  these mutators and re-emits well-formed SVG; edits survive re-ingestion
+  (round-trip proof). `wubusvg_cli` exposes `--set-attr` / `--remove-attr` on
+  the root for shell/agent-driven transforms.
 
 ## Reference fork (NOT modified, NOT redistributed here)
 `github.com/waefrebeorn/WuBuContainer` — a fork of the convert.to.it universal

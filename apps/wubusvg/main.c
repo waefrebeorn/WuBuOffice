@@ -27,7 +27,10 @@ static char *read_all(const char *path, size_t *out_len) {
 
 int main(int argc, char **argv) {
     if (argc < 2) {
-        fprintf(stderr, "usage: %s <in.svg> [--count <tag>]\n", argv[0]);
+        fprintf(stderr,
+            "usage: %s <in.svg> [--count <tag>] [--set-attr <key> <val>] [--remove-attr <key>]\n"
+            "  default: regurgitate the (optionally edited) SVG to stdout.\n"
+            "  --set-attr / --remove-attr act on the root element.\n", argv[0]);
         return 2;
     }
     size_t len = 0;
@@ -43,6 +46,17 @@ int main(int argc, char **argv) {
         printf("%zu\n", c);
         svg_free(doc);
         return 0;
+    }
+
+    /* optional root edits, then regurgitate */
+    for (int i = 2; i < argc; i++) {
+        if (strcmp(argv[i], "--set-attr") == 0 && i + 2 < argc) {
+            svg_set_attr(svg_root(doc), argv[i+1], argv[i+2]);
+            i += 2;
+        } else if (strcmp(argv[i], "--remove-attr") == 0 && i + 1 < argc) {
+            svg_remove_attr(svg_root(doc), argv[i+1]);
+            i += 1;
+        }
     }
 
     char *out = svg_regurgitate(doc);
