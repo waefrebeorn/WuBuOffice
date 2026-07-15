@@ -145,6 +145,41 @@ int main(void) {
         }
     }
 
+    /* --- semantic text/sheet CREATE round-trips: kinds ingested as models
+     *     (md/csv/tsv) must re-create, NOT return an empty text buffer.
+     *     Regression: doc_create_bytes text-branch used to swallow these. --- */
+    {
+        /* csv -> csv keeps commas; csv -> tsv converts the delimiter */
+        long cid = doc_ingest_text(s, "csv", "name,age\nAlice,30\nBob,25\n");
+        CK(cid >= 0, "ingest csv for create");
+        if (cid >= 0) {
+            size_t ol = 0; uint8_t *csv = doc_create_bytes(s, cid, "csv", &ol);
+            CK(csv && ol > 0, "create csv from csv model (non-empty)");
+            if (csv) {
+                CK(memchr(csv, ',', ol) != NULL, "csv output uses comma delimiter");
+                CK(strstr((char*)csv, "Alice") != NULL, "csv output kept data");
+                free(csv);
+            }
+            size_t tl = 0; uint8_t *tsv = doc_create_bytes(s, cid, "tsv", &tl);
+            CK(tsv && tl > 0, "create tsv from csv model (delimiter conversion)");
+            if (tsv) {
+                CK(memchr(tsv, '\t', tl) != NULL, "tsv output uses tab delimiter");
+                free(tsv);
+            }
+        }
+        /* md -> md must re-create from the semantic document model */
+        long mid3 = doc_ingest_text(s, "md", "# Title\n\nBody text.\n");
+        CK(mid3 >= 0, "ingest md for create");
+        if (mid3 >= 0) {
+            size_t ol = 0; uint8_t *md = doc_create_bytes(s, mid3, "md", &ol);
+            CK(md && ol > 0, "create md from md model (non-empty)");
+            if (md) {
+                CK(strstr((char*)md, "Title") != NULL, "md output kept heading");
+                free(md);
+            }
+        }
+    }
+
     /* --- generic zip keeps raw parts model --- */
     {
         char tmpl[] = "/tmp/wubudoc_g_XXXXXX";

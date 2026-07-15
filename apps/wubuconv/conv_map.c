@@ -443,6 +443,7 @@ int wubuconv_convert_mem(const uint8_t *data, size_t len,
             fseek(f, 0, SEEK_END); long sz = ftell(f); rewind(f);
             uint8_t *blob = malloc((size_t)sz + 1);
             size_t rd = fread(blob, 1, (size_t)sz, f); fclose(f);
+            blob[rd] = '\0';   /* NUL-terminate so text outputs are safe as C strings */
             *out = blob; *out_len = rd; rc = 0;
         } else rc = -1;
     }

@@ -459,21 +459,25 @@ uint8_t *doc_create_bytes(DocSession *s, long id, const char *format, size_t *ou
     if (!d || !format || !out_len) return NULL;
     *out_len = 0;
 
-    /* text formats: emit the raw text from the model */
+    /* text formats: emit the raw text from the model -- but ONLY when the
+     * handle actually holds raw text. md/csv/tsv/json/html can be ingested as
+     * SEMANTIC models (stored under "model", no "text" field); those must fall
+     * through to the semantic engine below, not return an empty text buffer. */
     if (!strcasecmp(format, "json") || !strcasecmp(format, "md") ||
         !strcasecmp(format, "csv") || !strcasecmp(format, "txt") ||
         !strcasecmp(format, "xml") || !strcasecmp(format, "html") ||
         !strcasecmp(format, "svg")) {
-        const JVal *text = d->text ? NULL : NULL;
-        (void)text;
-        /* prefer the model's text field; fall back to handle text */
         const JVal *mtext = j_obj_get((JVal*)d->model, "text");
-        const char *src = (mtext && j_type(mtext) == J_STR) ? j_as_str(mtext) : (d->text ? d->text : "");
-        size_t L = strlen(src);
-        uint8_t *o = malloc(L + 1);
-        memcpy(o, src, L); o[L] = '\0';
-        *out_len = L;
-        return o;
+        const char *src = (mtext && j_type(mtext) == J_STR) ? j_as_str(mtext)
+                                                            : (d->text ? d->text : NULL);
+        if (src) {
+            size_t L = strlen(src);
+            uint8_t *o = malloc(L + 1);
+            memcpy(o, src, L); o[L] = '\0';
+            *out_len = L;
+            return o;
+        }
+        /* no raw text -> semantic model; fall through to the engine */
     }
 
     /* zip: generic container of named parts (no semantic decoder) */
@@ -513,6 +517,7 @@ uint8_t *doc_create_bytes(DocSession *s, long id, const char *format, size_t *ou
         !strcasecmp(format, "md") || !strcasecmp(format, "doc") ||
         !strcasecmp(format, "xlsx") || !strcasecmp(format, "ods") ||
         !strcasecmp(format, "fods") || !strcasecmp(format, "xls") ||
+        !strcasecmp(format, "csv") || !strcasecmp(format, "tsv") ||
         !strcasecmp(format, "pptx") || !strcasecmp(format, "odp") ||
         !strcasecmp(format, "fodp") || !strcasecmp(format, "ppt")) {
         const JVal *model = j_obj_get((JVal*)d->model, "model");
