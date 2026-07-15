@@ -181,14 +181,22 @@ add_executable(wubuoffice apps/wubuoffice/main.c
   $<TARGET_OBJECTS:wubuconv_app>)
 target_link_libraries(wubuoffice PRIVATE wubuoxml wubuxml wubuzip wubuformula wubucfb)
 
+# --- wubujson: minimal JSON parse+emit (vendored from WuBuPad, same API) ---
+add_library(wubujson STATIC src/wubujson/json.c)
+target_include_directories(wubujson PUBLIC src/wubujson)
+
 # --- wubusvg: clean-room SVG ingest + regurgitate (document engine) ---
-add_library(wubusvg STATIC src/wubusvg/wubusvg.c src/wubuxml/parser.c)
+add_library(wubusvg STATIC src/wubusvg/wubusvg.c src/wubusvg/agent.c src/wubuxml/parser.c)
 target_include_directories(wubusvg PUBLIC src/wubusvg src/wubuxml)
-target_link_libraries(wubusvg PUBLIC wubuxml)
+target_link_libraries(wubusvg PUBLIC wubuxml wubujson)
 
 # wubusvg CLI: ingest an SVG and regurgitate it (byte-safe round-trip)
 add_executable(wubusvg_cli apps/wubusvg/main.c)
 target_link_libraries(wubusvg_cli PRIVATE wubusvg)
+
+# wubusvg_agent: NDJSON agent protocol (wubuOS "AGI GUI" surface)
+add_executable(wubusvg_agent apps/wubusvg/agent_main.c)
+target_link_libraries(wubusvg_agent PRIVATE wubusvg)
 
 # --- wubufont: clean-room SFNT/TrueType parser + SVG font emitter ---
 add_library(wubufont STATIC src/wubufont/wubufont.c src/wubufont/woff.c)
@@ -355,3 +363,8 @@ add_test(NAME wubufont COMMAND test_wubufont)
 add_executable(test_wubusvg tests/test_wubusvg.c)
 target_link_libraries(test_wubusvg PRIVATE wubusvg)
 add_test(NAME wubusvg COMMAND test_wubusvg)
+
+# wubusvg agent: NDJSON protocol for wubuOS (mirrors WuBuPad agent).
+add_executable(test_wubusvg_agent tests/test_wubusvg_agent.c)
+target_link_libraries(test_wubusvg_agent PRIVATE wubusvg)
+add_test(NAME wubusvg_agent COMMAND test_wubusvg_agent)

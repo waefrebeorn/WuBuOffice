@@ -68,6 +68,16 @@ Round-trip and foreign-read tests assert we agree with those tools.
   `svg/g/rect`; a leading root echo is ignored). This lets the AGI target a
   node WITHOUT walking the tree by hand — the "agentic usage easily" surface.
   `wubusvg_cli` exposes `--find`, `--find-all`, `--set <path>`, `--remove <path>`.
+- **SVG agent protocol (wubuOS "AGI GUI")** (`src/wubusvg/agent.{c,h}` +
+  `apps/wubusvg/agent_main.c`): NDJSON line protocol mirroring WuBuPad's
+  `agent.c` so wubuOS drives both tools identically. Commands: `ingest {text}`,
+  `open {path}`, `find {path}`, `find_all {path}`, `count {tag}`,
+  `set {path,key,val}`, `remove {path}`, `regurgitate {}`, `quit {}`. Output is
+  one JSON object per line on stdout. Backed by a vendored copy of WuBuPad's
+  minimal JSON (`src/wubujson/`, same `j_*` API) so the wire format is
+  byte-consistent across the suite. Verified by `test_wubusvg_agent` (drives the
+  exact dispatcher wubuOS uses) and by a live NDJSON session whose regurgitated
+  SVG is confirmed well-formed by an independent XML parser.
 
 ## Reference fork (NOT modified, NOT redistributed here)
 `github.com/waefrebeorn/WuBuContainer` — a fork of the convert.to.it universal
