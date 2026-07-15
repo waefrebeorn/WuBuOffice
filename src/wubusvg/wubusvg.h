@@ -85,6 +85,22 @@ int svg_remove_child(SvgNode *parent, size_t i);
 /* Replace a node's direct text content (entity-escaped on regurgitate). */
 int svg_set_text(SvgNode *n, const char *text);
 
+/* ---------- query + edit-by-query (agent targeting) ----------
+ * Paths are '/'-separated tag names, e.g. "g/rect" or "svg/g/rect". A leading
+ * segment equal to the root's tag name is ignored, so both forms work. */
+
+/* First node matching the path (depth-first by document order), or NULL. */
+SvgNode *svg_find(const SvgNode *root, const char *path);
+/* Collect all nodes matching the path (last segment is the target tag). Returns
+ * the number written to `out` (capped at `maxout`). */
+size_t svg_find_all(const SvgNode *root, const char *path, SvgNode **out, size_t maxout);
+
+/* Edit-by-query: operate on the first node matching `path`. Set/remove an
+ * attribute, or remove the node entirely. Returns 0 on success, -1 if no match
+ * (remove returns 1 if it removed a node). */
+int svg_set_attr_path(SvgNode *root, const char *path, const char *key, const char *val);
+int svg_remove_path(SvgNode *root, const char *path);
+
 #ifdef __cplusplus
 }
 #endif

@@ -62,6 +62,12 @@ Round-trip and foreign-read tests assert we agree with those tools.
   these mutators and re-emits well-formed SVG; edits survive re-ingestion
   (round-trip proof). `wubusvg_cli` exposes `--set-attr` / `--remove-attr` on
   the root for shell/agent-driven transforms.
+- **SVG query + edit-by-query** added to wubusvg: `svg_find(path)`,
+  `svg_find_all(path, out, max)`, `svg_set_attr_path(path, k, v)`,
+  `svg_remove_path(path)`. Paths are '/' tag chains (e.g. `g/rect` or
+  `svg/g/rect`; a leading root echo is ignored). This lets the AGI target a
+  node WITHOUT walking the tree by hand — the "agentic usage easily" surface.
+  `wubusvg_cli` exposes `--find`, `--find-all`, `--set <path>`, `--remove <path>`.
 
 ## Reference fork (NOT modified, NOT redistributed here)
 `github.com/waefrebeorn/WuBuContainer` — a fork of the convert.to.it universal

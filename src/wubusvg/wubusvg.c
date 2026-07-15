@@ -241,3 +241,117 @@ int svg_set_text(SvgNode *n, const char *text) {
     if (text && *text) node_add_text(n, text, strlen(text));
     return 0;
 }
+
+/* ---------- query + edit-by-query ---------- */
+/* Depth-first descendant-chain match: the first node whose ancestor chain
+ * matches segs[0]<-segs[1]<-...<-segs[nseg-1] (segs[0] nearest the root). The
+ * root's own tag is irrelevant (so "g/rect" and "svg/g/rect" both work). */
+static SvgNode *walk_path(const SvgNode *cur, char **segs, size_t nseg) {
+    if (!cur || nseg == 0) return NULL;
+    if (strcmp(cur->name, segs[0]) == 0) {
+        if (nseg == 1) return (SvgNode *)cur;
+        for (size_t i = 0; i < cur->nk; i++) {
+            SvgNode *r = walk_path(cur->kids[i], segs + 1, nseg - 1);
+            if (r) return r;
+        }
+        return NULL;
+    }
+    for (size_t i = 0; i < cur->nk; i++) {
+        SvgNode *r = walk_path(cur->kids[i], segs, nseg);
+        if (r) return r;
+    }
+    return NULL;
+}
+
+static size_t walk_path_all(const SvgNode *cur, char **segs, size_t nseg,
+                            SvgNode **out, size_t maxout, size_t got) {
+    if (!cur || nseg == 0) return got;
+    if (strcmp(cur->name, segs[0]) == 0) {
+        if (nseg == 1) {
+            if (got < maxout) out[got] = (SvgNode *)cur;
+            return got + 1;
+        }
+        for (size_t i = 0; i < cur->nk; i++)
+            got = walk_path_all(cur->kids[i], segs + 1, nseg - 1, out, maxout, got);
+        return got;
+    }
+    for (size_t i = 0; i < cur->nk; i++)
+        got = walk_path_all(cur->kids[i], segs, nseg, out, maxout, got);
+    return got;
+}
+
+/* Split `path` into up to 8 tag segments stored in a static arena; ignores a
+ * leading segment equal to the root tag (so "svg/g/rect" == "g/rect"). Returns
+ * the segment count and fills `segs` with NUL-terminated pointers. */
+static size_t split_path(const char *root_name, const char *path, char *segs[8]) {
+    static char arena[8][32];
+    size_t cnt = 0;
+    char buf[256];
+    size_t l = strlen(path);
+    if (l >= sizeof buf) l = sizeof buf - 1;
+    memcpy(buf, path, l); buf[l] = '\0';
+    char *save = NULL;
+    for (char *tok = strtok_r(buf, "/", &save); tok && cnt < 8; tok = strtok_r(NULL, "/", &save)) {
+        if (cnt == 0 && strcmp(tok, root_name) == 0) continue;  /* skip root echo */
+        strncpy(arena[cnt], tok, 31); arena[cnt][31] = '\0';
+        segs[cnt] = arena[cnt];
+        cnt++;
+    }
+    return cnt;
+}
+
+SvgNode *svg_find(const SvgNode *root, const char *path) {
+    if (!root || !path) return NULL;
+    char *segs[8];
+    size_t nseg = split_path(root->name, path, segs);
+    if (nseg == 0) return NULL;
+    return walk_path(root, segs, nseg);
+}
+
+size_t svg_find_all(const SvgNode *root, const char *path, SvgNode **out, size_t maxout) {
+    if (!root || !path || !out) return 0;
+    char *segs[8];
+    size_t nseg = split_path(root->name, path, segs);
+    if (nseg == 0) return 0;
+    return walk_path_all(root, segs, nseg, out, maxout, 0);
+}
+
+int svg_set_attr_path(SvgNode *root, const char *path, const char *key, const char *val) {
+    SvgNode *n = svg_find(root, path);
+    if (!n) return -1;
+    return svg_set_attr(n, key, val);
+}
+
+int svg_remove_path(SvgNode *root, const char *path) {
+    if (!root || !path) return -1;
+    char *segs[8];
+    size_t nseg = split_path(root->name, path, segs);
+    if (nseg == 0) return -1;
+
+    /* Locate the target node and its parent by descending the chain; segs[0]
+     * matches anywhere under root, each subsequent segment matches among that
+     * node's children. */
+    SvgNode *parent = NULL;
+    size_t idx = 0;
+    SvgNode *node = walk_path(root, segs, nseg);   /* first matching target */
+    if (!node) return -1;
+    /* find node's parent + index */
+    if (node != root) {
+        /* BFS-free: scan from root for the parent that has `node` as a child */
+        int found = 0;
+        /* small helper via recursion-less scan using a stack-like array */
+        SvgNode *stack[64]; size_t sp = 0;
+        stack[sp++] = (SvgNode *)root;
+        while (sp) {
+            SvgNode *p = stack[--sp];
+            for (size_t i = 0; i < p->nk; i++) {
+                if (p->kids[i] == node) { parent = p; idx = i; found = 1; break; }
+                if (sp < 64) stack[sp++] = p->kids[i];
+            }
+            if (found) break;
+        }
+    }
+    if (!parent) return -1;  /* cannot remove the root */
+    int rc = svg_remove_child(parent, idx);
+    return rc ? 1 : -1;
+}

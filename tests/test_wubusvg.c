@@ -97,6 +97,57 @@ int main(void) {
 
     svg_free(doc);
 
+    /* ---------- query + edit-by-query (agent targeting) ---------- */
+    {
+        SvgDoc *d = svg_parse(SRC, strlen(SRC));
+        CK(d != NULL, "query: parse base doc");
+        SvgNode *r = svg_root(d);
+
+        /* svg_find: root echo ignored */
+        SvgNode *g = svg_find(r, "svg/g");
+        CK(g != NULL && strcmp(svg_node_name(g), "g") == 0, "svg_find 'svg/g' finds <g>");
+        SvgNode *rect = svg_find(r, "g/rect");
+        CK(rect != NULL && strcmp(svg_node_name(rect), "rect") == 0, "svg_find 'g/rect' finds <rect>");
+
+        /* svg_find_all: collect glyphs */
+        SvgNode *gs[16];
+        size_t gn = svg_find_all(r, "glyph", gs, 16);
+        CK(gn == 2, "svg_find_all 'glyph' -> 2");
+
+        /* edit-by-query: set an attr on the rect via path */
+        CK(svg_set_attr_path(r, "g/rect", "class", "queried") == 0, "set-attr-by-path");
+        CK(strcmp(svg_attr(rect, "class"), "queried") == 0, "attr set on found rect");
+
+        /* edit-by-query: remove the <text> under <g> */
+        size_t kids_before = svg_child_count(g);
+        int rc = svg_remove_path(r, "g/text");
+        CK(rc == 1, "remove-by-path returns 1");
+        CK(svg_child_count(g) == kids_before - 1, "text removed from <g>");
+        CK(svg_find(r, "g/text") == NULL, "text gone after remove-by-path");
+
+        /* no-match returns -1, not crash */
+        CK(svg_set_attr_path(r, "g/nonexistent", "k", "v") == -1, "set-attr no-match -> -1");
+        CK(svg_remove_path(r, "nonexistent") == -1, "remove no-match -> -1");
+
+        char *q = svg_regurgitate(d);
+        CK(q != NULL, "regurgitate queried doc");
+        if (q) {
+            CK(strstr(q, "class=\"queried\"") != NULL, "queried attr in output");
+            CK(strstr(q, "<text") == NULL, "removed text absent in output");
+            FILE *tf = fopen("/tmp/wubusvg_queried.svg", "wb");
+            if (tf) { fputs(q, tf); fclose(tf); }
+            SvgDoc *d2 = svg_parse(q, strlen(q));
+            CK(d2 != NULL, "re-ingest queried");
+            if (d2) {
+                SvgNode *r2 = svg_find(svg_root(d2), "g/rect");
+                CK(r2 && strcmp(svg_attr(r2, "class"), "queried") == 0, "query edit persisted");
+                svg_free(d2);
+            }
+            free(q);
+        }
+        svg_free(d);
+    }
+
     /* ---------- editing (creation half) ---------- */
     {
         SvgDoc *d = svg_parse(SRC, strlen(SRC));
