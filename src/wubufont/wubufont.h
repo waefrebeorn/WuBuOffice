@@ -23,6 +23,9 @@ typedef struct Font Font;
  * not a recognised sfnt ('true'/'OTTO'/0x00010000). The blob must outlive
  * the Font (we reference it, we do not copy it). */
 Font *font_open(const uint8_t *data, size_t size);
+/* Like font_open, but if take_ownership != 0 the blob is copied so the
+ * returned Font is fully self-contained (used by woff_open). */
+Font *font_open_owned(const uint8_t *data, size_t size, int take_ownership);
 void  font_free(Font *f);
 
 /* number of tables in the sfnt directory */

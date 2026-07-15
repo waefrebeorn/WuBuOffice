@@ -6,6 +6,7 @@
  * is well-formed XML using an INDEPENDENT oracle (Python xml.dom.minidom).
  * SKIPs (exit 0) if no usable system font exists. */
 #include "wubufont.h"
+#include "woff.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -110,6 +111,42 @@ int main(void) {
         FILE *tf = fopen("/tmp/wubufont_test.svg", "wb");
         if (tf) { fputs(svg, tf); fclose(tf); }
         free(svg);
+    }
+
+    /* ---- WOFF round-trip (writer = self oracle) ----
+     * Compress the original sfnt to WOFF, reopen it, and assert the round-trip
+     * reconstructs an equivalent font: same metrics, same cmap, same glyph
+     * outline, and a valid (XML-well-formed) SVG emission. Done BEFORE freeing
+     * buf/font (no use-after-free). */
+    {
+        size_t wlen = 0;
+        uint8_t *woff = sfnt_to_woff(buf, (size_t)n, &wlen);
+        CK(woff != NULL, "sfnt_to_woff produces a WOFF blob");
+        CK(wlen > 44, "woff blob has a header");
+        CK(woff[0]=='w' && woff[1]=='O' && woff[2]=='F' && woff[3]=='F', "woff signature present");
+        if (woff) {
+            Font *wf = woff_open(woff, wlen);
+            CK(wf != NULL, "woff_open reopens the compressed font");
+            if (wf) {
+                CK(font_units_per_em(wf) == upm, "woff round-trip preserves unitsPerEm");
+                CK(font_glyph_count(wf) == gc, "woff round-trip preserves glyph count");
+                CK(font_cmap(wf, 'A') == gA, "woff round-trip preserves cmap('A')");
+                if (has_glyf) {
+                    char *wp = font_glyph_svg_path(wf, gA);
+                    CK(wp != NULL, "woff glyph outline decodes");
+                    if (wp) { CK(wp[0]=='M'||wp[0]=='Q'||wp[0]=='\0', "woff outline well-formed"); free(wp); }
+                }
+                char *wsvg = font_to_svg(wf, "Ag");
+                CK(wsvg != NULL, "woff font emits SVG");
+                if (wsvg) {
+                    FILE *tf2 = fopen("/tmp/wubufont_test_woff.svg", "wb");
+                    if (tf2) { fputs(wsvg, tf2); fclose(tf2); }
+                    free(wsvg);
+                }
+                font_free(wf);
+            }
+            free(woff);
+        }
     }
 
     font_free(font);

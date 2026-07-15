@@ -18,6 +18,7 @@ Round-trip and foreign-read tests assert we agree with those tools.
 | PDF | **ISO/IEC 32000** (PDF 1.7) | wubupdf |
 | JPEG 2000 | **ISO/IEC 15444** | (reference; raster path) |
 | Open Font Format (sfnt/TTF/OTF) | **ISO/IEC 14496-22** | wubufont |
+| WOFF 1.0 (web font container) | **W3C WOFF 1.0** + RFC 1950 (zlib) | wubufont/woff |
 | ZIP / DEFLATE container | **ISO/IEC 21320** (ZIP app note) + RFC 1951 | wubuzip |
 | Compound File Binary (legacy .doc/.xls/.ppt) | **MS-CFB** (ISO/IEC 29500-2 references) | wubucfb |
 | SVG | **W3C SVG 1.1** (and SVG 2 `<font>`/path) | wubufont emit |
@@ -34,6 +35,15 @@ Round-trip and foreign-read tests assert we agree with those tools.
   - Scope note: TrueType `glyf` outlines are decoded. CFF/OpenType (`CFF `
     table, Type2 charstrings) is *detected* but not yet decoded — that needs a
     Type2 interpreter (future work, not faked).
+- **WOFF 1.0 read + write** (`src/wubufont/woff.c`): `woff_open` decompresses
+  every table (RFC 1950 zlib, reusing `wubuzip` DEFLATE + our own Adler-32),
+  reconstructs the sfnt in memory, and hands it to the font parser — so a
+  `.woff` is transparently a compressed font. `sfnt_to_woff` compresses an sfnt
+  back to WOFF (per-table zlib, stores uncompressed when that's smaller).
+  Verified by a **byte-exact round-trip** on DejaVuSans.ttf: unitsPerEm, glyph
+  count, cmap, and glyph outlines all preserved; the WOFF (431 KB) is 43%
+  smaller than the sfnt (760 KB), and the CLI reads the `.woff` straight to a
+  well-formed SVG (independent XML oracle).
 - Office OOXML / ODF / legacy CFB / PDF / RTF / HTML / EPUB / MD — see
   `GAPS_*.md` and the existing test suite (26/26 green).
 

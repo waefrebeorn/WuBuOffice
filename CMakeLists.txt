@@ -182,8 +182,9 @@ add_executable(wubuoffice apps/wubuoffice/main.c
 target_link_libraries(wubuoffice PRIVATE wubuoxml wubuxml wubuzip wubuformula wubucfb)
 
 # --- wubufont: clean-room SFNT/TrueType parser + SVG font emitter ---
-add_library(wubufont STATIC src/wubufont/wubufont.c)
-target_include_directories(wubufont PUBLIC src/wubufont)
+add_library(wubufont STATIC src/wubufont/wubufont.c src/wubufont/woff.c)
+target_include_directories(wubufont PUBLIC src/wubufont src/wubuzip)
+target_link_libraries(wubufont PUBLIC wubuzip)
 
 # wubufont CLI: sfnt (ttf/otf) -> SVG <font> document
 add_executable(wubufont_cli apps/wubufont/main.c)
