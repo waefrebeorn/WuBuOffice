@@ -13,3 +13,5 @@
 
 # stray empty artifact
 /model
+/build-asan/
+/build-dbg/
