@@ -73,8 +73,27 @@ size_t tui_scrollbar_scroll_at(size_t h, size_t total, size_t visible, size_t ro
 size_t tui_button_width(const char *label);
 size_t tui_button(TuiScreen *s, size_t x, size_t y, const char *label, uint8_t attr);
 
-/* Return 1 if point (px,py) lies inside the rect (x,y,w,h), else 0. */
-int tui_hit(size_t px, size_t py, size_t x, size_t y, size_t w, size_t h);
+/* --- tab bar widget (Notepad++-style multi-doc tabs) --- */
+typedef struct {
+    const char *label;
+    int          active;   /* 1 if this tab is the front document */
+    size_t       x, w;    /* computed hit-box (x is left col, w is width) */
+} TuiTab;
+
+/* Lay out `n` tabs starting at column `x0` (after a leading label like "Docs:").
+ * Each tab is drawn as "[ label x ]" (the 'x' being a close affordance).
+ * Fills each tab's x/w. Returns the column just past the last tab (for the
+ * caller to know where the row ends), or x0 on error. Pure: no drawing. */
+size_t tui_tabbar_layout(TuiTab *tabs, size_t n, size_t x0);
+
+/* Draw the tab bar at row `y`. Active tab is reverse-video + its label; inactive
+ * tabs are dim. Returns the same end-column as tui_tabbar_layout(). */
+size_t tui_tabbar(TuiScreen *s, size_t y, TuiTab *tabs, size_t n, size_t x0);
+
+/* Which tab (0..n-1) contains cell (px,py) on the bar's row, or -1. The
+ * close 'x' sub-cell of a tab returns that tab's index too (closing == click
+ * the tab in this minimal model); the caller decides. */
+int tui_tabbar_hit(TuiTab *tabs, size_t n, size_t px, size_t py, size_t bar_y);
 
 #ifdef __cplusplus
 }

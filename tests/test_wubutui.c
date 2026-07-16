@@ -272,6 +272,36 @@ int main(void) {
         CK(tui_hit(2, 5, 1, 1, 6, 1) == 0, "hit outside button (y)");
     }
 
+    /* ---------- tab bar ---------- */
+    {
+        TuiTab tabs[3];
+        tabs[0].label = "notes.md"; tabs[0].active = 1;
+        tabs[1].label = "a.txt";     tabs[1].active = 0;
+        tabs[2].label = "longname.log"; tabs[2].active = 0;
+        size_t end = tui_tabbar_layout(tabs, 3, 0);
+        CK(end > 0, "tabbar layout returns end column");
+        /* tab0 [ notes.md x ] -> 2 + 8 + 3 = 13 wide ("notes.md" is 8 chars) */
+        CK(tabs[0].w == 13, "tab0 width = 13");
+        CK(tabs[0].x == 0, "tab0 at x=0");
+        CK(tabs[1].x == 14, "tab1 at x=14 (gap after tab0)");
+        /* draw + click hit-test */
+        TuiScreen *s = tui_screen_create(60, 3);
+        tui_tabbar(s, 1, tabs, 3, 0);
+        CK(tui_screen_char(s, 0, 1) == '[', "tab0 '[' at x0");
+        CK(tui_screen_char(s, 1, 1) == ' ', "tab0 space");
+        CK(tui_screen_char(s, 11, 1) == 'x', "tab0 close 'x'");
+        CK(tui_screen_char(s, 12, 1) == ']', "tab0 ']'");
+        /* active tab is reverse-video */
+        CK(tui_screen_attr(s, 2, 1) == (TUI_ATTR_REVERSE | TUI_ATTR_BOLD),
+            "active tab reverse+bold");
+        tui_screen_free(s);
+        /* hit-test: clicking tab1's label cell selects tab1 */
+        CK(tui_tabbar_hit(tabs, 3, 16, 1, 1) == 1, "hit tab1 label -> 1");
+        CK(tui_tabbar_hit(tabs, 3, 0, 1, 1) == 0, "hit tab0 -> 0");
+        CK(tui_tabbar_hit(tabs, 3, 0, 0, 1) == -1, "hit wrong row -> -1");
+        CK(tui_tabbar_hit(tabs, 3, 99, 1, 1) == -1, "hit past tabs -> -1");
+    }
+
     if (fails) { printf("WUBUTUI TESTS FAILED (%d)\n", fails); return 1; }
     printf("WUBUTUI TESTS PASSED\n");
     return 0;

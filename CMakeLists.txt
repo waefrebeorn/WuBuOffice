@@ -253,11 +253,30 @@ add_library(wubutui STATIC
     src/wubutui/draw.c   src/wubutui/term.c)
 target_include_directories(wubutui PUBLIC src/wubutui)
 
-# wubuview: human document viewer -- open ANY wubudoc format in a scrollable,
-# word-wrapped terminal window (docflat flattens the model to text).
-add_executable(wubuview apps/wubuview/entry.c apps/wubuview/main.c apps/wubuview/docflat.c apps/wubuview/controller.c)
-target_include_directories(wubuview PRIVATE apps/wubuview src/wubutui src/wubudoc src/wubujson)
-target_link_libraries(wubuview PRIVATE wubutui wubudoc wubujson)
+# wubunote_core: pure text-buffer model (Notepad++-class editing core).
+# Self-contained, allocation-checked, unit-tested without a TTY.
+add_library(wubunote_core STATIC src/wubunote/edit.c)
+target_include_directories(wubunote_core PUBLIC src/wubunote)
+
+# wubunote: tabbed terminal text editor (Notepad++-class UI).
+# Pure controller (tabs + editing + prompt/palette) is unit-tested; main.c
+# is the thin TTY driver. Reuses the wubunote editing core.
+add_executable(wubunote apps/wubunote/entry.c apps/wubunote/main.c
+                      apps/wubunote/note_controller.c)
+target_include_directories(wubunote PRIVATE apps/wubunote src/wubunote src/wubutui)
+target_link_libraries(wubunote PRIVATE wubunote_core wubutui)
+
+# wubunote controller test (real editor interaction path)
+add_executable(test_wubunote_ctrl tests/test_wubunote_ctrl.c
+                          apps/wubunote/note_controller.c)
+target_include_directories(test_wubunote_ctrl PRIVATE apps/wubunote src/wubunote src/wubutui)
+target_link_libraries(test_wubunote_ctrl PRIVATE wubunote_core wubutui)
+add_test(NAME wubunote_ctrl COMMAND test_wubunote_ctrl)
+
+# wubunote test (pure editing core)
+add_executable(test_wubunote tests/test_wubuedit.c)
+target_link_libraries(test_wubunote PRIVATE wubunote_core)
+add_test(NAME wubunote COMMAND test_wubunote)
 
 # --- tests ---
 enable_testing()

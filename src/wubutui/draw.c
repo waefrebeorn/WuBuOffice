@@ -198,3 +198,46 @@ size_t tui_button(TuiScreen *s, size_t x, size_t y, const char *label, uint8_t a
 int tui_hit(size_t px, size_t py, size_t x, size_t y, size_t w, size_t h) {
     return (px >= x && px < x + w && py >= y && py < y + h) ? 1 : 0;
 }
+
+/* --- tab bar widget --- */
+
+size_t tui_tabbar_layout(TuiTab *tabs, size_t n, size_t x0) {
+    if (!tabs || n == 0) return x0;
+    size_t x = x0;
+    for (size_t i = 0; i < n; i++) {
+        const char *l = tabs[i].label ? tabs[i].label : "";
+        /* "[ " + label + " x ]" -> len = 2 + label + 3 */
+        size_t w = 2 + strlen(l) + 3;
+        tabs[i].x = x;
+        tabs[i].w = w;
+        x += w + 1;   /* one-space gap between tabs */
+    }
+    return x;
+}
+
+size_t tui_tabbar(TuiScreen *s, size_t y, TuiTab *tabs, size_t n, size_t x0) {
+    size_t end = tui_tabbar_layout(tabs, n, x0);
+    if (!s) return end;
+    for (size_t i = 0; i < n; i++) {
+        const char *l = tabs[i].label ? tabs[i].label : "";
+        size_t x = tabs[i].x;
+        uint8_t attr = tabs[i].active ? (TUI_ATTR_REVERSE | TUI_ATTR_BOLD)
+                                        : TUI_ATTR_DIM;
+        tui_screen_put(s, x,     y, '[', attr);
+        tui_screen_put(s, x + 1, y, ' ', attr);
+        tui_text(s, x + 2, y, l, attr);
+        size_t ll = strlen(l);
+        tui_screen_put(s, x + 2 + ll, y, ' ', attr);
+        tui_screen_put(s, x + 3 + ll, y, 'x', attr);   /* close affordance */
+        tui_screen_put(s, x + 4 + ll, y, ']', attr);
+    }
+    return end;
+}
+
+int tui_tabbar_hit(TuiTab *tabs, size_t n, size_t px, size_t py, size_t bar_y) {
+    if (py != bar_y || !tabs) return -1;
+    for (size_t i = 0; i < n; i++) {
+        if (px >= tabs[i].x && px < tabs[i].x + tabs[i].w) return (int)i;
+    }
+    return -1;
+}

@@ -76,3 +76,61 @@ adjusts, and footer Bot/Top buttons drive scroll to end/top.
 Design follows the suite standard: opaque structs, minimal includes, C11 only,
 self-contained modules, reuse-never-duplicate (JSON via `wubujson`; ingestion via
 the `wubudoc` facade — the viewer implements no format parsing of its own).
+
+## UI case-study synthesis — best imaginable WuBuOffice UI
+
+Researched the big four office UIs and stole what's good, ditched what isn't.
+
+### Pain points found in the field
+- **MS Office Ribbon** — devours a full row of vertical space that documents
+  need; users routinely can't *find* the command they want (the single most
+  common complaint). Discoverability went *down* vs the old menu bar.
+- **LibreOffice** — menu + icon-toolbar clutter; reviewers note the ribbon
+  debate is not objectively settled and the defaults feel dated; scattered
+  settings, inconsistent dialogs.
+- **OpenOffice** — same lineage problems, slower maintenance, no modern touch.
+- **Google Docs** — online-only fragility: the moment the network drops you're
+  stuck; formatting/import quirks vs Word; no guaranteed offline reliability;
+  your data lives in someone else's cloud.
+
+### Notepad++ feature set we adopt (our editor, `wubunote`)
+Tabbed editing · line-number gutter · find/replace · **go-to-line** ·
+word-wrap toggle · a **status bar** (line/col, wrap state, dirty flag) ·
+EOL/encoding display. All local, instant, zero cloud.
+
+### Decisions for WuBuOffice
+1. **No ribbon.** One compact, *clickable* toolbar row (footer buttons), not a
+   space-hogging ribbon. Same density as a menu but mouse-friendly.
+2. **Command palette (Ctrl+K)** — the answer to "can't find the command". Press
+   Ctrl+K, type a prefix (`top` `bottom` `pgup` `pgdn` `quit` `nexttab`
+   `prevtab` in the viewer; `:w` `:q` `:tabnew` `:tabclose` `:wrap` `:find`
+   `:goto` in the editor), Enter runs it. Discoverability *without* sacrificing
+   screen space.
+3. **Tabs everywhere** (Notepad++-class) — open several docs/notes, click a tab
+   or Ctrl+B/Ctrl+E to switch. Document viewers and the editor both.
+4. **Proportional scrollbar as the document map** — a draggable thumb sized to
+   the doc, instead of a separate minimap that burns space. Click-to-jump and
+   drag-to-scrub.
+5. **Stay local / offline.** No cloud, no network requirement — our direct fix
+   for Google Docs' fragility. Everything is a file on disk.
+6. **Native terminal UI, zero deps** — `wubutui` is pure C11 + POSIX; renders in
+   WSL, SSH, anywhere. Mouse via old-school xterm reporting (SGR 1006 + X10):
+   wheel scroll, draggable scrollbar, clickable footer/tab buttons.
+7. **Pure core + thin edge** — all interaction logic lives in testable,
+   TTY-free controllers (`controller.c` for the viewer, `note_controller.c` for
+   the editor); `main.c` only reads bytes and paints. Real event→state paths are
+   unit-tested, not re-implemented in the tests.
+
+### Deliverables built this pass
+- `wubuview` multi-tab: open N docs as tabs, click tabs to switch, footer
+  buttons, scrollbar, **Ctrl+K command palette**; pure controller
+  (`apps/wubuview/controller.{h,c}`) + `test_wubuview_ctrl.c`.
+- `wubunote` tabbed editor: tabs, line-number gutter, word-wrap toggle,
+  find (Ctrl+F), go-to-line (Ctrl+G), save (Ctrl+S), command palette (Ctrl+K),
+  status bar; pure controller (`apps/wubunote/note_controller.{h,c}`) +
+  `test_wubunote_ctrl.c`. Editing core is the self-contained `wubunote_core`
+  lib (`src/wubunote/edit.{h,c}`) + `test_wubunote.c`.
+- `wubutui` tabbar widget (`tui_tabbar`/`_layout`/`_hit`) reused by both apps.
+
+Gates: **36/36 normal + 36/36 sanitizer (ASan+UBSan), 0 warnings/leaks/UB.**
+
