@@ -1,5 +1,11 @@
-/* fontdir.c -- discover and load a whole directory of fonts (see fontdir.h).
- * Clean C11, self-contained. Uses POSIX dirent + wubufont. */
+/* fontdir.c -- discover and load a whole directory tree of fonts (see
+ * fontdir.h). Clean C11, self-contained. Uses POSIX dirent + wubufont.
+ *
+ * A real "huge font repository" (e.g. the Google Fonts corpus) is DEEPLY
+ * nested: ofl/a/actor/.../Actor-Regular.ttf. So the loader recurses into
+ * subdirectories (bounded by `max` fonts and a depth cap) rather than only
+ * scanning one level -- that is what lets the bank study a large variety. */
+
 #include "fontdir.h"
 
 #include <dirent.h>
@@ -7,6 +13,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <strings.h>   /* strcasecmp */
+#include <sys/stat.h>  /* stat, S_ISDIR */
+
+#ifndef PATH_MAX
+#define PATH_MAX 4096
+#endif
 
 static int is_font_name(const char *name) {
     size_t L = strlen(name);
@@ -33,39 +44,60 @@ static uint8_t *slurp(const char *path, size_t *out_n) {
     return b;
 }
 
+/* Recursive collector. Stops early once `n` reaches `max` or depth hits 0.
+ * Returns the number collected so far (always <= max). */
+static size_t collect(const char *dir, Font ***fonts, uint8_t ***bufs,
+                       char ***paths, size_t *n, size_t max, int depth) {
+    if (depth <= 0 || *n >= max) return *n;
+    DIR *d = opendir(dir);
+    if (!d) return *n;
+
+    struct dirent *e;
+    while ((e = readdir(d)) != NULL && *n < max) {
+        if (e->d_name[0] == '.') continue;
+        /* build full path; skip if it would overflow (defensive) */
+        char path[PATH_MAX];
+        int wlen = snprintf(path, sizeof path, "%s/%s", dir, e->d_name);
+        if (wlen < 0 || (size_t)wlen >= sizeof path) continue;
+
+        /* directory -> recurse (depth bounded) */
+        struct stat st;
+        if (stat(path, &st) == 0 && S_ISDIR(st.st_mode)) {
+            collect(path, fonts, bufs, paths, n, max, depth - 1);
+            continue;
+        }
+        if (!is_font_name(e->d_name)) continue;
+
+        size_t sz = 0;
+        uint8_t *b = slurp(path, &sz);
+        if (!b) continue;
+        Font *fo = font_open(b, sz);
+        if (!fo) { free(b); continue; }
+        (*fonts)[*n] = fo; (*bufs)[*n] = b;
+        (*paths)[*n] = strdup(path);
+        (*n)++;
+    }
+    closedir(d);
+    return *n;
+}
+
 size_t ocr_font_dir_load(const char *dir, Font ***out_fonts, uint8_t ***out_bufs,
                          char ***out_paths, size_t max) {
     if (!dir || !out_fonts || !out_bufs || !out_paths || max == 0) return 0;
     *out_fonts = NULL; *out_bufs = NULL; *out_paths = NULL;
-
-    DIR *d = opendir(dir);
-    if (!d) return 0;
 
     Font **fonts = malloc(max * sizeof *fonts);
     uint8_t **bufs = malloc(max * sizeof *bufs);
     char **paths = malloc(max * sizeof *paths);
     if (!fonts || !bufs || !paths) {
         free(fonts); free(bufs); free(paths);
-        closedir(d);
         return 0;
     }
 
     size_t n = 0;
-    struct dirent *e;
-    while ((e = readdir(d)) != NULL && n < max) {
-        if (e->d_name[0] == '.') continue;
-        if (!is_font_name(e->d_name)) continue;
-        char *path = malloc(strlen(dir) + strlen(e->d_name) + 2);
-        if (!path) continue;
-        sprintf(path, "%s/%s", dir, e->d_name);
-        size_t sz = 0;
-        uint8_t *b = slurp(path, &sz);
-        if (!b) { free(path); continue; }
-        Font *fo = font_open(b, sz);
-        if (!fo) { free(b); free(path); continue; }
-        fonts[n] = fo; bufs[n] = b; paths[n] = path; n++;
-    }
-    closedir(d);
+    /* depth 32 is far deeper than any real font tree; bounds recursion
+     * against symlink cycles without needing a visited-set. */
+    collect(dir, &fonts, &bufs, &paths, &n, max, 32);
 
     if (n == 0) {
         free(fonts); free(bufs); free(paths);

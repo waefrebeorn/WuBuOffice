@@ -14,8 +14,8 @@
 
 #include "wubufont.h"   /* Font */
 
-/* Discover fonts under `dir` (non-recursive). Opens up to `max` of them.
- * On success returns the count opened (0..max) and fills:
+/* Discover fonts under `dir` (recursive, depth-bounded). Opens up to `max`
+ * of them. On success returns the count opened (0..max) and fills:
  *   *out_fonts : array of `count` opaque Font* (borrowed buffers, kept alive)
  *   *out_bufs  : array of `count` malloc'd file buffers (free these last)
  *   *out_paths : array of `count` malloc'd path strings

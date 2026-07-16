@@ -1,16 +1,18 @@
-build/
-build-*/
-*.o
-*.a
-*.docx
-*.xlsx
-*.pptx
-.DS_Store
-build/
-buildd/
+# Build trees (configured per-session)
+/build/
+/build-san/
 
-# ctest artifacts
-Testing/
+# Open-font study corpus (fetched by tools/fetch_font_corpus.sh).
+# This is a LOCAL artifact (1000+ OFL fonts from the Google Fonts repo), not
+# source. The bank studies it via --fontdir; it must never be committed.
+/fonts/study-corpus/
 
-# stray generated artifact (empty 'model' file emitted by model tooling)
+# Stray generated artifacts (test exports, ad-hoc build dirs, model output)
+WuBuOffice-edited.docx
+WuBuOffice.pptx
+/build-asan/
+/build-dbg/
+/model/
+
+# stray empty artifact
 /model
