@@ -13,20 +13,17 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* Printable ASCII range covered (matches recognize.c / font8x8). */
-#define FB_FIRST_CH 0x20   /* space */
-#define FB_LAST_CH  0x7E   /* ~ */
-#define FB_NCLASS   (FB_LAST_CH - FB_FIRST_CH + 1)
-
 struct OcrFontBank {
     size_t grid;                 /* NxN zoning grid */
     size_t dim;                  /* grid*grid */
     size_t nfonts;               /* number of contributing fonts */
+    size_t nclass;               /* number of glyph classes */
+    const char **classes;        /* nclass glyph strings (owned copies) */
     /* per-font templates: fonts[n] -> dim floats per class, row-major
-     * (FB_NCLASS * dim). A NULL row means that font had no usable
+     * (nclass * dim). A NULL row means that font had no usable
      * template for the class (e.g. glyph missing from the font). */
     float *vec[OCR_FONTBANK_MAX];
-    int    have[OCR_FONTBANK_MAX][FB_NCLASS];  /* 1 if class template present */
+    int    *have;                /* nfonts*nclass: 1 if font f has class c */
 };
 
 /* Inline ink test over a 1-bit wubufont bitmap (0/1, row-major w*h). */
@@ -121,37 +118,67 @@ static void fb_zone_glyph(const OcrBinary *b, const OcrBlock *g,
 }
 
 OcrFontBank *ocr_fontbank_build(const void *const *fonts, size_t nfonts,
-                                size_t grid, int ppm) {
+                                size_t grid, int ppm, const char *const *classes) {
     if (grid < 2 || grid > 16 || nfonts == 0) return NULL;
     if (nfonts > OCR_FONTBANK_MAX) nfonts = OCR_FONTBANK_MAX;
     if (ppm <= 0) ppm = 32;
+
+    /* Default class set: printable ASCII (English-first). */
+    const char *def[96];
+    if (!classes) {
+        for (int c = 0x20; c <= 0x7E; c++) { static char b[95][2]; b[c-0x20][0]=(char)c; b[c-0x20][1]='\0'; def[c-0x20]=b[c-0x20]; }
+        def[95] = NULL;
+        classes = def;
+    }
+    size_t nclass = 0;
+    while (classes[nclass]) nclass++;
+    if (nclass == 0) return NULL;
 
     OcrFontBank *bank = malloc(sizeof *bank);
     if (!bank) return NULL;
     memset(bank, 0, sizeof *bank);
     bank->grid = grid;
     bank->dim = grid * grid;
+    bank->nclass = nclass;
+    bank->classes = malloc(nclass * sizeof *bank->classes);
+    if (!bank->classes) { free(bank); return NULL; }
+    bank->have = malloc(OCR_FONTBANK_MAX * nclass * sizeof *bank->have);
+    if (!bank->have) { free(bank->classes); free(bank); return NULL; }
+    for (size_t c = 0; c < nclass; c++) {
+        size_t L = strlen(classes[c]);
+        char *cp = malloc(L + 1);
+        memcpy(cp, classes[c], L + 1);
+        bank->classes[c] = cp;
+    }
 
     size_t ncontrib = 0;
     for (size_t f = 0; f < nfonts; f++) {
         const Font *fo = (const Font *)fonts[f];
         if (!fo) continue;
-        float *vec = malloc((size_t)FB_NCLASS * bank->dim * sizeof *vec);
+        float *vec = malloc(nclass * bank->dim * sizeof *vec);
         if (!vec) continue;
         int any = 0;
-        for (int c = 0; c < FB_NCLASS; c++) {
-            bank->have[f][c] = 0;
-            int cp = FB_FIRST_CH + c;
+        for (size_t c = 0; c < nclass; c++) {
+            bank->have[f * nclass + c] = 0;
             /* skip the space template (handled by abstaining in classify) */
-            if (c == 0) { vec[(size_t)c * bank->dim] = 0.0f; continue; }
+            if (classes[c][0] == ' ' && classes[c][1] == '\0') { vec[(size_t)c * bank->dim] = 0.0f; continue; }
             int w = 0, h = 0; uint8_t *bits = NULL;
+            /* UTF-8 -> codepoint: 1-byte ASCII, 2-byte Latin-1/CJK-in-range,
+             * 3-byte BMP (CJK, etc.). Per the language-agnostic design, every
+             * codepoint is just another glyph token. */
+            int cp = (unsigned char)classes[c][0];
+            if ((cp & 0xE0) == 0xC0 && classes[c][1]) {
+                cp = ((cp & 0x1F) << 6) | (classes[c][1] & 0x3F);
+            } else if ((cp & 0xF0) == 0xE0 && classes[c][1] && classes[c][2]) {
+                cp = ((cp & 0x0F) << 12) | ((classes[c][1] & 0x3F) << 6) | (classes[c][2] & 0x3F);
+            }
             if (!font_rasterize(fo, (uint32_t)cp, ppm, &bits, &w, &h) || !bits) {
                 vec[(size_t)c * bank->dim] = 0.0f;
                 continue;
             }
             fb_zone_bitmap(bits, w, h, grid, vec + (size_t)c * bank->dim);
             free(bits);
-            bank->have[f][c] = 1;
+            bank->have[f * nclass + c] = 1;
             any = 1;
         }
         if (!any) { free(vec); continue; }
@@ -164,9 +191,19 @@ OcrFontBank *ocr_fontbank_build(const void *const *fonts, size_t nfonts,
     return bank;
 }
 
+OcrFontBank *ocr_fontbank_build_english(const void *const *fonts, size_t nfonts,
+                                        size_t grid, int ppm) {
+    return ocr_fontbank_build(fonts, nfonts, grid, ppm, NULL);
+}
+
 void ocr_fontbank_free(OcrFontBank *bank) {
     if (!bank) return;
     for (size_t f = 0; f < OCR_FONTBANK_MAX; f++) free(bank->vec[f]);
+    if (bank->classes) {
+        for (size_t c = 0; c < bank->nclass; c++) free((void *)bank->classes[c]);
+        free(bank->classes);
+    }
+    free(bank->have);
     free(bank);
 }
 
@@ -190,23 +227,25 @@ char *ocr_fontbank_recognize(const OcrBinary *b, const OcrBlock *glyph,
      * a glyph that one font recognizes confidently wins even if another
      * font's template is ambiguous -- no spurious tie-rejection that
      * would otherwise blank a clearly-readable glyph. */
-    double score[FB_NCLASS];
-    memset(score, 0, sizeof score);
+    double *score = malloc(bank->nclass * sizeof *score);
+    if (!score) { free(feat); return NULL; }
+    memset(score, 0, bank->nclass * sizeof *score);
 
     for (size_t f = 0; f < OCR_FONTBANK_MAX; f++) {
         if (!bank->vec[f]) continue;
         double best = 1e300, second = 1e300;
         int best_c = -1;
-        for (int c = 0; c < FB_NCLASS; c++) {
-            if (c == 0) continue;              /* skip space */
-            if (!bank->have[f][c]) continue;     /* font lacks this glyph */
+        for (size_t c = 0; c < bank->nclass; c++) {
+            /* skip the space class (handled by abstaining) */
+            if (bank->classes[c][0] == ' ' && bank->classes[c][1] == '\0') continue;
+            if (!bank->have[f * bank->nclass + c]) continue;     /* font lacks this glyph */
             const float *tv = bank->vec[f] + (size_t)c * bank->dim;
             double d = 0.0;
             for (size_t i = 0; i < bank->dim; i++) {
                 double diff = (double)feat[i] - (double)tv[i];
                 d += diff * diff;
             }
-            if (d < best) { second = best; best = d; best_c = c; }
+            if (d < best) { second = best; best = d; best_c = (int)c; }
             else if (d < second) { second = d; }
         }
         if (best_c < 0) continue;
@@ -224,15 +263,18 @@ char *ocr_fontbank_recognize(const OcrBinary *b, const OcrBlock *glyph,
      * floating sums are extremely unlikely to be exactly equal). */
     int best_c = -1;
     double best_s = 0.0;
-    for (int c = 1; c < FB_NCLASS; c++) {
-        if (score[c] > best_s) { best_s = score[c]; best_c = c; }
+    for (size_t c = 0; c < bank->nclass; c++) {
+        if (bank->classes[c][0] == ' ' && bank->classes[c][1] == '\0') continue;
+        if (score[c] > best_s) { best_s = score[c]; best_c = (int)c; }
     }
+    free(score);
     if (best_c < 0 || best_s <= 0.0) return NULL;
 
-    char *out = malloc(2);
+    const char *src = bank->classes[best_c];
+    size_t L = strlen(src);
+    char *out = malloc(L + 1);
     if (!out) return NULL;
-    out[0] = (char)(FB_FIRST_CH + best_c);
-    out[1] = '\0';
+    memcpy(out, src, L + 1);
     return out;
 }
 

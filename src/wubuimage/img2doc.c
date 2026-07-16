@@ -41,7 +41,7 @@ OcrFontBank *img2doc_default_bank(void) {
         kept++;
     }
     if (kept == 0) return NULL;
-    OcrFontBank *bank = ocr_fontbank_build((const void *const *)fonts, nf, 5, 48);
+    OcrFontBank *bank = ocr_fontbank_build_english((const void *const *)fonts, nf, 5, 48);
     /* The bank copies every template into its own heap during build, so the
      * Font* objects + their now-owned blobs can be released here -- no leak,
      * and the bank stays fully usable after this returns. */

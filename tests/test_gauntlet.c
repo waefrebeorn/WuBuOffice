@@ -14,6 +14,8 @@
 #include "fontbank.h"
 #include "wubufont.h"
 #include "image.h"
+#include "page_compose.h"
+#include "latin1.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -61,7 +63,7 @@ int main(void) {
     if (nfonts == 0) { printf("SKIP: no system font found\n"); return 0; }
     printf("using %zu font(s)\n", nfonts);
 
-    OcrFontBank *bank = ocr_fontbank_build(fonts, nfonts, 5, 48);
+    OcrFontBank *bank = ocr_fontbank_build_english(fonts, nfonts, 5, 48);
     CK(bank != NULL, "bank builds");
     if (!bank) {
         for (size_t i = 0; i < nfonts; i++) { font_free(fobjs[i]); free(bufs[i]); }
@@ -118,6 +120,27 @@ int main(void) {
                                                  "Hello 2026", 48, 0);
             CK(a >= 0.0 && a <= 1.0, "ablation accuracy in [0,1]");
             printf("  ablation(drop 0) accuracy = %.1f%%\n", 100.0 * a);
+        }
+
+        /* scatter composer: random placement + 2D/3D warping stress test */
+        OcrImage *sp = ocr_compose_page((const Font *const *)fobjs, nfonts,
+                                        OCR_ENGLISH_CHARS, OCR_ENGLISH_N,
+                                        512, 512, 48, 4242, 10.0, 0.3, 6.0, NULL);
+        CK(sp != NULL, "compose_page builds a warped crowd");
+        if (sp) {
+            CK(ocr_image_width(sp) == 512 && ocr_image_height(sp) == 512,
+               "composed page is 512x512");
+            uint8_t *pgm = NULL; size_t pl = 0;
+            CK(ocr_image_to_pgm(sp, &pgm, &pl) == 0 && pgm && pl > 0,
+               "composed page serializes to PGM");
+            ocr_image_free(sp);
+            free(pgm);
+            double rec = ocr_gauntlet_scatter(bank, (const Font *const *)fobjs, nfonts,
+                                              OCR_ENGLISH_CHARS, OCR_ENGLISH_N,
+                                              512, 512, 48, 4242, 10.0, 0.3, 6.0);
+            CK(rec >= 0.0 && rec <= 1.0, "scatter recall in [0,1]");
+            CK(rec > 0.0, "scatter recall > 0 (bank reads warped glyphs)");
+            printf("  scatter recall (read/placed) = %.1f%%\n", 100.0 * rec);
         }
     }
 

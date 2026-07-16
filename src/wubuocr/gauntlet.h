@@ -54,4 +54,17 @@ double ocr_gauntlet_ablate(const OcrFontBank *bank,
                             const Font *probe, const char *text,
                             int ppm, size_t drop_index);
 
+/* Scatter evaluator -- the user's "place glyphs randomly around the page with
+ * a mixture of 2-D and 3-D warping" stress test. Composes a warped crowd page
+ * from `fonts`/`chars` (via page_compose), OCRs it through `bank`, and returns
+ * the RECOGNITION RECALL (0..1): fraction of the placed (warped) glyphs the
+ * bank successfully read (vs rejected as too distorted / noise). This is the
+ * honest "how robust is the crowd read" number. `chars` may be NULL, in which
+ * case any non-empty recognition counts. */
+double ocr_gauntlet_scatter(const OcrFontBank *bank,
+                            const Font *const *fonts, size_t nfonts,
+                            const char *const *chars, size_t nchars,
+                            size_t W, size_t H, int ppm, unsigned seed,
+                            double maxrot, double maxpersp, double maxshear);
+
 #endif /* WUBUOCR_GAUNTLET_H */

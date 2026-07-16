@@ -84,7 +84,7 @@ int main(int argc, char **argv) {
                 bufs[nf] = b; objs[nf] = fo; fonts[nf] = fo; nf++;
             }
             if (nf) {
-                bank = ocr_fontbank_build(fonts, nf, 5, 48);
+                bank = ocr_fontbank_build_english(fonts, nf, 5, 48);
                 if (bank) { rec = ocr_fontbank_recognizer(); user = bank; }
                 else for (size_t i = 0; i < nf; i++) { font_free(objs[i]); free(bufs[i]); }
             } else {

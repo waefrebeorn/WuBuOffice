@@ -10,6 +10,7 @@
 #include "gauntlet.h"
 #include "wubufont.h"   /* Font, font_open, font_rasterize */
 #include "wubuocr.h"    /* OcrPage, ocr_page_from_netpbm, ocr_page_to_json, ocr_page_block_count, ocr_page_free */
+#include "page_compose.h" /* ocr_compose_page, ocr_compose_line */
 
 #include <stdlib.h>
 #include <string.h>
@@ -298,7 +299,7 @@ double ocr_gauntlet_ablate(const OcrFontBank *bank,
     size_t k = 0;
     for (size_t i = 0; i < nfonts && k < OCR_FONTBANK_MAX; i++)
         if (i != drop_index) kept[k++] = fonts[i];
-    OcrFontBank *reduced = ocr_fontbank_build(kept, k, 5, ppm);
+    OcrFontBank *reduced = ocr_fontbank_build_english(kept, k, 5, ppm);
     if (!reduced) return 0.0;
     /* accuracy on the clean probe text (severity 0) */
     double amts[1] = { 0.0 };
@@ -306,4 +307,38 @@ double ocr_gauntlet_ablate(const OcrFontBank *bank,
     ocr_gauntlet_sweep(reduced, probe, text, ppm, GA_ROTATE, amts, 1, acc);
     ocr_fontbank_free(reduced);
     return acc[0];
+}
+
+double ocr_gauntlet_scatter(const OcrFontBank *bank,
+                            const Font *const *fonts, size_t nfonts,
+                            const char *const *chars, size_t nchars,
+                            size_t W, size_t H, int ppm, unsigned seed,
+                            double maxrot, double maxpersp, double maxshear) {
+    if (!bank || !fonts || nfonts == 0 || W == 0 || H == 0) return 0.0;
+    size_t placed = 0;
+    OcrImage *page = ocr_compose_page(fonts, nfonts, chars, nchars,
+                                      W, H, ppm, seed, maxrot, maxpersp, maxshear, &placed);
+    if (!page) return 0.0;
+    if (placed == 0) { ocr_image_free(page); return 0.0; }
+
+    uint8_t *pgm = NULL; size_t pgmlen = 0;
+    if (ocr_image_to_pgm(page, &pgm, &pgmlen) != 0) { ocr_image_free(page); return 0.0; }
+    ocr_image_free(page);
+
+    OcrPage *pg = ocr_page_from_netpbm(pgm, pgmlen, ocr_fontbank_recognizer(), (void *)bank);
+    free(pgm);
+    if (!pg) return 0.0;
+
+    /* Each scattered glyph should be its own detected block; count how many
+     * blocks carry a recognized (non-empty) glyph -- that is the bank reading
+     * the warped crowd. Recall = read / placed. */
+    size_t nb = ocr_page_block_count(pg);
+    size_t read = 0;
+    for (size_t i = 0; i < nb; i++) {
+        char *t = (char *)ocr_page_block_text(pg, i);
+        if (t && t[0] != '\0') read++;
+        free(t);
+    }
+    ocr_page_free(pg);
+    return (double)read / (double)placed;
 }

@@ -123,7 +123,7 @@ int main(void) {
     }
     printf("using %zu font(s) in bank\n", nfonts);
 
-    OcrFontBank *bank = ocr_fontbank_build(fonts, nfonts, 5, 48);
+    OcrFontBank *bank = ocr_fontbank_build_english(fonts, nfonts, 5, 48);
     CK(bank != NULL, "ocr_fontbank_build succeeds");
     if (!bank) {
         for (size_t i = 0; i < nfonts; i++) { font_free(fobjs[i]); free(bufs[i]); }

@@ -38,9 +38,16 @@ typedef struct OcrFontBank OcrFontBank;
  *             single-font recognizer's grid.
  *   ppm     : rasterization resolution (pixels per em) used to render each
  *             reference glyph from the real fonts.
+ *   classes : NULL-terminated array of glyph strings (e.g. ASCII chars or
+ *             the English+Latin composite from latin1.h). Pass NULL for the
+ *             default English tier (printable ASCII 0x20..0x7E).
  * Returns NULL on OOM or if no font could contribute templates. */
 OcrFontBank *ocr_fontbank_build(const void *const *fonts, size_t nfonts,
-                                size_t grid, int ppm);
+                                size_t grid, int ppm, const char *const *classes);
+
+/* Convenience: build a bank over the English (printable ASCII) class set. */
+OcrFontBank *ocr_fontbank_build_english(const void *const *fonts, size_t nfonts,
+                                        size_t grid, int ppm);
 
 /* Free a bank (does not free the underlying Font* objects). */
 void ocr_fontbank_free(OcrFontBank *bank);

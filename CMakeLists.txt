@@ -238,7 +238,9 @@ add_library(wubuocr STATIC
     src/wubuocr/image.c src/wubuocr/binarize.c src/wubuocr/layout.c
     src/wubuocr/components.c src/wubuocr/wubuocr.c
     src/wubuocr/font8x8.c src/wubuocr/recognize.c
-    src/wubuocr/fontbank.c src/wubuocr/gauntlet.c)
+    src/wubuocr/fontbank.c src/wubuocr/gauntlet.c
+    src/wubuocr/page_compose.c src/wubuocr/latin1.c
+    src/wubuocr/unicode.c src/wubuocr/fontdir.c)
 target_include_directories(wubuocr PUBLIC src/wubuocr src/wubujson src/wubufont)
 target_link_libraries(wubuocr PUBLIC wubujson wubufont m)
 
@@ -463,6 +465,11 @@ add_test(NAME fontbank COMMAND test_fontbank)
 add_executable(test_gauntlet tests/test_gauntlet.c)
 target_link_libraries(test_gauntlet PRIVATE wubuocr wubufont)
 add_test(NAME gauntlet COMMAND test_gauntlet)
+
+# wubuocr Latin-1 tier: English-first, Latin second (accented glyph recall).
+add_executable(test_latin1 tests/test_latin1.c)
+target_link_libraries(test_latin1 PRIVATE wubuocr wubufont)
+add_test(NAME latin1 COMMAND test_latin1)
 
 # wubutui: pure TUI core (screen, wrap, key decode, draw) -- no TTY needed.
 add_executable(test_wubutui tests/test_wubutui.c)
