@@ -471,6 +471,13 @@ add_executable(test_latin1 tests/test_latin1.c)
 target_link_libraries(test_latin1 PRIVATE wubuocr wubufont)
 add_test(NAME latin1 COMMAND test_latin1)
 
+# wubuocr EMNIST Letters benchmark tool: train the lightweight zoning
+# recognizer on EMNIST train and report accuracy on EMNIST test. Not a ctest
+# (needs the downloaded IDX corpus under data/emnist/); run manually:
+#   ./build/emnist_eval data/emnist 5
+add_executable(emnist_eval tools/emnist_eval.c)
+target_link_libraries(emnist_eval PRIVATE wubuocr wubufont)
+
 # wubutui: pure TUI core (screen, wrap, key decode, draw) -- no TTY needed.
 add_executable(test_wubutui tests/test_wubutui.c)
 target_link_libraries(test_wubutui PRIVATE wubutui)

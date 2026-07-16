@@ -7,12 +7,9 @@
 # source. The bank studies it via --fontdir; it must never be committed.
 /fonts/study-corpus/
 
-# Stray generated artifacts (test exports, ad-hoc build dirs, model output)
-WuBuOffice-edited.docx
-WuBuOffice.pptx
-/build-asan/
-/build-dbg/
-/model/
+# EMNIST Letters benchmark corpus (downloaded by tools/fetch_emnist.sh).
+# ~62 MB of IDX files; git-ignored, local artifact only.
+/data/emnist/
 
 # stray empty artifact
 /model

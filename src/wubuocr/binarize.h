@@ -33,6 +33,13 @@ size_t ocr_binary_width(const OcrBinary *b);
 size_t ocr_binary_height(const OcrBinary *b);
 
 /* 1 if (x,y) is foreground ink, else 0. Out-of-range -> 0 (background). */
+/* Build an ink map directly from a raw pixel plane (row-major, w*h bytes,
+ * 0=black..255=white). Bits with grayscale <= `ink_threshold` are treated as
+ * foreground ink. Used to wrap dataset glyphs (e.g. EMNIST 28x28) without an
+ * OcrImage round-trip. NULL on OOM/empty input. The `bits` buffer is copied. */
+OcrBinary *ocr_binary_from_raw(const uint8_t *px, size_t w, size_t h,
+                               uint8_t ink_threshold);
+
 int ocr_binary_ink(const OcrBinary *b, size_t x, size_t y);
 
 #ifdef __cplusplus

@@ -79,3 +79,22 @@ int ocr_binary_ink(const OcrBinary *b, size_t x, size_t y) {
     if (!b || x >= b->w || y >= b->h) return 0;
     return (b->bits[y * b->stride + (x >> 3)] >> (7 - (x & 7))) & 1;
 }
+
+OcrBinary *ocr_binary_from_raw(const uint8_t *px, size_t w, size_t h,
+                               uint8_t ink_threshold) {
+    if (!px || w == 0 || h == 0) return NULL;
+    OcrBinary *b = malloc(sizeof *b);
+    if (!b) return NULL;
+    b->w = w; b->h = h;
+    b->stride = (w + 7) / 8;
+    b->bits = calloc(b->stride * h, 1);
+    if (!b->bits) { free(b); return NULL; }
+    for (size_t y = 0; y < h; y++) {
+        for (size_t x = 0; x < w; x++) {
+            if (px[y * w + x] <= ink_threshold) {
+                b->bits[y * b->stride + (x >> 3)] |= (uint8_t)(0x80u >> (x & 7));
+            }
+        }
+    }
+    return b;
+}
