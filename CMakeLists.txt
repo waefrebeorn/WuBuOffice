@@ -210,7 +210,9 @@ target_link_libraries(wubusvg_agent PRIVATE wubusvg)
 
 # --- wubudoc: unified document ingestion + creation facade (wubuOS bus) ---
 add_library(wubudoc STATIC
-    src/wubudoc/wubudoc.c)
+    src/wubudoc/wubudoc.c
+    src/wubudoc/b64.c
+    src/wubudoc/agent.c)
 target_include_directories(wubudoc PUBLIC
     src/wubudoc src/wubujson src/wubusvg src/wubufont src/wubuzip
     src/wubucfb src/wubuxml)

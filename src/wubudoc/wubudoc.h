@@ -30,6 +30,9 @@ typedef struct DocSession DocSession;
 DocSession *doc_session_create(void);
 void        doc_session_free(DocSession *s);
 
+/* Number of document handles currently in the session (ids 0..count-1). */
+size_t      doc_count(const DocSession *s);
+
 /* Load a document from disk into the session.
  *   path: filesystem path (extension selects the ingestor).
  * Returns a handle id (>=0) or -1 on failure. The handle owns a normalized
