@@ -18,6 +18,7 @@
 #include "draw.h"
 #include "input.h"
 #include "term.h"
+#include "wubudoc.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -102,6 +103,8 @@ static int run_interactive(int npaths, char **paths) {
     if (!t) { fprintf(stderr, "wubunote: not a terminal\n"); return 1; }
     NState st;
     memset(&st, 0, sizeof st);
+    tui_key_state_init(&st.keyst);
+    DocSession *drop_sess = doc_session_create();
     size_t prev_w = 0, prev_h = 0;
     if (npaths == 0) nctrl_new(&st);
     else for (int i = 0; i < npaths; i++) nctrl_open(&st, paths[i]);
@@ -130,9 +133,24 @@ static int run_interactive(int npaths, char **paths) {
         size_t off = 0;
         while (off < got) {
             TuiKey k;
-            size_t used = tui_key_decode(inbuf + off, got - off, &k);
+            size_t used = tui_key_decode_s(inbuf + off, got - off, &k, &st.keyst);
             if (used == 0) break;
             off += used;
+            if (k.type == TUI_KEY_PASTE) {
+                /* A drag/drop or bracketed paste: interpret the bytes as a
+                 * document and insert the extracted text into the buffer. */
+                char *txt = doc_drop_text(drop_sess,
+                                          (const uint8_t *)k.paste_data, k.paste_len);
+                EditBuf *b = nctrl_active_buf(&st);
+                if (txt && b) {
+                    for (char *p = txt; *p; p++) {
+                        if (*p == '\n') edit_new_line(b);
+                        else edit_put_char(b, *p);
+                    }
+                }
+                free(txt);
+                continue;
+            }
             nctrl_handle(&st, &k, &save_path);
             if (save_path) {
                 char *s = active_text(&st);
@@ -150,6 +168,8 @@ static int run_interactive(int npaths, char **paths) {
 
     /* reminder saves on quit if dirty */
     for (size_t i = 0; i < st.tab_n; i++) edit_free(st.tabs[i].buf);
+    doc_session_free(drop_sess);
+    tui_key_state_free(&st.keyst);
     return 0;
 }
 

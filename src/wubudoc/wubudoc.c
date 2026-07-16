@@ -20,11 +20,14 @@
 #include "cfb_write.h"
 #include "xml.h"
 #include "../../apps/wubuconv/conv_map.h"   /* semantic engine (treat as media) */
+#include "pdf_extract.h"  /* clean-room PDF text extraction */
+#include "img2doc.h"      /* image -> OCR'd document (png + font bank) */
 
 #include <stdlib.h>
 #include <string.h>
 #include <strings.h>   /* strcasecmp */
 #include <stdio.h>
+#include <sys/stat.h>
 
 /* ---------- normalized model ----------
  * model = { kind, source, text?, parts?[], streams?[] }
@@ -44,12 +47,13 @@ typedef struct {
 struct DocSession {
     DocHandle *h;
     size_t n, cap;
+    struct OcrFontBank *ocr_bank;   /* lazily-built multi-font recognizer */
 };
 
 DocSession *doc_session_create(void) {
     DocSession *s = malloc(sizeof *s);
     if (!s) return NULL;
-    s->h = NULL; s->n = s->cap = 0;
+    memset(s, 0, sizeof *s);
     return s;
 }
 
@@ -66,6 +70,7 @@ void doc_session_free(DocSession *s) {
     if (!s) return;
     for (size_t i = 0; i < s->n; i++) handle_free(&s->h[i]);
     free(s->h);
+    if (s->ocr_bank) ocr_fontbank_free(s->ocr_bank);
     free(s);
 }
 
@@ -350,6 +355,210 @@ long doc_open(DocSession *s, const char *path) {
     long id = ingest(s, kind, path, buf, rd);
     free(buf);
     return id;
+}
+
+/* ---------- magic-byte sniffing (drag/drop + bracketed paste) ----------
+ * Content-based kind detection so a document dropped/pasted with no filename
+ * (or a misleading one) is still ingested correctly. Returns a static kind
+ * string, or NULL if the content is not a recognized format. */
+static const char *sniff_kind(const uint8_t *d, size_t len) {
+    if (!d || len == 0) return NULL;
+    /* PDF */
+    if (len >= 4 && memcmp(d, "%PDF", 4) == 0) return "pdf";
+    /* PNG */
+    static const uint8_t pngsig[8] = {0x89,0x50,0x4E,0x47,0x0D,0x0A,0x1A,0x0A};
+    if (len >= 8 && memcmp(d, pngsig, 8) == 0) return "png";
+    /* GIF */
+    if (len >= 4 && memcmp(d, "GIF8", 4) == 0) return "gif";
+    /* JPEG */
+    if (len >= 3 && d[0]==0xFF && d[1]==0xD8 && d[2]==0xFF) return "jpg";
+    /* ZIP family (docx/xlsx/pptx/odt/ods/odp/zip) */
+    if (len >= 4 && memcmp(d, "PK\x03\x04", 4) == 0) return "zip";
+    /* CFB (legacy doc/xls/ppt) */
+    static const uint8_t cfb[8] = {0xD0,0xCF,0x11,0xE0,0xA1,0xB1,0x1A,0xE1};
+    if (len >= 8 && memcmp(d, cfb, 8) == 0) return "doc";
+    /* PostScript */
+    if (len >= 2 && d[0]=='%' && d[1]=='!') return "ps";
+    /* Text-ish: every byte is printable/whitespace (no NUL, no high bytes). */
+    int istext = 1;
+    for (size_t i = 0; i < len; i++) {
+        uint8_t c = d[i];
+        if (c=='\n' || c=='\r' || c=='\t' || (c>=0x20 && c<=0x7E)) continue;
+        istext = 0; break;
+    }
+    if (istext) {
+        if (len >= 1 && d[0]=='{') return "json";
+        if (len >= 5 && (memcmp(d, "<?xml", 5)==0 || memcmp(d, "<svg", 4)==0
+                         || memcmp(d, "<!DO", 4)==0)) return "xml";
+        if (len >= 1 && d[0]=='<') return "html";   /* some other XML/HTML-ish */
+        return "txt";
+    }
+    return NULL;
+}
+
+/* Peek inside a ZIP to choose the right office kind (OOXML vs ODF) so text
+ * extraction routes through the right wubuconv path. Returns a static kind. */
+static const char *classify_zip(const uint8_t *d, size_t len) {
+    wubuzip_archive z;
+    if (wubuzip_open(d, len, &z) != 0) return "zip";
+    const char *kind = "zip";
+    for (size_t i = 0; i < wubuzip_count(&z); i++) {
+        const char *nm = wubuzip_name(&z, i);
+        if (!nm) continue;
+        if (strncmp(nm, "word/", 5) == 0)      { kind = "docx"; break; }
+        if (strncmp(nm, "xl/", 3) == 0)        { kind = "xlsx"; break; }
+        if (strncmp(nm, "ppt/", 4) == 0)       { kind = "pptx"; break; }
+        if (strncmp(nm, "META-INF/", 9) == 0
+            || strcmp(nm, "content.xml") == 0
+            || strcmp(nm, "styles.xml") == 0)  { kind = "odt";  } /* refined below */
+    }
+    /* Distinguish ODF sub-types by the (stored, first) mimetype entry. */
+    if (strcmp(kind, "odt") == 0) {
+        for (size_t i = 0; i < wubuzip_count(&z); i++) {
+            const char *nm = wubuzip_name(&z, i);
+            if (nm && strcmp(nm, "mimetype") == 0) {
+                uint8_t *b = NULL; size_t bl = 0;
+                wubuzip_extract(&z, i, &b, &bl);
+                if (b) {
+                    if (memcmp(b, "application/vnd.oasis.opendocument.spreadsheet", 38)==0) kind="ods";
+                    else if (memcmp(b, "application/vnd.oasis.opendocument.presentation", 43)==0) kind="odp";
+                    else if (memcmp(b, "application/vnd.oasis.opendocument.text", 34)==0) kind="odt";
+                    free(b);
+                }
+                break;
+            }
+        }
+    }
+    wubuzip_close(&z);
+    return kind;
+}
+
+/* Lazily build the multi-font OCR recognizer bank (used for image->document).
+ * Returns the session bank, or NULL if no real font is available. */
+static struct OcrFontBank *session_ocr_bank(DocSession *s) {
+    if (!s->ocr_bank) s->ocr_bank = img2doc_default_bank();
+    return s->ocr_bank;
+}
+
+/* Ingest already-read bytes, detecting the kind from content (not filename).
+ * Returns a handle id or -1. PDFs are parsed for their text; PNGs are OCR'd
+ * into a document model -- both satisfy "drag an image/PDF in, treat it as a
+ * document". */
+long doc_open_mem(DocSession *s, const uint8_t *data, size_t len) {
+    if (!s || !data) return -1;
+    const char *kind = sniff_kind(data, len);
+    if (!kind) return -1;
+
+    if (!strcmp(kind, "pdf")) {
+        char *txt = pdf_extract_text(data, len);
+        if (!txt) return -1;
+        long id = doc_ingest_text(s, "txt", txt);  /* store extracted text */
+        free(txt);
+        return id;
+    }
+    if (!strcmp(kind, "png")) {
+        struct OcrFontBank *bank = session_ocr_bank(s);
+        char *doc = img2doc_recognize_png(data, len, bank);
+        if (!doc) return -1;
+        /* ingest the OCR'd document model as a JSON doc */
+        long id = doc_ingest_text(s, "json", doc);
+        free(doc);
+        return id;
+    }
+
+    if (!strcmp(kind, "zip")) kind = classify_zip(data, len);
+    return ingest(s, kind, "(memory)", data, len);
+}
+
+/* Decide whether dropped/pasted bytes are a file PATH (terminals often paste
+ * the dropped file's path) or the file CONTENTS. If a path that exists on
+ * disk, open it by path (extension-based); otherwise ingest the bytes. */
+long doc_open_auto(DocSession *s, const uint8_t *data, size_t len) {
+    if (!s || !data || len == 0) return -1;
+    /* a path: NUL-free, contains a '/' or ends in a known extension, no
+     * control chars except a single trailing newline. */
+    int pathlike = 1; size_t end = len;
+    while (end > 0 && (data[end-1]=='\n' || data[end-1]=='\r' || data[end-1]==' '))
+        end--;
+    if (end == 0) pathlike = 0;
+    for (size_t i = 0; i < end; i++) {
+        uint8_t c = data[i];
+        if (c == 0 || c == '\t') { pathlike = 0; break; }
+        if (c < 0x20) { pathlike = 0; break; }
+    }
+    if (pathlike && end < 4096) {
+        char *p = malloc(end + 1);
+        memcpy(p, data, end); p[end] = '\0';
+        /* a path has a slash or a dot-extension and the file exists */
+        int ispath = (strchr(p, '/') != NULL);
+        struct stat stbuf;
+        if (ispath && stat(p, &stbuf) == 0) {
+            long id = doc_open(s, p);
+            free(p);
+            if (id >= 0) return id;
+        }
+        free(p);
+    }
+    return doc_open_mem(s, data, len);
+}
+
+/* Flatten a wubudoc "document" / "ocr_page" model into readable text by
+ * concatenating each block's "text" field (one paragraph per block). Returns a
+ * malloc'd string (caller frees) or NULL if the model has no block text. */
+static char *docmodel_flat_text(const char *json) {
+    JVal *m = j_parse(json, NULL);
+    if (!m) return NULL;
+    const JVal *blocks = j_obj_get(m, "blocks");
+    char *out = NULL;
+    if (blocks && j_type(blocks) == J_ARR && j_len(blocks) > 0) {
+        size_t cap = 1024, n = 0;
+        out = calloc(cap, 1);
+        for (size_t i = 0; i < j_len(blocks); i++) {
+            const JVal *b = j_arr_at(blocks, i);
+            const JVal *t = j_obj_get(b, "text");
+            if (t && j_type(t) == J_STR) {
+                const char *s = j_as_str(t);
+                size_t al = strlen(s);
+                while (n + al + 2 >= cap) { cap *= 2; out = realloc(out, cap); }
+                memcpy(out + n, s, al); n += al;
+                out[n++] = '\n'; out[n] = '\0';
+            }
+        }
+        if (n == 0) { free(out); out = NULL; }
+    }
+    j_free(m);
+    return out;
+}
+
+/* Extract a displayable text projection for dropped/pasted bytes. Returns a
+ * malloc'd string (caller frees), or NULL. For text kinds returns the raw
+ * text; for office/container kinds it asks wubuconv for a Markdown projection;
+ * for image/PDF kinds it returns the OCR'd / extracted text. */
+char *doc_drop_text(DocSession *s, const uint8_t *data, size_t len) {
+    if (!s || !data || len == 0) return NULL;
+    long id = doc_open_auto(s, data, len);
+    if (id < 0) return NULL;
+    const char *t = doc_text(s, id);
+    if (t && *t) return strdup(t);
+    /* No raw text field: try to flatten a block-based JSON model (image OCR,
+     * docx/odt via wubuconv, etc.) into paragraphs. */
+    char *js = doc_json(s, id);
+    if (js) {
+        char *ft = docmodel_flat_text(js);
+        free(js);
+        if (ft) return ft;
+    }
+    /* Fallback: project container kinds to Markdown via the semantic engine. */
+    const char *kind = doc_kind(s, id);
+    uint8_t *mj = NULL; size_t mjlen = 0;
+    if (kind && wubuconv_convert_mem(data, len, kind, "md", &mj, &mjlen) == 0 && mjlen > 0) {
+        char *out = malloc(mjlen + 1);
+        memcpy(out, mj, mjlen); out[mjlen] = '\0';
+        free(mj);
+        return out;
+    }
+    free(mj);
+    return NULL;
 }
 
 /* ---------- accessors ---------- */

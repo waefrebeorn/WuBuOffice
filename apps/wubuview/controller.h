@@ -54,6 +54,9 @@ typedef struct {
     size_t pal_len;
     char   pal_buf[64];
     int    pal_sel;
+
+    /* bracketed-paste / drag-drop state (persists across reads) */
+    TuiKeyState keyst;
 } VState;
 
 void vctrl_init(VState *st, size_t screen_w, size_t screen_h);
@@ -77,6 +80,13 @@ size_t vctrl_max_scroll(const VState *st);
 /* apply one decoded key/mouse event. returns the footer button clicked this
  * event (VB__COUNT if none). mutates st in place. */
 VBtn vctrl_handle(VState *st, const TuiKey *k);
+
+/* open a new tab; returns its index or -1 if the tab limit is reached. */
+long vctrl_open(VState *st, const char *title, size_t total_lines);
+
+/* command palette entries (shared by controller + UI draw_frame) */
+extern const char *VCMD[];
+#define VCMD_N 7   /* entries in VCMD[] */
 
 /* pure mapping: which footer button (if any) contains cell (px,py) */
 VBtn vctrl_button_at(const VState *st, size_t px, size_t py);

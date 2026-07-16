@@ -4,9 +4,10 @@
 #include <string.h>
 #include <stdio.h>
 
-/* viewer command palette (Ctrl+K) -- discoverability without a ribbon */
-static const char *VCMD[] = { "top", "bottom", "pgup", "pgdn", "quit", "nexttab", "prevtab" };
-#define VCMD_N ((int)(sizeof VCMD / sizeof VCMD[0]))
+/* viewer command palette (Ctrl+K) -- discoverability without a ribbon.
+ * Exposed via controller.h (extern) so the UI (main.c draw_frame) can show
+ * the matching-command hint. */
+const char *VCMD[] = { "top", "bottom", "pgup", "pgdn", "quit", "nexttab", "prevtab" };
 
 static const char *VB_LABELS[VB__COUNT] = {
     [VB_TOP] = "Top", [VB_PGUP] = "PgUp", [VB_PGDN] = "PgDn",
@@ -58,7 +59,7 @@ void vctrl_resize(VState *st, size_t screen_w, size_t screen_h, size_t total_lin
     if (active(st)->scroll > max) active(st)->scroll = max;
 }
 
-int vctrl_open(VState *st, const char *title, size_t total_lines) {
+long vctrl_open(VState *st, const char *title, size_t total_lines) {
     if (st->tab_n >= VCTRL_MAX_TABS) return -1;
     VTab *t = &st->tabs[st->tab_n];
     snprintf(t->title, sizeof t->title, "%.*s", (int)(sizeof t->title - 1), title ? title : "");

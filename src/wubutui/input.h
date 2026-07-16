@@ -38,7 +38,8 @@ typedef enum {
     TUI_KEY_END,
     TUI_KEY_INSERT,
     TUI_KEY_DELETE,
-    TUI_KEY_MOUSE         /* a mouse event: see the .mouse fields */
+    TUI_KEY_MOUSE,        /* a mouse event: see the .mouse fields */
+    TUI_KEY_PASTE        /* bracketed paste (ESC[200~ ... ESC[201~) */
 } TuiKeyType;
 
 /* Mouse actions (old-school xterm reporting, decoded here). */
@@ -62,6 +63,10 @@ typedef enum {
 typedef struct {
     TuiKeyType type;
     char       ch;   /* valid when type == TUI_KEY_CHAR (the raw byte) */
+    /* valid when type == TUI_KEY_PASTE: the raw pasted bytes (NOT NUL-terminated;
+     * points into the caller's input buffer, valid only until the next read) */
+    const char *paste_data;
+    size_t      paste_len;
     /* valid when type == TUI_KEY_MOUSE: */
     TuiMouseAction mouse_action;
     TuiMouseButton mouse_button;
@@ -78,6 +83,23 @@ typedef struct {
  * Unknown escape sequences that are fully terminated are consumed and reported
  * as TUI_KEY_ESC so the stream never deadlocks. */
 size_t tui_key_decode(const char *buf, size_t len, TuiKey *out);
+
+/* Bracketed-paste state. A paste (ESC[200~ ... ESC[201~) may arrive split
+ * across many reads; hold one of these across calls so partial pastes are
+ * buffered until the closing sequence is seen. Zero-initialize before first
+ * use. tui_key_decode() is equivalent to tui_key_decode_s() with a fresh,
+ * local state (so it cannot span reads for pastes). */
+typedef struct {
+    int     pasting;     /* inside a bracketed paste */
+    char   *buf;         /* accumulated raw bytes (malloc'd) */
+    size_t  len, cap;
+} TuiKeyState;
+
+void tui_key_state_init(TuiKeyState *st);
+void tui_key_state_free(TuiKeyState *st);
+
+size_t tui_key_decode_s(const char *buf, size_t len, TuiKey *out,
+                        TuiKeyState *st);
 
 /* Human-readable name for a key type (for tests / debugging). */
 const char *tui_key_name(TuiKeyType t);

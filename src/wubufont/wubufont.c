@@ -1,6 +1,7 @@
 /* wubufont.c -- clean-room SFNT/TrueType parser. Native C11, no deps. */
 #include "wubufont.h"
 
+#include <math.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -544,18 +545,25 @@ static size_t flatten_contour(const int16_t *X, const int16_t *Y, const uint8_t 
             /* quadratic from current (cx,cy) through control (X[i],Y[i]) to
              * the next on-curve point, or the implied midpoint if the next is
              * also off-curve. Sample the curve (excluding the endpoint, which
-             * is emitted when we reach it). NOTE: the caller already supplies
-             * Y in screen coordinates (y grows downward), so we must NOT
-             * negate again here — the previous double-negation pushed composite
-             * glyphs (A/H/W) entirely below the bitmap, rendering them empty. */
+             * is emitted when we reach it). Coordinates are screen-space
+             * (y grows downward) — note we do NOT negate Y here. */
             int px = cx, py = cy;
             int qx = X[i], qy = Y[i];
             size_t ni = (i + 1) % n;
             int ex, ey;
             if (on[ni] & ON_BIT) { ex = X[ni]; ey = Y[ni]; }
             else { ex = (X[i] + X[ni]) / 2; ey = (Y[i] + Y[ni]) / 2; }
-            for (int t = 1; t < 6; t++) {
-                double u = (double)t / 6.0, v = 1.0 - u;
+            /* Adaptive subdivision: sample finely enough that no flattened
+             * segment spans more than ~1 device pixel. A fixed count
+             * under-samples tight strokes (e.g. the top of an 'o' loop) and
+             * leaves holes that break connectivity after binarization. */
+            double dxs = (double)ex - (double)px, dys = (double)ey - (double)py;
+            double len = sqrt(dxs*dxs + dys*dys) * s;
+            int steps = (int)(len + 1.0);
+            if (steps < 2) steps = 2;
+            if (steps > 24) steps = 24;   /* bound output size */
+            for (int t = 1; t < steps; t++) {
+                double u = (double)t / (double)steps, v = 1.0 - u;
                 int qx2 = (int)(v*v*px + 2*v*u*qx + u*u*ex);
                 int qy2 = (int)(v*v*py + 2*v*u*qy + u*u*ey);
                 out[m*2] = (int16_t)(qx2 * s + 0.5); out[m*2+1] = (int16_t)(qy2 * s + 0.5); m++;

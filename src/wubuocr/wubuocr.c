@@ -34,6 +34,9 @@ void ocr_page_free(OcrPage *pg) {
     free(pg);
 }
 
+/* forward declaration: defined below (concatenates a block's glyph text). */
+static char *block_text(const PageBlock *pb);
+
 OcrPage *ocr_page_analyze(const OcrImage *im, const OcrLayoutParams *params,
                           OcrRecognizer rec, void *user) {
     if (!im) return NULL;
@@ -60,7 +63,7 @@ OcrPage *ocr_page_analyze(const OcrImage *im, const OcrLayoutParams *params,
         PageBlock *pb = &pg->blk[i];
         pb->box = *b;
 
-        OcrComponents *cc = ocr_components_in_block(bin, b, 1);
+        OcrComponents *cc = ocr_components_in_block(bin, b, 5);
         if (cc) {
             size_t g = ocr_components_count(cc);
             if (g) {
@@ -100,6 +103,18 @@ size_t ocr_page_block_count(const OcrPage *pg) { return pg ? pg->nblk : 0; }
 const OcrBlock *ocr_page_block(const OcrPage *pg, size_t i) {
     if (!pg || i >= pg->nblk) return NULL;
     return &pg->blk[i].box;
+}
+
+const char *ocr_page_block_text(const OcrPage *pg, size_t i) {
+    if (!pg || i >= pg->nblk) return NULL;
+    char *t = block_text(&pg->blk[i]);
+    /* Always return a heap string the caller must free (never a literal),
+     * so ownership is unambiguous and sanitizers don't flag the empty case. */
+    if (!t) {
+        t = malloc(1);
+        if (t) t[0] = '\0';
+    }
+    return t;
 }
 
 /* Concatenate a block's glyph text in reading order, inserting a space between

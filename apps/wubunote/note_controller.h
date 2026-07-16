@@ -61,6 +61,9 @@ typedef struct {
 
     /* command list for the palette (static, see controller.c) */
     int     cmd_sel;    /* selected index while in NPMT_CMD */
+
+    /* bracketed-paste / drag-drop state (persists across reads) */
+    TuiKeyState keyst;
 } NState;
 
 void nctrl_init(NState *st, size_t w, size_t h);

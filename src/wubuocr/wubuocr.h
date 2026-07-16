@@ -52,6 +52,13 @@ void ocr_page_free(OcrPage *pg);
 size_t          ocr_page_block_count(const OcrPage *pg);
 const OcrBlock *ocr_page_block(const OcrPage *pg, size_t i);
 
+/* Recognized text of the i-th reading-order block (concatenated glyph
+ * text; "" if geometry-only). Returns an internal NUL-terminated
+ * string owned by the page (caler must NOT free it). NULL if
+ * out of range. Use this instead of scraping the JSON when you
+ * need structured block text. */
+const char *ocr_page_block_text(const OcrPage *pg, size_t i);
+
 /* Serialize the page as a JSON model:
  *   {"type":"ocr_page","width":W,"height":H,"threshold":T,
  *    "blocks":[{"x":..,"y":..,"w":..,"h":..,"order":i,

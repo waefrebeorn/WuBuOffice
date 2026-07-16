@@ -214,7 +214,7 @@ add_library(wubudoc STATIC
 target_include_directories(wubudoc PUBLIC
     src/wubudoc src/wubujson src/wubusvg src/wubufont src/wubuzip
     src/wubucfb src/wubuxml)
-target_link_libraries(wubudoc PUBLIC wubusvg wubufont wubuzip wubucfb wubuxml wubujson wubuoxml wuburead_app wubuconv)
+target_link_libraries(wubudoc PUBLIC wubusvg wubufont wubuzip wubucfb wubuxml wubujson wubuoxml wuburead_app wubuconv wubuimage)
 
 # wubudoc_agent: NDJSON agent protocol unifying the whole format range
 add_executable(wubudoc_agent apps/wubudoc/agent_main.c)
@@ -236,13 +236,29 @@ add_library(wubuocr STATIC
     src/wubuocr/image.c src/wubuocr/binarize.c src/wubuocr/layout.c
     src/wubuocr/components.c src/wubuocr/wubuocr.c
     src/wubuocr/font8x8.c src/wubuocr/recognize.c
-    src/wubuocr/fontbank.c)
+    src/wubuocr/fontbank.c src/wubuocr/gauntlet.c)
 target_include_directories(wubuocr PUBLIC src/wubuocr src/wubujson src/wubufont)
-target_link_libraries(wubuocr PUBLIC wubujson wubufont)
+target_link_libraries(wubuocr PUBLIC wubujson wubufont m)
+
+# --- wubuimage: clean-room raster decoders (PNG; no libpng) ---
+# PNG decode reuses the in-tree wubuzip DEFLATE engine; outputs an RGBA plane.
+# img2doc bridges a decoded raster into the wubuocr pipeline (image -> doc).
+# pdf_extract pulls text out of dropped PDFs (no third-party lib; FlateDecode
+#   via wubuzip). All three are the "drag a document/image in" front-end.
+add_library(wubuimage STATIC
+    src/wubuimage/png.c src/wubuimage/img2doc.c
+    src/wubupdf/pdf_extract.c)
+target_include_directories(wubuimage PUBLIC src/wubuimage src/wubuzip
+                                     src/wubuocr src/wubufont src/wubupdf)
+target_link_libraries(wubuimage PUBLIC wubuzip wubuocr wubufont m)
 
 # wubuocr CLI: image -> ocr_page / document JSON
 add_executable(wubuocr_cli apps/wubuocr/main.c)
 target_link_libraries(wubuocr_cli PRIVATE wubuocr)
+
+# wubugauntlet CLI: OCR robustness battery for the multi-font bank
+add_executable(wubugauntlet_cli apps/wubugauntlet/main.c)
+target_link_libraries(wubugauntlet_cli PRIVATE wubuocr wubufont)
 
 # --- wubutui: native terminal UI toolkit (human GUIs) ---
 # Pure C11 render/input core (screen buffer, ANSI diff, key decode, word wrap,
@@ -264,8 +280,8 @@ target_include_directories(wubunote_core PUBLIC src/wubunote)
 # is the thin TTY driver. Reuses the wubunote editing core.
 add_executable(wubunote apps/wubunote/entry.c apps/wubunote/main.c
                       apps/wubunote/note_controller.c)
-target_include_directories(wubunote PRIVATE apps/wubunote src/wubunote src/wubutui)
-target_link_libraries(wubunote PRIVATE wubunote_core wubutui)
+target_include_directories(wubunote PRIVATE apps/wubunote src/wubunote src/wubutui src/wubudoc)
+target_link_libraries(wubunote PRIVATE wubunote_core wubutui wubudoc)
 
 # wubunote controller test (real editor interaction path)
 add_executable(test_wubunote_ctrl tests/test_wubunote_ctrl.c
@@ -441,6 +457,11 @@ add_executable(test_fontbank tests/test_fontbank.c)
 target_link_libraries(test_fontbank PRIVATE wubuocr wubufont)
 add_test(NAME fontbank COMMAND test_fontbank)
 
+# wubugauntlet: OCR robustness battery for the multi-font bank.
+add_executable(test_gauntlet tests/test_gauntlet.c)
+target_link_libraries(test_gauntlet PRIVATE wubuocr wubufont)
+add_test(NAME gauntlet COMMAND test_gauntlet)
+
 # wubutui: pure TUI core (screen, wrap, key decode, draw) -- no TTY needed.
 add_executable(test_wubutui tests/test_wubutui.c)
 target_link_libraries(test_wubutui PRIVATE wubutui)
@@ -451,6 +472,13 @@ add_executable(test_wubuview tests/test_wubuview.c apps/wubuview/docflat.c)
 target_include_directories(test_wubuview PRIVATE apps/wubuview src/wubujson)
 target_link_libraries(test_wubuview PRIVATE wubujson)
 add_test(NAME wubuview COMMAND test_wubuview)
+
+# wubuview: tabbed terminal document viewer (drag/drop + multi-format).
+add_executable(wubuview apps/wubuview/entry.c apps/wubuview/main.c
+                     apps/wubuview/controller.c apps/wubuview/docflat.c)
+target_include_directories(wubuview PRIVATE apps/wubuview src/wubujson
+                                     src/wubutui src/wubudoc)
+target_link_libraries(wubuview PRIVATE wubutui wubudoc wubujson)
 
 # wubuview controller: pure event->state mapping (real app glue path)
 add_executable(test_wubuview_ctrl tests/test_wubuview_ctrl.c apps/wubuview/controller.c)
@@ -467,6 +495,11 @@ add_test(NAME wubusvg COMMAND test_wubusvg)
 add_executable(test_wubudoc tests/test_wubudoc.c)
 target_link_libraries(test_wubudoc PRIVATE wubudoc)
 add_test(NAME wubudoc COMMAND test_wubudoc)
+
+# drag/drop + bracketed-paste ingestion (magic-byte dispatch, paste decode)
+add_executable(test_drop tests/test_drop.c)
+target_link_libraries(test_drop PRIVATE wubudoc wubutui wubuimage)
+add_test(NAME drop COMMAND test_drop)
 
 # wubusvg agent: NDJSON protocol for wubuOS (mirrors WuBuPad agent).
 add_executable(test_wubusvg_agent tests/test_wubusvg_agent.c)

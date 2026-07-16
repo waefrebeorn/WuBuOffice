@@ -126,7 +126,7 @@ static void draw_frame(TuiScreen *sc, const char **texts, const VState *st) {
     }
 }
 
-static int run_interactive(const char **paths, size_t npaths, char **texts) {
+static int run_interactive(const char **paths, size_t npaths) {
     TuiTerm *t = tui_term_enter();
     if (!t) {
         fprintf(stderr, "wubuview: not a terminal (use --dump for piping)\n");
@@ -135,13 +135,19 @@ static int run_interactive(const char **paths, size_t npaths, char **texts) {
     size_t prev_w = 0, prev_h = 0;
     VState st;
     memset(&st, 0, sizeof st);
+    tui_key_state_init(&st.keyst);
+
+    char *texts[VCTRL_MAX_TABS];
+    memset(texts, 0, sizeof texts);
+    DocSession *drop_sess = doc_session_create();
 
     /* open every requested document as a tab */
-    for (size_t i = 0; i < npaths; i++) {
+    for (size_t i = 0; i < npaths && i < VCTRL_MAX_TABS; i++) {
         if (vctrl_open(&st, paths[i], 0) < 0) {
             fprintf(stderr, "wubuview: tab limit (%d) reached\n", VCTRL_MAX_TABS);
             break;
         }
+        texts[i] = load_text_for(paths[i]);
     }
 
     char inbuf[256];
@@ -175,9 +181,26 @@ static int run_interactive(const char **paths, size_t npaths, char **texts) {
         size_t off = 0;
         while (off < got) {
             TuiKey k;
-            size_t used = tui_key_decode(inbuf + off, got - off, &k);
+            size_t used = tui_key_decode_s(inbuf + off, got - off, &k, &st.keyst);
             if (used == 0) break;
             off += used;
+            if (k.type == TUI_KEY_PASTE) {
+                /* A drag/drop or bracketed paste: interpret the bytes as a
+                 * document (file path, or the file contents) and open the
+                 * extracted text in a new tab. */
+                char *txt = doc_drop_text(drop_sess, (const uint8_t *)k.paste_data, k.paste_len);
+                if (txt) {
+                    size_t idx = vctrl_open(&st, "[dropped]", 0);
+                    if (idx != (size_t)-1 && idx < VCTRL_MAX_TABS) {
+                        texts[idx] = txt;
+                        size_t tot = count_lines(txt, body_w);
+                        vctrl_resize(&st, W, H, tot);
+                    } else {
+                        free(txt);
+                    }
+                }
+                continue;
+            }
             VBtn b = vctrl_handle(&st, &k);
             /* a tab click on the tabbar switches the active doc */
             if (k.type == TUI_KEY_MOUSE && k.mouse_action == TUI_MOUSE_PRESS
@@ -195,6 +218,9 @@ static int run_interactive(const char **paths, size_t npaths, char **texts) {
         }
     }
     tui_term_leave(t);
+    for (size_t i = 0; i < VCTRL_MAX_TABS; i++) free(texts[i]);
+    doc_session_free(drop_sess);
+    tui_key_state_free(&st.keyst);
     return 0;
 }
 
@@ -230,7 +256,7 @@ int wubuview_main(int argc, char **argv) {
         }
         rc = 0;
     } else {
-        rc = run_interactive(paths, n, texts);
+        rc = run_interactive(paths, n);
     }
 
     for (size_t i = 0; i < n; i++) free(texts[i]);

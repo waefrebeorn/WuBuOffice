@@ -42,6 +42,20 @@ long doc_open(DocSession *s, const char *path);
  * Returns a handle id or -1. */
 long doc_ingest_bytes(DocSession *s, const char *type, const uint8_t *data, size_t len);
 
+/* Ingest already-read bytes (caller supplies content). Kind is detected from
+ * content (magic bytes) rather than a filename. Returns a handle id or -1. */
+long doc_open_mem(DocSession *s, const uint8_t *data, size_t len);
+
+/* Ingest dropped/pasted bytes: if they look like an existing file path
+ * (terminals often paste a dropped file's path) open that; otherwise ingest
+ * the bytes by content. Returns a handle id or -1. */
+long doc_open_auto(DocSession *s, const uint8_t *data, size_t len);
+
+/* Extract a displayable text projection for dropped/pasted bytes (malloc'd,
+ * free it). For text kinds returns the raw text; for office/container kinds it
+ * asks wubuconv for a Markdown projection. NULL if nothing extractable. */
+char *doc_drop_text(DocSession *s, const uint8_t *data, size_t len);
+
 /* Convenience: ingest a JSON/text literal already in memory as `type`. */
 long doc_ingest_text(DocSession *s, const char *type, const char *text);
 

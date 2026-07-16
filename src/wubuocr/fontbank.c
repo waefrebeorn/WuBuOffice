@@ -8,6 +8,8 @@
 #include "fontbank.h"
 #include "wubufont.h"   /* Font, font_open, font_rasterize, font_cmap, font_free */
 
+#include <math.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -35,7 +37,14 @@ static int fb_ink(const uint8_t *bits, int w, int h, int x, int y) {
 
 /* Zoning feature vector for a rendered glyph bitmap (wubufont output).
  * Zones the glyph's TIGHT ink bounding box so the template is
- * scale-invariant in exactly the same way the candidate is zoned below. */
+ * scale-invariant in exactly the same way the candidate is zoned below.
+ *
+ * Zone boundaries use FLOATING-POINT math over the box extent, and each
+ * output zone sums the ink of every source pixel whose center falls inside
+ * it (with a partial-pixel fringe via the pixel's fractional coverage of the
+ * zone). This avoids the integer-division collapse that saturated every
+ * column zone to 1.0 for thin glyphs (e.g. a 4px-wide 'l'), which previously
+ * made all narrow glyphs indistinguishable. */
 static void fb_zone_bitmap(const uint8_t *bits, int w, int h,
                            size_t grid, float *out) {
     int minx = w, miny = h, maxx = -1, maxy = -1;
@@ -51,45 +60,63 @@ static void fb_zone_bitmap(const uint8_t *bits, int w, int h,
         for (size_t i = 0; i < grid * grid; i++) out[i] = 0.0f;
         return;
     }
-    size_t bx0 = (size_t)minx, by0 = (size_t)miny;
-    size_t bw = (size_t)(maxx - minx + 1), bh = (size_t)(maxy - miny + 1);
+    double bx0 = (double)minx, by0 = (double)miny;
+    double bw = (double)(maxx - minx + 1), bh = (double)(maxy - miny + 1);
     for (size_t gy = 0; gy < grid; gy++)
         for (size_t gx = 0; gx < grid; gx++) {
-            size_t x0 = bx0 + (gx * bw) / grid, x1 = bx0 + ((gx + 1) * bw) / grid;
-            size_t y0 = by0 + (gy * bh) / grid, y1 = by0 + ((gy + 1) * bh) / grid;
-            if (x1 <= x0) x1 = x0 + 1;
-            if (y1 <= y0) y1 = y0 + 1;
-            size_t ink = 0, area = 0;
-            for (size_t y = y0; y < y1; y++)
-                for (size_t x = x0; x < x1; x++) {
-                    area++;
-                    if (fb_ink(bits, w, h, (int)x, (int)y)) ink++;
+            double zx0 = bx0 + bw * ((double)gx) / (double)grid;
+            double zx1 = bx0 + bw * ((double)(gx + 1)) / (double)grid;
+            double zy0 = by0 + bh * ((double)gy) / (double)grid;
+            double zy1 = by0 + bh * ((double)(gy + 1)) / (double)grid;
+            double ink = 0.0, area = 0.0;
+            int ix0 = (int)floor(zx0), ix1 = (int)ceil(zx1);
+            int iy0 = (int)floor(zy0), iy1 = (int)ceil(zy1);
+            for (int y = iy0; y < iy1; y++)
+                for (int x = ix0; x < ix1; x++) {
+                    if (x < 0 || y < 0 || x >= w || y >= h) continue;
+                    /* fractional coverage of this pixel by the zone rect */
+                    double ox0 = (x > zx0) ? (double)x : zx0;
+                    double ox1 = (x + 1 < zx1) ? (double)(x + 1) : zx1;
+                    double oy0 = (y > zy0) ? (double)y : zy0;
+                    double oy1 = (y + 1 < zy1) ? (double)(y + 1) : zy1;
+                    double cov = (ox1 - ox0) * (oy1 - oy0);
+                    if (cov <= 0.0) continue;
+                    area += cov;
+                    if (fb_ink(bits, w, h, x, y)) ink += cov;
                 }
-            out[gy * grid + gx] = area ? (float)ink / (float)area : 0.0f;
+            out[gy * grid + gx] = area > 0.0f ? (float)(ink / area) : 0.0f;
         }
 }
 
 /* Zoning feature vector for a candidate glyph box within the ink map.
- * Scales the box's own bounding rectangle into the grid (scale-invariant),
- * mirroring the template zoning above. */
+ * Mirrors fb_zone_bitmap using float zone boundaries over the box rect. */
 static void fb_zone_glyph(const OcrBinary *b, const OcrBlock *g,
                           size_t grid, float *out) {
-    size_t gw = g->x1 - g->x0, gh = g->y1 - g->y0;
-    if (gw == 0) gw = 1;
-    if (gh == 0) gh = 1;
+    double gx0 = (double)g->x0, gy0 = (double)g->y0;
+    double gw = (double)(g->x1 - g->x0), gh = (double)(g->y1 - g->y0);
+    if (gw <= 0) gw = 1.0;
+    if (gh <= 0) gh = 1.0;
     for (size_t gy = 0; gy < grid; gy++)
         for (size_t gx = 0; gx < grid; gx++) {
-            size_t x0 = g->x0 + (gx * gw) / grid, x1 = g->x0 + ((gx + 1) * gw) / grid;
-            size_t y0 = g->y0 + (gy * gh) / grid, y1 = g->y0 + ((gy + 1) * gh) / grid;
-            if (x1 <= x0) x1 = x0 + 1;
-            if (y1 <= y0) y1 = y0 + 1;
-            size_t ink = 0, area = 0;
-            for (size_t y = y0; y < y1; y++)
-                for (size_t x = x0; x < x1; x++) {
-                    area++;
-                    if (ocr_binary_ink(b, x, y)) ink++;
+            double zx0 = gx0 + gw * ((double)gx) / (double)grid;
+            double zx1 = gx0 + gw * ((double)(gx + 1)) / (double)grid;
+            double zy0 = gy0 + gh * ((double)gy) / (double)grid;
+            double zy1 = gy0 + gh * ((double)(gy + 1)) / (double)grid;
+            double ink = 0.0, area = 0.0;
+            int ix0 = (int)floor(zx0), ix1 = (int)ceil(zx1);
+            int iy0 = (int)floor(zy0), iy1 = (int)ceil(zy1);
+            for (int y = iy0; y < iy1; y++)
+                for (int x = ix0; x < ix1; x++) {
+                    double ox0 = (x > zx0) ? (double)x : zx0;
+                    double ox1 = (x + 1 < zx1) ? (double)(x + 1) : zx1;
+                    double oy0 = (y > zy0) ? (double)y : zy0;
+                    double oy1 = (y + 1 < zy1) ? (double)(y + 1) : zy1;
+                    double cov = (ox1 - ox0) * (oy1 - oy0);
+                    if (cov <= 0.0) continue;
+                    area += cov;
+                    if (ocr_binary_ink(b, (size_t)x, (size_t)y)) ink += cov;
                 }
-            out[gy * grid + gx] = area ? (float)ink / (float)area : 0.0f;
+            out[gy * grid + gx] = area > 0.0f ? (float)(ink / area) : 0.0f;
         }
 }
 

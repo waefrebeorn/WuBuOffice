@@ -1,6 +1,9 @@
 /* input.c -- pure byte-stream key decoder (no fd reads). */
 #include "input.h"
 
+#include <stdlib.h>
+#include <string.h>
+
 /* CSI sequences: ESC '[' ... final. We recognize the common editing keys.
  * "\x1b[A" up, [B down, [C right, [D left, [H home, [F end,
  * "\x1b[1~" home, [2~ insert, [3~ delete, [4~ end, [5~ pgup, [6~ pgdn,
@@ -140,7 +143,7 @@ static size_t decode_ss3(const char *b, size_t len, TuiKey *o) {
     }
 }
 
-size_t tui_key_decode(const char *buf, size_t len, TuiKey *out) {
+static size_t decode_one(const char *buf, size_t len, TuiKey *out) {
     TuiKey scratch;
     TuiKey *o = out ? out : &scratch;
     o->ch = 0;
@@ -173,6 +176,96 @@ size_t tui_key_decode(const char *buf, size_t len, TuiKey *out) {
     return 1;
 }
 
+/* ---------- bracketed paste (ESC[200~ ... ESC[201~) ----------
+ * Terminals wrap drag/dropped files and pasted text in this pair. The raw
+ * bytes between the markers are delivered verbatim (they may even contain ESC
+ * sequences of their own), so we never interpret them as key events. */
+static const char PASTE_OPEN[6]  = { 0x1b, '[', '2', '0', '0', '~' };
+static const char PASTE_CLOSE[6] = { 0x1b, '[', '2', '0', '1', '~' };
+
+static int is_prefix(const char *buf, size_t len, const char *pat, size_t patlen) {
+    size_t n = len < patlen ? len : patlen;
+    for (size_t i = 0; i < n; i++) if (buf[i] != pat[i]) return 0;
+    return 1;
+}
+
+/* find `needle[0..nlen)` in `hay[0..hlen)`; return index or SIZE_MAX */
+static size_t find_sub(const char *hay, size_t hlen, const char *needle, size_t nlen) {
+    if (nlen == 0 || hlen < nlen) return (size_t)-1;
+    for (size_t i = 0; i + nlen <= hlen; i++)
+        if (memcmp(hay + i, needle, nlen) == 0) return i;
+    return (size_t)-1;
+}
+
+static int st_ensure(TuiKeyState *st, size_t extra) {
+    if (st->len + extra <= st->cap) return 1;
+    size_t nc = st->cap ? st->cap * 2 : 64;
+    while (nc < st->len + extra) nc *= 2;
+    char *nb = realloc(st->buf, nc);
+    if (!nb) return 0;
+    st->buf = nb; st->cap = nc;
+    return 1;
+}
+
+void tui_key_state_init(TuiKeyState *st) {
+    if (st) { st->pasting = 0; st->buf = NULL; st->len = st->cap = 0; }
+}
+void tui_key_state_free(TuiKeyState *st) {
+    if (st) { free(st->buf); st->buf = NULL; st->len = st->cap = 0; st->pasting = 0; }
+}
+
+size_t tui_key_decode_s(const char *buf, size_t len, TuiKey *out, TuiKeyState *st) {
+    TuiKey scratch;
+    TuiKey *o = out ? out : &scratch;
+    o->ch = 0;
+    o->mouse_action = TUI_MOUSE_PRESS;
+    o->mouse_button = TUI_MBTN_NONE;
+    o->mouse_x = o->mouse_y = 0;
+    o->mouse_shift = o->mouse_alt = o->mouse_ctrl = 0;
+    o->paste_data = NULL; o->paste_len = 0;
+    if (len == 0) { o->type = TUI_KEY_NONE; return 0; }
+
+    if (st && st->pasting) {
+        /* accumulate everything we got, then look for the closing marker */
+        if (!st_ensure(st, len)) { o->type = TUI_KEY_INCOMPLETE; return 0; }
+        memcpy(st->buf + st->len, buf, len); st->len += len;
+        size_t p = find_sub(st->buf, st->len, PASTE_CLOSE, 6);
+        if (p == (size_t)-1) { o->type = TUI_KEY_INCOMPLETE; return 0; }
+        o->type = TUI_KEY_PASTE;
+        o->paste_data = st->buf;     /* valid until next paste / state free */
+        o->paste_len = p;
+        st->pasting = 0;
+        return len;
+    }
+
+    /* Not pasting yet: a complete open marker starts a paste. */
+    if (st && len >= 6 && memcmp(buf, PASTE_OPEN, 6) == 0) {
+        st->pasting = 1; st->len = 0;
+        /* consume the marker, then handle the rest (content + close) in-state */
+        return 6 + tui_key_decode_s(buf + 6, len - 6, out, st);
+    }
+    /* A partial open marker (split read): ask for more bytes. Only when we
+     * have at least ESC + '[' (otherwise a lone ESC is the Esc key, and a
+     * bare ESC[ is handled by the normal decoder as an incomplete CSI). */
+    if (st && len < 6 && len >= 2 && is_prefix(buf, len, PASTE_OPEN, 6)) {
+        o->type = TUI_KEY_INCOMPLETE; return 0;
+    }
+
+    /* Ordinary key (the pure decoder never sees a full paste marker). */
+    return decode_one(buf, len, out);
+}
+
+/* Stateless convenience: equivalent to a fresh TuiKeyState per call, so a
+ * paste that spans reads will be truncated -- apps that accept drag/drop or
+ * bracketed paste must use tui_key_decode_s with a persistent state. */
+size_t tui_key_decode(const char *buf, size_t len, TuiKey *out) {
+    TuiKeyState st;
+    tui_key_state_init(&st);
+    size_t r = tui_key_decode_s(buf, len, out, &st);
+    tui_key_state_free(&st);
+    return r;
+}
+
 const char *tui_key_name(TuiKeyType t) {
     switch (t) {
         case TUI_KEY_NONE:       return "NONE";
@@ -193,6 +286,7 @@ const char *tui_key_name(TuiKeyType t) {
         case TUI_KEY_INSERT:     return "INSERT";
         case TUI_KEY_DELETE:     return "DELETE";
         case TUI_KEY_MOUSE:      return "MOUSE";
+        case TUI_KEY_PASTE:      return "PASTE";
     }
     return "?";
 }
