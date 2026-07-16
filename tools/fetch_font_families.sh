@@ -37,7 +37,7 @@ FAMILIES=(
   googlefonts/inconsolata
   googlefonts/ubuntu
   googlefonts/cantarell
-  googlefonts/crimson-text
+  googlefonts/crimson
   googlefonts/playfair-display
   googlefonts/montserrat
   googlefonts/poppins
@@ -56,7 +56,7 @@ FAMILIES=(
   googlefonts/josefin-sans
   googlefonts/bitter
   googlefonts/cardo
-  googlefonts/eb-garamond
+  googlefonts/spectral
   googlefonts/librefranklin
   googlefonts/heebo
   googlefonts/manrope
@@ -66,18 +66,17 @@ FAMILIES=(
   googlefonts/hind
   googlefonts/gothic-a1
   googlefonts/noto-cjk
-  theleagueofmoveabletype/fanwood
+  googlefonts/staatliches
+  googlefonts/pacifico
+  googlefonts/lexend
+  googlefonts/atkinson-hyperlegible
+  googlefonts/domine
   theleagueofmoveabletype/league-gothic
   theleagueofmoveabletype/league-spartan
   theleagueofmoveabletype/junction
   theleagueofmoveabletype/ostrich-sans
-  theleagueofmoveabletype/propaganda
   bBoxType/Vollkorn
   impallari/lobster
-  impallari/cabin
-  impallari/dosis
-  kkos/onest
-  etcetera-io/spline-sans
   fortawesome/font-awesome
 )
 
