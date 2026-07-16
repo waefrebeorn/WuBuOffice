@@ -1,1 +1,0 @@
-/usr/bin/cc -fsanitize=address -g -O1 -g -fsanitize=address CMakeFiles/test_formula.dir/tests/test_formula.c.o -o test_formula  libwubuformula.a -lm 

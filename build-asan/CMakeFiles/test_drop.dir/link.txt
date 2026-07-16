@@ -1,1 +1,0 @@
-/usr/bin/cc -fsanitize=address -g -O1 -g -fsanitize=address CMakeFiles/test_drop.dir/tests/test_drop.c.o -o test_drop  libwubudoc.a libwubutui.a libwubuimage.a libwubuocr.a libwubusvg.a libwubufont.a libwubuconv.a libwubucfb.a libwubujson.a libwubuxml.a libwubuoxml.a libwubuzip.a libwubuformula.a -lm 

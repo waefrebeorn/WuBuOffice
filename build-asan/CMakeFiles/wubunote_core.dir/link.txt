@@ -1,2 +1,0 @@
-/usr/bin/ar qc libwubunote_core.a CMakeFiles/wubunote_core.dir/src/wubunote/edit.c.o
-/usr/bin/ranlib libwubunote_core.a

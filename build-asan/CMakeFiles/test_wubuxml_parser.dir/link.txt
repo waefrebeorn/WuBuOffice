@@ -1,1 +1,0 @@
-/usr/bin/cc -fsanitize=address -g -O1 -g -fsanitize=address CMakeFiles/test_wubuxml_parser.dir/tests/test_wubuxml_parser.c.o -o test_wubuxml_parser  libwubuoxml.a libwubuzip.a 

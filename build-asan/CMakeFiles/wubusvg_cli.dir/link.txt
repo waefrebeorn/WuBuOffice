@@ -1,1 +1,0 @@
-/usr/bin/cc -fsanitize=address -g -O1 -g -fsanitize=address CMakeFiles/wubusvg_cli.dir/apps/wubusvg/main.c.o -o wubusvg_cli  libwubusvg.a libwubuxml.a libwubujson.a 

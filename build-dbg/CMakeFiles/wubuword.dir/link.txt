@@ -1,1 +1,0 @@
-/usr/bin/cc -g -g CMakeFiles/wubuword.dir/apps/wubuword/entry.c.o CMakeFiles/wubuword_app.dir/apps/wubuword/main.c.o CMakeFiles/wubuword_app.dir/apps/wubuword/word.c.o CMakeFiles/wubuword_app.dir/apps/wubuword/assemble.c.o -o wubuword  libwubuoxml.a libwubuxml.a libwubuzip.a 

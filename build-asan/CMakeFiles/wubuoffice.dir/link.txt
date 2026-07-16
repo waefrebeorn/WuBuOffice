@@ -1,1 +1,0 @@
-/usr/bin/cc -fsanitize=address -g -O1 -g -fsanitize=address CMakeFiles/wubuoffice.dir/apps/wubuoffice/main.c.o -o wubuoffice  libwubuoxml.a libwubuxml.a libwubuzip.a libwubuformula.a libwubucfb.a libwubujson.a libwubuconv.a libwubucfb.a libwubujson.a libwubuxml.a libwubuformula.a -lm libwubuoxml.a libwubuzip.a 

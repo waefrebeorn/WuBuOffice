@@ -1,1 +1,0 @@
-/usr/bin/cc -fsanitize=address -g -O1 -g -fsanitize=address CMakeFiles/test_wubuview.dir/tests/test_wubuview.c.o CMakeFiles/test_wubuview.dir/apps/wubuview/docflat.c.o -o test_wubuview  libwubujson.a 

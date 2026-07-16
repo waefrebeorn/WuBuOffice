@@ -1,1 +1,0 @@
-/usr/bin/cc -g -g CMakeFiles/wuburead.dir/apps/wuburead/entry.c.o CMakeFiles/wuburead_app.dir/apps/wuburead/main.c.o -o wuburead  libwubuoxml.a libwubuzip.a 

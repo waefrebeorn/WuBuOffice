@@ -1,6 +1,0 @@
-wubuzip_crc 4 0.00194007
-inflate 4 0.00194083
-deflate_roundtrip 3 0.0214258
-reader_roundtrip 3 0.00502845
-edit_roundtrip 3 0.00615862
----

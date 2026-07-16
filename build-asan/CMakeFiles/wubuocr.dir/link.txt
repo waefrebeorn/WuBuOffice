@@ -1,2 +1,0 @@
-/usr/bin/ar qc libwubuocr.a CMakeFiles/wubuocr.dir/src/wubuocr/image.c.o CMakeFiles/wubuocr.dir/src/wubuocr/binarize.c.o CMakeFiles/wubuocr.dir/src/wubuocr/layout.c.o CMakeFiles/wubuocr.dir/src/wubuocr/components.c.o CMakeFiles/wubuocr.dir/src/wubuocr/wubuocr.c.o CMakeFiles/wubuocr.dir/src/wubuocr/font8x8.c.o CMakeFiles/wubuocr.dir/src/wubuocr/recognize.c.o CMakeFiles/wubuocr.dir/src/wubuocr/fontbank.c.o CMakeFiles/wubuocr.dir/src/wubuocr/gauntlet.c.o
-/usr/bin/ranlib libwubuocr.a

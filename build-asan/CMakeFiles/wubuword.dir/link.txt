@@ -1,1 +1,0 @@
-/usr/bin/cc -fsanitize=address -g -O1 -g -fsanitize=address CMakeFiles/wubuword.dir/apps/wubuword/entry.c.o CMakeFiles/wubuword_app.dir/apps/wubuword/main.c.o CMakeFiles/wubuword_app.dir/apps/wubuword/word_doc.c.o CMakeFiles/wubuword_app.dir/apps/wubuword/word_table.c.o CMakeFiles/wubuword_app.dir/apps/wubuword/assemble.c.o -o wubuword  libwubuoxml.a libwubuxml.a libwubuzip.a 

@@ -1,2 +1,0 @@
-/usr/bin/ar qc libwubuimage.a CMakeFiles/wubuimage.dir/src/wubuimage/png.c.o CMakeFiles/wubuimage.dir/src/wubuimage/img2doc.c.o CMakeFiles/wubuimage.dir/src/wubupdf/pdf_extract.c.o
-/usr/bin/ranlib libwubuimage.a

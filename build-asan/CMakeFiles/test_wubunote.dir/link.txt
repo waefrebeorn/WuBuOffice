@@ -1,1 +1,0 @@
-/usr/bin/cc -fsanitize=address -g -O1 -g -fsanitize=address CMakeFiles/test_wubunote.dir/tests/test_wubuedit.c.o -o test_wubunote  libwubunote_core.a 
