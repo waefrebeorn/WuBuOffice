@@ -1,0 +1,1 @@
+/usr/bin/cc -fsanitize=address -g -O1 -g -fsanitize=address CMakeFiles/wubudoc_agent.dir/apps/wubudoc/agent_main.c.o -o wubudoc_agent  libwubudoc.a libwubusvg.a libwubuconv.a libwubucfb.a libwubuxml.a libwubuoxml.a libwubuformula.a libwubuimage.a libwubuocr.a libwubufont.a libwubuzip.a libwubujson.a -lm 

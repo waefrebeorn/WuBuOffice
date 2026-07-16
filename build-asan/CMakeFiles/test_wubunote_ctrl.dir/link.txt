@@ -1,0 +1,1 @@
+/usr/bin/cc -fsanitize=address -g -O1 -g -fsanitize=address CMakeFiles/test_wubunote_ctrl.dir/tests/test_wubunote_ctrl.c.o CMakeFiles/test_wubunote_ctrl.dir/apps/wubunote/note_controller.c.o -o test_wubunote_ctrl  libwubunote_core.a libwubutui.a 

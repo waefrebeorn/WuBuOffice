@@ -1,0 +1,1 @@
+/usr/bin/cc -fsanitize=address -g -O1 -g -fsanitize=address CMakeFiles/test_deflate_roundtrip.dir/tests/test_deflate_roundtrip.c.o -o test_deflate_roundtrip  libwubuzip.a 

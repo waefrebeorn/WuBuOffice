@@ -1,0 +1,1 @@
+/usr/bin/cc -fsanitize=address,undefined -g -g CMakeFiles/test_deflate.dir/tests/test_deflate.c.o -o test_deflate  libwubuzip.a -lz 

@@ -1,0 +1,1 @@
+/usr/bin/cc -fsanitize=address -g -O1 -g -fsanitize=address CMakeFiles/test_model_io_roundtrip.dir/tests/test_model_io_roundtrip.c.o -o test_model_io_roundtrip  libwubumodel.a libwubuoxml.a libwubuzip.a -lpthread 

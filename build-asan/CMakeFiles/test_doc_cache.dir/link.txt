@@ -1,0 +1,1 @@
+/usr/bin/cc -fsanitize=address -g -O1 -g -fsanitize=address CMakeFiles/test_doc_cache.dir/tests/test_doc_cache.c.o -o test_doc_cache  libwubumodel.a libwubuoxml.a libwubuzip.a -lpthread 

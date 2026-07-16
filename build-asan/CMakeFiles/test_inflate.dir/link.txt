@@ -1,0 +1,1 @@
+/usr/bin/cc -fsanitize=address -g -O1 -g -fsanitize=address CMakeFiles/test_inflate.dir/tests/test_inflate.c.o -o test_inflate  libwubuzip.a -lz 

@@ -1,0 +1,2 @@
+/usr/bin/ar qc libwubuzip.a CMakeFiles/wubuzip.dir/src/wubuzip/zip.c.o CMakeFiles/wubuzip.dir/src/wubuzip/inflate.c.o CMakeFiles/wubuzip.dir/src/wubuzip/reader.c.o
+/usr/bin/ranlib libwubuzip.a

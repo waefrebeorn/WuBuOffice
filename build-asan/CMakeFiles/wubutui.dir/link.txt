@@ -1,0 +1,2 @@
+/usr/bin/ar qc libwubutui.a CMakeFiles/wubutui.dir/src/wubutui/screen.c.o CMakeFiles/wubutui.dir/src/wubutui/input.c.o CMakeFiles/wubutui.dir/src/wubutui/draw.c.o CMakeFiles/wubutui.dir/src/wubutui/term.c.o
+/usr/bin/ranlib libwubutui.a

@@ -1,0 +1,1 @@
+/usr/bin/cc -fsanitize=address -g -O1 -g -fsanitize=address CMakeFiles/test_fontbank.dir/tests/test_fontbank.c.o -o test_fontbank  libwubuocr.a libwubufont.a libwubuzip.a libwubujson.a -lm 

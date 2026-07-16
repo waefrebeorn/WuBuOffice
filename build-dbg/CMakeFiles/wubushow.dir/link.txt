@@ -1,0 +1,1 @@
+/usr/bin/cc -g -g CMakeFiles/wubushow.dir/apps/wubushow/entry.c.o CMakeFiles/wubushow_app.dir/apps/wubushow/main.c.o CMakeFiles/wubushow_app.dir/apps/wubushow/show.c.o -o wubushow  libwubuoxml.a libwubuzip.a 

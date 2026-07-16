@@ -1,0 +1,2 @@
+/usr/bin/ar qc libwubumodel.a CMakeFiles/wubumodel.dir/src/wubumodel/model.c.o CMakeFiles/wubumodel.dir/src/wubumodel/model_io.c.o CMakeFiles/wubumodel.dir/src/wubumodel/doc_cache.c.o CMakeFiles/wubumodel.dir/src/wubumodel/load_async.c.o
+/usr/bin/ranlib libwubumodel.a

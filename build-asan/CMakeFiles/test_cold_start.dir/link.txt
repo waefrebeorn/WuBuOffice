@@ -1,0 +1,1 @@
+/usr/bin/cc -fsanitize=address -g -O1 -g -fsanitize=address CMakeFiles/test_cold_start.dir/tests/test_cold_start.c.o -o test_cold_start  libwubumodel.a libwubuoxml.a libwubuzip.a -lpthread 

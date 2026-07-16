@@ -1,0 +1,1 @@
+/usr/bin/cc -fsanitize=address -g -O1 -g -fsanitize=address CMakeFiles/wubuocr_cli.dir/apps/wubuocr/main.c.o -o wubuocr_cli  libwubuocr.a libwubujson.a libwubufont.a libwubuzip.a -lm 
