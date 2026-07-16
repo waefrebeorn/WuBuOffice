@@ -149,6 +149,54 @@ int main(void) {
         }
     }
 
+    /* ---- rasterizer (clean-room outline -> 1-bit bitmap) ----
+     * For a TrueType 'glyf' font, rasterizing a code point must yield a
+     * non-empty bitmap with plausible ink coverage and a sane aspect ratio
+     * (a capital letter is taller than wide, ink fraction 5%..70%). */
+    if (has_glyf) {
+        int w = 0, h = 0; uint8_t *bits = NULL;
+        int ok = font_rasterize(font, 'H', 96, &bits, &w, &h);
+        CK(ok == 1, "font_rasterize('H') succeeds");
+        if (ok) {
+            CK(w > 8 && h > 8, "rasterized glyph has non-trivial size");
+            long ink = 0, area = (long)w * h;
+            for (long i = 0; i < area; i++) ink += bits[i];
+            double frac = (double)ink / (double)area;
+            printf("  'H' @96ppm: %dx%d ink=%.1f%%\n", w, h, 100.0 * frac);
+            CK(frac > 0.02 && frac < 0.85, "ink fraction plausible for a letter");
+            free(bits);
+        }
+        /* Composite glyph ('A' is built from component outlines in DejaVu):
+         * it must NOT rasterize empty (regression guard for the double-Y
+         * negation bug that pushed composited glyphs below the bitmap). */
+        int aw = 0, ah = 0; uint8_t *abits = NULL;
+        if (font_rasterize(font, 'A', 96, &abits, &aw, &ah)) {
+            long aink = 0; for (long i = 0; i < (long)aw * ah; i++) aink += abits[i];
+            printf("  'A' @96ppm: %dx%d ink=%.1f%%\n", aw, ah,
+                   100.0 * (double)aink / ((double)aw * ah + 1));
+            CK(aink > 0, "composite glyph 'A' rasterizes non-empty");
+            free(abits);
+        }
+        /* Thin stem ('l' / 'i'): at low ppm BOTH edges can round to the
+         * same integer x, so a naive xa<xb fill loop draws nothing
+         * (regression guard for the coincident-edge gap). */
+        for (const char *thin = "li"; *thin; thin++) {
+            int lw = 0, lh = 0; uint8_t *lbits = NULL;
+            if (font_rasterize(font, (uint32_t)*thin, 32, &lbits, &lw, &lh)) {
+                long link = 0; for (long i = 0; i < (long)lw * lh; i++) link += lbits[i];
+                printf("  '%c' @32ppm: %dx%d ink=%ld\n", *thin, lw, lh, link);
+                CK(link > 0, "thin stem rasterizes non-empty");
+                free(lbits);
+            }
+        }
+        /* string rasterization should be wider than a single glyph */
+        int sw = 0, sh = 0; uint8_t *sbits = NULL;
+        if (font_rasterize_string(font, "Hi", 96, &sbits, &sw, &sh)) {
+            CK(sw > w, "string bitmap wider than one glyph");
+            free(sbits);
+        }
+    }
+
     font_free(font);
     free(buf);
 

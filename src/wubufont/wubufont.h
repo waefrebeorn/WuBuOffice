@@ -65,4 +65,33 @@ char *font_glyph_svg_path(const Font *f, uint16_t glyph_index);
  * Returns a malloc'd NUL-terminated SVG document (caller frees) or NULL. */
 char *font_to_svg(const Font *f, const char *sample);
 
+/* ---- raw glyph outline access (for rasterization, no SVG string) ---- */
+/* A contour is a list of points; on_curve marks TrueType on-curve points
+ * (off-curve points are quadratic Bézier control points). */
+typedef struct { int x, y; int on_curve; } FontPoint;
+typedef struct {
+    FontPoint *pts;
+    size_t     n;
+    int        empty;   /* 1 if the glyph has no ink (space, etc.) */
+} FontContour;
+
+/* Decode a code point into one or more contours (composite glyphs expanded).
+ * Returns the number of contours filled (caller frees each .pts with free()),
+ * or 0 if the code point is unmapped / has no ink. `scale` maps font units
+ * (em-square) to output pixels (e.g. pixels_per_em / units_per_em). */
+size_t font_glyph_contours(const Font *f, uint32_t codepoint,
+                           double scale, FontContour *out, size_t max_out);
+
+/* Rasterize a code point into a 1-bit (ink) bitmap. Allocates *bits
+ * (caller frees) as (w*h) bytes, 1 = ink. Returns 1 on success, 0 on failure
+ * or if the glyph has no ink (in which case *w=*h=0). `ppm` = pixels per em. */
+int font_rasterize(const Font *f, uint32_t codepoint, int ppm,
+                   uint8_t **bits, int *w, int *h);
+
+/* Rasterize a string into a single row bitmap (glyphs left-to-right, no
+ * kerning beyond advance widths). Allocates *bits (caller frees) of size
+ * (*w)*(*h); 1 = ink. Returns 1 on success. */
+int font_rasterize_string(const Font *f, const char *utf8, int ppm,
+                          uint8_t **bits, int *w, int *h);
+
 #endif /* WUBUFONT_H */

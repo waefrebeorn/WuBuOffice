@@ -235,9 +235,10 @@ target_link_libraries(wubufont_cli PRIVATE wubufont)
 add_library(wubuocr STATIC
     src/wubuocr/image.c src/wubuocr/binarize.c src/wubuocr/layout.c
     src/wubuocr/components.c src/wubuocr/wubuocr.c
-    src/wubuocr/font8x8.c src/wubuocr/recognize.c)
-target_include_directories(wubuocr PUBLIC src/wubuocr src/wubujson)
-target_link_libraries(wubuocr PUBLIC wubujson)
+    src/wubuocr/font8x8.c src/wubuocr/recognize.c
+    src/wubuocr/fontbank.c)
+target_include_directories(wubuocr PUBLIC src/wubuocr src/wubujson src/wubufont)
+target_link_libraries(wubuocr PUBLIC wubujson wubufont)
 
 # wubuocr CLI: image -> ocr_page / document JSON
 add_executable(wubuocr_cli apps/wubuocr/main.c)
@@ -434,6 +435,11 @@ add_test(NAME wubuocr COMMAND test_wubuocr)
 add_executable(test_wubuocr_recognize tests/test_wubuocr_recognize.c)
 target_link_libraries(test_wubuocr_recognize PRIVATE wubuocr)
 add_test(NAME wubuocr_recognize COMMAND test_wubuocr_recognize)
+
+# wubuocr fontbank: multi-font bank built from REAL font rasterizations.
+add_executable(test_fontbank tests/test_fontbank.c)
+target_link_libraries(test_fontbank PRIVATE wubuocr wubufont)
+add_test(NAME fontbank COMMAND test_fontbank)
 
 # wubutui: pure TUI core (screen, wrap, key decode, draw) -- no TTY needed.
 add_executable(test_wubutui tests/test_wubutui.c)
