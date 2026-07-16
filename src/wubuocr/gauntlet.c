@@ -342,3 +342,52 @@ double ocr_gauntlet_scatter(const OcrFontBank *bank,
     ocr_page_free(pg);
     return (double)read / (double)placed;
 }
+
+/* Shared: count recognized characters across a composed-page OCR result and
+ * return recall = min(1, chars / placed). For a line/grid layout a full line
+ * is ONE block holding many characters, so we sum block-string lengths rather
+ * than counting blocks (which would report 1/placed). For scatter each glyph
+ * is its own block with ~1 char, so the two metrics agree. */
+static double recall_chars(OcrPage *pg, size_t placed) {
+    if (!pg || placed == 0) return 0.0;
+    size_t nb = ocr_page_block_count(pg);
+    size_t chars = 0;
+    for (size_t i = 0; i < nb; i++) {
+        char *t = (char *)ocr_page_block_text(pg, i);
+        if (t) {
+            /* count non-space recognized glyphs; spaces are ambiguous in a
+             * pure OCR layer and should not count as a failed transcription */
+            for (char *p = t; *p; p++) if (*p != ' ' && *p != '\t') chars++;
+            free(t);
+        }
+    }
+    double r = (double)chars / (double)placed;
+    return r > 1.0 ? 1.0 : r;
+}
+
+double ocr_gauntlet_layout(const OcrFontBank *bank,
+                           const Font *const *fonts, size_t nfonts,
+                           const char *const *chars, size_t nchars,
+                           size_t W, size_t H, int ppm, unsigned seed,
+                           double maxrot, double maxpersp, double maxshear,
+                           OcrComposeLayout layout, size_t rows, size_t cols) {
+    if (!bank || !fonts || nfonts == 0 || W == 0 || H == 0) return 0.0;
+    size_t placed = 0;
+    OcrImage *page = ocr_compose_page_ex(fonts, nfonts, chars, nchars,
+                                         W, H, ppm, seed, maxrot, maxpersp, maxshear,
+                                         layout, rows, cols, &placed);
+    if (!page) return 0.0;
+    if (placed == 0) { ocr_image_free(page); return 0.0; }
+
+    uint8_t *pgm = NULL; size_t pgmlen = 0;
+    if (ocr_image_to_pgm(page, &pgm, &pgmlen) != 0) { ocr_image_free(page); return 0.0; }
+    ocr_image_free(page);
+
+    OcrPage *pg = ocr_page_from_netpbm(pgm, pgmlen, ocr_fontbank_recognizer(), (void *)bank);
+    free(pgm);
+    if (!pg) return 0.0;
+
+    double recall = recall_chars(pg, placed);
+    ocr_page_free(pg);
+    return recall;
+}

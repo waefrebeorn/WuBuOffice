@@ -70,6 +70,7 @@ int main(int argc, char **argv) {
     int ppm = 48;
     const char *text = "Hello 2026";
     const char *fontdir = NULL;
+    const char *layout_arg = NULL;
     int use_latin = 0, do_compose = 0, use_unicode = 0;
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "--ppm") == 0 && i + 1 < argc) ppm = atoi(argv[++i]);
@@ -78,6 +79,7 @@ int main(int argc, char **argv) {
         else if (strcmp(argv[i], "--compose") == 0) do_compose = 1;
         else if (strcmp(argv[i], "--unicode") == 0) use_unicode = 1;
         else if (strcmp(argv[i], "--fontdir") == 0 && i + 1 < argc) fontdir = argv[++i];
+        else if (strcmp(argv[i], "--layout") == 0 && i + 1 < argc) layout_arg = argv[++i];
     }
 
     /* load fonts (hardcoded candidates first, then any --fontdir directory) */
@@ -174,6 +176,33 @@ int main(int argc, char **argv) {
         }
         printf("   scatter recall (read/placed): best=%5.1f%% worst=%5.1f%% mean=%5.1f%%\n",
                100.0 * best, 100.0 * worst, 100.0 * (sum / runs));
+    }
+
+    /* Structured-layout evaluator -- the user's "most text is arranged in a
+     * pattern: a line, a paragraph, or (for other languages) a line-grid".
+     * --layout lines  -> baseline paragraph (each glyph still individually warped)
+     * --layout grid   -> line-grid cell arrangement (CJK/Asian books)
+     * This measures the honest structured-page read, the dominant real case. */
+    if (layout_arg) {
+        OcrComposeLayout lay = OCR_LAYOUT_SCATTER;
+        const char *lname = "scatter";
+        if (strcmp(layout_arg, "lines") == 0) { lay = OCR_LAYOUT_LINES; lname = "lines"; }
+        else if (strcmp(layout_arg, "grid") == 0) { lay = OCR_LAYOUT_GRID; lname = "grid"; }
+        const char *const *crowd = class_ptr ? class_ptr : OCR_ENGLISH_CHARS;
+        size_t nc = class_ptr ? nclass : OCR_ENGLISH_N;
+        printf("\n[%s layout] warped %s page, 2D+3D mix:\n", lname, lname);
+        double best = 0, worst = 1, sum = 0; size_t runs = 4;
+        for (size_t r = 0; r < runs; r++) {
+            double acc = ocr_gauntlet_layout(bank, (const Font *const *)objs, nf, crowd, nc,
+                                             640, 480, ppm, (unsigned)(2000 + r),
+                                             10.0, 0.25, 6.0, lay, 8, 16);
+            printf("   seed=%zu  %s recall=%5.1f%%\n", 2000 + r, lname, 100.0 * acc);
+            best = acc > best ? acc : best;
+            worst = acc < worst ? acc : worst;
+            sum += acc;
+        }
+        printf("   %s recall (read/placed): best=%5.1f%% worst=%5.1f%% mean=%5.1f%%\n",
+               lname, 100.0 * best, 100.0 * worst, 100.0 * (sum / runs));
     }
 
     /* Unicode tier validation: build a CJK-inclusive bank and measure recall

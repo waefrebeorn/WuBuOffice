@@ -23,6 +23,7 @@
 
 #include "image.h"        /* OcrImage */
 #include "fontbank.h"    /* OcrFontBank */
+#include "page_compose.h" /* OcrComposeLayout */
 #include "wubufont.h"    /* Font (opaque; used as a const pointer) */
 
 /* Corruption operators (the "pain points" of real OCR ingestion). */
@@ -66,5 +67,20 @@ double ocr_gauntlet_scatter(const OcrFontBank *bank,
                             const char *const *chars, size_t nchars,
                             size_t W, size_t H, int ppm, unsigned seed,
                             double maxrot, double maxpersp, double maxshear);
+
+/* Structured-layout evaluator -- the user's "most text is arranged in a
+ * pattern: a line, a paragraph, or (for other languages) a line-grid".
+ * Composes a page with the given OcrComposeLayout (LINES = baseline
+ * paragraph, GRID = line-grid), OCRs it through `bank`, and returns the same
+ * RECOGNITION RECALL (read / placed) as the scatter evaluator. This is the
+ * honest "how robust is the structured-page read" number -- the dominant real
+ * case, not just the messy crowd. `rows`/`cols` size the LINES paragraph (rows
+ * of baseline text; cols ignored -> one line per class) or the GRID cell grid. */
+double ocr_gauntlet_layout(const OcrFontBank *bank,
+                            const Font *const *fonts, size_t nfonts,
+                            const char *const *chars, size_t nchars,
+                            size_t W, size_t H, int ppm, unsigned seed,
+                            double maxrot, double maxpersp, double maxshear,
+                            OcrComposeLayout layout, size_t rows, size_t cols);
 
 #endif /* WUBUOCR_GAUNTLET_H */

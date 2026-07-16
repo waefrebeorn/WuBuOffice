@@ -142,6 +142,47 @@ int main(void) {
             CK(rec > 0.0, "scatter recall > 0 (bank reads warped glyphs)");
             printf("  scatter recall (read/placed) = %.1f%%\n", 100.0 * rec);
         }
+
+        /* structured layouts: lines (paragraph) + grid (line-grid). These are
+         * the dominant real arrangement (the user: "most text is in a pattern:
+         * a line, a paragraph, or a line-grid"), so the gauntlet must exercise
+         * them, not only the messy scatter crowd. */
+        OcrImage *lp = ocr_compose_page_ex((const Font *const *)fobjs, nfonts,
+                                           OCR_ENGLISH_CHARS, OCR_ENGLISH_N,
+                                           640, 480, 48, 7001,
+                                           10.0, 0.25, 6.0, OCR_LAYOUT_LINES, 8, 16, NULL);
+        CK(lp != NULL, "compose_page_ex builds a warped LINES page");
+        if (lp) {
+            uint8_t *pgm = NULL; size_t pl = 0;
+            CK(ocr_image_to_pgm(lp, &pgm, &pl) == 0 && pgm && pl > 0,
+               "lines page serializes to PGM");
+            ocr_image_free(lp); free(pgm);
+            double rlines = ocr_gauntlet_layout(bank, (const Font *const *)fobjs, nfonts,
+                                                OCR_ENGLISH_CHARS, OCR_ENGLISH_N,
+                                                640, 480, 48, 7001,
+                                                10.0, 0.25, 6.0, OCR_LAYOUT_LINES, 8, 16);
+            CK(rlines >= 0.0 && rlines <= 1.0, "lines recall in [0,1]");
+            CK(rlines > 0.0, "lines recall > 0 (bank reads a warped paragraph)");
+            printf("  lines recall (read/placed) = %.1f%%\n", 100.0 * rlines);
+        }
+        OcrImage *gp = ocr_compose_page_ex((const Font *const *)fobjs, nfonts,
+                                           OCR_ENGLISH_CHARS, OCR_ENGLISH_N,
+                                           640, 480, 48, 8001,
+                                           8.0, 0.2, 5.0, OCR_LAYOUT_GRID, 12, 16, NULL);
+        CK(gp != NULL, "compose_page_ex builds a warped GRID page");
+        if (gp) {
+            uint8_t *pgm = NULL; size_t pl = 0;
+            CK(ocr_image_to_pgm(gp, &pgm, &pl) == 0 && pgm && pl > 0,
+               "grid page serializes to PGM");
+            ocr_image_free(gp); free(pgm);
+            double rgrid = ocr_gauntlet_layout(bank, (const Font *const *)fobjs, nfonts,
+                                               OCR_ENGLISH_CHARS, OCR_ENGLISH_N,
+                                               640, 480, 48, 8001,
+                                               8.0, 0.2, 5.0, OCR_LAYOUT_GRID, 12, 16);
+            CK(rgrid >= 0.0 && rgrid <= 1.0, "grid recall in [0,1]");
+            CK(rgrid > 0.0, "grid recall > 0 (bank reads a warped line-grid)");
+            printf("  grid recall (read/placed) = %.1f%%\n", 100.0 * rgrid);
+        }
     }
 
     ocr_fontbank_free(bank);
