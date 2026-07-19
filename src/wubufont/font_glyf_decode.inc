@@ -37,6 +37,16 @@ static void decode_flags_and_coords(const uint8_t *flags, size_t flaglen,
     }
     (void)flaglen;
 }
+/* Compute the true number of points a simple glyph carries (the value the
+ * end-of-contours table implies plus one), WITHOUT decoding coordinates.
+ * Used by callers that must size heap buffers to the real count. Caps at the
+ * same 1024 limit decode_simple_points uses, so the two can never disagree. */
+static uint16_t font_glyph_point_count(const uint8_t *g, uint16_t n) {
+    if (n == 0) return 0;
+    uint16_t total = (uint16_t)(rd16(g + 10 + (size_t)(n - 1) * 2) + 1);
+    if (total > 1024) total = 1024;
+    return total;
+}
 static uint16_t decode_simple_points(const uint8_t *g, uint16_t n,
                                      int16_t *X, int16_t *Y, uint8_t *on) {
     uint16_t instrlen = rd16(g + 10 + (size_t)n * 2);

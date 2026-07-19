@@ -76,16 +76,20 @@ static size_t  glyph_offset(const Font *f, uint16_t gi);
 static size_t  glyph_next(const Font *f, uint16_t gi);
 static uint16_t decode_simple_points(const uint8_t *g, uint16_t n,
                                      int16_t *X, int16_t *Y, uint8_t *on);
+static uint16_t font_glyph_point_count(const uint8_t *g, uint16_t n);
 static char   *font_glyph_decode_simple(const Font *f, const uint8_t *g, uint16_t n);
 static int16_t coord_next(coord_cursor *c, uint8_t flag, int is_y);
 static void    decode_flags_and_coords(const uint8_t *flags, size_t flaglen,
                                        coord_cursor *cc, int is_y,
                                        int16_t *out, uint8_t *on, uint16_t total);
 static size_t  flatten_contour(const int16_t *X, const int16_t *Y, const uint8_t *on,
-                               size_t n, double s, int16_t *out);
+                               size_t n, double s, int16_t *out, size_t max_out);
 static void    scanline_fill(const int16_t *verts, const size_t *cnt, size_t nc,
                              int w, int h, uint8_t *bits);
 static size_t  font_glyph_contours_idx(const Font *f, uint16_t gi,
                                        double scale, FontContour *out, size_t max_out);
+static size_t  font_glyph_contours_idx_d(const Font *f, uint16_t gi,
+                                         double scale, FontContour *out,
+                                         size_t max_out, int depth);
 
 #endif /* WUBUFONT_INTERNAL_H */

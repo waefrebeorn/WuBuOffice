@@ -4,23 +4,25 @@
  * integer pixel points. TrueType uses quadratic Béziers; an off-curve point
  * followed by another off-curve point implies an implicit on-curve midpoint.
  * `pts` are font-units; we scale by `s` and round. Fills `out` (caller sized
- * >= n*16); returns the number of output vertices. */
+ * >= n*16); returns the number of output vertices. `max_out` is the capacity
+ * of `out` in int16 PAIRS (2 int16 per vertex) — writes are bounded to it so
+ * a pathological contour cannot overflow the caller's buffer. */
 static size_t flatten_contour(const int16_t *X, const int16_t *Y, const uint8_t *on,
-                              size_t n, double s, int16_t *out) {
-    if (n == 0) return 0;
+                              size_t n, double s, int16_t *out, size_t max_out) {
+    if (n == 0 || max_out == 0) return 0;
     /* find a starting on-curve point (if none, point 0 is treated as on-curve) */
     size_t start = 0;
     for (size_t i = 0; i < n; i++) if (on[i] & ON_BIT) { start = i; break; }
     /* emit the start point */
     size_t m = 0;
     int cx = X[start], cy = Y[start];
-    out[m*2] = (int16_t)(cx * s + 0.5); out[m*2+1] = (int16_t)(cy * s + 0.5); m++;
-    for (size_t k = 1; k <= n; k++) {
+    if (m < max_out) { out[m*2] = (int16_t)(cx * s + 0.5); out[m*2+1] = (int16_t)(cy * s + 0.5); m++; }
+    for (size_t k = 1; k <= n && m < max_out; k++) {
         size_t i = (start + k) % n;
         if (on[i] & ON_BIT) {
             /* straight line from current to this on-curve point */
             cx = X[i]; cy = Y[i];
-            out[m*2] = (int16_t)(cx * s + 0.5); out[m*2+1] = (int16_t)(cy * s + 0.5); m++;
+            if (m < max_out) { out[m*2] = (int16_t)(cx * s + 0.5); out[m*2+1] = (int16_t)(cy * s + 0.5); m++; }
         } else {
             /* quadratic from current (cx,cy) through control (X[i],Y[i]) to
              * the next on-curve point, or the implied midpoint if the next is
@@ -42,7 +44,7 @@ static size_t flatten_contour(const int16_t *X, const int16_t *Y, const uint8_t 
             int steps = (int)(len + 1.0);
             if (steps < 2) steps = 2;
             if (steps > 24) steps = 24;   /* bound output size */
-            for (int t = 1; t < steps; t++) {
+            for (int t = 1; t < steps && m < max_out; t++) {
                 double u = (double)t / (double)steps, v = 1.0 - u;
                 int qx2 = (int)(v*v*px + 2*v*u*qx + u*u*ex);
                 int qy2 = (int)(v*v*py + 2*v*u*qy + u*u*ey);
@@ -86,6 +88,17 @@ static void scanline_fill(const int16_t *verts, const size_t *cnt, size_t nc,
 }
 size_t font_glyph_contours_idx(const Font *f, uint16_t gi,
                            double scale, FontContour *out, size_t max_out) {
+    return font_glyph_contours_idx_d(f, gi, scale, out, max_out, 0);
+}
+/* Depth-bounded variant: prevents unbounded recursion on fonts whose
+ * composite glyphs nest components (Windows symbol fonts like Webdings /
+ * Wingdings can recurse thousands of levels deep, which overflowed the
+ * stack). `depth` is the recursion level; we stop pulling further components
+ * past FONT_GLYPH_MAX_DEPTH. */
+#define FONT_GLYPH_MAX_DEPTH 32
+static size_t font_glyph_contours_idx_d(const Font *f, uint16_t gi,
+                           double scale, FontContour *out, size_t max_out,
+                           int depth) {
     if (!f || !f->glyf || !f->loca) return 0;
     if (gi == 0 || gi >= f->glyph_count) return 0;
     size_t off  = glyph_offset(f, gi);
@@ -95,11 +108,21 @@ size_t font_glyph_contours_idx(const Font *f, uint16_t gi,
     int16_t ncontours = rd16s(g);
     size_t filled = 0;
     if (ncontours > 0) {
-        /* simple glyph: decode its contours directly */
+        /* simple glyph: decode its contours directly.
+         * Allocate the point arrays on the heap sized to the true contour
+         * count (decode_simple_points caps at its own 1024 limit, but a
+         * glyph can carry far fewer; fixed 1024 stacks both waste space and
+         * invite one-past-end writes when total hits the cap). */
         uint16_t n = (uint16_t)ncontours;
-        int16_t X[1024], Y[1024]; uint8_t on[1024];
-        uint16_t total = decode_simple_points(g, n, X, Y, on);
+        uint16_t total = font_glyph_point_count(g, n);
         if (total == 0) return 0;
+        int16_t *X = malloc(sizeof(int16_t) * (size_t)total);
+        int16_t *Y = malloc(sizeof(int16_t) * (size_t)total);
+        uint8_t *on = malloc(sizeof(uint8_t) * (size_t)total);
+        if (!X || !Y || !on) { free(X); free(Y); free(on); return 0; }
+        uint16_t got = decode_simple_points(g, n, X, Y, on);
+        if (got == 0) { free(X); free(Y); free(on); return 0; }
+        total = got;
         size_t start = 0;
         for (uint16_t c = 0; c < n; c++) {
             uint16_t endpt = rd16(g + 10 + (size_t)c * 2);
@@ -116,12 +139,13 @@ size_t font_glyph_contours_idx(const Font *f, uint16_t gi,
             }
             start = (size_t)endpt + 1;
         }
+        free(X); free(Y); free(on);
     } else if (ncontours < 0) {
         /* composite glyph: walk components, translate each by (dx,dy),
          * recursively reusing the simple decoder (or nested composites).
-         * We cap recursion depth to avoid malformed-font loops. */
+         * Recursion is depth-bounded so fonts whose components nest deeply
+         * (Windows symbol fonts) cannot blow the stack. */
         const uint8_t *com = g + 10;
-        int depth = 0; (void)depth;
         for (;;) {
             if (off + (size_t)(com - g) + 4 > f->size) break;
             uint16_t cflags = rd16(com);
@@ -137,20 +161,47 @@ size_t font_glyph_contours_idx(const Font *f, uint16_t gi,
              * offsets). TrueType 2x2 affine matrices (0x08) and
              * point-anchored matching (0x04) are not applied; DejaVu
              * (and most text fonts) use simple translation only. */
-            if (gc != 0 && gc < f->glyph_count) {
-                FontContour comp[64];
-                size_t nc = font_glyph_contours_idx(f, gc, scale, comp, 64);
-                for (size_t k = 0; k < nc && filled < max_out; k++) {
-                    size_t cn = comp[k].n;
-                    out[filled].pts = xrealloc(NULL, sizeof(FontPoint) * cn);
-                    for (size_t j = 0; j < cn; j++) {
-                        out[filled].pts[j].x = comp[k].pts[j].x + (int)(dx * scale + 0.5);
-                        out[filled].pts[j].y = comp[k].pts[j].y - (int)(dy * scale + 0.5);
-                        out[filled].pts[j].on_curve = comp[k].pts[j].on_curve;
+            if (gc != 0 && gc < f->glyph_count && depth < FONT_GLYPH_MAX_DEPTH) {
+                /* Count this component's contours first so we can heap-allocate
+                 * exactly what is needed (a fixed 64-slot stack overflowed on
+                 * complex composite glyphs). */
+                uint16_t gi_off = glyph_offset(f, gc);
+                uint16_t gi_next = glyph_next(f, gc);
+                size_t ncomp = 0;
+                if (gi_next > gi_off && (size_t)gi_off + 2 <= f->size) {
+                    int16_t cnc = rd16s(f->glyf + gi_off);
+                    if (cnc > 0) ncomp = (size_t)cnc;
+                    else if (cnc < 0) {
+                        const uint8_t *ccom = f->glyf + gi_off + 10;
+                        for (;;) {
+                            if (gi_off + (size_t)(ccom - (f->glyf + gi_off)) + 4 > f->size) break;
+                            uint16_t cf = rd16(ccom);
+                            if (!(cf & 0x20)) break;
+                            ccom += 4;
+                            if (cf & 0x01) ccom += 2; else ccom += 1;
+                            if (cf & 0x02) ccom += 2; else ccom += 1;
+                            ncomp++;
+                        }
                     }
-                    out[filled].n = cn; out[filled].empty = 0;
-                    filled++;
-                    free(comp[k].pts);
+                }
+                FontContour *comp = (ncomp > 0) ? malloc(sizeof(FontContour) * ncomp) : NULL;
+                if (comp || ncomp == 0) {
+                    size_t nc = (ncomp > 0)
+                        ? font_glyph_contours_idx_d(f, gc, scale, comp, ncomp, depth + 1)
+                        : 0;
+                    for (size_t k = 0; k < nc && filled < max_out; k++) {
+                        size_t cn = comp[k].n;
+                        out[filled].pts = xrealloc(NULL, sizeof(FontPoint) * cn);
+                        for (size_t j = 0; j < cn; j++) {
+                            out[filled].pts[j].x = comp[k].pts[j].x + (int)(dx * scale + 0.5);
+                            out[filled].pts[j].y = comp[k].pts[j].y - (int)(dy * scale + 0.5);
+                            out[filled].pts[j].on_curve = comp[k].pts[j].on_curve;
+                        }
+                        out[filled].n = cn; out[filled].empty = 0;
+                        filled++;
+                        free(comp[k].pts);
+                    }
+                    free(comp);
                 }
             }
             if (!(cflags & 0x20)) break;   /* MORE_COMPONENTS */
@@ -193,16 +244,24 @@ int font_rasterize(const Font *f, uint32_t codepoint, int ppm,
     if (gh <= 0) { gh = 1; }
     uint8_t *bm = xrealloc(NULL, (size_t)gw * gh);
     memset(bm, 0, (size_t)gw * gh);
-    /* flatten + fill (translate into bitmap space) */
-    int16_t *verts = xrealloc(NULL, sizeof(int16_t) * 64 * 1024);
+    /* flatten + fill (translate into bitmap space).
+     * Size the vertex buffer by the true worst case so a complex glyph with
+     * many contours cannot overflow it. Each contour of n points can emit up
+     * to n (on-curve) + n*24 (quadratic subdivisions) vertices = up to 25*n.
+     * Sum that across all contours, with headroom, and allocate once. */
+    size_t max_verts = 0;
+    for (size_t c = 0; c < nc; c++) max_verts += cs[c].n * 25u + 2u;
+    if (max_verts < 64) max_verts = 64;
+    int16_t *verts = xrealloc(NULL, sizeof(int16_t) * 2u * max_verts);
     size_t *cnt = xrealloc(NULL, sizeof(size_t) * 64);
     size_t vbase = 0; size_t ci = 0;
     for (size_t c = 0; c < nc; c++) {
         int16_t X[1024], Y[1024]; uint8_t on[1024];
         for (size_t k = 0; k < cs[c].n; k++) { X[k] = (int16_t)cs[c].pts[k].x; Y[k] = (int16_t)cs[c].pts[k].y; on[k] = cs[c].pts[k].on_curve ? ON_BIT : 0; }
-        /* each flattened vertex occupies 2 int16_t (x,y), so the
-         * per-contour slice must be offset by 2*vbase, NOT vbase. */
-        size_t m = flatten_contour(X, Y, on, cs[c].n, 1.0, verts + 2*vbase);
+        /* each flattened vertex occupies 2 int16_t (x,y); the slice starts
+         * at 2*vbase and has room for (max_verts - vbase) vertices. */
+        size_t room = (max_verts > vbase) ? (max_verts - vbase) : 0;
+        size_t m = flatten_contour(X, Y, on, cs[c].n, 1.0, verts + 2*vbase, room);
         for (size_t k = 0; k < m; k++) { verts[(vbase+k)*2] -= minx - 1; verts[(vbase+k)*2+1] -= miny - 1; }
         cnt[ci++] = m; vbase += m;
         free(cs[c].pts);
