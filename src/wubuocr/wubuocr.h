@@ -59,6 +59,11 @@ const OcrBlock *ocr_page_block(const OcrPage *pg, size_t i);
  * need structured block text. */
 const char *ocr_page_block_text(const OcrPage *pg, size_t i);
 
+/* Per-glyph box accessors: true document coordinates of each connected-
+ * component glyph inside reading-order block `bi`. NULL/out-of-range safe. */
+size_t          ocr_page_glyph_count(const OcrPage *pg, size_t bi);
+const OcrBlock *ocr_page_glyph(const OcrPage *pg, size_t bi, size_t k);
+
 /* Serialize the page as a JSON model:
  *   {"type":"ocr_page","width":W,"height":H,"threshold":T,
  *    "blocks":[{"x":..,"y":..,"w":..,"h":..,"order":i,

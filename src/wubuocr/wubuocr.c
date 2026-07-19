@@ -117,6 +117,20 @@ const char *ocr_page_block_text(const OcrPage *pg, size_t i) {
     return t;
 }
 
+/* Per-glyph box accessors: let a caller read the true document coordinates of
+ * each connected-component glyph inside a reading-order block without reaching
+ * into the page struct. Used by ingestion tools (e.g. DFT compression/analysis)
+ * that need to crop each glyph. */
+size_t ocr_page_glyph_count(const OcrPage *pg, size_t bi) {
+    if (!pg || bi >= pg->nblk) return 0;
+    return pg->blk[bi].nglyph;
+}
+const OcrBlock *ocr_page_glyph(const OcrPage *pg, size_t bi, size_t k) {
+    if (!pg || bi >= pg->nblk) return NULL;
+    if (k >= pg->blk[bi].nglyph) return NULL;
+    return &pg->blk[bi].glyph[k];
+}
+
 /* Concatenate a block's glyph text in reading order, inserting a space between
  * consecutive glyphs whose horizontal gap exceeds a fraction of the typical
  * glyph width (classic word segmentation: a wide inter-glyph gap is a space).

@@ -240,9 +240,12 @@ add_library(wubuocr STATIC
     src/wubuocr/font8x8.c src/wubuocr/recognize.c
     src/wubuocr/fontbank.c src/wubuocr/gauntlet.c
     src/wubuocr/page_compose.c src/wubuocr/latin1.c
-    src/wubuocr/unicode.c src/wubuocr/fontdir.c)
+    src/wubuocr/unicode.c src/wubuocr/fontdir.c
+    src/wubuocr/zoning.c src/wubuocr/mlp.c
+    src/wubuocr/convnet.c src/wubuocr/convnet3.c
+    src/wubuocr/stylebank.c src/wubuocr/dft.c src/wubuocr/goldplace.c)
 target_include_directories(wubuocr PUBLIC src/wubuocr src/wubujson src/wubufont)
-target_link_libraries(wubuocr PUBLIC wubujson wubufont m)
+target_link_libraries(wubuocr PUBLIC wubujson wubufont wubuzip m)
 
 # --- wubuimage: clean-room raster decoders (PNG; no libpng) ---
 # PNG decode reuses the in-tree wubuzip DEFLATE engine; outputs an RGBA plane.
@@ -263,6 +266,14 @@ target_link_libraries(wubuocr_cli PRIVATE wubuocr)
 # wubugauntlet CLI: OCR robustness battery for the multi-font bank
 add_executable(wubugauntlet_cli apps/wubugauntlet/main.c)
 target_link_libraries(wubugauntlet_cli PRIVATE wubuocr wubufont)
+
+# ocringest: end-to-end coordinate-aware OCR ingestion demo. Ties the whole
+# pipeline together -- many real fonts -> golden-ratio warped layout ->
+# deterministic ingest (binarize/XY-cut/components) -> per-glyph DFT compression
+# + golden-region tags -> coordinate JSON. Depends on wubuocr + wubufont +
+# wubujson + wubuzip (woff needs inflate).
+add_executable(ocringest tools/ocringest.c)
+target_link_libraries(ocringest PRIVATE wubuocr wubufont wubujson wubuzip m)
 
 # --- wubutui: native terminal UI toolkit (human GUIs) ---
 # Pure C11 render/input core (screen buffer, ANSI diff, key decode, word wrap,
@@ -471,17 +482,95 @@ add_executable(test_latin1 tests/test_latin1.c)
 target_link_libraries(test_latin1 PRIVATE wubuocr wubufont)
 add_test(NAME latin1 COMMAND test_latin1)
 
-# wubuocr EMNIST Letters benchmark tool: train the lightweight zoning
-# recognizer on EMNIST train and report accuracy on EMNIST test. Not a ctest
-# (needs the downloaded IDX corpus under data/emnist/); run manually:
-#   ./build/emnist_eval data/emnist 5
-add_executable(emnist_eval tools/emnist_eval.c)
-target_link_libraries(emnist_eval PRIVATE wubuocr wubufont)
+# wubuocr EMNIST Letters training/inference tools (lightweight C11 OCR).
+#   emnist_train : train the zoning+MLP recognizer with the wubu Riemannian SGD
+#                  optimizer (needs WuBuMath). See tools/build_wubu_ocr.sh.
+#   emnist_infer : dependency-free inference (zoning + mlp modules only).
+# These need the downloaded IDX corpus under data/emnist/ (tools/fetch_emnist.sh)
+# and are NOT ctests. Run manually, e.g.:
+#   ./build/emnist_train data/emnist 12 128 64 40
+#   ./build/emnist_infer  data/emnist build/emnist_wubu_mlp_g12_h128_64.wts
+find_path(WUBUMATH_INCLUDE_DIR NAMES wubumath.h
+          PATHS ${CMAKE_SOURCE_DIR}/../WuBuMath/include
+                $ENV{HOME}/WuBuMath/include
+          NO_DEFAULT_PATH)
+find_library(WUBUMATH_SGD  NAMES wubu_riemannian_sgd
+             PATHS ${CMAKE_SOURCE_DIR}/../WuBuMath/src/train
+                   $ENV{HOME}/WuBuMath/src/train NO_DEFAULT_PATH)
+if (WUBUMATH_INCLUDE_DIR AND EXISTS "${WUBUMATH_INCLUDE_DIR}/wubu_riemannian_sgd.h")
+  add_executable(emnist_train tools/emnist_train.c src/wubuocr/zoning.c src/wubuocr/mlp.c)
+  target_include_directories(emnist_train PRIVATE ${WUBUMATH_INCLUDE_DIR} src/wubuocr)
+  target_sources(emnist_train PRIVATE
+    ${WUBUMATH_INCLUDE_DIR}/../src/train/wubu_riemannian_sgd.c
+    ${WUBUMATH_INCLUDE_DIR}/../src/train/wubu_q_controller.c
+    ${WUBUMATH_INCLUDE_DIR}/../src/math/wubu_utils.c
+    ${WUBUMATH_INCLUDE_DIR}/../src/math/wubu_hyperbolic.c)
+  target_link_libraries(emnist_train PRIVATE m)
+endif()
 
-# wubutui: pure TUI core (screen, wrap, key decode, draw) -- no TTY needed.
-add_executable(test_wubutui tests/test_wubutui.c)
-target_link_libraries(test_wubutui PRIVATE wubutui)
-add_test(NAME wubutui COMMAND test_wubutui)
+add_executable(emnist_infer tools/emnist_infer.c src/wubuocr/zoning.c src/wubuocr/mlp.c)
+target_include_directories(emnist_infer PRIVATE src/wubuocr)
+target_link_libraries(emnist_infer PRIVATE m)
+
+# emnist_train_conv / emnist_infer_conv: ultra-light conv+MLP (dependency-free
+# plain C11 SGD). The "2011 single-core" build: convnet + mlp modules only.
+add_executable(emnist_train_conv tools/emnist_train_conv.c
+               src/wubuocr/convnet.c src/wubuocr/mlp.c)
+target_include_directories(emnist_train_conv PRIVATE src/wubuocr)
+target_link_libraries(emnist_train_conv PRIVATE m)
+
+add_executable(emnist_infer_conv tools/emnist_infer_conv.c
+               src/wubuocr/convnet.c src/wubuocr/mlp.c)
+target_include_directories(emnist_infer_conv PRIVATE src/wubuocr)
+target_link_libraries(emnist_infer_conv PRIVATE m)
+
+# wubuocr: zoning + mlp module unit tests (dependency-free, fast).
+add_executable(test_zoning tests/test_zoning.c src/wubuocr/zoning.c)
+target_include_directories(test_zoning PRIVATE src/wubuocr)
+add_test(NAME zoning COMMAND test_zoning)
+
+add_executable(test_mlp tests/test_mlp.c src/wubuocr/mlp.c)
+target_include_directories(test_mlp PRIVATE src/wubuocr)
+target_link_libraries(test_mlp PRIVATE m)
+add_test(NAME mlp COMMAND test_mlp)
+
+# conv+MLP gradient pipeline test (end-to-end on a separable problem).
+add_executable(test_convnet tests/test_convnet.c
+               src/wubuocr/convnet.c src/wubuocr/mlp.c)
+target_include_directories(test_convnet PRIVATE src/wubuocr)
+target_link_libraries(test_convnet PRIVATE m)
+add_test(NAME convnet COMMAND test_convnet)
+
+# conv3 (3-stage MED) gradient pipeline test (same decisive proof).
+add_executable(test_convnet3 tests/test_convnet3.c
+               src/wubuocr/convnet3.c src/wubuocr/mlp.c)
+target_include_directories(test_convnet3 PRIVATE src/wubuocr)
+target_link_libraries(test_convnet3 PRIVATE m)
+add_test(NAME convnet3 COMMAND test_convnet3)
+
+# instance-norm (batch-free BatchNorm) gamma/beta gradient finite-diff check.
+add_executable(gradcheck_inorm tests/gradcheck_inorm.c
+               src/wubuocr/convnet3.c src/wubuocr/mlp.c)
+target_include_directories(gradcheck_inorm PRIVATE src/wubuocr)
+target_link_libraries(gradcheck_inorm PRIVATE m)
+add_test(NAME inorm_gradcheck COMMAND gradcheck_inorm)
+
+# stylebank: 64MB multi-style expert bank (56 best + 8 rolling) smoke test.
+add_executable(test_stylebank tests/test_stylebank.c
+               src/wubuocr/stylebank.c src/wubuocr/convnet3.c src/wubuocr/mlp.c)
+target_include_directories(test_stylebank PRIVATE src/wubuocr)
+target_link_libraries(test_stylebank PRIVATE m)
+add_test(NAME stylebank COMMAND test_stylebank)
+
+# emnist_train_conv3 / emnist_infer_conv3: 3-stage MED conv+MLP (2011 build).
+add_executable(emnist_train_conv3 tools/emnist_train_conv3.c
+               src/wubuocr/convnet3.c src/wubuocr/mlp.c)
+target_include_directories(emnist_train_conv3 PRIVATE src/wubuocr)
+target_link_libraries(emnist_train_conv3 PRIVATE m pthread)
+add_test(NAME emnist_train_conv3_smoke COMMAND emnist_train_conv3 data 128 64 2 2000)
+set_tests_properties(emnist_train_conv3_smoke PROPERTIES WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+
+
 
 # wubuview: docflat model->text flattening (pure).
 add_executable(test_wubuview tests/test_wubuview.c apps/wubuview/docflat.c)
