@@ -514,13 +514,14 @@ target_link_libraries(emnist_infer PRIVATE m)
 
 # emnist_train_conv / emnist_infer_conv: ultra-light conv+MLP (dependency-free
 # plain C11 SGD). The "2011 single-core" build: convnet + mlp modules only.
-add_executable(emnist_train_conv tools/emnist_train_conv.c
-               src/wubuocr/convnet.c src/wubuocr/mlp.c)
-target_include_directories(emnist_train_conv PRIVATE src/wubuocr)
-target_link_libraries(emnist_train_conv PRIVATE m)
-
+# emnist_infer_conv: evaluates the trained conv3+MLP on the EMNIST Letters test
+# set (full accuracy + per-class). Uses the live convnet3 API (the trainer
+# emnist_train_conv3 saves conv3.wts / conv3_mlp.wts). Supersedes the retired
+# convnet.c-based emnist_train_conv / emnist_infer_conv pair.
 add_executable(emnist_infer_conv tools/emnist_infer_conv.c
-               src/wubuocr/convnet.c src/wubuocr/mlp.c)
+               src/wubuocr/convnet3.c src/wubuocr/mlp.c
+               src/wubuocr/dft.c src/wubuocr/goldplace.c
+               src/wubuocr/stylebank.c src/wubuocr/zoning.c)
 target_include_directories(emnist_infer_conv PRIVATE src/wubuocr)
 target_link_libraries(emnist_infer_conv PRIVATE m)
 

@@ -1,21 +1,26 @@
-/* emnist_infer_conv.c -- ultra-light conv+MLP OCR inference (dependency-free).
+/* emnist_infer_conv.c -- ultra-light conv3+MLP OCR inference (dependency-free).
  *
- * Loads convnet.wts (ConvNet) + emnist_conv_mlp.wts (MLP + standardization
- * stats) produced by emnist_train_conv, and classifies EMNIST Letters.
+ * Loads conv3.wts (ConvNet3) + conv3_mlp.wts (MLP + standardization stats)
+ * produced by emnist_train_conv3, and classifies EMNIST Letters.
  *   emnist_infer_conv <data/emnist>            -> full test-set accuracy
  *   emnist_infer_conv <data/emnist> N          -> classify first N, print A-Z
  *
- * Pure C11, no wubu math: only convnet + mlp modules. Runs single-core. */
+ * Pure C11, no wubu math: only convnet3 + mlp modules. Runs single-core.
+ *
+ * NOTE: rewritten to match the live trainer (convnet3, not the retired
+ * convnet API) and its weight filenames (conv3.wts / conv3_mlp.wts). The
+ * previous version called convnet_load/forward and loaded emnist_conv.wts --
+ * dead links against the current model. */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
 
-#include "convnet.h"
+#include "convnet3.h"
 #include "mlp.h"
 
 #define EMNIST_NCLASS 26
-#define MAXFEAT (16*16 + 16)
+#define MAXFEAT (64*4 + 64)   /* conv3 MED feature length = 256 */
 
 static long idx_count(const unsigned char *hdr) {
     return ((long)hdr[4] << 24) | ((long)hdr[5] << 16) |
@@ -50,26 +55,26 @@ int main(int argc, char **argv) {
     long show = (argc > 2) ? atol(argv[2]) : 0;
 
     char cpath[576], mpath[576];
-    snprintf(cpath, sizeof cpath, "%s/emnist_conv.wts", dir);
-    snprintf(mpath, sizeof mpath, "%s/emnist_conv_mlp.wts", dir);
+    snprintf(cpath, sizeof cpath, "%s/conv3.wts", dir);
+    snprintf(mpath, sizeof mpath, "%s/conv3_mlp.wts", dir);
 
-    ConvNet *cn = NULL; ConvConfig ccfg;
-    if (convnet_load(cpath, &cn, &ccfg) != 0) {
-        fprintf(stderr, "failed to load conv weights %s\n", cpath);
+    ConvNet3 *cn = NULL; ConvConfig3 ccfg;
+    if (convnet3_load(cpath, &cn, &ccfg) != 0) {
+        fprintf(stderr, "failed to load conv3 weights %s\n", cpath);
         return 1;
     }
-    int D = convnet_dim(cn);
+    int D = convnet3_dim(cn);
 
     float zmean[MAXFEAT], zstd[MAXFEAT];
     int dim = 0;
     MLP *m = NULL;
     if (mlp_load(mpath, &m, zmean, zstd, &dim) != 0) {
         fprintf(stderr, "failed to load mlp weights %s\n", mpath);
-        convnet_destroy(cn); return 1;
+        convnet3_destroy(cn); return 1;
     }
     if (dim != D) {
         fprintf(stderr, "conv/mlp dim mismatch: conv=%d mlp=%d\n", D, dim);
-        mlp_destroy(m); convnet_destroy(cn); return 1;
+        mlp_destroy(m); convnet3_destroy(cn); return 1;
     }
 
     char pte[512], ptel[512];
@@ -87,7 +92,7 @@ int main(int argc, char **argv) {
             const unsigned char *raw = te_img + i * 784;
             float im[784];
             for (int q = 0; q < 784; q++) im[q] = (float)(255 - raw[q]) / 255.0f;
-            convnet_forward(cn, im, z);
+            convnet3_forward(cn, im, z);
             for (int d = 0; d < D; d++) z[d] = (z[d] - zmean[d]) / zstd[d];
             mlp_forward(m, z, sc);
             int best = 0; for (int c = 1; c < EMNIST_NCLASS; c++) if (sc[c] > sc[best]) best = c;
@@ -103,7 +108,7 @@ int main(int argc, char **argv) {
             const unsigned char *raw = te_img + i * 784;
             float im[784];
             for (int q = 0; q < 784; q++) im[q] = (float)(255 - raw[q]) / 255.0f;
-            convnet_forward(cn, im, z);
+            convnet3_forward(cn, im, z);
             for (int d = 0; d < D; d++) z[d] = (z[d] - zmean[d]) / zstd[d];
             mlp_forward(m, z, sc);
             int best = 0; for (int c = 1; c < EMNIST_NCLASS; c++) if (sc[c] > sc[best]) best = c;
@@ -111,7 +116,7 @@ int main(int argc, char **argv) {
             ct[truth]++; if (best == truth) { correct++; cc[truth]++; }
         }
         float acc = 100.0f * (float)correct / (float)nte;
-        printf("=== EMNIST Letters inference (ultra-light conv+MLP) ===\n");
+        printf("=== EMNIST Letters inference (ultra-light conv3+MLP) ===\n");
         printf("OVERALL ACCURACY: %.2f%% (%ld/%ld)\n", acc, correct, nte);
         printf("per-class:\n");
         for (int c = 0; c < EMNIST_NCLASS; c++)
@@ -119,7 +124,7 @@ int main(int argc, char **argv) {
                               100.0f * (float)cc[c] / (float)ct[c], cc[c], ct[c]);
     }
 
-    mlp_destroy(m); convnet_destroy(cn);
+    mlp_destroy(m); convnet3_destroy(cn);
     free(te_img); free(te_lab);
     return 0;
 }
