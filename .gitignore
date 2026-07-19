@@ -24,3 +24,6 @@
 
 # stray empty artifact
 /model
+
+# per-session build tree
+/build-train/
