@@ -27,3 +27,6 @@
 
 # per-session build tree
 /build-train/
+
+# Stray per-session build tree (cmake -S . -B build-cmake-crnn)
+build-cmake-crnn/

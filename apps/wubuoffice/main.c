@@ -8,6 +8,7 @@ extern int wubushow_main(int argc, char **argv);
 extern int wuburead_main(int argc, char **argv);
 extern int wubuedit_main(int argc, char **argv);
 extern int wubuconv_convert(const char *in_path, const char *out_path);
+extern int image2doc_main(int argc, char **argv);
 
 static void usage(const char *prog) {
     fprintf(stderr,
@@ -20,7 +21,9 @@ static void usage(const char *prog) {
         "  edit  <in.docx|xlsx|pptx> [out.<ext>]  round-trip re-write (structure preserved)\n"
         "  convert <in> <out>                     convert ANY supported format to ANY other\n"
         "         supported in:  docx xlsx pptx csv tsv md odt ods odp fodt fods fodp doc xls ppt\n"
-        "         supported out: docx xlsx pptx csv tsv md html rtf odt ods odp fodt fods fodp doc xls ppt pdf epub json\n",
+        "         supported out: docx xlsx pptx csv tsv md html rtf odt ods odp fodt fods fodp doc xls ppt pdf epub json\n"
+        "  ocr   <in.png|pgm> <out.docx|md|...>  picture -> editable document (CRNN line recognizer)\n"
+        "         env: LOAD=<model.crnn> (required), CHARS=<alphabet> (default A..Z)\n",
         prog);
 }
 
@@ -39,6 +42,10 @@ int main(int argc, char **argv) {
     if (strcmp(cmd, "convert") == 0) {
         if (argc < 3) { fprintf(stderr, "usage: %s convert <in> <out>\n", argv[0]); return 1; }
         return wubuconv_convert(argv[1], argv[2]) ? 1 : 0;
+    }
+    if (strcmp(cmd, "ocr") == 0) {
+        /* image2doc takes (in, out); argv already shifted so argv[1]=in, argv[2]=out */
+        return image2doc_main(argc, argv);
     }
     usage(argv[0]);
     return 1;

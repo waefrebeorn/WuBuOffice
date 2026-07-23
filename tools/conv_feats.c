@@ -28,7 +28,7 @@ int main(int argc, char**argv){
     float im[784], ft[1024];
     for(long i=0;i<n;i++){
         const unsigned char *raw=img+(size_t)i*784;
-        for(int q=0;q<784;q++) im[q]=(float)(255-raw[q])/255.0f;
+        for(int q=0;q<784;q++) im[q]=(float)raw[q]/255.0f;
         convnet3_forward(cn,im,ft);
         for(int d=0;d<D;d++) fprintf(fo,"%s%g", d?",":"", ft[d]);
         fprintf(fo,"\n");

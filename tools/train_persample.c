@@ -87,7 +87,7 @@ int main(int argc,char**argv){
     /* estimate z-norm stats once from 4000 raw-conv features */
     if(donorm){
         long ns=ntr<4000?ntr:4000; float*acc=calloc(D,sizeof(float)),*ac2=calloc(D,sizeof(float)); float im[784];
-        for(long i=0;i<ns;i++){const unsigned char*raw=trI+i*784; for(int q=0;q<784;q++)im[q]=(float)(255-raw[q])/255.0f; convnet3_forward(cn,im,feat); for(int d=0;d<D;d++){acc[d]+=feat[d];ac2[d]+=feat[d]*feat[d];}}
+        for(long i=0;i<ns;i++){const unsigned char*raw=trI+i*784; for(int q=0;q<784;q++)im[q]=(float)raw[q]/255.0f; convnet3_forward(cn,im,feat); for(int d=0;d<D;d++){acc[d]+=feat[d];ac2[d]+=feat[d]*feat[d];}}
         for(int d=0;d<D;d++){zmean[d]=acc[d]/ns; float v=ac2[d]/ns-zmean[d]*zmean[d]; zstd[d]=v>1e-4f?sqrtf(v):1.0f;}
         free(acc);free(ac2);
     } else { for(int d=0;d<D;d++){zmean[d]=0;zstd[d]=1;} }
@@ -100,7 +100,7 @@ int main(int argc,char**argv){
         long cor=0;
         for(long ii=0;ii<ntr;ii++){
             long n=idx[ii]; const unsigned char*raw=trI+n*784;
-            for(int q=0;q<784;q++)im[q]=(float)(255-raw[q])/255.0f;
+            for(int q=0;q<784;q++)im[q]=(float)raw[q]/255.0f;
             const float*src=im;
             if(aug>0){ float deg=(fr()*2-1)*aug; rot(im,rim,deg); src=rim; }
             convnet3_forward(cn,src,feat);
@@ -126,7 +126,7 @@ int main(int argc,char**argv){
         }
         /* test each epoch (subset 2000 for speed except last) */
         long tec = (ep==epochs-1)?nte:2000; long tc=0;
-        for(long i=0;i<tec;i++){const unsigned char*raw=teI+i*784; for(int q=0;q<784;q++)im[q]=(float)(255-raw[q])/255.0f; convnet3_forward(cn,im,feat); for(int d=0;d<D;d++)z[d]=(feat[d]-zmean[d])/zstd[d]; float sc[64]; mlp_forward(m,z,sc); int best=0; for(int k=1;k<nclass;k++)if(sc[k]>sc[best])best=k; if(best==(teL[i]-laboff))tc++;}
+        for(long i=0;i<tec;i++){const unsigned char*raw=teI+i*784; for(int q=0;q<784;q++)im[q]=(float)raw[q]/255.0f; convnet3_forward(cn,im,feat); for(int d=0;d<D;d++)z[d]=(feat[d]-zmean[d])/zstd[d]; float sc[64]; mlp_forward(m,z,sc); int best=0; for(int k=1;k<nclass;k++)if(sc[k]>sc[best])best=k; if(best==(teL[i]-laboff))tc++;}
         printf("ep%2d lr=%.4f train_acc=%.2f%% test_acc=%.2f%%\n",ep+1,clr,100.0*cor/ntr,100.0*tc/tec);
         fflush(stdout);
     }

@@ -41,13 +41,24 @@ void mlp_forward(const MLP *m, const float *z, float *out_scores);
 void mlp_zero_grad(MLP *m);
 
 /* Accumulate cross-entropy gradients for ONE sample (target in [0,K)).
- * Call after mlp_forward(z) for each sample in the batch; the gradient
- * buffers accumulate across calls until you apply an update and re-zero.
- * For a single-sample step, mlp_train_step() = zero + backward below. */
+ * REQUIRES a mlp_forward(m, z, ...) to have been called immediately before
+ * (for this same z) so the hidden activations h1act/h2act are cached.
+ * Calling backward without a preceding forward yields ALL-ZERO gradients
+ * (stale cached activations), which silently poisons training -- always
+ * forward-then-backward, exactly as emnist_train_conv3.c does per sample. */
 void mlp_backward(MLP *m, const float *z, int target);
+
+/* Label-smoothed variant (smooth in [0,1)): the one-hot target is blended
+ * with uniform, dscore[c] = softmax[c] - (c==target ? 1-smooth : smooth/(K-1)).
+ * 2026-standard regularization: smooth=0.1 typically. Reduces overconfidence
+ * and improves generalization at ~no cost. smooth<=0 falls back to hard target. */
+void mlp_backward_smooth(MLP *m, const float *z, int target, float smooth);
 
 /* Convenience: zero gradients then accumulate ONE sample's gradient. */
 void mlp_train_step(MLP *m, const float *z, int target);
+
+/* Convenience: zero gradients then accumulate ONE sample's gradient (smoothed). */
+void mlp_train_step_smooth(MLP *m, const float *z, int target, float smooth);
 
 /* Gradient of the loss w.r.t. the input z (length din), given that
  * mlp_backward(m, z, target) has just been called for the last sample.

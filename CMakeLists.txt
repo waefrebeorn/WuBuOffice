@@ -188,8 +188,10 @@ add_executable(wubuedit $<TARGET_OBJECTS:wubuedit_app> apps/wubuedit/entry.c)
 target_link_libraries(wubuedit PRIVATE wubuoxml wubuword_app wubucell_app wubushow_app)
 
 # --- unified CLI ---
-add_executable(wubuoffice apps/wubuoffice/main.c)
-target_link_libraries(wubuoffice PRIVATE wubuoxml wubuxml wubuzip wubuformula wubucfb wubujson wubuconv)
+add_executable(wubuoffice apps/wubuoffice/main.c tools/image2doc.c)
+target_compile_definitions(wubuoffice PRIVATE WUBEOFFICE_EMBED)
+target_include_directories(wubuoffice PRIVATE apps/wubuconv src/wubuocr src/wubuimage src/wubufont)
+target_link_libraries(wubuoffice PRIVATE wubuoxml wubuxml wubuzip wubuformula wubucfb wubujson wubuconv crnnocr wubuimage wubufont m)
 
 # --- wubujson: minimal JSON parse+emit (vendored from WuBuPad, same API) ---
 add_library(wubujson STATIC src/wubujson/json.c)
@@ -243,7 +245,8 @@ add_library(wubuocr STATIC
     src/wubuocr/unicode.c src/wubuocr/fontdir.c
     src/wubuocr/zoning.c src/wubuocr/mlp.c
     src/wubuocr/convnet.c src/wubuocr/convnet3.c
-    src/wubuocr/stylebank.c src/wubuocr/dft.c src/wubuocr/goldplace.c)
+    src/wubuocr/stylebank.c src/wubuocr/dft.c src/wubuocr/goldplace.c
+    src/wubuocr/crnn_transcribe.c)
 target_include_directories(wubuocr PUBLIC src/wubuocr src/wubujson src/wubufont)
 target_link_libraries(wubuocr PUBLIC wubujson wubufont wubuzip m)
 
@@ -274,6 +277,74 @@ target_link_libraries(wubugauntlet_cli PRIVATE wubuocr wubufont)
 # wubujson + wubuzip (woff needs inflate).
 add_executable(ocringest tools/ocringest.c)
 target_link_libraries(ocringest PRIVATE wubuocr wubufont wubujson wubuzip m)
+
+# --- Modern CRNN + CTC modular OCR pipeline (clean-room, dependency-free) ---
+# Self-contained modules, opaque structs, no god headers:
+#   crnn.c   sequence model (conv trunk + recurrent + CTC head), save/load
+#   ctc.c    CTC loss (label-smooth + focal) + Graves two-score beam decode
+#   rnn.c    LSTM core          gru.c  GRU core (extracted, single offset table)
+#   lexicon.c  beam post-correction
+#   lens.c   perspective flatten (Office-Lens corner warp)
+#   png.c / png_encode.c  no-lib PNG decode/encode (reuses wubuzip inflate)
+# The conv trunk + image plumbing are reused from the wubuocr lib
+# (convnet3.c / image.c / mlp.c). Each module compiles and links independently.
+add_library(crnnocr STATIC
+    src/wubuocr/crnn.c
+    src/wubuocr/ctc.c
+    src/wubuocr/rnn.c
+    src/wubuocr/gru.c
+    src/wubuocr/lexicon.c
+    src/wubuocr/lens.c
+    src/wubuocr/png.c
+    src/wubuocr/png_encode.c)
+target_include_directories(crnnocr PUBLIC src/wubuocr src/wubufont src/wubujson src/wubuzip)
+target_link_libraries(crnnocr PUBLIC wubuocr)
+
+# CRNN pipeline unit tests (built + registered as ctest).
+add_executable(ctc_test tools/ctc_test.c src/wubuocr/ctc.c)
+target_include_directories(ctc_test PRIVATE src/wubuocr)
+target_link_libraries(ctc_test PRIVATE m)
+add_test(NAME ctc_test COMMAND ctc_test)
+
+add_executable(gru_test tools/gru_test.c src/wubuocr/rnn.c src/wubuocr/gru.c)
+target_include_directories(gru_test PRIVATE src/wubuocr)
+target_link_libraries(gru_test PRIVATE m)
+add_test(NAME gru_test COMMAND gru_test)
+
+add_executable(rnn_test tools/rnn_test.c src/wubuocr/rnn.c)
+target_include_directories(rnn_test PRIVATE src/wubuocr)
+target_link_libraries(rnn_test PRIVATE m)
+add_test(NAME rnn_test COMMAND rnn_test)
+
+add_executable(gradcheck_conv3 tools/gradcheck_conv3.c
+               src/wubuocr/convnet3.c src/wubuocr/mlp.c)
+target_include_directories(gradcheck_conv3 PRIVATE src/wubuocr)
+target_link_libraries(gradcheck_conv3 PRIVATE m)
+add_test(NAME gradcheck_conv3 COMMAND gradcheck_conv3)
+
+# CRNN training / inference tools (render glyphs -> train -> recognize).
+foreach(t crnn_train crnn_img_train crnn_ocr_train crnn_lex_train crnn_warp_train)
+  add_executable(${t} tools/${t}.c)
+  target_include_directories(${t} PRIVATE src/wubuocr src/wubufont)
+  target_link_libraries(${t} PRIVATE crnnocr wubufont m)
+endforeach()
+add_executable(crnn_doc_demo tools/crnn_doc_demo.c)
+target_include_directories(crnn_doc_demo PRIVATE src/wubuocr src/wubufont)
+target_link_libraries(crnn_doc_demo PRIVATE crnnocr wubufont m)
+add_executable(crnn_photo_demo tools/crnn_photo_demo.c)
+target_include_directories(crnn_photo_demo PRIVATE src/wubuocr src/wubufont)
+target_link_libraries(crnn_photo_demo PRIVATE crnnocr wubufont m)
+
+# image2doc: page image -> editable document via the CRNN line recognizer.
+# PNG -> OcrImage -> crnn_transcribe (docmodel JSON) -> wubuconv (docx/md/...).
+add_executable(image2doc tools/image2doc.c)
+target_include_directories(image2doc PRIVATE src/wubuocr src/wubuimage src/wubufont apps/wubuconv)
+target_link_libraries(image2doc PRIVATE crnnocr wubuimage wubuconv wubujson wubufont m)
+
+# gen_pgmpage: synthetic multi-line Latin page (PGM) for image2doc testing.
+add_executable(gen_pgmpage tools/gen_pgmpage.c)
+target_include_directories(gen_pgmpage PRIVATE src/wubuocr src/wubufont)
+target_link_libraries(gen_pgmpage PRIVATE wubuocr wubufont m)
 
 # --- wubutui: native terminal UI toolkit (human GUIs) ---
 # Pure C11 render/input core (screen buffer, ANSI diff, key decode, word wrap,
@@ -460,6 +531,18 @@ add_test(NAME wubufont COMMAND test_wubufont)
 # wubuocr: image -> document pipeline (Otsu, XY-cut reading order, components).
 add_executable(test_wubuocr tests/test_wubuocr.c)
 target_link_libraries(test_wubuocr PRIVATE wubuocr)
+# CRNN line transcribe -> docmodel JSON (document path regression test)
+add_executable(test_crnn_transcribe tests/test_crnn_transcribe.c)
+target_include_directories(test_crnn_transcribe PRIVATE src/wubuocr src/wubufont)
+target_link_libraries(test_crnn_transcribe PRIVATE crnnocr wubuocr wubufont m)
+add_test(NAME crnn_transcribe COMMAND test_crnn_transcribe)
+
+# CRNN line transcribe -> docmodel JSON (full document charset regression test)
+add_executable(test_crnn_transcribe_full tests/test_crnn_transcribe_full.c)
+target_include_directories(test_crnn_transcribe_full PRIVATE src/wubuocr src/wubufont)
+target_link_libraries(test_crnn_transcribe_full PRIVATE crnnocr wubuocr wubufont m)
+add_test(NAME crnn_transcribe_full COMMAND test_crnn_transcribe_full)
+
 add_test(NAME wubuocr COMMAND test_wubuocr)
 
 # wubuocr recognizer: zoning + 1-NN glyph classification (render->recognize).
@@ -549,6 +632,15 @@ target_include_directories(test_convnet3 PRIVATE src/wubuocr)
 target_link_libraries(test_convnet3 PRIVATE m)
 add_test(NAME convnet3 COMMAND test_convnet3)
 
+# im2col+GEMM conv rewrite: numeric equivalence to brute-force conv + bias-grad FD check.
+add_executable(test_convnet3_im2col tools/test_convnet3_im2col.c
+               src/wubuocr/convnet3.c src/wubuocr/mlp.c
+               src/wubuocr/dft.c src/wubuocr/goldplace.c
+               src/wubuocr/stylebank.c src/wubuocr/zoning.c)
+target_include_directories(test_convnet3_im2col PRIVATE src/wubuocr)
+target_link_libraries(test_convnet3_im2col PRIVATE m)
+add_test(NAME convnet3_im2col COMMAND test_convnet3_im2col)
+
 # instance-norm (batch-free BatchNorm) gamma/beta gradient finite-diff check.
 add_executable(gradcheck_inorm tests/gradcheck_inorm.c
                src/wubuocr/convnet3.c src/wubuocr/mlp.c)
@@ -570,6 +662,17 @@ target_include_directories(emnist_train_conv3 PRIVATE src/wubuocr)
 target_link_libraries(emnist_train_conv3 PRIVATE m pthread)
 add_test(NAME emnist_train_conv3_smoke COMMAND emnist_train_conv3 data 128 64 2 2000)
 set_tests_properties(emnist_train_conv3_smoke PROPERTIES WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+
+# Modular trainer CLI
+add_executable(trainer_cli tools/trainer_cli.c src/wubuocr/trainer.c
+               src/wubuocr/convnet3.c src/wubuocr/mlp.c)
+target_include_directories(trainer_cli PRIVATE src/wubuocr)
+target_link_libraries(trainer_cli PRIVATE m pthread)
+
+# Fast validation trainer (small net, few epochs, capped data)
+add_executable(emnist_train_fast tools/emnist_train_fast.c src/wubuocr/convnet3.c src/wubuocr/mlp.c)
+target_include_directories(emnist_train_fast PRIVATE src/wubuocr)
+target_link_libraries(emnist_train_fast PRIVATE m pthread)
 
 
 

@@ -15,6 +15,10 @@ struct MLP {
     /* input gradient dL/dz for the last backward() call (feeds an upstream
      * module such as ConvNet) */
     float *dz;
+    /* persistent hidden-gradient scratch (dh2 size h2, dh1 size h1), reused by
+     * both mlp_backward / mlp_backward_smooth instead of per-sample malloc/free
+     * -- removes alloc churn AND a double-free class from the hot path */
+    float *dh1s, *dh2s;
     int shared_params;   /* 1 if weight pointers alias another MLP (grad-only replica) */
 };
 
@@ -46,9 +50,11 @@ MLP *mlp_create(int din, int h1, int h2, int K, uint32_t seed) {
     m->gW3 = (float *)calloc((size_t)h2 * K, sizeof(float));
     m->gb3 = (float *)calloc((size_t)K, sizeof(float));
     m->dz  = (float *)calloc((size_t)din, sizeof(float));
+    m->dh2s = (float *)malloc((size_t)h2 * sizeof(float));
+    m->dh1s = (float *)malloc((size_t)h1 * sizeof(float));
     if (!m->W1 || !m->b1 || !m->W2 || !m->b2 || !m->W3 || !m->b3 ||
         !m->h1act || !m->h2act || !m->gW1 || !m->gb1 || !m->gW2 || !m->gb2 ||
-        !m->gW3 || !m->gb3 || !m->dz) { mlp_destroy(m); return NULL; }
+        !m->gW3 || !m->gb3 || !m->dz || !m->dh1s || !m->dh2s) { mlp_destroy(m); return NULL; }
 
     s_seed(seed ? seed : 0x1234ABCDu);
     float s1 = sqrtf(2.0f / (float)din);
@@ -81,6 +87,11 @@ MLP *mlp_gradbuf(const MLP *s) {
     m->gW3 = calloc((size_t)s->h2*s->K,sizeof(float));
     m->gb3 = calloc((size_t)s->K,sizeof(float));
     m->dz  = calloc((size_t)s->din,sizeof(float));
+    /* scratch must be PRIVATE to each replica (== each worker thread), never
+     * aliased from s -- sharing it would reintroduce the cross-thread
+     * hidden-grad race / double-free class. */
+    m->dh2s = malloc((size_t)s->h2*sizeof(float));
+    m->dh1s = malloc((size_t)s->h1*sizeof(float));
     return m;
 }
 
@@ -93,6 +104,7 @@ void mlp_destroy(MLP *m) {
     free(m->h1act); free(m->h2act);
     free(m->gW1); free(m->gb1); free(m->gW2); free(m->gb2);
     free(m->gW3); free(m->gb3); free(m->dz);
+    free(m->dh1s); free(m->dh2s);   /* scratch is per-instance, free always */
     free(m);
 }
 
@@ -119,7 +131,7 @@ void mlp_forward(const MLP *m, const float *z, float *out_scores) {
         float s = m->b3[c];
         const float *Wr = m->W3 + (size_t)c * m->h2;
         for (int i = 0; i < m->h2; i++) s += Wr[i] * h2[i];
-        out_scores[c] = s;
+        if (out_scores) out_scores[c] = s;   /* NULL allowed (forward-only, e.g. inside mlp_train_step) */
     }
 }
 
@@ -161,7 +173,7 @@ void mlp_backward(MLP *m, const float *z, int target) {
     }
 
     /* hidden2 grad: dh2[i] = (sum_c dsc[c]*W3[c,i]) * leak-or-1 */
-    float *dh2 = (float *)malloc((size_t)m->h2 * sizeof(float));
+    float *dh2 = m->dh2s;   /* persistent struct scratch -- no per-call malloc */
     for (int i = 0; i < m->h2; i++) {
         float g = 0;
         for (int c = 0; c < m->K; c++) g += dsc[c] * m->W3[(size_t)c * m->h2 + i];
@@ -174,7 +186,7 @@ void mlp_backward(MLP *m, const float *z, int target) {
     }
 
     /* hidden1 grad: dh1[i] = (sum_j dh2[j]*W2[j,i]) * leak-or-1 */
-    float *dh1 = (float *)malloc((size_t)m->h1 * sizeof(float));
+    float *dh1 = m->dh1s;   /* persistent struct scratch -- no per-call malloc */
     for (int i = 0; i < m->h1; i++) {
         float g = 0;
         for (int j = 0; j < m->h2; j++) g += dh2[j] * m->W2[(size_t)j * m->h1 + i];
@@ -191,13 +203,76 @@ void mlp_backward(MLP *m, const float *z, int target) {
         for (int j = 0; j < m->h1; j++) g += dh1[j] * m->W1[(size_t)j * m->din + i];
         m->dz[i] = g;
     }
-    free(dh2); free(dh1);
 }
 
 /* legacy single-sample step (kept for small tests / back-compat) */
 void mlp_train_step(MLP *m, const float *z, int target) {
     mlp_zero_grad(m);
+    mlp_forward(m, z, NULL);   /* MUST forward first: mlp_backward reads cached h1act/h2act */
     mlp_backward(m, z, target);
+}
+
+/* label-smoothed backward: same as mlp_backward but with a softened target.
+ * dscore[c] = softmax[c] - (c==target ? 1-smooth : smooth/(K-1)). */
+void mlp_backward_smooth(MLP *m, const float *z, int target, float smooth) {
+    float *h1 = m->h1act, *h2 = m->h2act;
+    float scores[MLP_NCLASS_MAX], sm[MLP_NCLASS_MAX];
+    for (int c = 0; c < m->K; c++) {
+        float s = m->b3[c];
+        const float *Wr = m->W3 + (size_t)c * m->h2;
+        for (int i = 0; i < m->h2; i++) s += Wr[i] * h2[i];
+        scores[c] = s;
+    }
+    float mx = scores[0];
+    for (int c = 1; c < m->K; c++) if (scores[c] > mx) mx = scores[c];
+    float sum = 0;
+    for (int c = 0; c < m->K; c++) { sm[c] = expf(scores[c] - mx); sum += sm[c]; }
+    for (int c = 0; c < m->K; c++) sm[c] /= sum;
+
+    const float s = smooth > 0.0f ? smooth : 0.0f;
+    const float off = s > 0.0f ? s / (float)(m->K - 1) : 0.0f;
+    float dsc[MLP_NCLASS_MAX];
+    for (int c = 0; c < m->K; c++)
+        dsc[c] = sm[c] - (c == target ? (1.0f - s) : off);
+
+    for (int c = 0; c < m->K; c++) {
+        float *gW3c = m->gW3 + (size_t)c * m->h2;
+        for (int i = 0; i < m->h2; i++) gW3c[i] += dsc[c] * h2[i];
+        m->gb3[c] += dsc[c];
+    }
+    float *dh2 = m->dh2s;   /* persistent struct scratch -- no per-call malloc */
+    for (int i = 0; i < m->h2; i++) {
+        float g = 0;
+        for (int c = 0; c < m->K; c++) g += dsc[c] * m->W3[(size_t)c * m->h2 + i];
+        dh2[i] = (h2[i] > 0 ? g : MLP_LEAK * g);
+    }
+    for (int j = 0; j < m->h2; j++) {
+        float *gW2j = m->gW2 + (size_t)j * m->h1;
+        for (int i = 0; i < m->h1; i++) gW2j[i] += dh2[j] * h1[i];
+        m->gb2[j] += dh2[j];
+    }
+    float *dh1 = m->dh1s;   /* persistent struct scratch -- no per-call malloc */
+    for (int i = 0; i < m->h1; i++) {
+        float g = 0;
+        for (int j = 0; j < m->h2; j++) g += dh2[j] * m->W2[(size_t)j * m->h1 + i];
+        dh1[i] = (h1[i] > 0 ? g : MLP_LEAK * g);
+    }
+    for (int k = 0; k < m->h1; k++) {
+        float *gW1k = m->gW1 + (size_t)k * m->din;
+        for (int i = 0; i < m->din; i++) gW1k[i] += dh1[k] * z[i];
+        m->gb1[k] += dh1[k];
+    }
+    /* input grad bridge for upstream (conv) backprop -- must run BEFORE free(dh1) */
+    for (int i = 0; i < m->din; i++) {
+        float g = 0;
+        for (int k = 0; k < m->h1; k++) g += dh1[k] * m->W1[(size_t)k * m->din + i];
+        m->dz[i] = g;   /* dh1[k] already carries the layer-1 ReLU derivative */
+    }
+}
+
+void mlp_train_step_smooth(MLP *m, const float *z, int target, float smooth) {
+    mlp_zero_grad(m);
+    mlp_backward_smooth(m, z, target, smooth);
 }
 
 void mlp_input_grad(MLP *m, const float *z, float *out_dz) {
@@ -213,7 +288,9 @@ void mlp_scale_grad(MLP *m, float s) {
     for (int i = 0; i < m->h2 * m->K; i++)  m->gW3[i] *= s;
     for (int i = 0; i < m->K; i++)         m->gb3[i] *= s;
 }
-/* Accumulate src gradient buffers into dst (thread-private -> shared reduce). */
+/* Accumulate src gradient buffers into dst (thread-private -> shared reduce).
+ * Consumes src (zeros it) so the next batch starts fresh and gradients don't
+ * leak across batches. */
 void mlp_add_grad(MLP *dst, const MLP *src) {
     for (int i = 0; i < dst->din * dst->h1; i++) dst->gW1[i] += src->gW1[i];
     for (int i = 0; i < dst->h1; i++)        dst->gb1[i] += src->gb1[i];
@@ -221,6 +298,7 @@ void mlp_add_grad(MLP *dst, const MLP *src) {
     for (int i = 0; i < dst->h2; i++)       dst->gb2[i] += src->gb2[i];
     for (int i = 0; i < dst->h2 * dst->K; i++)  dst->gW3[i] += src->gW3[i];
     for (int i = 0; i < dst->K; i++)         dst->gb3[i] += src->gb3[i];
+    mlp_zero_grad((MLP*)src);
 }
 
 int mlp_layer_count(const MLP *m) { (void)m; return 6; }

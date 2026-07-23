@@ -91,7 +91,7 @@ int main(int argc, char **argv) {
         for (long i = 0; i < show && i < nte; i++) {
             const unsigned char *raw = te_img + i * 784;
             float im[784];
-            for (int q = 0; q < 784; q++) im[q] = (float)(255 - raw[q]) / 255.0f;
+            for (int q = 0; q < 784; q++) im[q] = (float)raw[q] / 255.0f;
             convnet3_forward(cn, im, z);
             for (int d = 0; d < D; d++) z[d] = (z[d] - zmean[d]) / zstd[d];
             mlp_forward(m, z, sc);
@@ -107,7 +107,7 @@ int main(int argc, char **argv) {
         for (long i = 0; i < nte; i++) {
             const unsigned char *raw = te_img + i * 784;
             float im[784];
-            for (int q = 0; q < 784; q++) im[q] = (float)(255 - raw[q]) / 255.0f;
+            for (int q = 0; q < 784; q++) im[q] = (float)raw[q] / 255.0f;
             convnet3_forward(cn, im, z);
             for (int d = 0; d < D; d++) z[d] = (z[d] - zmean[d]) / zstd[d];
             mlp_forward(m, z, sc);
