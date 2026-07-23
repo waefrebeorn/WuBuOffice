@@ -73,6 +73,38 @@ static void gen_sample(OcrImage *im, Font *font, int *tgt, int L, int aug, uint3
     }
 }
 
+/* Photo-style distortion applied in place to a rendered line: a gentle
+ * horizontal shear (slant) plus light salt-and-pepper noise, so the model
+ * learns to survive scanned/photographed text instead of only pristine font
+ * renders. Keep it subtle: on a 20px-tall line, a large shear just smears the
+ * glyphs into noise (the model collapses to a constant prediction). */
+static void photo_aug(OcrImage *im, uint32_t *rs){
+    int H=(int)ocr_image_height(im), W=(int)ocr_image_width(im);
+    /* slant: displace the top vs bottom of the line by at most ~2px total. */
+    double slant = (rndf(rs)*2.0f-1.0f) * 2.0f;   /* -2..2 px across the height */
+    OcrImage *tmp=ocr_image_create(W,H);
+    for(int y=0;y<H;y++){
+        double f = H>1 ? (double)(y-(H/2))/(H/2) : 0.0;   /* -1..1 down the line */
+        int off = (int)(slant*f + (f>=0?0.5:-0.5));
+        for(int x=0;x<W;x++){
+            int sx=x-off;
+            uint8_t g = (sx>=0&&sx<W)? ocr_image_get(im,(size_t)sx,(size_t)y) : 15;
+            ocr_image_set(tmp,(size_t)x,(size_t)y,g);
+        }
+    }
+    int nn=(int)(rndf(rs)*(size_t)W*H*0.02f);  /* up to ~2% salt/pepper */
+    for(int i=0;i<nn;i++){
+        int x=(int)(rndf(rs)*W), y=(int)(rndf(rs)*H);
+        uint8_t g=ocr_image_get(tmp,(size_t)x,(size_t)y);
+        int r=(int)(rndf(rs)*100);
+        uint8_t ng = r<10? 235 : (r>90? 15 : g);
+        ocr_image_set(tmp,(size_t)x,(size_t)y,ng);
+    }
+    for(int y=0;y<H;y++) for(int x=0;x<W;x++)
+        ocr_image_set(im,(size_t)x,(size_t)y, ocr_image_get(tmp,(size_t)x,(size_t)y));
+    ocr_image_free(tmp);
+}
+
 int main(int argc,char**argv){
     if(argc<2){ printf("usage: %s <font.ttf> [epochs] [LR]\n",argv[0]); return 1; }
     int EPOCHS = argc>2? atoi(argv[2]) : 60;
@@ -102,8 +134,10 @@ int main(int argc,char**argv){
     }
     printf("stride=%d strip=%d\n", crnn_get_stride(m), STRIP);
 
-    #define NTR 200
-    int AUG = getenv("AUG")? atoi(getenv("AUG")) : 0;   /* 1 = online warp aug each epoch */
+    #define NTR_DFLT 400
+    int NTR = getenv("NTR")? atoi(getenv("NTR")) : NTR_DFLT;
+    int AUG = getenv("AUG")? atoi(getenv("AUG")) : 0;   /* 1 = online glyph jitter */
+    int PHOTO = getenv("PHOTO")? atoi(getenv("PHOTO")) : 0; /* 1 = + line shear & salt-pepper noise */
     OcrImage **imgs = malloc(NTR*sizeof(OcrImage*));
     int *tgts = malloc((size_t)NTR*MAXLEN*sizeof(int));
     int *lens = malloc(NTR*sizeof(int));
@@ -116,6 +150,7 @@ int main(int argc,char**argv){
         seed[n] = (rng ^ (0x9E3779B9u*(uint32_t)(n+1))) | 1u;
         imgs[n] = ocr_image_create(MAXLEN*STRIP, STRIP);
         gen_sample(imgs[n], font, tgts+n*MAXLEN, L, AUG, &seed[n]);
+        if(PHOTO) photo_aug(imgs[n], &seed[n]);
     }
 
     float prev=1e30f, best=1e30f; int step=0;
@@ -124,7 +159,7 @@ int main(int argc,char**argv){
         /* ONLINE AUGMENTATION: re-render every sample with fresh distortion so the
          * model sees new jitter each epoch instead of memorizing a fixed noisy set. */
         if(AUG && epoch>0){
-            for(int n=0;n<NTR;n++) gen_sample(imgs[n], font, tgts+n*MAXLEN, lens[n], AUG, &seed[n]);
+            for(int n=0;n<NTR;n++){ gen_sample(imgs[n], font, tgts+n*MAXLEN, lens[n], AUG, &seed[n]); if(PHOTO) photo_aug(imgs[n], &seed[n]); }
         }
         float tot=0;
         for(int n=0;n<NTR;n++){

@@ -346,6 +346,11 @@ add_executable(gen_pgmpage tools/gen_pgmpage.c)
 target_include_directories(gen_pgmpage PRIVATE src/wubuocr src/wubufont)
 target_link_libraries(gen_pgmpage PRIVATE wubuocr wubufont m)
 
+# Synthetic skewed+noisy PNG page (photo-like validation input)
+add_executable(gen_realpage tools/gen_realpage.c)
+target_include_directories(gen_realpage PRIVATE src/wubuocr src/wubufont)
+target_link_libraries(gen_realpage PRIVATE crnnocr wubuimage wubufont m)
+
 # --- wubutui: native terminal UI toolkit (human GUIs) ---
 # Pure C11 render/input core (screen buffer, ANSI diff, key decode, word wrap,
 # draw primitives) + a thin POSIX termios edge (term.c). No dependency, no
@@ -540,8 +545,14 @@ add_test(NAME crnn_transcribe COMMAND test_crnn_transcribe)
 # CRNN line transcribe -> docmodel JSON (full document charset regression test)
 add_executable(test_crnn_transcribe_full tests/test_crnn_transcribe_full.c)
 target_include_directories(test_crnn_transcribe_full PRIVATE src/wubuocr src/wubufont)
-target_link_libraries(test_crnn_transcribe_full PRIVATE crnnocr wubuocr wubufont m)
+target_link_libraries(test_crnn_transcribe_full PRIVATE crnnocr wubuimage wubufont m)
 add_test(NAME crnn_transcribe_full COMMAND test_crnn_transcribe_full)
+
+# Deskew + line-segmentation on a tilted page (photo/scan front door)
+add_executable(test_ocr_realpage tests/test_ocr_realpage.c)
+target_include_directories(test_ocr_realpage PRIVATE src/wubuocr src/wubufont)
+target_link_libraries(test_ocr_realpage PRIVATE crnnocr wubuimage wubufont m)
+add_test(NAME ocr_realpage COMMAND test_ocr_realpage)
 
 add_test(NAME wubuocr COMMAND test_wubuocr)
 

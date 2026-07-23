@@ -59,15 +59,15 @@ OcrImage *ocr_image_from_png(const uint8_t *data, size_t len, int *was_interlace
     uint32_t W=0,H=0; int bitdepth=0, colortype=0, interlace=0;
     int have_ihdr=0;
     while(off + 8 <= len){
-        uint32_t clen = (data[off]<<24)|(data[off+1]<<16)|(data[off+2]<<8)|data[off+3];
+        uint32_t clen = ((uint32_t)data[off]<<24)|((uint32_t)data[off+1]<<16)|((uint32_t)data[off+2]<<8)|(uint32_t)data[off+3];
         if(off + 8 + clen + 4 > len) break;
         char type[5]; memcpy(type, data+off+4, 4); type[4]=0;
         const uint8_t *cdata = data+off+8;
-        uint32_t crc = (data[off+8+clen]<<24)|(data[off+8+clen+1]<<16)|(data[off+8+clen+2]<<8)|data[off+8+clen+3];
+        uint32_t crc = ((uint32_t)data[off+8+clen]<<24)|((uint32_t)data[off+8+clen+1]<<16)|((uint32_t)data[off+8+clen+2]<<8)|(uint32_t)data[off+8+clen+3];
         if(crc32_buf(data+off+4, 4+clen) != crc) return NULL; /* corrupt */
         if(memcmp(type,"IHDR",4)==0){
-            W=(cdata[0]<<24)|(cdata[1]<<16)|(cdata[2]<<8)|cdata[3];
-            H=(cdata[4]<<24)|(cdata[5]<<16)|(cdata[6]<<8)|cdata[7];
+            W=((uint32_t)cdata[0]<<24)|((uint32_t)cdata[1]<<16)|((uint32_t)cdata[2]<<8)|(uint32_t)cdata[3];
+            H=((uint32_t)cdata[4]<<24)|((uint32_t)cdata[5]<<16)|((uint32_t)cdata[6]<<8)|(uint32_t)cdata[7];
             bitdepth=cdata[8]; colortype=cdata[9]; interlace=cdata[12];
             have_ihdr=1;
         }

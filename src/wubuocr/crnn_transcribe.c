@@ -73,6 +73,55 @@ static OcrImage *normalize_line(const OcrImage *page, int ry0, int band_h, int s
     return line;
 }
 
+/* Rotate `src` about its center by `deg` degrees (nearest-neighbour). The
+ * canvas is kept the same size; rotated-out corners are filled with `fill`
+ * (use the page background so they don't read as ink). Returns a new image. */
+static OcrImage *rotate_img(const OcrImage *src, double deg, uint8_t fill) {
+    int W = (int)ocr_image_width(src), H = (int)ocr_image_height(src);
+    int cx = W / 2, cy = H / 2;
+    double a = deg * 3.141592653589793 / 180.0, ca = cos(a), sa = sin(a);
+    OcrImage *dst = ocr_image_create((size_t)W, (size_t)H);
+    if (!dst) return NULL;
+    for (int y = 0; y < H; y++) for (int x = 0; x < W; x++)
+        ocr_image_set(dst, (size_t)x, (size_t)y, fill);
+    for (int y = 0; y < H; y++) for (int x = 0; x < W; x++) {
+        int sx = (int)(cx + (x - cx) * ca + (y - cy) * sa);
+        int sy = (int)(cy - (x - cx) * sa + (y - cy) * ca);
+        if (sx >= 0 && sx < W && sy >= 0 && sy < H)
+            ocr_image_set(dst, (size_t)x, (size_t)y, ocr_image_get(src, (size_t)sx, (size_t)sy));
+    }
+    return dst;
+}
+
+/* Projection-profile deskew: scan small rotation angles and pick the one that
+ * maximizes the variance of the per-row ink count. Text lines are most
+ * separated (and background bands emptiest) at the correct skew, so this
+ * straightens a slightly-rotated page before line segmentation. */
+static OcrImage *deskew_page(const OcrImage *src, int bg) {
+    double best = -1; int bestk = 0;
+    uint8_t fill = (uint8_t)(bg > 127 ? 235 : 15);
+    for (int k = -16; k <= 16; k++) {
+        double deg = k * 0.5;
+        OcrImage *r = rotate_img(src, deg, fill);
+        int H = (int)ocr_image_height(r), W = (int)ocr_image_width(r);
+        double mean = 0;
+        int *proj = calloc((size_t)H, sizeof(int));
+        for (int y = 0; y < H; y++) {
+            int cnt = 0;
+            for (int x = 0; x < W; x++) if (is_ink(ocr_image_get(r, (size_t)x, (size_t)y), bg)) cnt++;
+            proj[y] = cnt >= 3 ? cnt : 0;   /* ignore single-pixel noise rows */
+            mean += proj[y];
+        }
+        mean /= H;
+        double var = 0;
+        for (int y = 0; y < H; y++) { double d = proj[y] - mean; var += d * d; }
+        free(proj); ocr_image_free(r);
+        if (var > best) { best = var; bestk = k; }
+    }
+    if (bestk == 0) return NULL;
+    return rotate_img(src, bestk * 0.5, fill);
+}
+
 int crnn_transcribe_page_json(CRNN *m, const OcrImage *page,
                               int strip, const char *charset,
                               char **out_json) {
@@ -96,12 +145,34 @@ int crnn_transcribe_page_json(CRNN *m, const OcrImage *page,
         for (int v = 0; v < 256; v++) { acc += hist[v]; if (acc >= half) { bg = v; break; } }
     }
 
+    /* ---- polarity normalization ----
+     * The model is trained on dark background + light text. Real scans/photos
+     * are the opposite (light background + dark text). Detect that from the
+     * median and invert the whole page so the rest of the pipeline (deskew,
+     * segmentation, CRNN) sees the polarity it was trained on. */
+    OcrImage *norm = NULL;
+    if (bg > 127) {
+        norm = ocr_image_create((size_t)W, (size_t)H);
+        for (int y = 0; y < H; y++)
+            for (int x = 0; x < W; x++)
+                ocr_image_set(norm, (size_t)x, (size_t)y,
+                              (uint8_t)(255 - ocr_image_get(page, (size_t)x, (size_t)y)));
+        bg = 15;   /* after inversion, background is dark */
+        page = norm;
+    }
+
+    /* ---- deskew: straighten a slightly-rotated page before segmentation ----\n     * A perfect (unrotated) page deskews to itself (no-op), so this is safe to\n     * always run on photo/scan input. */
+    OcrImage *desk = deskew_page(page, bg);
+    const OcrImage *pg = desk ? desk : page;
+    W = (int)ocr_image_width(pg);
+    H = (int)ocr_image_height(pg);
+
     /* ---- horizontal ink-projection: mark rows that contain any ink ---- */
     char *row_ink = malloc((size_t)H);
-    if (!row_ink) return -1;
+    if (!row_ink) { if (desk) ocr_image_free(desk); return -1; }
     for (int y = 0; y < H; y++) {
-        int ink = 0;
-        for (int x = 0; x < W; x++) if (is_ink(ocr_image_get(page, (size_t)x, (size_t)y), bg)) { ink = 1; break; }
+        int ink = 0, cnt = 0;
+        for (int x = 0; x < W; x++) if (is_ink(ocr_image_get(pg, (size_t)x, (size_t)y), bg)) { cnt++; if (cnt >= 3) { ink = 1; break; } }
         row_ink[y] = (char)ink;
     }
 
@@ -122,7 +193,7 @@ int crnn_transcribe_page_json(CRNN *m, const OcrImage *page,
         int y1 = y;                 /* [y0, y1) is the ink band */
         int band_h = y1 - y0;
 
-        OcrImage *line = normalize_line(page, y0, band_h, strip);
+        OcrImage *line = normalize_line(pg, y0, band_h, strip);
         char pred[512];
         if (line) {
             crnn_recognize(m, line, charset, pred, sizeof pred);
@@ -144,6 +215,8 @@ int crnn_transcribe_page_json(CRNN *m, const OcrImage *page,
     if (ba_append_str(&buf, &len, &cap, "]}") != 0) rc = -1;
 
     free(row_ink);
+    if (desk) ocr_image_free(desk);
+    if (norm) ocr_image_free(norm);
 
     if (rc != 0) { free(buf); return -1; }
     if (out_json) *out_json = buf;
