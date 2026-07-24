@@ -255,6 +255,7 @@ int main(int argc,char**argv){
         }
         float mean=tot/NTR; if(mean<best) best=mean;
         if(epoch%5==0||epoch==EPOCHS-1) printf("epoch %2d  mean_loss=%.4f\n", epoch, mean);
+        fflush(stdout);  /* keep file-redirected runs monitorable */
         prev=mean;
     }
     printf("final mean_loss=%.4f  best=%.4f\n", prev, best);
