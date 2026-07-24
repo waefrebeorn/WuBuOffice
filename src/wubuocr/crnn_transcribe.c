@@ -55,20 +55,50 @@ static int ba_append_json_escaped(char **buf, size_t *len, size_t *cap, const ch
     return 0;
 }
 
-/* Build a strip-tall (height == `strip`) line image from the page band
- * [ry0, ry0+band_h). Vertical scaling is nearest-neighbour so the conv trunk
- * (which slices exactly `strip`-tall windows) receives correctly-proportioned
- * ink; the CRNN is width-invariant, so only the height must match `strip`. */
-static OcrImage *normalize_line(const OcrImage *page, int ry0, int band_h, int strip) {
+/* Count ink pixels in row `y` that are 8-connected to another ink pixel
+ * (any of the 8 neighbours is ink). Real glyph strokes -- even thin vertical
+ * stems -- are connected, so their pixels count. Salt-and-pepper noise is
+ * single isolated pixels with no ink neighbour, so it counts ~0. This cleanly
+ * separates text rows from noisy blank rows regardless of ink density. */
+static int row_paired_ink(const OcrImage *page, int y, int bg, int W) {
+    int H = (int)ocr_image_height(page);
+    int cnt = 0;
+    for (int x = 0; x < W; x++) {
+        if (!is_ink(ocr_image_get(page, (size_t)x, (size_t)y), bg)) continue;
+        int connected = 0;
+        for (int dy = -1; dy <= 1 && !connected; dy++) {
+            int ny = y + dy;
+            if (ny < 0 || ny >= H) continue;
+            for (int dx = -1; dx <= 1; dx++) {
+                if (dx == 0 && dy == 0) continue;
+                int nx = x + dx;
+                if (nx < 0 || nx >= W) continue;
+                if (is_ink(ocr_image_get(page, (size_t)nx, (size_t)ny), bg)) { connected = 1; break; }
+            }
+        }
+        if (connected) cnt++;
+    }
+    return cnt;
+}
+
+/* Build a strip-tall (height == `strip`) line image centered on the text
+ * line at vertical position `cy`. The window is a FIXED strip-tall region
+ * around the line center -- NO vertical scaling. The CRNN was trained on
+ * glyphs centered in a fixed strip-tall cell; stretching the variable-height
+ * ink band to `strip` pixels distorts glyph proportions and tanks accuracy.
+ * `cy` is the middle of the detected ink run; we take [cy-strip/2, cy+strip/2). */
+static OcrImage *extract_line(const OcrImage *page, int cy, int strip) {
     int W = (int)ocr_image_width(page);
+    int H = (int)ocr_image_height(page);
     OcrImage *line = ocr_image_create((size_t)W, (size_t)strip);
     if (!line) return NULL;
-    if (band_h < 1) band_h = 1;
+    int top = cy - strip / 2;
     for (int y = 0; y < strip; y++) {
-        int sy = ry0 + (int)((long)y * band_h / strip);
-        for (int x = 0; x < W; x++) {
+        int sy = top + y;
+        if (sy < 0) sy = 0;
+        if (sy >= H) sy = H - 1;
+        for (int x = 0; x < W; x++)
             ocr_image_set(line, (size_t)x, (size_t)y, ocr_image_get(page, (size_t)x, (size_t)sy));
-        }
     }
     return line;
 }
@@ -98,6 +128,7 @@ static OcrImage *rotate_img(const OcrImage *src, double deg, uint8_t fill) {
  * separated (and background bands emptiest) at the correct skew, so this
  * straightens a slightly-rotated page before line segmentation. */
 static OcrImage *deskew_page(const OcrImage *src, int bg) {
+    if (getenv("DESKEW") && getenv("DESKEW")[0] == '0') return NULL;
     double best = -1; int bestk = 0;
     uint8_t fill = (uint8_t)(bg > 127 ? 235 : 15);
     for (int k = -16; k <= 16; k++) {
@@ -107,9 +138,8 @@ static OcrImage *deskew_page(const OcrImage *src, int bg) {
         double mean = 0;
         int *proj = calloc((size_t)H, sizeof(int));
         for (int y = 0; y < H; y++) {
-            int cnt = 0;
-            for (int x = 0; x < W; x++) if (is_ink(ocr_image_get(r, (size_t)x, (size_t)y), bg)) cnt++;
-            proj[y] = cnt >= 3 ? cnt : 0;   /* ignore single-pixel noise rows */
+            int cnt = row_paired_ink(r, y, bg, W);
+            proj[y] = cnt > 0 ? cnt : 0;   /* paired>0 => real ink row */
             mean += proj[y];
         }
         mean /= H;
@@ -171,9 +201,12 @@ int crnn_transcribe_page_json(CRNN *m, const OcrImage *page,
     char *row_ink = malloc((size_t)H);
     if (!row_ink) { if (desk) ocr_image_free(desk); return -1; }
     for (int y = 0; y < H; y++) {
-        int ink = 0, cnt = 0;
-        for (int x = 0; x < W; x++) if (is_ink(ocr_image_get(pg, (size_t)x, (size_t)y), bg)) { cnt++; if (cnt >= 3) { ink = 1; break; } }
-        row_ink[y] = (char)ink;
+        /* paired-ink: a real text row has contiguous strokes (paired pixels);
+         * a blank row with salt-and-pepper noise has only isolated single
+         * pixels (paired = 0), so noise is rejected while real lines stay solid.
+         * Use >=1 so sparse stroke-tips at line edges don't split a line. */
+        int cnt = row_paired_ink(pg, y, bg, W);
+        row_ink[y] = (char)(cnt >= 1);
     }
 
     /* ---- growable JSON buffer ---- */
@@ -191,9 +224,9 @@ int crnn_transcribe_page_json(CRNN *m, const OcrImage *page,
         int y0 = y;
         while (y < H && row_ink[y]) y++;
         int y1 = y;                 /* [y0, y1) is the ink band */
-        int band_h = y1 - y0;
+        int cy = (y0 + y1) / 2;     /* center of the line */
 
-        OcrImage *line = normalize_line(pg, y0, band_h, strip);
+        OcrImage *line = extract_line(pg, cy, strip);
         char pred[512];
         if (line) {
             crnn_recognize(m, line, charset, pred, sizeof pred);

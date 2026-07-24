@@ -44,14 +44,15 @@ int main(int argc,char**argv){
     size_t fn; uint8_t*fb=readf(argv[1],&fn);
     Font *font=fb?font_open(fb,fn):NULL;
     if(!font){ printf("font open failed\n"); return 1; }
-    rng=(uint32_t)time(NULL)|1u;
+    const char *SE = getenv("SEED");
+    rng = SE ? (uint32_t)strtoul(SE,0,10) : ((uint32_t)time(NULL)|1u);
 
     int W=MAXW*STRIP, H=NLINES*STRIP+(NLINES+1)*GAP;
     OcrImage *page=ocr_image_create(W,H);
     for(int y=0;y<H;y++) for(int x=0;x<W;x++) ocr_image_set(page,x,y,15);
 
     int nch = (int)strlen(CH);
-    srand((unsigned)time(NULL));
+    srand(SE ? (unsigned)strtoul(SE,0,10) : (unsigned)time(NULL));
     for(int l=0;l<NLINES;l++){
         int L=4+(int)(rnd()*6.99f); if(L>MAXW)L=MAXW;
         int y0=GAP+l*(STRIP+GAP);
