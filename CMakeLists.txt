@@ -351,6 +351,14 @@ add_executable(gen_realpage tools/gen_realpage.c)
 target_include_directories(gen_realpage PRIVATE src/wubuocr src/wubufont)
 target_link_libraries(gen_realpage PRIVATE crnnocr wubuimage wubufont m)
 
+# crnn_save/crnn_load fidelity probe
+add_executable(crnn_roundtrip tools/crnn_roundtrip.c)
+target_include_directories(crnn_roundtrip PRIVATE src/wubuocr src/wubufont)
+target_link_libraries(crnn_roundtrip PRIVATE crnnocr wubufont m)
+add_executable(crnn_reload tools/crnn_reload.c)
+target_include_directories(crnn_reload PRIVATE src/wubuocr src/wubufont)
+target_link_libraries(crnn_reload PRIVATE crnnocr wubufont m)
+
 # --- wubutui: native terminal UI toolkit (human GUIs) ---
 # Pure C11 render/input core (screen buffer, ANSI diff, key decode, word wrap,
 # draw primitives) + a thin POSIX termios edge (term.c). No dependency, no

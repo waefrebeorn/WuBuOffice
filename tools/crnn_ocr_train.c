@@ -139,7 +139,7 @@ int main(int argc,char**argv){
     int AUG = getenv("AUG")? atoi(getenv("AUG")) : 0;   /* 1 = online glyph jitter */
     int PHOTO = getenv("PHOTO")? atoi(getenv("PHOTO")) : 0; /* 1 = + line shear & salt-pepper noise */
     OcrImage **imgs = malloc(NTR*sizeof(OcrImage*));
-    int *tgts = malloc((size_t)NTR*MAXLEN*sizeof(int));
+    int *tgts = calloc((size_t)NTR*MAXLEN, sizeof(int));   /* zero-fill: CTC only reads target[0..L-1], but keep tail clean */
     int *lens = malloc(NTR*sizeof(int));
     uint32_t *seed = malloc(NTR*sizeof(uint32_t));   /* per-sample aug RNG state */
     /* fix each word's CONTENT + length once; pixels (re)rendered per epoch */
