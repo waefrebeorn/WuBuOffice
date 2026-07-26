@@ -33,6 +33,18 @@ add_executable(test_wubumath test_math.c)
 target_link_libraries(test_wubumath PRIVATE wubumath)
 add_test(NAME wubumath COMMAND test_wubumath)
 
+add_executable(test_epub test_epub.c)
+target_link_libraries(test_epub PRIVATE wubuepub)
+add_test(NAME epub COMMAND test_epub)
+
+add_executable(test_a11y test_a11y.c)
+target_link_libraries(test_a11y PRIVATE wubua11y)
+add_test(NAME a11y COMMAND test_a11y)
+
+add_executable(test_script test_script.c)
+target_link_libraries(test_script PRIVATE wubuscript)
+add_test(NAME script COMMAND test_script)
+
 add_executable(test_model test_model.c)
 target_link_libraries(test_model PRIVATE wubumodel)
 add_test(NAME model COMMAND test_model)

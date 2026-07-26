@@ -204,6 +204,9 @@ wubumodel_node *wubumodel_node_first_child(const wubumodel_node *parent) {
 wubumodel_node *wubumodel_node_next_sibling(const wubumodel_node *node) {
     return node ? node->next_sibling : NULL;
 }
+wubumodel_style *wubumodel_node_style(const wubumodel_node *n) {
+    return n ? n->style : NULL;
+}
 
 /* Return the first top-level node of the document (a SECTION/BLOCK/etc.),
  * or NULL if the doc is empty. Used by readers/serializers to walk the

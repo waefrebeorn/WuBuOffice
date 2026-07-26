@@ -79,6 +79,9 @@ int wubumodel_node_append(wubumodel_doc *doc, wubumodel_node *parent,
 wubumodel_node *wubumodel_node_first_child(const wubumodel_node *parent);
 wubumodel_node *wubumodel_node_next_sibling(const wubumodel_node *node);
 
+/* Return the shared style attached to `n` (may be NULL). */
+wubumodel_style *wubumodel_node_style(const wubumodel_node *n);
+
 /* First top-level node of `doc` (a SECTION/BLOCK/etc.), or NULL if empty.
  * Walk the tree from here with node_first_child / node_next_sibling. */
 wubumodel_node *wubumodel_doc_root(const wubumodel_doc *doc);
