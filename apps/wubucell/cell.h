@@ -39,6 +39,18 @@ void wubucell_cell_nx(wubucell_book *b, int sheet, int col, int row, double num,
 void wubucell_cell_f(wubucell_book *b, int sheet, int col, int row, const char *formula, double cached);
 void wubucell_cell_fx(wubucell_book *b, int sheet, int col, int row, const char *formula, double cached, int style);
 
+/* Merge a rectangular range of cells (1-based, inclusive). The top-left cell's
+ * value is what survives; the rest are visually covered. Excel requires that
+ * only the top-left cell carry a value inside a merged region, so callers
+ * should set the value on (c0,r0) and leave the other slots empty. */
+void wubucell_merge(wubucell_book *b, int sheet, int c0, int r0, int c1, int r1);
+
+/* Read back merge regions of a sheet. Returns the count; fill `c0/r0/c1/r1`
+ * for index `i` (0-based) when non-NULL. Returns -1 if the sheet is invalid. */
+int  wubucell_merge_count(const wubucell_book *b, int sheet);
+int  wubucell_merge_get(const wubucell_book *b, int sheet, int i,
+                        int *c0, int *r0, int *c1, int *r1);
+
 /* Add a bar chart to a sheet referencing a cell range. `title` may be NULL.
  * cats = "Sheet1!A2:A5" style range of category labels, vals = numeric range.
  * Returns a 1-based chart index (used only for bookkeeping). */

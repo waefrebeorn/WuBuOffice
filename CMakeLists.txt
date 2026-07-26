@@ -532,6 +532,11 @@ target_link_libraries(test_cell_cycle PRIVATE wubucell_app wubuformula)
 target_include_directories(test_cell_cycle PRIVATE apps/wubucell src/wubuformula src/wubuformula/functions)
 add_test(NAME cell_cycle COMMAND test_cell_cycle)
 
+add_executable(test_cell_merge tests/test_cell_merge.c)
+target_link_libraries(test_cell_merge PRIVATE wubucell_app wubuoxml wubuxml wubuformula)
+target_include_directories(test_cell_merge PRIVATE apps/wubucell src/wubuoxml src/wubuxml src/wubuformula src/wubuformula/functions)
+add_test(NAME cell_merge COMMAND test_cell_merge)
+
 add_executable(test_csv tests/test_csv.c)
 target_link_libraries(test_csv PRIVATE wubucell_app wubuoxml wubuxml wubuformula)
 target_include_directories(test_csv PRIVATE apps/wubucell src/wubuoxml src/wubuxml src/wubuformula src/wubuformula/functions)

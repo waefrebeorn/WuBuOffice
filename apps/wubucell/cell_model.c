@@ -73,6 +73,24 @@ int wubucell_chart(wubucell_book *b, int sheet, const char *title, const char *c
     return (int)b->ncharts;
 }
 
+void wubucell_merge(wubucell_book *b, int sheet, int c0, int r0, int c1, int r1) {
+    sheet_t *s = book_sheet(b, sheet);
+    if (!s) return;
+    /* normalise so (c0,r0) is the top-left */
+    if (c1 < c0) { int t = c0; c0 = c1; c1 = t; }
+    if (r1 < r0) { int t = r0; r0 = r1; r1 = t; }
+    if (c1 == c0 && r1 == r0) return;   /* nothing to merge */
+    if (s->nmerge == s->capm) {
+        size_t nc = s->capm ? s->capm*2 : 4;
+        void *nm = realloc(s->merges, nc * sizeof(*s->merges));
+        if (!nm) return;                 /* OOM: skip merge, keep book intact */
+        s->merges = nm; s->capm = nc;
+    }
+    s->merges[s->nmerge].c0 = c0; s->merges[s->nmerge].r0 = r0;
+    s->merges[s->nmerge].c1 = c1; s->merges[s->nmerge].r1 = r1;
+    s->nmerge++;
+}
+
 void cell_col_letter(int col, char *out) {
     int n = col; char tmp[8]; int k = 0;
     while (n > 0) { int r = (n - 1) % 26; tmp[k++] = (char)('A' + r); n = (n - 1) / 26; }
@@ -144,7 +162,19 @@ char *cell_render_sheet(const wubucell_book *b, const sheet_t *s, size_t sheet_i
         }
         fprintf(m, "</row>\n");
     }
-    fprintf(m, "</sheetData>\n</worksheet>\n");
+    fprintf(m, "</sheetData>\n");
+    if (s->nmerge) {
+        fprintf(m, "<mergeCells count=\"%zu\">\n", s->nmerge);
+        for (size_t i = 0; i < s->nmerge; i++) {
+            char tl[16], br[16];
+            cell_col_letter(s->merges[i].c0, tl);
+            cell_col_letter(s->merges[i].c1, br);
+            fprintf(m, "<mergeCell ref=\"%s%d:%s%d\"/>\n",
+                    tl, s->merges[i].r0, br, s->merges[i].r1);
+        }
+        fprintf(m, "</mergeCells>\n");
+    }
+    fprintf(m, "</worksheet>\n");
     fflush(m); fclose(m);
     return out;
 }
@@ -170,6 +200,23 @@ char *cell_render_chart(const chart_t *c, size_t idx) {
 }
 
 /* --- read-back accessors (public API in cell.h) --- */
+
+int  wubucell_merge_count(const wubucell_book *b, int sheet) {
+    if (!b || sheet < 1 || (size_t)sheet > b->n) return -1;
+    return (int)b->sheets[sheet - 1].nmerge;
+}
+
+int  wubucell_merge_get(const wubucell_book *b, int sheet, int i,
+                        int *c0, int *r0, int *c1, int *r1) {
+    if (!b || sheet < 1 || (size_t)sheet > b->n) return -1;
+    const sheet_t *s = &b->sheets[sheet - 1];
+    if (i < 0 || (size_t)i >= s->nmerge) return -1;
+    if (c0) *c0 = s->merges[i].c0;
+    if (r0) *r0 = s->merges[i].r0;
+    if (c1) *c1 = s->merges[i].c1;
+    if (r1) *r1 = s->merges[i].r1;
+    return 0;
+}
 
 int wubucell_sheet_count(const wubucell_book *b) {
     return (int)(b ? b->n : 0);

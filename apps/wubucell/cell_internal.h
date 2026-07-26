@@ -38,6 +38,7 @@ typedef struct {
 typedef struct {
     char *name;
     cell_t *cells; size_t n, cap;
+    struct { int c0, r0, c1, r1; } *merges; size_t nmerge, capm;
 } sheet_t;
 
 typedef struct {

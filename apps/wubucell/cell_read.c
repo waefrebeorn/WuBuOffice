@@ -81,6 +81,26 @@ static int on_event(wubuxml_event evt, const wubuxml_info *info, void *user) {
             } else if (strcmp(name, "f") == 0) { st->in_f = 1; st->f_len = 0; }
             else if (strcmp(name, "v") == 0) { st->in_v = 1; st->v_len = 0; }
             else if (strcmp(name, "is") == 0) { st->in_is = 1; }
+            else if (strcmp(name, "mergeCell") == 0) {
+                const char *ref = NULL;
+                for (int a = 0; a < info->attr_count; a++)
+                    if (strcmp(info->attr_name[a], "ref") == 0) { ref = info->attr_val[a]; break; }
+                if (ref) {
+                    char a1[32], b2[32]; a1[0] = b2[0] = '\0';
+                    const char *colon = strchr(ref, ':');
+                    if (colon) {
+                        size_t k = 0;
+                        for (const char *p = ref; p < colon && k < 31; p++) a1[k++] = *p; a1[k] = '\0';
+                        k = 0; for (const char *p = colon + 1; *p && k < 31; p++) b2[k++] = *p; b2[k] = '\0';
+                        int c0 = 0, r0 = 0, c1 = 0, r1 = 0;
+                        const char *p = a1; while (*p && isalpha((unsigned char)*p)) { c0 = c0 * 26 + (toupper((unsigned char)*p) - 'A' + 1); p++; }
+                        r0 = atoi(p);
+                        p = b2; while (*p && isalpha((unsigned char)*p)) { c1 = c1 * 26 + (toupper((unsigned char)*p) - 'A' + 1); p++; }
+                        r1 = atoi(p);
+                        wubucell_merge(st->book, st->sheet_idx, c0, r0, c1, r1);
+                    }
+                }
+            }
         }
         return 0;
     }
