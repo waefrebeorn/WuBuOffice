@@ -1,0 +1,26 @@
+[
+  {
+    "match": "apt-get install -y ccache",
+    "desc": "install ccache (compiler cache) for fast incremental builds"
+  },
+  {
+    "match": "apt-get update",
+    "desc": "refresh package index before a vetted install"
+  },
+  {
+    "match": "apt-get install -y (build-essential|cmake|ninja-build|pkg-config|libpng-dev|zlib1g-dev|libjpeg-dev|libfreetype6-dev)",
+    "desc": "install known build toolchain deps for WuBuOffice"
+  },
+  {
+    "match": "id",
+    "desc": "identity probe (sanity check of root channel)"
+  },
+  {
+    "match": "cmake --install .*",
+    "desc": "install built artifacts (privileged install step)"
+  },
+  {
+    "match": "make install",
+    "desc": "legacy install step (privileged)"
+  }
+]
