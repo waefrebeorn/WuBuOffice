@@ -107,5 +107,6 @@ int main(void){
     }
     printf("LSTM gradcheck: checked=%d fails(>5%%)=%d\n", checked, fails);
     printf("%s\n", fails==0?"LSTM TESTS PASSED":"LSTM TESTS FAILED");
+    free(Whead); free(bhead); free(x); lstm_free(R);
     return fails==0?0:1;
 }

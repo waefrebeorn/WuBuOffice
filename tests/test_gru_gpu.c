@@ -75,7 +75,8 @@ int main(void){
         if(rel>maxrel){ maxrel=rel; worst_i=idx; worst_fd=fd; }
     }
     printf("gradcheck: nparams=%d ncheck=%d maxrel=%.3e max|an|=%.3e max|fd|=%.3e\n", nparams, ncheck, maxrel, maxan, maxfd);
-    printf("  worst_i=%d an=%.4e fd=%.4e\n", worst_i, g[worst_i], worst_fd);
+    if(worst_i>=0)
+        printf("  worst_i=%d an=%.4e fd=%.4e\n", worst_i, g[worst_i], worst_fd);
     int ok = maxrel < 2e-2f;  /* float finite-diff tolerance */
     printf("GRU GPU backward %s (maxrel=%.3e)\n", ok?"PASS":"FAIL", maxrel);
 

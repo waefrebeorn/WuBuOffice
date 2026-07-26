@@ -80,5 +80,6 @@ int main(void){
 
     int ok = (maxerr<2e-2) && (dxerr<2e-2);
     printf(ok? "GRU TESTS PASSED\n" : "GRU TESTS FAILED\n");
+    free(x); free(yref); free(out); free(dy); free(dx); free(xnum); gru_free(g);
     return ok?0:1;
 }

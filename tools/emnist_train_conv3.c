@@ -200,7 +200,7 @@ int main(int argc, char **argv) {
      * samples. Also bounds the batch loop's idx[] reads (prevents OOB). */
     long ntrain = (traincap > 0 && traincap < ntr) ? traincap : ntr;
 
-    ConvNet3 *cn = convnet3_create(&CONV_MED_PAD);  /* 32×32 padded input → 576 feats */
+    ConvNet3 *cn = convnet3_create(&CONV_MED);  /* 28×28 EMNIST input → 256 feats */
     /* Optional: load a pretrained conv (e.g. to freeze good features and only
      * fit the MLP head, or to warm-start joint training). CN_LOAD_CONV=path */
     if(getenv("CN_LOAD_CONV")){
@@ -432,5 +432,6 @@ int main(int argc, char **argv) {
     for(int g=0;g<nlayers;g++){ free(cvel[g]); free(cmsq[g]); }
     free(cvel); free(cmsq);
     if(use_wubu){ for(int g=0;g<nlayers;g++){ free(cwvel[g]); free(cwcsq[g]); } free(cwvel); free(cwcsq); }
+    else { free(cwvel); free(cwcsq); }
     return 0;
 }

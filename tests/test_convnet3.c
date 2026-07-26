@@ -80,6 +80,10 @@ int main(void){
     for(int i=0;i<256;i++) if(f1[i]!=f2[i]){ printf("FAIL forward not deterministic\n"); ok=0; break; }
     for(int i=0;i<256;i++) if(isnan(f1[i])||isinf(f1[i])){ printf("FAIL NaN/Inf in features\n"); ok=0; break; }
 
-    if(ok && acc>=99.0f){ printf("PASS\n"); return 0; }
-    printf("FAIL (acc=%.1f)\n", acc); return 1;
+    if(ok && acc>=99.0f){ printf("PASS\n"); }
+    else { printf("FAIL (acc=%.1f)\n", acc); }
+
+    free(X); free(Y); free(feat); free(df);
+    convnet3_destroy(cn); mlp_destroy(m);
+    return ok && acc>=99.0f ? 0 : 1;
 }

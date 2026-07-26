@@ -61,5 +61,6 @@ int main(void){
         if(!ok) fails++;
     }
     printf(fails? "\nGRADCHECK FAIL (%d)\n":"\nGRADCHECK PASS\n", fails);
+    convnet3_destroy(cn); mlp_destroy(m);
     return fails?1:0;
 }
