@@ -8,8 +8,8 @@
     "desc": "refresh package index before a vetted install"
   },
   {
-    "match": "apt-get install -y (build-essential|cmake|ninja-build|pkg-config|libpng-dev|zlib1g-dev|libjpeg-dev|libfreetype6-dev)",
-    "desc": "install known build toolchain deps for WuBuOffice"
+    "match": "apt-get install -y (build-essential|cmake|ninja-build|pkg-config|libpng-dev|zlib1g-dev|libjpeg-dev|libfreetype6-dev|libsdl2-dev)",
+    "desc": "install known build toolchain deps for WuBuOffice/WuBuPad"
   },
   {
     "match": "id",
