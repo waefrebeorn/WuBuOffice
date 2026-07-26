@@ -25,6 +25,14 @@ add_executable(test_autosave test_autosave.c)
 target_link_libraries(test_autosave PRIVATE wubuautosave)
 add_test(NAME autosave COMMAND test_autosave)
 
+add_executable(test_draw test_draw.c)
+target_link_libraries(test_draw PRIVATE wubudraw)
+add_test(NAME draw COMMAND test_draw)
+
+add_executable(test_wubumath test_math.c)
+target_link_libraries(test_wubumath PRIVATE wubumath)
+add_test(NAME wubumath COMMAND test_wubumath)
+
 add_executable(test_model test_model.c)
 target_link_libraries(test_model PRIVATE wubumodel)
 add_test(NAME model COMMAND test_model)
