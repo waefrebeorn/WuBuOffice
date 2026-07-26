@@ -135,7 +135,7 @@ int rs_decode(uint8_t *recv, int n, int nroots){
      * alpha^i = X_k^{-1} = alpha^{-(n-1-p)}, so i = -(n-1-p) mod 255, i.e.
      * p = (i + n - 1) mod 255. Include i=0 (X_k = 1, last codeword coeff). */
     int errs[64], nerr = 0;
-    for (int i = 0; i < 256; i++) {
+    for (int i = 0; i < 255; i++) { /* alpha^i has period 255: i=255 would duplicate i=0 */
         uint8_t ev = 0;
         for (int j = 0; j <= L; j++) ev ^= gf_mul(Lrev[j], gf_exp[(j * i) % 255]);
         if (ev == 0) {
@@ -166,16 +166,18 @@ int rs_decode(uint8_t *recv, int n, int nroots){
     return 0;
 }
 
-/* ---------------- QR version tables (ECC level M, versions 1..7) ---------------- */
+/* ---------------- QR version tables (ECC level M, versions 1..7) ----------------
+ * datacw = TOTAL data codewords across all blocks; ecc = EC codewords PER BLOCK.
+ * (ISO/IEC 18004, level M: all blocks equal-sized for v1-7.) */
 typedef struct { int ver; int size; int align[3]; int nblocks; int datacw; int ecc; } QRVer;
 static const QRVer VERS[7] = {
-    {1,21,{},                 1, 16, 10},
-    {2,25,{6,18},             1, 28, 16},
-    {3,29,{6,22},             1, 44, 26},
-    {4,33,{6,26},             2, 32, 18},
-    {5,37,{6,30},             2, 43, 22},
-    {6,41,{6,34},             4, 27, 16},
-    {7,45,{6,22,38},          4, 31, 18},
+    {1,21,{},                 1,  16, 10},
+    {2,25,{6,18},             1,  28, 16},
+    {3,29,{6,22},             1,  44, 26},
+    {4,33,{6,26},             2,  64, 18},
+    {5,37,{6,30},             2,  86, 24},
+    {6,41,{6,34},             4, 108, 16},
+    {7,45,{6,22,38},          4, 124, 18},
 };
 static const int NVER = 7;
 
@@ -468,6 +470,30 @@ int qr_decode_matrix(const uint8_t *matrix, int size, char *out, int outcap){
  * affine map from the three detected corners, samples the modules, and decodes. */
 static int qr_is_dark(unsigned char v, int bg){ return (int)v < (bg + (255 - bg) / 2); }
 
+/* vertical cross-check: walk up/down from (cx,cy) counting the run structure
+ * D(center) L D L D; require the same 1:1:3:1:1 profile within tolerance. */
+static int qr_vcheck(const unsigned char *pix, int W, int H, int bg, int cx, int cy, int mw){
+    if (cx < 0 || cx >= W || cy < 0 || cy >= H) return 0;
+    if (!qr_is_dark(pix[cy * W + cx], bg)) return 0;
+    int runs[5] = {0, 0, 0, 0, 0}; /* [0]=center dark, [1]=light up, [2]=dark up, [3]=light down, [4]=dark down */
+    int y;
+    /* center dark run extent */
+    for (y = cy; y >= 0 && qr_is_dark(pix[y * W + cx], bg); y--) runs[0]++;
+    int topd = y;
+    for (y = cy + 1; y < H && qr_is_dark(pix[y * W + cx], bg); y++) runs[0]++;
+    int botd = y;
+    /* above: light then dark */
+    for (y = topd; y >= 0 && !qr_is_dark(pix[y * W + cx], bg); y--) runs[1]++;
+    for (; y >= 0 && qr_is_dark(pix[y * W + cx], bg); y--) runs[2]++;
+    /* below: light then dark */
+    for (y = botd; y < H && !qr_is_dark(pix[y * W + cx], bg); y++) runs[3]++;
+    for (; y < H && qr_is_dark(pix[y * W + cx], bg); y++) runs[4]++;
+    /* center dark should be ~3 modules, others ~1 module */
+    if (runs[0] < 2 * mw || runs[0] > 5 * mw) return 0;
+    for (int k = 1; k < 5; k++) if (runs[k] < mw / 2 || runs[k] > 2 * mw + 1) return 0;
+    return 1;
+}
+
 int qr_detect_blocks(const unsigned char *pix, int W, int H, int bg,
                      int maxn, char text[][256], int txtcap,
                      int *x0, int *y0, int *x1, int *y1){
@@ -479,48 +505,40 @@ int qr_detect_blocks(const unsigned char *pix, int W, int H, int bg,
     Cand *cands = (Cand*)malloc(sizeof(Cand) * (size_t)(W * H / 4 + 16));
     int nc = 0;
     for (int y = 0; y < H; y++) {
-        int runs[5], rc = 0, prev = -1, runlen = 0;
-        int x = 0;
-        while (x < W) {
+        /* collect ALL alternating runs (width, is_dark) across the row */
+        int rw[256], rd[256], rn = 0, prev = -1, runlen = 0;
+        for (int x = 0; x < W; x++) {
             int d = qr_is_dark(pix[y * W + x], bg) ? 1 : 0;
-            if (d != prev) { if (prev != -1) { runs[rc++] = runlen; if (rc == 5) break; } prev = d; runlen = 1; }
-            else runlen++;
-            x++;
+            if (d != prev) {
+                if (prev != -1) { rw[rn] = runlen; rd[rn] = prev; rn++; }
+                prev = d; runlen = 1;
+            } else runlen++;
         }
-        if (rc < 5) continue;
-        /* runs should be D L D L D => prev sequence; check center is 3x */
-        if (runs[2] < 1) continue;
-        int w0 = runs[0], w1 = runs[1], w2 = runs[2], w3 = runs[3], w4 = runs[4];
-        int okr = (w2 >= 2 * w0) && (w2 <= 5 * w0) &&
-                  (w1 <= 2 * w0) && (w1 >= w0 / 2) &&
-                  (w3 <= 2 * w0) && (w3 >= w0 / 2) &&
-                  (w4 <= 2 * w0) && (w4 >= w0 / 2);
-        if (!okr) continue;
-        int cx = (w0 + (w0 + w1) + (w0 + w1 + w2)) ; /* approx center col */
-        /* center column relative to start of run sequence; recompute precisely */
-        int startx = 0; /* we lost start; instead verify by column scan below */
-        (void)cx; (void)startx;
-        /* verify with a vertical scan at the candidate center column */
-        int cc = x - (runlen) - 1; /* last x is one past; approximate */
-        /* recompute candidate center x from the run widths */
-        /* The 5 runs started at some sx; center of middle run = sx + w0+w1+w2/2 */
-        /* We don't have sx; do a second horizontal pass to get exact center. */
-        (void)cc;
-        /* Second pass: find exact start by re-scanning this row's runs fully. */
-        {
-            int sx = -1; int r2[5], rc2 = 0, pv = -1, rl = 0;
-            for (int xx = 0; xx < W; xx++) {
-                int d = qr_is_dark(pix[y * W + xx], bg) ? 1 : 0;
-                if (d != pv) { if (pv != -1) { r2[rc2++] = rl; if (rc2 == 5) { sx = xx - rl; break; } } pv = d; rl = 1; }
-                else rl++;
-            }
-            if (sx < 0) continue;
-            int mw = r2[2];
-            int centerx = sx + r2[0] + r2[1] + r2[2] / 2;
-            cands[nc].x = centerx; cands[nc].y = y; cands[nc].mw = mw; nc++;
+        if (prev != -1) { rw[rn] = runlen; rd[rn] = prev; rn++; }
+        if (rn < 5) continue;
+        /* slide a 5-run window that starts on a DARK run (finder: D L D L D) */
+        for (int i = 0; i + 4 < rn; i++) {
+            if (rd[i] != 1) continue; /* finder outer ring is dark */
+            int w0 = rw[i], w1 = rw[i+1], w2 = rw[i+2], w3 = rw[i+3], w4 = rw[i+4];
+            if (w2 < 1) continue;
+            int okr = (w2 >= 2 * w0) && (w2 <= 5 * w0) &&
+                      (w1 <= 2 * w0) && (w1 >= w0 / 2) &&
+                      (w3 <= 2 * w0) && (w3 >= w0 / 2) &&
+                      (w4 <= 2 * w0) && (w4 >= w0 / 2);
+            if (!okr) continue;
+            /* start x of run i, then center of middle run */
+            int sx = 0;
+            for (int k = 0; k < i; k++) sx += rw[k];
+            int centerx = sx + w0 + w1 + w2 / 2;
+            /* vertical cross-check: kills false positives from timing/data rows
+             * and off-center rows whose profile happens to match horizontally */
+            if (!qr_vcheck(pix, W, H, bg, centerx, y, w0)) continue;
+            cands[nc].x = centerx; cands[nc].y = y; cands[nc].mw = w0; nc++;
+            i += 3; /* skip past this window; a row may cross MORE finders (TL+TR) */
         }
     }
     int found = 0;
+    if (getenv("QRACQDBG")) fprintf(stderr, "QRACQ nc=%d\n", nc);
     /* 2) cluster candidates into finders (centers within ~3 module-widths). */
     int *used = (int*)calloc((size_t)nc, sizeof(int));
     Cand *finders = (Cand*)malloc(sizeof(Cand) * (size_t)(nc + 1));
@@ -540,67 +558,81 @@ int qr_detect_blocks(const unsigned char *pix, int W, int H, int bg,
     /* 3) need at least 3 finders; pick the trio forming the symbol. For a clean
      *    scan the three finders are the corners (TL, TR, BL). Use the three most
      *    separated ones. */
+    if (getenv("QRACQDBG")) { fprintf(stderr, "QRACQ nf=%d", nf); for (int i=0;i<nf;i++) fprintf(stderr, " (%d,%d m%d)", finders[i].x, finders[i].y, finders[i].mw); fprintf(stderr, "\n"); }
     free(cands); free(used);
     if (nf < 3) { free(finders); return 0; }
 
-    /* choose 3 finders: prefer the configuration with the largest bounding box
-     * formed by 3 mutually-distant points. Simple: take global extremes. */
+    /* choose 3 finders forming the QR corner geometry: a right isoceles
+     * triangle (legs equal, ~90 deg at TL). Data-region false positives can
+     * survive the run checks, so geometry — not raw spread — must pick the trio. */
     int idx[3] = {0, 1, 2};
-    /* sort by x then pick spread; for typical layout, the three finders are
-     * enough; just use first three distinct if nf==3, else pick max-spread trio. */
-    if (nf > 3) {
-        /* pick the trio maximizing sum of pairwise distances */
-        int best = -1;
+    int have_corner = 0;
+    {
+        double bestscore = -1;
         for (int a = 0; a < nf; a++) for (int b = a+1; b < nf; b++) for (int c = b+1; c < nf; c++) {
-            int d = abs(finders[a].x-finders[b].x)+abs(finders[a].y-finders[b].y)
-                   +abs(finders[b].x-finders[c].x)+abs(finders[b].y-finders[c].y)
-                   +abs(finders[a].x-finders[c].x)+abs(finders[a].y-finders[c].y);
-            if (d > best) { best = d; idx[0]=a; idx[1]=b; idx[2]=c; }
+            /* try each vertex as the corner (TL) */
+            int vs[3][3] = {{a,b,c},{b,a,c},{c,a,b}};
+            for (int t = 0; t < 3; t++) {
+                Cand *P = &finders[vs[t][0]], *Q = &finders[vs[t][1]], *R = &finders[vs[t][2]];
+                double ux = Q->x - P->x, uy = Q->y - P->y;
+                double vx = R->x - P->x, vy = R->y - P->y;
+                double lu = hypot(ux, uy), lv = hypot(vx, vy);
+                if (lu < 8 * P->mw || lv < 8 * P->mw) continue;   /* too close: v1 legs are 14 modules */
+                double ratio = lu < lv ? lu / lv : lv / lu;       /* leg equality (1 = perfect) */
+                if (ratio < 0.8) continue;
+                double cosang = (ux * vx + uy * vy) / (lu * lv);  /* ~0 at 90 deg */
+                if (fabs(cosang) > 0.25) continue;
+                double score = ratio * (1.0 - fabs(cosang)) * (lu + lv);
+                if (score > bestscore) { bestscore = score; idx[0]=vs[t][0]; idx[1]=vs[t][1]; idx[2]=vs[t][2]; have_corner = 1; }
+            }
         }
+        if (bestscore < 0) { free(finders); return 0; }
     }
-    /* map to TL, TR, BL by coordinates: TL=min(x+y), TR=max(x-y), BL=max(x+y) */
+    /* TL is the corner vertex from the geometry search; orient TR/BL so the
+     * cross product (TL->TR) x (TL->BL) is positive (right-handed, matches the
+     * standard upright QR layout: TR right of TL, BL below TL). */
     Cand tri[3];
     for (int k = 0; k < 3; k++) tri[k] = finders[idx[k]];
+    (void)have_corner;
     Cand *TL = &tri[0], *TR = &tri[1], *BL = &tri[2];
-    /* sort by x+y ascending => TL first */
-    for (int a = 0; a < 3; a++) for (int b = a+1; b < 3; b++) {
-        int sa = tri[a].x + tri[a].y, sb = tri[b].x + tri[b].y;
-        if (sa > sb) { Cand t = tri[a]; tri[a] = tri[b]; tri[b] = t; }
+    {
+        double ux = TR->x - TL->x, uy = TR->y - TL->y;
+        double vx = BL->x - TL->x, vy = BL->y - TL->y;
+        if (ux * vy - uy * vx < 0) { Cand *t = TR; TR = BL; BL = t; }
     }
-    TL = &tri[0];
-    /* among remaining two, TR has smaller y (top), BL has larger y */
-    if (tri[1].y < tri[2].y) { TR = &tri[1]; BL = &tri[2]; }
-    else { TR = &tri[2]; BL = &tri[1]; }
 
-    /* 4) estimate module size and symbol dimension from finder spacing */
+    /* 4) estimate symbol dimension: module size comes straight from the finder
+     * run widths (mw = 1 module). Center-to-center spacing = (N-7) modules, so
+     * N = spacing/ms + 7; snap to the nearest valid size (17+4v, v=1..7). */
     double dTR = hypot((double)(TR->x - TL->x), (double)(TR->y - TL->y));
     double dBL = hypot((double)(BL->x - TL->x), (double)(BL->y - TL->y));
-    /* module size ~ distance / (size-7) for v>=1; solve via version guess */
-    int est_modules = 0;
+    double msf = (TL->mw + TR->mw + BL->mw) / 3.0;
+    if (msf < 1) msf = 1;
+    double nest = (dTR + dBL) / (2.0 * msf) + 7.0;
+    int N = 21, bestd = 1 << 30;
     for (int vv = 1; vv <= 7; vv++) {
-        int N = 17 + 4 * vv;
-        double ms1 = dTR / (N - 7), ms2 = dBL / (N - 7);
-        if (fabs(ms1 - ms2) / (ms1 + 1e-6) < 0.15) { est_modules = N; break; }
+        int cand = 17 + 4 * vv;
+        int dd = (int)fabs(nest - cand);
+        if (dd < bestd) { bestd = dd; N = cand; }
     }
-    if (est_modules == 0) est_modules = 21;
-    int N = est_modules;
     double ms = (dTR + dBL) / (2.0 * (N - 7));
     if (ms < 1) ms = 1;
 
-    /* 5) affine map dst(module r,c)->src(pixel). Solve forward map src=A*dst. */
-    /* dst TL=(0,0), TR=(N-1,0), BL=(0,N-1); src known. */
+    /* 5) affine map: finder CENTERS sit at module coords (3.5,3.5), (N-3.5,3.5),
+     * (3.5,N-3.5). Span between centers = N-7 modules. Sample module centers. */
     double x0p = TL->x, y0p = TL->y;
     double x1p = TR->x, y1p = TR->y;
     double x2p = BL->x, y2p = BL->y;
-    double a = (x1p - x0p) / (double)(N - 1);
-    double b = (x2p - x0p) / (double)(N - 1);
-    double c = (y1p - y0p) / (double)(N - 1);
-    double d = (y2p - y0p) / (double)(N - 1);
+    double a = (x1p - x0p) / (double)(N - 7);
+    double b = (x2p - x0p) / (double)(N - 7);
+    double c = (y1p - y0p) / (double)(N - 7);
+    double d = (y2p - y0p) / (double)(N - 7);
 
     unsigned char *matrix = (unsigned char*)malloc((size_t)N * N);
     for (int r = 0; r < N; r++) for (int cc2 = 0; cc2 < N; cc2++) {
-        double sx = x0p + a * cc2 + b * r;
-        double sy = y0p + c * cc2 + d * r;
+        double u = (cc2 + 0.5) - 3.5, v2 = (r + 0.5) - 3.5;
+        double sx = x0p + a * u + b * v2;
+        double sy = y0p + c * u + d * v2;
         int ix = (int)floor(sx + 0.5), iy = (int)floor(sy + 0.5);
         int v = 0;
         if (ix >= 0 && ix < W && iy >= 0 && iy < H) v = qr_is_dark(pix[iy * W + ix], bg) ? 1 : 0;
@@ -608,6 +640,11 @@ int qr_detect_blocks(const unsigned char *pix, int W, int H, int bg,
     }
 
     char dec[256];
+    if (getenv("QRACQDBG")) {
+        FILE *mf = fopen("/tmp/samp_matrix.txt","w");
+        for (int r=0;r<N;r++){ for(int cc2=0;cc2<N;cc2++) fprintf(mf,"%d",matrix[r*N+cc2]); fprintf(mf,"\n"); }
+        fclose(mf);
+    }
     if (qr_decode_matrix(matrix, N, dec, sizeof dec) == 0 && dec[0]) {
         if (found < maxn) {
             strncpy(text[found], dec, 255); text[found][255] = 0;
@@ -622,35 +659,5 @@ int qr_detect_blocks(const unsigned char *pix, int W, int H, int bg,
     free(matrix);
     free(finders);
     return found;
-}
-
-/* self-test: rs_encode then rs_decode, including error correction */
-static int qr_rs_selftest(void){
-    gf_init();
-    int nroots = 10, ndata = 16, n = ndata + nroots;
-    uint8_t data[16];
-    for (int i = 0; i < 16; i++) data[i] = (uint8_t)(i * 7 + 3);
-    int fail = 0;
-    /* clean */
-    uint8_t cw[26];
-    for (int i = 0; i < 16; i++) cw[i] = data[i];
-    rs_encode(cw, ndata, nroots, cw + ndata);
-    if (rs_decode(cw, n, nroots) != 0) { fprintf(stderr, "SELFTEST clean FAIL\n"); fail = 1; }
-    else fprintf(stderr, "SELFTEST clean OK\n");
-    /* 1-error */
-    uint8_t c1[26];
-    for (int i = 0; i < n; i++) c1[i] = cw[i];
-    c1[7] ^= 0x55;
-    if (rs_decode(c1, n, nroots) != 0) { fprintf(stderr, "SELFTEST 1-err FAIL\n"); fail = 1; }
-    else { int ok = 1; for (int i = 0; i < n; i++) if (c1[i] != cw[i]) ok = 0;
-           fprintf(stderr, "SELFTEST 1-err %s\n", ok ? "OK" : "FAIL"); if (!ok) fail = 1; }
-    /* 2-error */
-    uint8_t c2[26];
-    for (int i = 0; i < n; i++) c2[i] = cw[i];
-    c2[3] ^= 0xAA; c2[11] ^= 0x33;
-    if (rs_decode(c2, n, nroots) != 0) { fprintf(stderr, "SELFTEST 2-err FAIL\n"); fail = 1; }
-    else { int ok = 1; for (int i = 0; i < n; i++) if (c2[i] != cw[i]) ok = 0;
-           fprintf(stderr, "SELFTEST 2-err %s\n", ok ? "OK" : "FAIL"); if (!ok) fail = 1; }
-    return fail ? -1 : 0;
 }
 
