@@ -47,7 +47,7 @@ int main(void){
      * CN_LEAK=1 the hard-ReLU kinks make FD disagree with the (correct)
      * subgradient the backward computes -- that is a harness artifact, not a
      * backward bug. Force it before create() reads the env. */
-    putenv("CN_LEAK=1");
+    setenv("CN_LEAK", "1", 1);
     ConvConfig3 cfg = {28,28, 8,3,1, 16,3,1, 32,3,1};
     ConvNet3 *cn = convnet3_create(&cfg);
     int D = convnet3_dim(cn);

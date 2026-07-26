@@ -10,6 +10,7 @@
 
 #include "cell_internal.h"
 #include "cell.h"
+#include "cell_read.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

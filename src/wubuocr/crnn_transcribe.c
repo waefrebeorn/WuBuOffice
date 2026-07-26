@@ -7,6 +7,7 @@
 #include <string.h>
 #include <math.h>
 #include "binarize.h"
+#include "lexicon.h"
 
 /* A pixel is "ink" when it deviates strongly from the page background. This
  * is adaptive: synthetic test pages use a dark background (low value) with
@@ -835,9 +836,14 @@ int crnn_transcribe_page_json(CRNN *m, const OcrImage *page,
                         char w[128]; int k=0;
                         for (;i<j && k<127;) w[k++]=pred[i++]; w[k]='\0';
                         int dist=0;
-                        const char *fixed = lex_correct((Lexicon*)lex, w, 2, &dist);
-                        if (fixed && dist>0 && dist<=2) {
-                            for (int q=0; fixed[q] && ci<511; q++) corr[ci++]=fixed[q];
+                        int widx = lex_correct((Lexicon*)lex, w, 2, &dist);
+                        if (widx >= 0) {
+                            const char *fixed = lex_word((Lexicon*)lex, widx);
+                            if (fixed && dist>0 && dist<=2) {
+                                for (int q=0; fixed[q] && ci<511; q++) corr[ci++]=fixed[q];
+                            } else {
+                                for (int q=0; w[q] && ci<511; q++) corr[ci++]=w[q];
+                            }
                         } else {
                             for (int q=0; w[q] && ci<511; q++) corr[ci++]=w[q];
                         }

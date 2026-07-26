@@ -18,6 +18,7 @@
 #include "image.h"
 #include "wubufont.h"
 #include "ocr_render.h"
+#include "crnn_transcribe.h"
 
 #define STRIP 20
 #define PPM   16
