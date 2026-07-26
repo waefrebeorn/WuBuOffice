@@ -62,7 +62,7 @@ Legend: [DONE] implemented this pass · [CORE] pipeline exists · [TODO] planned
 46. [DONE] Language auto-detect → charset/script tag (per-block `lang` + doc-level majority vote)
 47. [TODO] Handwriting model (separate CRNN head)
 48. [DONE] Math/equation recognition (line detector + `math` block w/ latex placeholder)
-49. [TODO] Barcode / QR decode → embedded text
+49. [DONE] Barcode / QR decode → embedded text (byte-mode QR, ECC-M, v1..7; GF(256) RS encoder/decoder with BM+Chien+Forney error correction; `qr_encode`/`qr_decode_matrix` + `test_qr` round-trip)
 50. [TODO] ONNX import of external models
 
 ## E. Output formats

@@ -42,6 +42,7 @@ runtime dependencies** beyond POSIX. (The only external link is `zlib`, used
 | `wubudoc` | ✅ working | **EPUB 3** writer over the doc model (EbookLib validated) — chapters split at H1/Title, OPF + nav + NCX |
 | `wubulegacy` | ✅ working | **Legacy binary** readers: `.xls` (BIFF8, validated by xlwt/xlrd), `.doc` (FIB + piece table), `.ppt` (record atoms) |
 | `wubuconv` | ✅ working | **Unified conversion**: any supported format → any other (docx/xlsx/pptx/csv/tsv/md/html/rtf/odt/ods/odp/fodt/fods/fodp/doc/xls/ppt/pdf/epub/json) |
+| `wubuocr` QR | ✅ working | Byte-mode **QR codec** (ECC-M, v1..7): `qr_encode`/`qr_decode_matrix`, GF(256) Reed-Solomon encoder/decoder with Berlekamp-Massey + Chien + Forney error correction; `test_qr` round-trips text (finder-based image acquisition is a separate subsystem) |
 
 All three writers emit files that open in Microsoft Word / Excel /
 PowerPoint and LibreOffice. The reader decodes **real deflate-compressed
