@@ -24,14 +24,23 @@ int wubuword_main(int argc, char **argv) {
     wubuword_cell(d, 0, "wubuoxml"); wubuword_cell(d, 0, "OPC package");
     wubuword_table_end(d);
 
-    size_t len = 0;
-    char *doc = wubuword_render(d, &len);
-    wubuword_free(d);
+    wubuword_para(d, "Heading2", 0, "Roadmap");
+    wubuword_list_begin(d, "bullet");
+    wubuword_list_item(d, "Images and headers/footers");
+    wubuword_list_item(d, "Hyperlinks and comments");
+    wubuword_list_item(d, "Nested and multilevel lists");
+    wubuword_list_end(d);
+    wubuword_para(d, NULL, 0, "Ordered steps:");
+    wubuword_list_begin(d, "number");
+    wubuword_list_item(d, "Parse the spec");
+    wubuword_list_item(d, "Write the writer");
+    wubuword_list_item(d, "Validate the output");
+    wubuword_list_end(d);
 
-    if (wubuword_assemble(outpath, doc, len) != 0) {
-        fprintf(stderr, "wubuword: assemble failed\n"); free(doc); return 1;
+    if (wubuword_assemble_doc(outpath, d) != 0) {
+        fprintf(stderr, "wubuword: assemble failed\n"); wubuword_free(d); return 1;
     }
-    free(doc);
-    fprintf(stderr, "wubuword: wrote %s (%zu bytes of document.xml)\n", outpath, len);
+    fprintf(stderr, "wubuword: wrote %s (used_lists=%d)\n", outpath, wubuword_used_lists(d));
+    wubuword_free(d);
     return 0;
 }

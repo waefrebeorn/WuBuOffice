@@ -20,6 +20,19 @@ void wubuword_free(wubuword_doc *d);
  * `bold` nonzero makes the run bold. */
 void wubuword_para(wubuword_doc *d, const char *style, int bold, const char *text);
 
+/* Lists. Begin a list, then add items; end closes it. `kind` is "bullet" or
+ * "number" (decimal). Items nest by calling list_begin again (one level deep
+ * is sufficient for the common case). Each item is a paragraph carrying
+ * numbering properties (w:numPr) referencing the numbering definition that
+ * wubuword emits into word/numbering.xml when any list is used. */
+void wubuword_list_begin(wubuword_doc *d, const char *kind);
+void wubuword_list_item(wubuword_doc *d, const char *text);
+void wubuword_list_end(wubuword_doc *d);
+
+/* True if the document used any list (so the caller must include the
+ * numbering part). Lets wubuword_assemble emit word/numbering.xml. */
+int  wubuword_used_lists(const wubuword_doc *d);
+
 /* Begin/end a table. Call wubuword_cell() between begin and end to fill rows.
  * Each row is started with wubuword_row() (call it before the cells of a row;
  * it closes the previous row if one is open). */

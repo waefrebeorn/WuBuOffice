@@ -31,7 +31,7 @@ runtime dependencies** beyond POSIX. (The only external link is `zlib`, used
 | `wubuxml` | ✅ working | Streaming, well-formed XML writer with correct escaping |
 | `wubuoxml` | ✅ working | OPC writer **+ reader** — `[Content_Types].xml`, `.rels` graphs, text extraction |
 | `wuburead` | ✅ working | **Full OOXML read-back**: docx paragraph/run text, xlsx cells (shared-string + inline-string resolution, formula cached values) as TSV, pptx slide text. Dispatches by detected part type. |
-|| `wubuword` | ✅ working | WordprocessingML: headings, bold, tables, `.docx` assembly |
+|| `wubuword` | ✅ working | WordprocessingML: headings, bold/italic runs, **bullet + numbered lists** (word/numbering.xml), tables |
 | `wubucell` | ✅ working | SpreadsheetML: multi-sheet, shared strings, numbers, **formulas**, styles |
 | `wubushow` | ✅ working | PresentationML: multi-slide, title + multi-paragraph body, theme/master/layout |
 | `wubuedit` | ✅ working | **Structure-preserving** round-trip: parses word/document.xml into a model (paragraph style, bold runs, tables) and re-emits it — structure survives the reader+writer loop |

@@ -16,6 +16,9 @@ struct wubuword_doc {
     int in_table;
     int in_tr;        /* inside a <w:tr> (row open, awaiting cells) */
     int opened;       /* body/document opened */
+    int used_lists;   /* any list item emitted -> need numbering.xml */
+    int in_list;      /* inside a list context */
+    int list_numid;   /* active numId (1=bullet, 2=number) */
 };
 
 /* doc.c */

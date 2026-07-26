@@ -561,6 +561,12 @@ target_compile_definitions(test_convert PRIVATE
     ODF_ORACLE_SCRIPT="${CMAKE_CURRENT_SOURCE_DIR}/tests/conformance/odf_oracle.py")
 add_test(NAME convert COMMAND test_convert)
 
+# Word lists (bullet + numbered) feature: assemble + re-read validation.
+add_executable(test_word_lists tests/test_word_lists.c)
+target_link_libraries(test_word_lists PRIVATE wubuword_app wubuoxml wubuxml wubuzip)
+target_include_directories(test_word_lists PRIVATE apps/wubuword src/wubuoxml src/wubuxml src/wubuzip)
+add_test(NAME word_lists COMMAND test_word_lists)
+
 # Reverse-direction readers (rtf/html/epub -> dm_doc) round-trip.
 add_executable(test_readers tests/test_readers.c)
 target_link_libraries(test_readers PRIVATE wubuoxml wubuxml wubuzip wubucfb wubuformula wubuedit_app wubujson wubuconv)
