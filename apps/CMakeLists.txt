@@ -1,0 +1,20 @@
+# WuBuOffice application layers. Each app owns its build in its own dir.
+# OBJECT libraries (app_*_app) are shared between the standalone CLI and the
+# unified wubuoffice binary; forward link references resolve lazily.
+add_subdirectory(wubuword)
+add_subdirectory(wubucell)
+add_subdirectory(wubushow)
+add_subdirectory(wuburead)
+add_subdirectory(wubuedit)
+add_subdirectory(wubudoc)
+add_subdirectory(wubuodf)
+add_subdirectory(wubuconv)
+add_subdirectory(wubulegacy)
+add_subdirectory(wubupdf)
+add_subdirectory(wubuoffice)
+add_subdirectory(wubusvg)
+add_subdirectory(wubufont)
+add_subdirectory(wubuocr)
+add_subdirectory(wubugauntlet)
+add_subdirectory(wubunote)
+add_subdirectory(wubuview)
