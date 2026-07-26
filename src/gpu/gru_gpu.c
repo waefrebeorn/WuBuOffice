@@ -87,7 +87,10 @@ static void transpose_TH(const float *M,int T,int H,float *Mt){ /* M[T*H] -> Mt[
     for(int t=0;t<T;t++) for(int j=0;j<H;j++) Mt[j*T+t]=M[t*H+j];
 }
 
-/* forward one direction */
+/* forward one direction — same two-pass structure as gru.c: all z,r gates for
+ * the timestep are computed BEFORE any candidate, so candidates only ever see
+ * this timestep's reset gates. The W·x gate GEMM parts are precomputed per
+ * scan step (AZ/AR/AC), indexed by the scan position t (input row ti). */
 static void gru_fwd_dir(GRU *r,int T,const float *x,int dir){
     int H=r->hid,D=r->din; GRUOffs o=gru_offs(H,D);
     const float *P=r->P+(dir?o.block:0);
@@ -95,27 +98,30 @@ static void gru_fwd_dir(GRU *r,int T,const float *x,int dir){
     const float *Uz=P+o.Uz,*Ur=P+o.Ur,*Uh=P+o.Uh;
     const float *Bz=P+o.Bz,*Br=P+o.Br,*Bh=P+o.Bh;
     float *z=dir?r->zb:r->zf,*rr=dir?r->rb:r->rf,*h=dir?r->hb:r->hf;
-    /* Precompute gate linear parts (X*W) then combined scan. Empirically
-     * matches the gru.c reference (verified by manual transcription, 0.1283). */
-    for(int t=0;t<T;t++) for(int j=0;j<H;j++){
-        float az=0, ar=0, ac=0;
-        const float *xt=x+(size_t)t*D;
-        for(int i=0;i<D;i++){ az+=Wz[j*D+i]*xt[i]; ar+=Wr[j*D+i]*xt[i]; ac+=Wh[j*D+i]*xt[i]; }
-        r->AZ[t*H+j]=az; r->AR[t*H+j]=ar; r->AC[t*H+j]=ac;
-    }
     for(int t=0;t<T;t++){
-        int ti=dir?(T-1-t):t;
+        int ti=dir?(T-1-t):t;             /* input row consumed at scan step t */
         const float *xt=x+(size_t)ti*D;
         for(int j=0;j<H;j++){
-            float az=r->AZ[t*H+j];
-            float ar=r->AR[t*H+j];
-            float ac=r->AC[t*H+j];
-            float hp=(t==0)?0:h[(size_t)(t-1)*H+j];
-            for(int k=0;k<H;k++){ float pv=(t==0)?0:h[(size_t)(t-1)*H+k]; az+=Uz[j*H+k]*pv; ar+=Ur[j*H+k]*pv; ac+=Uh[j*H+k]*(z[t*H+k]*pv); }
-            az+=Bz[j]; ar+=Br[j]; ac+=Bh[j];
+            float az=0, ar=0, ac=0;
+            for(int i=0;i<D;i++){ az+=Wz[j*D+i]*xt[i]; ar+=Wr[j*D+i]*xt[i]; ac+=Wh[j*D+i]*xt[i]; }
+            r->AZ[t*H+j]=az; r->AR[t*H+j]=ar; r->AC[t*H+j]=ac;
+        }
+        /* pass A: complete z,r for the whole timestep */
+        for(int j=0;j<H;j++){
+            float az=r->AZ[t*H+j], ar=r->AR[t*H+j];
+            for(int k=0;k<H;k++){ float pv=(t==0)?0:h[(size_t)(t-1)*H+k]; az+=Uz[j*H+k]*pv; ar+=Ur[j*H+k]*pv; }
+            az+=Bz[j]; ar+=Br[j];
             z[t*H+j]=SIG(az); rr[t*H+j]=SIG(ar);
+        }
+        /* pass B: candidate n and hidden h with the now-complete r[t] */
+        for(int j=0;j<H;j++){
+            float zv=z[t*H+j];
+            float hp=(t==0)?0:h[(size_t)(t-1)*H+j];
+            float ac=r->AC[t*H+j];
+            for(int k=0;k<H;k++){ float pv=(t==0)?0:h[(size_t)(t-1)*H+k]; ac+=Uh[j*H+k]*(rr[t*H+k]*pv); }
+            ac+=Bh[j];
             float nv=mtanh(ac);
-            h[t*H+j]=(1.0f-z[t*H+j])*hp + z[t*H+j]*nv;
+            h[t*H+j]=(1.0f-zv)*hp + zv*nv;
         }
     }
 }
@@ -159,7 +165,7 @@ static void gru_bwd_dir(GRU *r,int T,const float *dy,float *dx,int dir){
             float zv=z[t*H+j],rv=rr[t*H+j];
             int ti=dir?(T-1-t):t; const float *xt=r->xcache+(size_t)ti*D;
             float a=0; for(int i=0;i<D;i++) a+=Wh[j*D+i]*xt[i];
-            for(int k=0;k<H;k++){ float pv=(t==0)?0:h[(size_t)(t-1)*H+k]; a+=Uh[j*H+k]*(z[t*H+k]*pv); }
+            for(int k=0;k<H;k++){ float pv=(t==0)?0:h[(size_t)(t-1)*H+k]; a+=Uh[j*H+k]*(rr[t*H+k]*pv); }
             a+=P[o.Bh+j];
             float nv=mtanh(a);
             float dht=dh[t*H+j];
@@ -169,18 +175,17 @@ static void gru_bwd_dir(GRU *r,int T,const float *dy,float *dx,int dir){
             float daz=dnz*zv*(1.0f-zv);
             for(int k=0;k<H;k++){ float pv=(t==0)?0:h[(size_t)(t-1)*H+k]; drg[k]+=dna*Uh[j*H+k]*pv; }
             r->dZ[t*H+j]=daz; r->dN[t*H+j]=dna;
-            for(int k=0;k<H;k++){ float pv=(t==0)?0:h[(size_t)(t-1)*H+k]; gUh[j*H+k]+=dna*(z[t*H+k]*pv); gUz[j*H+k]+=daz*pv; }
+            for(int k=0;k<H;k++){ float pv=(t==0)?0:h[(size_t)(t-1)*H+k]; gUh[j*H+k]+=dna*(rr[t*H+k]*pv); gUz[j*H+k]+=daz*pv; }
             if(t>0){ dh[(size_t)(t-1)*H+j]+=dht*(1.0f-zv);
-                     for(int k=0;k<H;k++){ float pv=(t==0)?0:h[(size_t)(t-1)*H+k]; float rk=z[t*H+k];
+                     for(int k=0;k<H;k++){ float rk=rr[t*H+k];
                          dh[(size_t)(t-1)*H+k]+=daz*Uz[j*H+k]; dh[(size_t)(t-1)*H+k]+=dna*Uh[j*H+k]*rk; } }
             /* note: dx (input grad) accumulated below in the r-gate pass */
         }
         for(int k=0;k<H;k++){
             float rv=rr[t*H+k]; float dar=drg[k]*rv*(1.0f-rv);
-            int ti=dir?(T-1-t):t; const float *xt=r->xcache+(size_t)ti*D;
             r->dR[t*H+k]=dar;
-            for(int i=0;i<D;i++){ gWr[k*D+i]+=dar*xt[i]; dx[(size_t)ti*D+i]+=dar*Wr[k*D+i]; }
-            gBr[k]+=dar;
+            /* gWr/gBr/dx are accumulated ONCE in the trailing scalar loop
+             * below (adding them here too double-counted the r-gate grads) */
             for(int k2=0;k2<H;k2++){ float pv=(t==0)?0:h[(size_t)(t-1)*H+k2]; gUr[k*H+k2]+=dar*pv;
                 if(t>0) dh[(size_t)(t-1)*H+k2]+=dar*Ur[k*H+k2]; }
         }

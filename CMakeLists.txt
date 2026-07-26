@@ -604,12 +604,14 @@ add_executable(test_crnn_transcribe tests/test_crnn_transcribe.c)
 target_include_directories(test_crnn_transcribe PRIVATE src/wubuocr src/wubufont)
 target_link_libraries(test_crnn_transcribe PRIVATE crnnocr wubuocr wubufont m)
 add_test(NAME crnn_transcribe COMMAND test_crnn_transcribe)
+set_tests_properties(crnn_transcribe PROPERTIES WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 
 # CRNN line transcribe -> docmodel JSON (full document charset regression test)
 add_executable(test_crnn_transcribe_full tests/test_crnn_transcribe_full.c)
 target_include_directories(test_crnn_transcribe_full PRIVATE src/wubuocr src/wubufont)
 target_link_libraries(test_crnn_transcribe_full PRIVATE crnnocr wubuimage wubufont m)
 add_test(NAME crnn_transcribe_full COMMAND test_crnn_transcribe_full)
+set_tests_properties(crnn_transcribe_full PROPERTIES WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 
 # Multi-column detection (1/2/3-col) end-to-end via crnn_transcribe_page_json
 add_executable(test_columns tests/test_columns.c)
@@ -782,7 +784,7 @@ add_executable(emnist_train_conv3 tools/emnist_train_conv3.c
                src/wubuocr/convnet3.c src/wubuocr/mlp.c)
 target_include_directories(emnist_train_conv3 PRIVATE src/wubuocr)
 target_link_libraries(emnist_train_conv3 PRIVATE m pthread)
-add_test(NAME emnist_train_conv3_smoke COMMAND emnist_train_conv3 data 128 64 2 2000)
+add_test(NAME emnist_train_conv3_smoke COMMAND emnist_train_conv3 data/emnist 128 64 2 2000)
 set_tests_properties(emnist_train_conv3_smoke PROPERTIES WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 
 # Modular trainer CLI
@@ -888,7 +890,7 @@ add_executable(test_gemm_nt tests/test_gemm_nt.c)
 target_link_libraries(test_gemm_nt PRIVATE gpublas m)
 add_test(NAME gemm_nt COMMAND test_gemm_nt)
 
-add_executable(test_gru_cmp tests/test_gru_cmp.c src/gpu/gru_gpu.c src/wubuocr/gru_layout.c)
+add_executable(test_gru_cmp tests/test_gru_cmp.c src/gpu/gru_gpu.c src/wubuocr/gru_layout.c src/wubuocr/ocl_gru.c)
 target_include_directories(test_gru_cmp PRIVATE src/wubuocr src/gpu)
 target_compile_definitions(test_gru_cmp PRIVATE WITH_CUDA_BUILD)
 target_link_libraries(test_gru_cmp PRIVATE gpublas m)

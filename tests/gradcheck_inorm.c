@@ -12,14 +12,16 @@ static uint32_t rng=0x77AB77CDu;
 static uint32_t xr(void){rng^=rng<<13;rng^=rng>>17;rng^=rng<<5;return rng;}
 static float fr(void){return (float)xr()/(float)0xFFFFFFFFu;}
 
-/* loss = cross-entropy of conv3->mlp on one fixed sample/label */
-static float loss_of(ConvNet3*cn, MLP*m, const float*img, int lab, int D){
+/* loss = cross-entropy of conv3->mlp on one fixed sample/label.
+ * DOUBLE accumulation: a float loss gives FD noise ~1e-7/eps = 1e-4, which
+ * swamps small gradients (be1 ~7e-4) and reports false failures. */
+static double loss_of(ConvNet3*cn, MLP*m, const float*img, int lab, int D){
     float feat[256], sc[8];
     convnet3_forward(cn,img,feat);
     mlp_forward(m,feat,sc);
-    float mx=sc[0]; for(int c=1;c<D;c++) if(sc[c]>mx)mx=sc[c];
-    float sum=0; for(int c=0;c<D;c++) sum+=expf(sc[c]-mx);
-    return -(sc[lab]-mx-logf(sum));
+    double mx=sc[0]; for(int c=1;c<D;c++) if(sc[c]>mx)mx=sc[c];
+    double sum=0; for(int c=0;c<D;c++) sum+=exp((double)sc[c]-mx);
+    return -((double)sc[lab]-mx-log(sum));
 }
 
 int main(void){
@@ -46,14 +48,17 @@ int main(void){
         int idx = xr()%L.n;             /* spot-check one element */
         float g_an=L.grad[idx];
         float save=L.param[idx];
-        L.param[idx]=save+eps; float lp=loss_of(cn,m,img,lab,D);
-        L.param[idx]=save-eps; float lm=loss_of(cn,m,img,lab,D);
+        L.param[idx]=save+eps; double lp=loss_of(cn,m,img,lab,D);
+        L.param[idx]=save-eps; double lm=loss_of(cn,m,img,lab,D);
         L.param[idx]=save;
-        float g_fd=(lp-lm)/(2*eps);
-        float rel=fabsf(g_an-g_fd)/(fabsf(g_an)+fabsf(g_fd)+1e-8f);
+        float g_fd=(float)((lp-lm)/(2.0*eps));
+        float ad=fabsf(g_an-g_fd);
+        float rel=ad/(fabsf(g_an)+fabsf(g_fd)+1e-8f);
+        /* absolute floor: below float-forward FD noise, rel is meaningless */
+        int ok = (rel<2e-2f) || (ad<5e-4f);
         printf("%s[%d]: analytic=% .6f  fd=% .6f  rel_err=%.2e  %s\n",
-               names[li-6],idx,g_an,g_fd,rel, rel<2e-2f?"ok":"FAIL");
-        if(rel>=2e-2f) fails++;
+               names[li-6],idx,g_an,g_fd,rel, ok?"ok":"FAIL");
+        if(!ok) fails++;
     }
     printf(fails? "\nGRADCHECK FAIL (%d)\n":"\nGRADCHECK PASS\n", fails);
     return fails?1:0;

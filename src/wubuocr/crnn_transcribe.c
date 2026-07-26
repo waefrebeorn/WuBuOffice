@@ -658,6 +658,26 @@ int crnn_transcribe_page_json(CRNN *m, const OcrImage *page,
         lcy[nlines] = (y0 + y1) / 2;
         nlines++;
     }
+    /* merge bands separated by tiny gaps: small glyphs (apostrophes, quotes,
+     * dots of i/j, accents) can leave a 1-2 row blank inside a text line and
+     * split one line into two bands. A real inter-line gap is a significant
+     * fraction of the line height; a 1-2 px gap is intra-line noise. */
+    if (nlines > 1) {
+        int hsum = 0;
+        for (int li = 0; li < nlines; li++) hsum += ly1[li] - ly0[li];
+        int avgh = hsum / nlines;
+        int maxgap = avgh / 4; if (maxgap < 2) maxgap = 2;
+        int w2 = 0;
+        for (int li = 0; li < nlines; li++) {
+            if (w2 > 0 && ly0[li] - ly1[w2 - 1] <= maxgap) {
+                ly1[w2 - 1] = ly1[li];               /* merge into previous */
+                lcy[w2 - 1] = (ly0[w2 - 1] + ly1[w2 - 1]) / 2;
+            } else {
+                ly0[w2] = ly0[li]; ly1[w2] = ly1[li]; lcy[w2] = lcy[li]; w2++;
+            }
+        }
+        nlines = w2;
+    }
 
     /* ---- column detection via row-counting vertical projection ----
      * A 2-column page has two lines per y-row (one per column) at the SAME y,

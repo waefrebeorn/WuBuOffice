@@ -30,3 +30,10 @@
 
 # Stray per-session build tree (cmake -S . -B build-cmake-crnn)
 build-cmake-crnn/
+
+# per-session build trees + stray logs
+/build_cuda/
+/build_asan/
+/build_ocl/
+/build_static/
+asan_math.log

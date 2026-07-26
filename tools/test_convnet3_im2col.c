@@ -13,6 +13,7 @@ static float rnd(float lo,float hi){ static unsigned s=12345; s=s*1664525u+10139
 int main(void){
     ConvConfig3 cfg={28,28, 16,5,2, 32,5,2, 64,3,1};
     ConvNet3 *cn=convnet3_create(&cfg);
+    convnet3_set_leak(cn,0.0f);   /* reference math below is HARD ReLU */
     int D=convnet3_dim(cn);
 
     float *img=malloc(28*28*sizeof(float));
@@ -69,6 +70,7 @@ int main(void){
 
     /* reference analytic gradient via forward+backward on cn2 */
     ConvNet3 *cn2=convnet3_create(&cfg);
+    convnet3_set_leak(cn2,0.0f);
     memcpy(convnet3_layer(cn2,0).param, Lw1.param, K1*S1*S1*sizeof(float));
     memcpy(convnet3_layer(cn2,1).param, Lb1.param, K1*sizeof(float));
     memcpy(convnet3_layer(cn2,2).param, Lw2.param, K2*K1*S2*S2*sizeof(float));
@@ -86,6 +88,7 @@ int main(void){
     /* finite diff: forward with b3[0]+eps and -eps */
     float *fp=malloc(D*sizeof(float));
     ConvNet3 *cn3=convnet3_create(&cfg);
+    convnet3_set_leak(cn3,0.0f);
     memcpy(convnet3_layer(cn3,0).param, Lw1.param, K1*S1*S1*sizeof(float));
     memcpy(convnet3_layer(cn3,1).param, Lb1.param, K1*sizeof(float));
     memcpy(convnet3_layer(cn3,2).param, Lw2.param, K2*K1*S2*S2*sizeof(float));
@@ -97,6 +100,7 @@ int main(void){
 
     float *fm=malloc(D*sizeof(float));
     ConvNet3 *cn4=convnet3_create(&cfg);
+    convnet3_set_leak(cn4,0.0f);
     memcpy(convnet3_layer(cn4,0).param, Lw1.param, K1*S1*S1*sizeof(float));
     memcpy(convnet3_layer(cn4,1).param, Lb1.param, K1*sizeof(float));
     memcpy(convnet3_layer(cn4,2).param, Lw2.param, K2*K1*S2*S2*sizeof(float));

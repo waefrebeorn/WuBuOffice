@@ -13,11 +13,11 @@
 static uint32_t rng=0x1234u;
 static float frnd(void){ rng^=rng<<13; rng^=rng>>17; rng^=rng<<5; return ((float)(rng&0xFFFFFF)/(float)0xFFFFFF)*2.0f-1.0f; }
 
-static float out_sum(GRU *r, int T, const float *x, float *ybuf){
+static double out_sum(GRU *r, int T, const float *x, float *ybuf){
     gru_forward(r, T, x);
     int od=gru_outdim(r);
     gru_get_output(r, ybuf);
-    float s=0; for(int i=0;i<T*od;i++) s+=ybuf[i];
+    double s=0; for(int i=0;i<T*od;i++) s+=(double)ybuf[i];  /* double acc: float sum noise ~5e-4 swamped tiny grads */
     return s;
 }
 
@@ -55,23 +55,23 @@ int main(void){
     for(int c=0;c<ncheck;c++){
         int idx = (int)( ((sr^=sr<<13,sr^=sr>>17,sr^=sr<<5,(float)(sr&0xFFFFFF)/(float)0xFFFFFF)) * nparams );
         if(idx<0)idx=-idx; if(idx>=nparams)idx=nparams-1;
-        /* gru.c's reset gate (rr) is computed but UNUSED in the forward
-         * (candidate uses the update gate z instead), so Wr/Ur weights are
-         * mathematically dead: FD sees no output change (fd=0) while the
-         * analytic grad is nonzero. Skip those blocks (they match gru.c). */
-        if((idx>=30 && idx<60) || (idx>=126 && idx<162)) continue;
         float eps=1e-3f;
         float orig=p[idx];
-        p[idx]=orig+eps; float lp=out_sum(r,T,x,y);
-        p[idx]=orig-eps; float lm=out_sum(r,T,x,y);
+        p[idx]=orig+eps; double lp=out_sum(r,T,x,y);
+        p[idx]=orig-eps; double lm=out_sum(r,T,x,y);
         p[idx]=orig;
-        float fd=(lp-lm)/(2*eps);
+        float fd=(float)((lp-lm)/(2.0*eps));
         float an=g[idx];
         if(fabsf(an)>maxan)maxan=fabsf(an);
         if(fabsf(fd)>maxfd)maxfd=fabsf(fd);
         if(c<5) printf("  idx=%d an=%.4e fd=%.4e\n", idx, an, fd);
+        /* mixed criterion: relative error with an absolute floor. Near-zero
+         * gradients (|an|,|fd| ~1e-4) are float FD noise; pure relative error
+         * saturates at 1.0 there and reports a false failure. */
+        float ad=fabsf(fd-an);
+        if(ad < 2e-3f) continue;                 /* below FD noise floor */
         float denom=fabsf(fd)+fabsf(an)+1e-6f;
-        float rel=fabsf(fd-an)/denom;
+        float rel=ad/denom;
         if(rel>maxrel){ maxrel=rel; worst_i=idx; worst_fd=fd; }
     }
     printf("gradcheck: nparams=%d ncheck=%d maxrel=%.3e max|an|=%.3e max|fd|=%.3e\n", nparams, ncheck, maxrel, maxan, maxfd);

@@ -11,6 +11,11 @@
 #include <string.h>
 
 static float rnd(void){ return ((float)rand()/RAND_MAX)*2.0f-1.0f; }
+/* Small stable init for the CHECK: with |w|~1 at T=5 the unrolled forward is
+ * chaotic and central finite differences explode (num ~1e2 for true grads
+ * ~0.1) — a FD artifact, not a BPTT bug (see skill c-nn-gradient-debugging,
+ * step 3). Scale weights to ~±0.1 so the FD is trustworthy. */
+static float rnds(void){ return rnd()*0.1f; }
 
 /* double-precision loss so the central-difference is not round-off limited */
 static double d_loss_of(GRU *g, int T, const float *x, const float *yref){
@@ -28,6 +33,9 @@ int main(void){
     GRU *g = gru_create(D,H,bidir,0xCAFEu);
     if(!g){ printf("gru_create failed\n"); return 1; }
     int O=gru_outdim(g);
+    /* overwrite the ctor's init with small stable weights for the FD check */
+    { int P0=gru_num_params(g); float *w0=gru_param(g);
+      for(int i=0;i<P0;i++) w0[i]=rnds(); }
 
     float *x=malloc((size_t)T*D*sizeof(float));
     float *yref=malloc((size_t)T*O*sizeof(float));
