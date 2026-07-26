@@ -230,6 +230,63 @@ int crnn_recognize(CRNN *m, const OcrImage *line, const char *charset,
     return o;
 }
 
+int crnn_recognize_scored(CRNN *m, const OcrImage *line, const char *charset,
+                          char *out, int cap, int *conf){
+    int T = crnn_time_steps(m, ocr_image_width(line));
+    int *idx = malloc((size_t)T*sizeof(int));
+    int n = crnn_predict(m, line, idx);
+    int o=0, cslen=(int)strlen(charset);
+    /* confidence: mean over frames of the max softmax of the logits */
+    float csum = 0.0f;
+    if (m->logits && n > 0) {
+        for (int t = 0; t < n; t++) {
+            const float *row = m->logits + (size_t)t * m->C;
+            float mx = -1e30f; float denom = 0.0f;
+            for (int c = 0; c < m->C; c++) { float e = (float)expf(row[c]); denom += e; if (e > mx) mx = e; }
+            if (denom > 0.0f) csum += mx / denom;
+        }
+        csum = (csum / (float)n) * 100.0f;
+    }
+    if (conf) *conf = (int)(csum + 0.5f);
+    for(int i=0;i<n && o<cap-1;i++){
+        int k=idx[i];
+        if(k>=1 && k-1<cslen) out[o++]=charset[k-1];
+    }
+    out[o]='\0';
+    free(idx);
+    return o;
+}
+
+int crnn_recognize_scored_chars(CRNN *m, const OcrImage *line, const char *charset,
+                                char *out, int cap, int *conf,
+                                int *cconf, int cconf_cap){
+    int T = crnn_time_steps(m, ocr_image_width(line));
+    int *idx = malloc((size_t)T*sizeof(int));
+    int n = crnn_predict(m, line, idx);
+    int o=0, cslen=(int)strlen(charset);
+    float csum = 0.0f;
+    if (m->logits && n > 0) {
+        for (int t = 0; t < n; t++) {
+            const float *row = m->logits + (size_t)t * m->C;
+            float mx = -1e30f; float denom = 0.0f;
+            for (int c = 0; c < m->C; c++) { float e = (float)expf(row[c]); denom += e; if (e > mx) mx = e; }
+            float p = (denom > 0.0f) ? mx/denom : 0.0f;
+            /* emitted character t gets this frame's max-softmax as its confidence */
+            if (t < cconf_cap) cconf[t] = (int)(p*100.0f + 0.5f);
+            csum += p;
+        }
+        csum = (csum / (float)n) * 100.0f;
+    }
+    if (conf) *conf = (int)(csum + 0.5f);
+    for(int i=0;i<n && o<cap-1;i++){
+        int k=idx[i];
+        if(k>=1 && k-1<cslen) out[o++]=charset[k-1];
+    }
+    out[o]='\0';
+    free(idx);
+    return o;
+}
+
 /* UTF-8-aware recognition. `cp_of_class(cls)` returns the codepoint for class
  * cls (cls in 0..C-1, where 0 is blank), or 0 to skip. Multibyte-safe: each
  * codepoint is UTF-8 encoded into out. This replaces the byte-indexed
@@ -349,8 +406,8 @@ float crnn_train_step(CRNN *m, int T, const float *seq_feats, int L, const int *
     if(img){ T = crnn_time_steps(m, ocr_image_width(img)); ensure_cap(m, T);
              slice_and_conv(m, img, m->feat); feat=m->feat; }
     else   { ensure_cap(m, T); memcpy(m->feat, seq_feats, (size_t)T*m->D*sizeof(float)); feat=m->feat; }
-    lstm_forward(m->rnn, T, feat);
-    lstm_get_output(m->rnn, m->rnn_out_buf);
+    seq_forward(m, T, feat);
+    seq_get_output(m, m->rnn_out_buf);
     for(int t=0;t<T;t++) for(int c=0;c<m->C;c++){
         float a=m->bout[c]; for(int k=0;k<m->rnn_out;k++) a+=m->Wout[c*m->rnn_out+k]*m->rnn_out_buf[(size_t)t*m->rnn_out+k];
         m->logits[(size_t)t*m->C+c]=a;
@@ -412,9 +469,13 @@ void crnn_adam(CRNN *m, float lr, int t){
      * conv MUST use grad-proportional SGD (see wubuocr skill: conv_fac ~5e-4). */
     float conv_lr = lr*0.02f;
     for(int i=0;i<m->nparams_conv;i++) m->param_all[i] -= conv_lr*m->grad_all[i];
-    /* rnn + head: Adam */
+    /* rnn + head: Adam (with optional global-norm clip to stop CTC explosions) */
+    float gclip = getenv("GRAD_CLIP")? (float)atof(getenv("GRAD_CLIP")) : 0.0f;
+    float gnorm = 0.0f;
+    if(gclip>0.0f){ for(int i=m->nparams_conv;i<m->total;i++){ float g=m->grad_all[i]; gnorm+=g*g; } gnorm=sqrtf(gnorm); }
+    float gscale = (gclip>0.0f && gnorm>gclip)? gclip/gnorm : 1.0f;
     for(int i=m->nparams_conv;i<m->total;i++){
-        float g=m->grad_all[i];
+        float g=m->grad_all[i]*gscale;
         m->adam_m[i]=b1*m->adam_m[i]+(1-b1)*g;
         m->adam_v[i]=b2*m->adam_v[i]+(1-b2)*g*g;
         float mhat=m->adam_m[i]/bc1, vhat=m->adam_v[i]/bc2;
@@ -427,6 +488,6 @@ void crnn_adam(CRNN *m, float lr, int t){
     memcpy(m->Wout, m->param_all+m->head_off, (size_t)m->C*m->rnn_out*sizeof(float));
     memcpy(m->bout, m->param_all+m->head_off+(size_t)m->C*m->rnn_out, m->C*sizeof(float));
     /* zero grads */
-    convnet3_zero_grad(m->conv); lstm_zero_grad(m->rnn);
+    convnet3_zero_grad(m->conv); seq_zero_grad(m);
     memset(m->gWout,0,(size_t)m->C*m->rnn_out*sizeof(float)); memset(m->gbout,0,m->C*sizeof(float));
 }

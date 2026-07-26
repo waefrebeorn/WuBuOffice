@@ -35,6 +35,14 @@ void gpu_conv2d_fwd(const float *in, int Hin, int Win, int Cin,
                     int Cout, int Kh, int Kw, int S, int P, int act,
                     float *out, int *Hout, int *Wout);
 
+/* Transposed-A GEMM: C[MxN] = A^T[KxM] * B[KxN] (A stored row-major [MxK]).
+ * Used for gradient accumulation (dW = dY^T * X). Falls back to CPU. */
+void gpu_gemmT(const float *A, const float *B, float *C, int M, int K, int N);
+
+/* B-transposed GEMM: C[MxN] = A[MxK] * B^T[NxK] (B stored row-major [NxK]).
+ * Used for gate preactivations (az = X * Wz^T) and their backward. Falls back to CPU. */
+void gpu_gemmNT(const float *A, const float *B, float *C, int M, int K, int N);
+
 #ifdef __cplusplus
 }
 #endif

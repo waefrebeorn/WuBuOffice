@@ -161,15 +161,16 @@ static OcrImage *rot_line(const OcrImage *im, double deg) {
  * model collapses to a constant prediction). */
 static void photo_aug(OcrImage *im, uint32_t *rs){
     int H=(int)ocr_image_height(im), W=(int)ocr_image_width(im);
-    /* rotation: up to ~ +-4 deg, matching real scanned/photo page skew */
-    double rot = (rndf(rs)*2.0f-1.0f) * 4.0f;
+    /* rotation: up to ~ +-2 deg (very mild — enough to mimic real page skew
+     * without smearing the 20px-tall glyphs into noise). */
+    double rot = (rndf(rs)*2.0f-1.0f) * 2.0f;
     OcrImage *rim = rot_line(im, rot);
     if (!rim) return;
-    /* slant: displace the top vs bottom of the line by at most ~2px total. */
-    double slant = (rndf(rs)*2.0f-1.0f) * 2.0f;   /* -2..2 px across the height */
+    /* slant: displace top vs bottom by at most ~1px total. */
+    double slant = (rndf(rs)*2.0f-1.0f) * 1.0f;
     OcrImage *tmp=ocr_image_create(W,H);
     for(int y=0;y<H;y++){
-        double f = H>1 ? (double)(y-(H/2))/(H/2) : 0.0;   /* -1..1 down the line */
+        double f = H>1 ? (double)(y-(H/2))/(H/2) : 0.0;
         int off = (int)(slant*f + (f>=0?0.5:-0.5));
         for(int x=0;x<W;x++){
             int sx=x-off;
@@ -178,7 +179,7 @@ static void photo_aug(OcrImage *im, uint32_t *rs){
         }
     }
     ocr_image_free(rim);
-    int nn=(int)(rndf(rs)*(size_t)W*H*0.02f);  /* up to ~2% salt/pepper */
+    int nn=(int)(rndf(rs)*(size_t)W*H*0.01f);  /* up to ~1% salt/pepper (light) */
     for(int i=0;i<nn;i++){
         int x=(int)(rndf(rs)*W), y=(int)(rndf(rs)*H);
         uint8_t g=ocr_image_get(tmp,(size_t)x,(size_t)y);
@@ -208,11 +209,23 @@ int main(int argc,char**argv){
     if(!font){ printf("font open failed: %s\n",argv[1]); return 1; }
 
     ConvConfig3 cfg={STRIP,STRIP,4,2,2,8,2,2,16,1,1};
+    /* CONV env selects a wider front-end (bigger feats -> better diacritic
+     * discrimination). Presets live in convnet3.c. Default = tiny (legacy). */
+    const char *convsel = getenv("CONV");
+    if(convsel){
+        if(0==strcmp(convsel,"WIDE"))      cfg = (ConvConfig3){STRIP,STRIP, 32,3,2, 64,3,2, 128,3,1};
+        else if(0==strcmp(convsel,"BIGMAP")) cfg = (ConvConfig3){STRIP,STRIP, 32,3,1, 64,3,1, 128,3,1};
+        else if(0==strcmp(convsel,"XL"))     cfg = (ConvConfig3){STRIP,STRIP, 64,3,2, 128,3,2, 256,3,1};
+    }
     CRNN *m = NULL;
     if(LOAD){
         if(!crnn_load(LOAD,&m)||!m){ printf("crnn_load failed: %s\n",LOAD); return 1; }
-        printf("loaded model from %s (skipping training)\n",LOAD);
-        EPOCHS=0;
+        if(getenv("FINETUNE")){
+            printf("loaded model from %s (FINE-TUNING, %d epochs)\n", LOAD, EPOCHS);
+        } else {
+            printf("loaded model from %s (skipping training)\n",LOAD);
+            EPOCHS=0;
+        }
     } else {
         int hid = getenv("HID") ? atoi(getenv("HID")) : 32;
         m = crnn_create(&cfg, STRIP, hid, nclass, 1, 4242);

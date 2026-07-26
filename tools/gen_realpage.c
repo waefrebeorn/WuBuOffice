@@ -44,7 +44,10 @@ static void paint_letter(OcrImage *im, Font *f, int x0, int y0, char ch){
 }
 
 int main(int argc,char**argv){
-    if(argc<3){ printf("usage: %s <font.ttf> <out.png> [out_gt.txt]\n",argv[0]); return 1; }
+    if(argc<3){ printf("usage: %s <font.ttf> <out.png> [out_gt.txt] [--cols N]\n",argv[0]); return 1; }
+    int cols=1;
+    for(int a=3;a<argc;a++){ if(strcmp(argv[a],"--cols")==0 && a+1<argc){ cols=atoi(argv[++a]); } }
+    if(cols<1) cols=1;
     size_t fn; uint8_t*fb=ocr_readf(argv[1],&fn);
     Font *f = fb? font_open(fb,fn):NULL;
     if(!f){ printf("font open failed\n"); return 1; }
@@ -53,16 +56,20 @@ int main(int argc,char**argv){
     const char *CH = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 .,!?'-";
     int nch=(int)strlen(CH);
 
-    int W=520, H=NLINES*(STRIP+GAP)+GAP;
+    int colgap=60;
+    int W=cols*520 + (cols-1)*colgap, H=NLINES*(STRIP+GAP)+GAP;
     OcrImage *im=ocr_image_create(W,H);
     for(int y=0;y<H;y++) for(int x=0;x<W;x++) ocr_image_set(im,(size_t)x,(size_t)y,235); /* white page */
 
-    char lines[NLINES][MAXW+1];
-    for(int l=0;l<NLINES;l++){
-        int L=4+(int)(rndf()* (MAXW-3));
-        int y0=GAP+l*(STRIP+GAP);
-        for(int i=0;i<L;i++){ char ch=CH[(int)(rndf()*nch)]; lines[l][i]=ch; paint_letter(im,f,GAP+i*STRIP,y0,ch); }
-        lines[l][L]=0;
+    char lines[8][NLINES][MAXW+1];
+    for(int c=0;c<cols;c++){
+        int xoff=c*(520+colgap);
+        for(int l=0;l<NLINES;l++){
+            int L=4+(int)(rndf()* (MAXW-3));
+            int y0=GAP+l*(STRIP+GAP);
+            for(int i=0;i<L;i++){ char ch=CH[(int)(rndf()*nch)]; lines[c][l][i]=ch; paint_letter(im,f,xoff+GAP+i*STRIP,y0,ch); }
+            lines[c][l][L]=0;
+        }
     }
 
     /* --- photo-like distortion --- */
@@ -100,9 +107,13 @@ int main(int argc,char**argv){
     fwrite(png,1,pl,of); fclose(of); free(png);
     printf("wrote %s (%zu bytes)\n",argv[2],pl);
 
-    /* ground truth */
+    /* ground truth (row-major across columns: line r, columns 0..cols-1) */
     FILE *gf = argc>3? fopen(argv[3],"w") : stdout;
-    for(int l=0;l<NLINES;l++) fprintf(gf,"line %d: %s\n", l, lines[l]);
+    for(int l=0;l<NLINES;l++){
+        fprintf(gf,"line %d:", l);
+        for(int c=0;c<cols;c++) fprintf(gf,"\t%s", lines[c][l]);
+        fprintf(gf,"\n");
+    }
     if(gf!=stdout) fclose(gf);
 
     ocr_image_free(im); font_free(f); free(fb);

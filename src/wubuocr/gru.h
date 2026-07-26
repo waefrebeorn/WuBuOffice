@@ -40,6 +40,13 @@ float *gru_param(GRU *r);
 float *gru_grad(GRU *r);
 void   gru_zero_grad(GRU *r);
 
+/* OpenCL fallback (#98): one GRU direction forward on the GPU, filling the
+ * z/r/h caches (length T*hid). Mirrors gru_fwd_dir exactly. Returns 1 on
+ * success, 0 if OpenCL is unavailable or the dispatch failed (caller must fall
+ * back to the CPU path). `dir` is 0 (forward) or 1 (backward). */
+int ocl_gru_dir(const float *P, int H, int D, int T, const float *x, int dir,
+                float *zbuf, float *rbuf, float *hbuf);
+
 #ifdef __cplusplus
 }
 #endif

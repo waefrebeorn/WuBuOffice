@@ -15,6 +15,7 @@
  * gradients landed on the wrong weights. That is now structurally impossible.
  */
 #include "gru.h"
+#include "gru_layout.h"
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
@@ -35,16 +36,9 @@ struct GRU {
 };
 
 /* ---- single shared offset table (per direction block) ----
- * Order: Wz, Wr, Wh, Uz, Ur, Uh, Bz, Br, Bh  (3 input, 3 hidden, 3 bias). */
-typedef struct { int Wz,Wr,Wh,Uz,Ur,Uh,Bz,Br,Bh,block; } GRUOffs;
-static GRUOffs gru_offs(int H,int D){
-    GRUOffs o;
-    o.Wz=0;            o.Wr=o.Wz+H*D; o.Wh=o.Wr+H*D;
-    o.Uz=o.Wh+H*D;     o.Ur=o.Uz+H*H; o.Uh=o.Ur+H*H;
-    o.Bz=o.Uh+H*H;     o.Br=o.Bz+H;     o.Bh=o.Br+H;
-    o.block=o.Bh+H;
-    return o;
-}
+ * Defined once in gru_layout.c (shared by gru.c, gru_gpu.c, ocl_gru.c).
+ * Layout order: Wz, Wr, Wh, Uz, Ur, Uh, Bz, Br, Bh (3 input, 3 hidden,
+ * 3 bias). */
 
 static uint32_t gru_rng=0x9E3779B9u;
 static float gru_rndf(void){ gru_rng^=gru_rng<<13; gru_rng^=gru_rng>>17; gru_rng^=gru_rng<<5; return ((float)(gru_rng&0xFFFFFF)/(float)0xFFFFFF)*2.0f-1.0f; }
@@ -132,6 +126,15 @@ void gru_forward(GRU *r, int T, const float *x){
         r->xcache=realloc(r->xcache,(size_t)T*r->din*sizeof(float));
     }
     memcpy(r->xcache,x,(size_t)T*r->din*sizeof(float));
+    /* OpenCL fallback (#98): if OPENCL=1 and a device is available, compute the
+     * recurrent forward on the GPU. The OpenCL kernel mirrors gru_fwd_dir exactly
+     * (same weight layout via gru_layout.h), so this is a drop-in accelerator.
+     * Any failure falls back to the scalar CPU path below. */
+    if (getenv("OPENCL") && getenv("OPENCL")[0]=='1') {
+        if (ocl_gru_dir(r->P, r->hid, r->din, T, x, 0, r->zf, r->rf, r->hf)
+            && (!r->bidir || ocl_gru_dir(r->P, r->hid, r->din, T, x, 1, r->zb, r->rb, r->hb)))
+            return;
+    }
     gru_fwd_dir(r,T,x,0);
     if(r->bidir) gru_fwd_dir(r,T,x,1);
 }

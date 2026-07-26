@@ -23,6 +23,16 @@ if(WITH_SANITIZER)
   add_link_options(-fsanitize=address,undefined -fno-sanitize-recover=all)
 endif()
 
+# Static single-binary build (#100): link every executable with -static so the
+# produced image2doc / ocrserve / crnn_* tools are self-contained (no shared-lib
+# or libc runtime dependency). Off by default (shared is fine for development).
+option(STATIC "Build fully static executables (-static)" OFF)
+if(STATIC)
+  add_link_options(-static)
+  # OpenMP/most static toolchains need pthread and the static math/libc present;
+  # they are on this box (libc.a/libm.a/libpthread.a). Keep -static for all targets.
+endif()
+
 # --- wubuzip: from-scratch ZIP + DEFLATE (reader and writer) ---
 add_library(wubuzip STATIC
   src/wubuzip/crc.c
@@ -246,9 +256,11 @@ add_library(wubuocr STATIC
     src/wubuocr/zoning.c src/wubuocr/mlp.c
     src/wubuocr/convnet.c src/wubuocr/convnet3.c
     src/wubuocr/stylebank.c src/wubuocr/dft.c src/wubuocr/goldplace.c
-    src/wubuocr/crnn_transcribe.c)
+    src/wubuocr/crnn_transcribe.c src/wubuocr/docfmt.c src/wubuocr/pdfsearch.c
+    src/wubuocr/qr.c
+    src/wubuocr/gru_layout.c)
 target_include_directories(wubuocr PUBLIC src/wubuocr src/wubujson src/wubufont)
-target_link_libraries(wubuocr PUBLIC wubujson wubufont wubuzip m)
+target_link_libraries(wubuocr PUBLIC wubujson wubufont wubuzip crnnocr m)
 
 # --- wubuimage: clean-room raster decoders (PNG; no libpng) ---
 # PNG decode reuses the in-tree wubuzip DEFLATE engine; outputs an RGBA plane.
@@ -256,7 +268,7 @@ target_link_libraries(wubuocr PUBLIC wubujson wubufont wubuzip m)
 # pdf_extract pulls text out of dropped PDFs (no third-party lib; FlateDecode
 #   via wubuzip). All three are the "drag a document/image in" front-end.
 add_library(wubuimage STATIC
-    src/wubuimage/png.c src/wubuimage/img2doc.c
+    src/wubuimage/png.c src/wubuimage/img2doc.c src/wubuimage/imgops.c
     src/wubupdf/pdf_extract.c)
 target_include_directories(wubuimage PUBLIC src/wubuimage src/wubuzip
                                      src/wubuocr src/wubufont src/wubupdf)
@@ -292,13 +304,31 @@ add_library(crnnocr STATIC
     src/wubuocr/crnn.c
     src/wubuocr/ctc.c
     src/wubuocr/rnn.c
+    $<$<BOOL:${WITH_CUDA}>:src/gpu/gru_gpu.c>
     src/wubuocr/gru.c
+    src/wubuocr/ocl_gru.c
     src/wubuocr/lexicon.c
     src/wubuocr/lens.c
     src/wubuocr/png.c
     src/wubuocr/png_encode.c)
 target_include_directories(crnnocr PUBLIC src/wubuocr src/wubufont src/wubujson src/wubuzip)
-target_link_libraries(crnnocr PUBLIC wubuocr)
+target_link_libraries(crnnocr PUBLIC wubuocr dl)
+if(WITH_CUDA)
+    target_link_libraries(crnnocr PUBLIC gpublas)
+    # when CUDA is on, use the GPU-matmul GRU instead of the scalar one
+    set_source_files_properties(src/wubuocr/gru.c PROPERTIES HEADER_FILE_ONLY ON)
+    target_compile_definitions(crnnocr PUBLIC WITH_CUDA_BUILD)
+endif()
+# OpenCL fallback (#98): symbols are resolved at runtime via dlopen/dlsym inside
+# ocl_gru.c, so there is NO link-time OpenCL dependency (the binary links cleanly
+# with -static, and the GPU path activates only if libOpenCL.so is present on the
+# host at runtime; otherwise gru_forward falls back to the CPU scalar path).
+if(WITH_CUDA)
+    target_link_libraries(crnnocr PUBLIC gpublas)
+    # when CUDA is on, use the GPU-matmul GRU instead of the scalar one
+    set_source_files_properties(src/wubuocr/gru.c PROPERTIES HEADER_FILE_ONLY ON)
+    target_compile_definitions(crnnocr PUBLIC WITH_CUDA_BUILD)
+endif()
 
 # CRNN pipeline unit tests (built + registered as ctest).
 add_executable(ctc_test tools/ctc_test.c src/wubuocr/ctc.c)
@@ -306,14 +336,36 @@ target_include_directories(ctc_test PRIVATE src/wubuocr)
 target_link_libraries(ctc_test PRIVATE m)
 add_test(NAME ctc_test COMMAND ctc_test)
 
-add_executable(gru_test tools/gru_test.c src/wubuocr/rnn.c src/wubuocr/gru.c)
+add_executable(gru_test tools/gru_test.c)
 target_include_directories(gru_test PRIVATE src/wubuocr)
-target_link_libraries(gru_test PRIVATE m)
+# Pull the active GRU/LSTM from crnnocr (under WITH_CUDA that is the GPU
+# matmul GRU; otherwise the scalar one). Do NOT compile gru.c/rnn.c inline
+# here -- with WITH_CUDA=ON those sources are HEADER_FILE_ONLY and would
+# yield no object (undefined gru_create at link).
+target_link_libraries(gru_test PRIVATE crnnocr wubuocr wubufont m)
 add_test(NAME gru_test COMMAND gru_test)
 
-add_executable(rnn_test tools/rnn_test.c src/wubuocr/rnn.c)
+# OpenCL GRU fallback (#98): numeric equivalence to the scalar CPU forward.
+add_executable(ocl_gru_test tools/ocl_gru_test.c src/wubuocr/ocl_gru.c)
+target_include_directories(ocl_gru_test PRIVATE src/wubuocr)
+target_link_libraries(ocl_gru_test PRIVATE crnnocr wubuocr wubufont m)
+add_test(NAME ocl_gru COMMAND ocl_gru_test)
+
+# Math/equation line detector (#48).
+add_executable(test_math tools/test_math.c)
+target_include_directories(test_math PRIVATE src/wubuocr)
+target_link_libraries(test_math PRIVATE wubuocr m)
+add_test(NAME test_math COMMAND test_math)
+
+# QR-code codec (#49): encode -> matrix -> decode round-trip, plus image acquire.
+add_executable(test_qr tools/test_qr.c)
+target_include_directories(test_qr PRIVATE src/wubuocr)
+target_link_libraries(test_qr PRIVATE wubuocr m)
+add_test(NAME test_qr COMMAND test_qr)
+
+add_executable(rnn_test tools/rnn_test.c)
 target_include_directories(rnn_test PRIVATE src/wubuocr)
-target_link_libraries(rnn_test PRIVATE m)
+target_link_libraries(rnn_test PRIVATE crnnocr wubuocr wubufont m)
 add_test(NAME rnn_test COMMAND rnn_test)
 
 add_executable(gradcheck_conv3 tools/gradcheck_conv3.c
@@ -339,7 +391,7 @@ target_link_libraries(crnn_photo_demo PRIVATE crnnocr wubufont m)
 # PNG -> OcrImage -> crnn_transcribe (docmodel JSON) -> wubuconv (docx/md/...).
 add_executable(image2doc tools/image2doc.c)
 target_include_directories(image2doc PRIVATE src/wubuocr src/wubuimage src/wubufont apps/wubuconv)
-target_link_libraries(image2doc PRIVATE crnnocr wubuimage wubuconv wubujson wubufont m)
+target_link_libraries(image2doc PRIVATE crnnocr wubuimage wubuconv wubujson wubufont pthread m)
 
 # gen_pgmpage: synthetic multi-line Latin page (PGM) for image2doc testing.
 add_executable(gen_pgmpage tools/gen_pgmpage.c)
@@ -358,6 +410,9 @@ target_link_libraries(crnn_roundtrip PRIVATE crnnocr wubufont m)
 add_executable(fontcpgrep tools/fontcpgrep.c)
 target_include_directories(fontcpgrep PRIVATE src/wubuocr src/wubufont)
 target_link_libraries(fontcpgrep PRIVATE crnnocr wubufont m)
+add_executable(charsetgen tools/charsetgen.c)
+target_include_directories(charsetgen PRIVATE src/wubuocr src/wubufont)
+target_link_libraries(charsetgen PRIVATE crnnocr wubufont m)
 
 # --- wubutui: native terminal UI toolkit (human GUIs) ---
 # Pure C11 render/input core (screen buffer, ANSI diff, key decode, word wrap,
@@ -556,7 +611,55 @@ target_include_directories(test_crnn_transcribe_full PRIVATE src/wubuocr src/wub
 target_link_libraries(test_crnn_transcribe_full PRIVATE crnnocr wubuimage wubufont m)
 add_test(NAME crnn_transcribe_full COMMAND test_crnn_transcribe_full)
 
-# Deskew + line-segmentation on a tilted page (photo/scan front door)
+# Multi-column detection (1/2/3-col) end-to-end via crnn_transcribe_page_json
+add_executable(test_columns tests/test_columns.c)
+target_include_directories(test_columns PRIVATE src/wubuocr src/wubufont)
+target_link_libraries(test_columns PRIVATE crnnocr wubuocr wubufont m)
+add_test(NAME columns COMMAND test_columns)
+
+# Binarize unit tests: Sauvola / Otsu / despeckle / auto-crop / empty-page
+add_executable(test_imageops tests/test_imageops.c)
+target_include_directories(test_imageops PRIVATE src/wubuocr)
+target_link_libraries(test_imageops PRIVATE wubuocr m)
+
+# xlsx (Excel OOXML) export: docmodel JSON -> valid .xlsx zip with 6 OOXML parts
+add_executable(test_xlsx tests/test_xlsx.c)
+target_include_directories(test_xlsx PRIVATE src/wubuocr src/wubuzip)
+target_link_libraries(test_xlsx PRIVATE wubuocr wubuzip m)
+add_test(NAME xlsx COMMAND test_xlsx)
+
+# docfmt2 unit test: TEI serialization + reading-order/confidence fields
+add_executable(test_docfmt2 tests/test_docfmt2.c)
+target_include_directories(test_docfmt2 PRIVATE src/wubuocr)
+target_link_libraries(test_docfmt2 PRIVATE crnnocr wubuocr wubufont m)
+add_test(NAME docfmt2 COMMAND test_docfmt2)
+
+# pdfua unit test: PDF/UA structure tree + language tag
+add_executable(test_pdfua tests/test_pdfua.c)
+target_include_directories(test_pdfua PRIVATE src/wubuocr)
+target_link_libraries(test_pdfua PRIVATE crnnocr wubuocr wubufont m)
+add_test(NAME pdfua COMMAND test_pdfua)
+
+# nfc unit test: Unicode NFC Latin composition
+add_executable(test_nfc tests/test_nfc.c)
+target_include_directories(test_nfc PRIVATE src/wubuocr)
+target_link_libraries(test_nfc PRIVATE crnnocr wubuocr wubufont m)
+add_test(NAME nfc COMMAND test_nfc)
+add_test(NAME imageops COMMAND test_imageops)
+
+# imgops: image preprocessing (rotate / contrast / median / shading / sharpen)
+add_executable(test_imgops tests/test_imgops.c)
+target_include_directories(test_imgops PRIVATE src/wubuimage src/wubuocr)
+target_link_libraries(test_imgops PRIVATE wubuimage wubuocr m)
+add_test(NAME imgops COMMAND test_imgops)
+
+# docfmt: alternate document serializations (txt/tsv/csv/jsonl/latex/rtf/hocr/alto)
+add_executable(test_docfmt tests/test_docfmt.c)
+target_include_directories(test_docfmt PRIVATE src/wubuocr src/wubujson)
+target_link_libraries(test_docfmt PRIVATE wubuocr wubujson m)
+add_test(NAME docfmt COMMAND test_docfmt)
+
+
 add_executable(test_ocr_realpage tests/test_ocr_realpage.c)
 target_include_directories(test_ocr_realpage PRIVATE src/wubuocr src/wubufont)
 target_link_libraries(test_ocr_realpage PRIVATE crnnocr wubuimage wubufont m)
@@ -773,3 +876,20 @@ endif()
 add_executable(test_gpu_blas tests/test_gpu_blas.c)
 target_link_libraries(test_gpu_blas PRIVATE gpublas m)
 add_test(NAME gpu_blas COMMAND test_gpu_blas)
+
+# Finite-difference gradcheck for the GPU-matmul GRU (forward + BPTT).
+add_executable(test_gru_gpu tests/test_gru_gpu.c src/gpu/gru_gpu.c src/wubuocr/gru_layout.c)
+target_include_directories(test_gru_gpu PRIVATE src/wubuocr src/gpu)
+target_compile_definitions(test_gru_gpu PRIVATE WITH_CUDA_BUILD)
+target_link_libraries(test_gru_gpu PRIVATE gpublas m)
+add_test(NAME gru_gpu_gradcheck COMMAND test_gru_gpu)
+
+add_executable(test_gemm_nt tests/test_gemm_nt.c)
+target_link_libraries(test_gemm_nt PRIVATE gpublas m)
+add_test(NAME gemm_nt COMMAND test_gemm_nt)
+
+add_executable(test_gru_cmp tests/test_gru_cmp.c src/gpu/gru_gpu.c src/wubuocr/gru_layout.c)
+target_include_directories(test_gru_cmp PRIVATE src/wubuocr src/gpu)
+target_compile_definitions(test_gru_cmp PRIVATE WITH_CUDA_BUILD)
+target_link_libraries(test_gru_cmp PRIVATE gpublas m)
+add_test(NAME gru_cmp COMMAND test_gru_cmp)

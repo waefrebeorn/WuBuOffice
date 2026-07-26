@@ -30,6 +30,7 @@ struct LSTM {
     float *grad;                 /* flat: [fwd block][bwd block], each = W(4*hid*din)+U(4*hid*hid)+b(4*hid) */
     float *cf,*hf,*cb,*hb;       /* caches Tcap x hid */
     float *xcache;               /* Tcap x din */
+    int Tcur;                    /* current T (set in lstm_forward) */
 };
 
 static uint32_t rng=0x9E3779B9u;
@@ -98,6 +99,7 @@ void lstm_forward(LSTM *r, int T, const float *x){
         r->cb=realloc(r->cb,(size_t)T*r->hid*sizeof(float)); r->hb=realloc(r->hb,(size_t)T*r->hid*sizeof(float));
         r->xcache=realloc(r->xcache,(size_t)T*r->din*sizeof(float));
     }
+    r->Tcur=T;
     memcpy(r->xcache,x,(size_t)T*r->din*sizeof(float));
     dir_fwd(r,T,x,0);
     if(r->bidir) dir_fwd(r,T,x,1);
@@ -105,8 +107,8 @@ void lstm_forward(LSTM *r, int T, const float *x){
 
 void lstm_get_output(const LSTM *r, float *y){
     if(!r) return;
-    int H=r->hid;
-    for(int t=0;t<r->Tcap;t++){
+    int H=r->hid; int T=r->Tcur;
+    for(int t=0;t<T;t++){
         if(!r->bidir) memcpy(y+(size_t)t*H, r->hf+(size_t)t*H, H*sizeof(float));
         else { memcpy(y+(size_t)t*2*H, r->hf+(size_t)t*H, H*sizeof(float));
                memcpy(y+(size_t)t*2*H+H, r->hb+(size_t)t*H, H*sizeof(float)); }

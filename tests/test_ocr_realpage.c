@@ -79,7 +79,7 @@ int main(void){
     OcrImage *tilt = rotate(page, 4.0);   /* ~4 deg tilt */
 
     char *json=NULL;
-    int rc = crnn_transcribe_page_json(m, tilt, STRIP, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", &json);
+    int rc = crnn_transcribe_page_json(m, tilt, STRIP, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", NULL, &json);
     int blocks = 0;
     if(rc==0 && json){
         blocks = 0; const char *p=json;

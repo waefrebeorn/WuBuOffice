@@ -40,3 +40,21 @@ void gpu_conv2d_fwd(const float *in, int Hin, int Win, int Cin,
                 out[((size_t)h * wout + ww) * Cout + oc] = acc;
             }
 }
+
+void gpu_gemmT(const float *A, const float *B, float *C, int M, int K, int N) {
+    for (int i = 0; i < M; i++)
+        for (int j = 0; j < N; j++) {
+            float s = 0.0f;
+            for (int k = 0; k < K; k++) s += A[(size_t)k * M + i] * B[(size_t)k * N + j];
+            C[(size_t)i * N + j] = s;
+        }
+}
+
+void gpu_gemmNT(const float *A, const float *B, float *C, int M, int K, int N) {
+    for (int i = 0; i < M; i++)
+        for (int j = 0; j < N; j++) {
+            float s = 0.0f;
+            for (int k = 0; k < K; k++) s += A[(size_t)i * K + k] * B[(size_t)j * K + k];
+            C[(size_t)i * N + j] = s;
+        }
+}

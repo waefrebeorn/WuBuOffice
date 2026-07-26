@@ -106,6 +106,101 @@ void gpu_gemm(const float *A, const float *B, float *C, int M, int K, int N) {
     cudaFree(dA); cudaFree(dB); cudaFree(dC);
 }
 
+/* Transposed-A GEMM: C[MxN] = A^T[KxM] * B[KxN], where A is row-major [MxK].
+ * Equivalent to: for i,j: C[i*N+j] = sum_k A[k*M+i] * B[k*N+j]. */
+__global__ void gemmT_kernel(const float *A, const float *B, float *C,
+                             int M, int K, int N) {
+    const int T = 16;
+    __shared__ float As[T][T], Bs[T][T];
+    int row = blockIdx.y * T + threadIdx.y;   /* i in [0,M) */
+    int col = blockIdx.x * T + threadIdx.x;   /* j in [0,N) */
+    float acc = 0.0f;
+    for (int t = 0; t < (K + T - 1) / T; t++) {
+        int ka = t * T + threadIdx.x;  /* k index for A col */
+        int kb = t * T + threadIdx.y;  /* k index for B row */
+        if (row < M && ka < K) As[threadIdx.y][threadIdx.x] = A[(size_t)ka * M + row];
+        else As[threadIdx.y][threadIdx.x] = 0.0f;
+        if (col < N && kb < K) Bs[threadIdx.y][threadIdx.x] = B[(size_t)kb * N + col];
+        else Bs[threadIdx.y][threadIdx.x] = 0.0f;
+        __syncthreads();
+        for (int k = 0; k < T; k++) acc += As[threadIdx.y][k] * Bs[k][threadIdx.x];
+        __syncthreads();
+    }
+    if (row < M && col < N) C[(size_t)row * N + col] = acc;
+}
+
+void gpu_gemmT(const float *A, const float *B, float *C, int M, int K, int N) {
+    if (!gpu_available()) {  /* CPU fallback */
+        for (int i = 0; i < M; i++)
+            for (int j = 0; j < N; j++) {
+                float s = 0.0f;
+                for (int k = 0; k < K; k++) s += A[(size_t)k * M + i] * B[(size_t)k * N + j];
+                C[(size_t)i * N + j] = s;
+            }
+        return;
+    }
+    float *dA, *dB, *dC;
+    size_t sa = (size_t)K * M * sizeof(float);
+    size_t sb = (size_t)K * N * sizeof(float);
+    size_t sc = (size_t)M * N * sizeof(float);
+    cudaMalloc(&dA, sa); cudaMalloc(&dB, sb); cudaMalloc(&dC, sc);
+    cudaMemcpy(dA, A, sa, cudaMemcpyHostToDevice);
+    cudaMemcpy(dB, B, sb, cudaMemcpyHostToDevice);
+    const int T = 16;
+    dim3 block(T, T);
+    dim3 grid((N + T - 1) / T, (M + T - 1) / T);
+    gemmT_kernel<<<grid, block>>>(dA, dB, dC, M, K, N);
+    cudaMemcpy(C, dC, sc, cudaMemcpyDeviceToHost);
+    cudaFree(dA); cudaFree(dB); cudaFree(dC);
+}
+
+/* B-transposed GEMM: C[MxN] = A[MxK] * B^T[NxK]. Kernel indexes B as B[n*K+k]. */
+__global__ void gemmNT_kernel(const float *A, const float *B, float *C,
+                              int M, int K, int N) {
+    const int T = 16;
+    __shared__ float As[T][T], Bs[T][T];
+    int row = blockIdx.y * T + threadIdx.y;   /* i in [0,M) */
+    int col = blockIdx.x * T + threadIdx.x;   /* j in [0,N) */
+    float acc = 0.0f;
+    for (int t = 0; t < (K + T - 1) / T; t++) {
+        int ka = t * T + threadIdx.x;  /* k for A */
+        int kb = t * T + threadIdx.y;  /* k for B row */
+        if (row < M && ka < K) As[threadIdx.y][threadIdx.x] = A[(size_t)row * K + ka];
+        else As[threadIdx.y][threadIdx.x] = 0.0f;
+        if (col < N && kb < K) Bs[threadIdx.y][threadIdx.x] = B[(size_t)col * K + kb];
+        else Bs[threadIdx.y][threadIdx.x] = 0.0f;
+        __syncthreads();
+        for (int k = 0; k < T; k++) acc += As[threadIdx.y][k] * Bs[k][threadIdx.x];
+        __syncthreads();
+    }
+    if (row < M && col < N) C[(size_t)row * N + col] = acc;
+}
+
+void gpu_gemmNT(const float *A, const float *B, float *C, int M, int K, int N) {
+    if (!gpu_available()) {  /* CPU fallback */
+        for (int i = 0; i < M; i++)
+            for (int j = 0; j < N; j++) {
+                float s = 0.0f;
+                for (int k = 0; k < K; k++) s += A[(size_t)i * K + k] * B[(size_t)j * K + k];
+                C[(size_t)i * N + j] = s;
+            }
+        return;
+    }
+    float *dA, *dB, *dC;
+    size_t sa = (size_t)M * K * sizeof(float);
+    size_t sb = (size_t)N * K * sizeof(float);
+    size_t sc = (size_t)M * N * sizeof(float);
+    cudaMalloc(&dA, sa); cudaMalloc(&dB, sb); cudaMalloc(&dC, sc);
+    cudaMemcpy(dA, A, sa, cudaMemcpyHostToDevice);
+    cudaMemcpy(dB, B, sb, cudaMemcpyHostToDevice);
+    const int T = 16;
+    dim3 block(T, T);
+    dim3 grid((N + T - 1) / T, (M + T - 1) / T);
+    gemmNT_kernel<<<grid, block>>>(dA, dB, dC, M, K, N);
+    cudaMemcpy(C, dC, sc, cudaMemcpyDeviceToHost);
+    cudaFree(dA); cudaFree(dB); cudaFree(dC);
+}
+
 void gpu_conv2d_fwd(const float *in, int Hin, int Win, int Cin,
                     const float *w, const float *bias,
                     int Cout, int Kh, int Kw, int S, int P, int act,

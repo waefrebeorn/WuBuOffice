@@ -77,7 +77,7 @@ int main(void) {
     if (!crnn_load(LOAD, &m) || !m) { printf("FAIL: crnn_load %s\n", LOAD); ocr_image_free(page); font_free(font); free(fb); return 1; }
 
     char *json = NULL;
-    int rc = crnn_transcribe_page_json(m, page, STRIP, CHARSET, &json);
+    int rc = crnn_transcribe_page_json(m, page, STRIP, CHARSET, NULL, &json);
     crnn_free(m); ocr_image_free(page); font_free(font); free(fb);
     if (rc != 0 || !json) { printf("FAIL: transcribe returned %d\n", rc); return 1; }
 

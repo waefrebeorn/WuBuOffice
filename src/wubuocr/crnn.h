@@ -45,6 +45,21 @@ int   crnn_predict(CRNN *m, const OcrImage *img, int *out);
  * so it plugs in at the block/line level, NOT the per-glyph OcrRecognizer slot. */
 int  crnn_recognize(CRNN *m, const OcrImage *line, const char *charset,
                      char *out, int cap); /* ASCII-only (legacy); prefer _utf8 */
+/* Recognition + a 0..100 confidence estimate (mean over frames of the max
+ * softmax probability). Writes the NUL-terminated string into `out` and
+ * stores *conf = 0..100. Returns the string length. Low scores flag
+ * uncertain lines for downstream review/correction. */
+int  crnn_recognize_scored(CRNN *m, const OcrImage *line, const char *charset,
+                           char *out, int cap, int *conf);
+/* Recognition + per-CHARACTER 0..100 confidence. Emits the string into `out`
+ * (as _scored does) and fills `cconf[0..len-1]` with each emitted character's
+ * frame-softmax confidence (the max softmax probability at the time step that
+ * produced that character). `cconf_cap` bounds the array. `conf` (line mean) is
+ * also returned. Enables word-level uncertain-flagging (#44): a word whose
+ * minimum per-char confidence is low is likely mis-recognized. */
+int  crnn_recognize_scored_chars(CRNN *m, const OcrImage *line, const char *charset,
+                                 char *out, int cap, int *conf,
+                                 int *cconf, int cconf_cap);
 /* UTF-8-aware recognition: cp_of_class(cls,u) maps a CRNN class (0=blank) to a
  * codepoint, returning 0 to skip. Multibyte-safe. Use for any non-ASCII script. */
 int  crnn_recognize_utf8(CRNN *m, const OcrImage *line,

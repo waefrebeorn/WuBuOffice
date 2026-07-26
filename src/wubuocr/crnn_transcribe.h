@@ -20,6 +20,7 @@
 #include <stdint.h>
 #include "crnn.h"      /* CRNN */
 #include "image.h"    /* OcrImage */
+#include "lexicon.h"  /* Lexicon (optional post-correction) */
 
 #ifdef __cplusplus
 extern "C" {
@@ -37,7 +38,15 @@ extern "C" {
  * Returns 0 on success, -1 on OOM/empty input. */
 int crnn_transcribe_page_json(CRNN *m, const OcrImage *page,
                               int strip, const char *charset,
+                              const struct Lexicon *lex,
                               char **out_json);
+
+/* Unicode NFC composition for Latin scripts (#96): precompose a base Latin
+ * letter followed by combining diacritical marks (U+0300..U+036F) where a
+ * precomposed codepoint exists. Returns the UTF-8 length written to `out`. */
+size_t wubuocr_nfc_latin(const char *in, char *out, size_t outsz);
+
+int wubuocr_detect_math_line(const char *s);
 
 #ifdef __cplusplus
 }
