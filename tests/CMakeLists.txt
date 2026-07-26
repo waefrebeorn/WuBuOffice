@@ -13,6 +13,10 @@ target_link_libraries(test_formula PRIVATE wubuformula)
 target_include_directories(test_formula PRIVATE ${CMAKE_SOURCE_DIR}/src/wubuformula/functions)
 add_test(NAME formula COMMAND test_formula)
 
+add_executable(test_spell test_spell.c)
+target_link_libraries(test_spell PRIVATE wubuspell)
+add_test(NAME spell COMMAND test_spell)
+
 add_executable(test_model test_model.c)
 target_link_libraries(test_model PRIVATE wubumodel)
 add_test(NAME model COMMAND test_model)

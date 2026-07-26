@@ -4,9 +4,10 @@
 # tested editing engine (Doc + DONE search) without duplicating it.
 
 find_library(WUBUPAD_UI_LIB     NAMES wubupad_ui    PATHS ${CMAKE_SOURCE_DIR}/../WuBuPad/build NO_DEFAULT_PATH)
+find_library(WUBUPAD_CORE_LIB   NAMES wubupad_core  PATHS ${CMAKE_SOURCE_DIR}/../WuBuPad/build NO_DEFAULT_PATH)
 find_path(WUBUPAD_INC          NAMES doc.h         PATHS ${CMAKE_SOURCE_DIR}/../WuBuPad/src NO_DEFAULT_PATH)
 
-if(NOT WUBUPAD_UI_LIB OR NOT WUBUPAD_INC)
+if(NOT WUBUPAD_UI_LIB OR NOT WUBUPAD_CORE_LIB OR NOT WUBUPAD_INC)
   message(STATUS "wubupad_bridge: WuBuPad not built at ../WuBuPad/build -- bridge DISABLED (run WuBuPad build first).")
   return()
 endif()
@@ -29,10 +30,11 @@ endif()
 if(Freetype_FOUND)
   list(APPEND _wubupad_extra Freetype::Freetype)
 endif()
-# wubupad_ui is the headless-only UI lib (no SDL2/Freetype), so the bridge
-# never pulls in windowing deps. wubupad_gfx (with SDL2) is separate and not
-# needed here.
-target_link_libraries(wubupad_bridge PUBLIC ${WUBUPAD_UI_LIB})
+# wubupad_ui is the headless-only UI lib (no SDL2/Freetype); it depends on
+# wubupad_core for the Doc/session model. Link UI before core so the archive
+# order resolves (UI references core symbols). wubupad_gfx (SDL2) is separate
+# and not needed here.
+target_link_libraries(wubupad_bridge PUBLIC ${WUBUPAD_UI_LIB} ${WUBUPAD_CORE_LIB})
 
 add_executable(wubupad_edit wubupad_edit.c)
 target_link_libraries(wubupad_edit PRIVATE wubupad_bridge)
