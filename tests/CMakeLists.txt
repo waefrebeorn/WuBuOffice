@@ -17,6 +17,10 @@ add_executable(test_spell test_spell.c)
 target_link_libraries(test_spell PRIVATE wubuspell)
 add_test(NAME spell COMMAND test_spell)
 
+add_executable(test_chart test_chart.c)
+target_link_libraries(test_chart PRIVATE wubuchart)
+add_test(NAME chart COMMAND test_chart)
+
 add_executable(test_model test_model.c)
 target_link_libraries(test_model PRIVATE wubumodel)
 add_test(NAME model COMMAND test_model)
