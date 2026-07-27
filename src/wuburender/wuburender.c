@@ -132,6 +132,7 @@ wubumodel_doc *wurender_sample_doc(void){
     wubumodel_style *hs = wubumodel_style_create();
     wubumodel_style_set_prop(hs, "name", "Heading 1");
     wubumodel_node_set_style(h, hs);
+    wubumodel_style_destroy(hs);   /* node now owns the style (ref taken) */
     wubumodel_node *hr = wubumodel_node_create(d, WUBUMODEL_RUN);
     wubumodel_run_set_text(hr, "WuBuWord — First Real Render");
     wubumodel_node_append(d, h, hr);
@@ -185,6 +186,7 @@ wubumodel_doc *wurender_doc_from_markdown(const char *text){
                     char nm[16]; snprintf(nm,sizeof nm,"Heading %d",heading);
                     wubumodel_style_set_prop(hs, "name", nm);
                     wubumodel_node_set_style(cur, hs);
+                    wubumodel_style_destroy(hs);  /* node now owns the style */
                 }
                 wubumodel_node_append(d, sec, cur);
             }

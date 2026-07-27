@@ -46,7 +46,7 @@ static int render(WuView *v, int w, int h, int scroll,
     return 0;
 }
 
-static void destroy(WuView *v){ free(v->priv); }
+static void destroy(WuView *v){ free(v->priv); free(v); }
 
 WuView *wuos_slide_create(const char *path){
     SlideV *e = calloc(1, sizeof *e);

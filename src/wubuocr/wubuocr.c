@@ -10,6 +10,7 @@ typedef struct {
     OcrBlock *glyph;     /* glyph boxes in reading order */
     char    **gtext;     /* recognized text per glyph (may be NULL entries) */
     size_t    nglyph;
+    char     *text;      /* cached concatenated block text (owned by page) */
 } PageBlock;
 
 struct OcrPage {
@@ -24,6 +25,7 @@ static void page_block_free(PageBlock *pb) {
         for (size_t i = 0; i < pb->nglyph; i++) free(pb->gtext[i]);
         free(pb->gtext);
     }
+    free(pb->text);
     free(pb->glyph);
 }
 
@@ -107,14 +109,14 @@ const OcrBlock *ocr_page_block(const OcrPage *pg, size_t i) {
 
 const char *ocr_page_block_text(const OcrPage *pg, size_t i) {
     if (!pg || i >= pg->nblk) return NULL;
-    char *t = block_text(&pg->blk[i]);
-    /* Always return a heap string the caller must free (never a literal),
-     * so ownership is unambiguous and sanitizers don't flag the empty case. */
-    if (!t) {
-        t = malloc(1);
-        if (t) t[0] = '\0';
+    PageBlock *pb = (PageBlock*)&pg->blk[i];
+    if (!pb->text) pb->text = block_text(pb);  /* cached; owned by page */
+    if (!pb->text) {
+        /* allocate an empty literal we still own via page_block_free */
+        pb->text = malloc(1);
+        if (pb->text) pb->text[0] = '\0';
     }
-    return t;
+    return pb->text;
 }
 
 /* Per-glyph box accessors: let a caller read the true document coordinates of

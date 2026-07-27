@@ -148,6 +148,7 @@ static void destroy(WuView *v){
     if(e->fonts){ for (size_t i=0;i<e->nfonts;i++) font_free((Font*)e->fonts[i]); free((void*)e->fonts); }
     free(e->sel_text);
     free(e);
+    free(v);
 }
 
 WuView *wuos_ocr_create(const char *path){

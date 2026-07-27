@@ -139,7 +139,7 @@ static void on_key(WuView *v, int key, int down){
     if (key>=32 && key<128){ e->editing=1; e->fbuf[0]=(char)key; e->fbuf[1]=0; return; }
 }
 
-static void destroy(WuView *v){ CellV *e = v->priv; wubucell_free(e->b); free(e); }
+static void destroy(WuView *v){ CellV *e = v->priv; wubucell_free(e->b); free(e); free(v); }
 
 static const char *get_path(WuView *v){ (void)v; return NULL; }
 

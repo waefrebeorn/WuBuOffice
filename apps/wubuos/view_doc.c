@@ -99,10 +99,13 @@ static void on_key(WuView *v, int key, int down){
 
 static void destroy(WuView *v){
     DocV *e = v->priv;
-    if (e->doc) wubumodel_doc_destroy(e->doc);
-    if (e->r)   wurender_destroy(e->r);
-    free(e->path); free(e->text); free(e->find_q);
+    if(e->r)    wurender_destroy(e->r);
+    if(e->doc)  wubumodel_doc_destroy(e->doc);
+    if(e->text) free(e->text);
+    if(e->path) free(e->path);
+    if(e->find_q) free(e->find_q);
     free(e);
+    free(v);
 }
 
 static const char *get_path(WuView *v){ return ((DocV*)v->priv)->path; }

@@ -990,6 +990,7 @@ static void destroy(WuView *v){
     if (e->lex) lex_free(e->lex);
     if (e->docs) docs_free(e->docs);
     free(e);
+    free(v);
 }
 
 static void save(WuView *v){

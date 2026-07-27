@@ -86,5 +86,14 @@ add_executable(test_plugin_abi test_plugin_abi.c plugin.c)
 target_include_directories(test_plugin_abi PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(test_plugin_abi PRIVATE dl)
 target_compile_options(test_plugin_abi PRIVATE -Wall -Wextra)
-add_test(NAME plugin_abi COMMAND test_plugin_abi "${CMAKE_CURRENT_BINARY_DIR}/plugins/sample_plugin.so")
+# Negative-test plugin: reports a WRONG ABI version so the loader must reject it.
+add_library(badabi_plugin MODULE plugins/badabi/badabi_plugin.c)
+set_target_properties(badabi_plugin PROPERTIES
+    PREFIX "" OUTPUT_NAME "badabi_plugin" LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/plugins")
+target_include_directories(badabi_plugin PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_options(badabi_plugin PRIVATE -fvisibility=hidden -Wall -Wextra)
+
+add_test(NAME plugin_abi COMMAND test_plugin_abi
+    "${CMAKE_CURRENT_BINARY_DIR}/plugins/sample_plugin.so"
+    "${CMAKE_CURRENT_BINARY_DIR}/plugins/badabi_plugin.so")
 set_tests_properties(plugin_abi PROPERTIES LABELS "plugin")

@@ -76,7 +76,7 @@ static int render(WuView *v, int w, int h, int scroll,
     return 0;
 }
 
-static void destroy(WuView *v){ CmpV *e=v->priv; free(e->la); free(e->lb); free(e->text); free(e); }
+static void destroy(WuView *v){ CmpV *e=v->priv; free(e->la); free(e->lb); free(e->text); free(e); free(v); }
 
 static char *read_dup(const char *path){
     if (!path) return strdup("");
