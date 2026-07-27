@@ -15,6 +15,7 @@
 #include FT_FREETYPE_H
 #include <zlib.h>
 
+#include "wububase.h"   /* shared utf8 decode (was a private copy here) */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -108,47 +109,19 @@ static int ft_init(void){
     return 0;
 }
 
-/* decode one UTF-8 codepoint from s; returns codepoint, advances *p.
- * Robust: never emits a partial/garbage glyph for a multibyte sequence. */
-static unsigned int utf8_next(const char **p){
-    const unsigned char *s = (const unsigned char*)*p;
-    unsigned int cp = *s++;
-    if (cp < 0x80){
-        *p = (const char*)s; return cp;
-    }
-    if ((cp & 0xE0) == 0xC0){           /* 2-byte */
-        unsigned int c = (cp & 0x1F) << 6;
-        if ((*s & 0xC0) == 0x80) c |= (*s++ & 0x3F);
-        *p = (const char*)s; return c;
-    }
-    if ((cp & 0xF0) == 0xE0){           /* 3-byte */
-        unsigned int c = (cp & 0x0F) << 12;
-        if ((*s & 0xC0) == 0x80){ c |= (*s++ & 0x3F) << 6;
-            if ((*s & 0xC0) == 0x80) c |= (*s++ & 0x3F); }
-        *p = (const char*)s; return c;
-    }
-    if ((cp & 0xF8) == 0xF0){           /* 4-byte */
-        unsigned int c = (cp & 0x07) << 18;
-        if ((*s & 0xC0) == 0x80){ c |= (*s++ & 0x3F) << 12;
-            if ((*s & 0xC0) == 0x80){ c |= (*s++ & 0x3F) << 6;
-                if ((*s & 0xC0) == 0x80) c |= (*s++ & 0x3F); } }
-        *p = (const char*)s; return c;
-    }
-    /* invalid lead byte -> emit as-is, skip one byte */
-    *p = (const char*)s; return cp;
-}
-
 /* draw a UTF-8 string at baseline y, returning advance width.
- * Multibyte sequences are decoded to a single codepoint before rasterizing
- * (no byte-wise mojibake). */
+ * Multibyte sequences are decoded to a single codepoint via wububase before
+ * rasterizing (no byte-wise mojibake). */
 static int draw_str(const char *s, int x, int y, int bold, unsigned char r,unsigned char g,unsigned char b){
     FT_Face face = (bold && g_face_bold)? g_face_bold : g_face_reg;
     if (!face) return 0;
     int ox = x;
     const char *p = s;
     while (*p){
-        unsigned int cp = utf8_next(&p);
-        if (cp == 0) break;
+        uint32_t cp;
+        int k = wububase_utf8_decode(p, &cp);
+        if (k <= 0) { p++; continue; }   /* skip invalid byte */
+        p += k;
         if (FT_Load_Char(face, (FT_ULong)cp, FT_LOAD_RENDER)) continue;
         FT_GlyphSlot gl = face->glyph;
         int gx = ox + gl->bitmap_left;

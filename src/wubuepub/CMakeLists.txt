@@ -6,4 +6,4 @@ target_include_directories(wubuepub PUBLIC
     ${CMAKE_SOURCE_DIR}/src
     ${CMAKE_SOURCE_DIR}/src/wubumodel
     ${CMAKE_SOURCE_DIR}/src/wubuzip)
-target_link_libraries(wubuepub PUBLIC wubumodel wubuzip)
+target_link_libraries(wubuepub PUBLIC wubumodel wubuzip wububase)

@@ -1,6 +1,7 @@
 # WuBuOffice core libraries -- each module owns its build in its own dir.
 # Dependency order here is informational; CMake resolves link targets lazily,
 # so forward references (e.g. src/wubudoc -> apps/wubuconv) are fine.
+add_subdirectory(wububase)
 add_subdirectory(wubuzip)
 add_subdirectory(wubuxml)
 add_subdirectory(wubucfb)

@@ -55,6 +55,10 @@ Extraction order (lowest risk first):
    tiny, pure, and used almost everywhere. Land it, then point
    `wubuwordview`/`wubuchart`/`wubuepub` at it (deletes ~200 duplicated lines
    and the mojibake class of bug).
+   **STATUS: DONE.** `src/wububase/` (utf8 decode/encode/len + Buf + xml_escape)
+   created; `wubuwordview` and `wubuepub` now use it (private copies deleted);
+   `test_base` covers utf8/Buf/xml. Remaining: `wubuchart`/`wubudraw`/`wubumath`
+   still have their own `Buf`/`esc_attr` — follow-up (low priority, no known bug).
 2. **`wubupng`** = one correct PNG encoder (zlib-backed, chunk-framing correct —
    the `wubuwordview` one had a chunk-length bug we already fixed; promote that
    fixed version). `wubuocr/png_encode.c` reuses it.
