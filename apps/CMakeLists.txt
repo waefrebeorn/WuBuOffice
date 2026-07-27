@@ -2,6 +2,7 @@
 # OBJECT libraries (app_*_app) are shared between the standalone CLI and the
 # unified wubuoffice binary; forward link references resolve lazily.
 add_subdirectory(wubuword)
+add_subdirectory(wubuwordwin)
 add_subdirectory(wubucell)
 add_subdirectory(wubushow)
 add_subdirectory(wuburead)
@@ -18,4 +19,5 @@ add_subdirectory(wubuocr)
 add_subdirectory(wubugauntlet)
 add_subdirectory(wubunote)
 add_subdirectory(wubuview)
+add_subdirectory(wubuwordview)
 add_subdirectory(wubupad_bridge)

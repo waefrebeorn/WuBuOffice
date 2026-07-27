@@ -55,10 +55,15 @@ Extraction order (lowest risk first):
    tiny, pure, and used almost everywhere. Land it, then point
    `wubuwordview`/`wubuchart`/`wubuepub` at it (deletes ~200 duplicated lines
    and the mojibake class of bug).
-   **STATUS: DONE.** `src/wububase/` (utf8 decode/encode/len + Buf + xml_escape)
-   created; `wubuwordview` and `wubuepub` now use it (private copies deleted);
-   `test_base` covers utf8/Buf/xml. Remaining: `wubuchart`/`wubudraw`/`wubumath`
-   still have their own `Buf`/`esc_attr` — follow-up (low priority, no known bug).
+   **STATUS: DONE.** `src/wububase` (utf8 + Buf + xml_escape) created + consumed
+   by wubuwordview/wubuepub. `src/wubupng` (RGBA + GRAY8 encoder) created +
+   consumed by wubuwordview/wubuocr. `src/wuburender` (doc->RGBA) created and
+   is the SINGLE render path for both apps/wubuwordview (offscreen PNG) and the
+   new apps/wubuwordwin (live SDL2 window). `wubuchart`/`wubudraw`/`wubumath`
+   now use wububase Buf (private copies deleted). Remaining: crc32 lives only in
+   wubuzip (canonical) -- wubuocr's png.c still has its own decode-side crc32
+   (clean-room decoder, out of scope). Same for the duplicated `xml_esc` count
+   dropped to zero after wububase.
 2. **`wubupng`** = one correct PNG encoder (zlib-backed, chunk-framing correct —
    the `wubuwordview` one had a chunk-length bug we already fixed; promote that
    fixed version). `wubuocr/png_encode.c` reuses it.
