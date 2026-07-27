@@ -423,7 +423,7 @@ int main(void){
         }
     }
 
-    /* ---- OCR interactive: blocks detected + selection navigation ---- */
+    /* ---- OCR interactive: real recognized text + selection navigation ---- */
     {
         WuView *ov = wuos_ocr_create(NULL);
         if (!ov){ fprintf(stderr,"[ocr] create FAILED\n"); bad++; }
@@ -432,13 +432,21 @@ int main(void){
             int n = wuos_ocr_blocks(ov);
             if (n < 1){ fprintf(stderr,"[ocr] no blocks detected\n"); bad++; }
             else {
+                char *txt = wuos_ocr_text(ov);
+                /* The sample is synthesized from DejaVuSans and recognized by
+                 * the DejaVu-backed fontbank; expect non-empty real text. */
+                if (!txt || !*txt){
+                    fprintf(stderr,"[ocr] no recognized text (fontbank missing?)\n"); bad++;
+                } else {
+                    fprintf(stderr,"[ocr] ok (%d blocks; recognized '%s')\n", n, txt);
+                }
+                free(txt);
                 /* navigation must be safe + change selection without crashing */
                 ov->on_key(ov, WUOS_KEY_DOWN, 1);
                 ov->on_key(ov, WUOS_KEY_UP, 1);
-                ov->on_key(ov, WUOS_KEY_RETURN, 1);  /* copy selected block */
-                char *sel = wuos_ocr_selected(ov);    /* may be empty if recognizer
-                                                        has no model in this env */
-                fprintf(stderr,"[ocr] ok (%d blocks; selected '%s')\n", n, sel?sel:"(empty)");
+                ov->on_key(ov, WUOS_KEY_RETURN, 1);
+                char *sel = wuos_ocr_selected(ov);
+                fprintf(stderr,"[ocr] selected '%s'\n", sel?sel:"(empty)");
                 free(sel);
             }
             ov->destroy(ov);

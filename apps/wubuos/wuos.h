@@ -89,6 +89,8 @@ void wuos_cell_formula(WuView *v, char *out, int outn); /* stored formula (if FO
 /* OCR view inspection: block count + selected block text (caller frees). */
 int  wuos_ocr_blocks(WuView *v);
 char *wuos_ocr_selected(WuView *v);
+/* OCR: concatenated recognized text across all blocks (caller frees); NULL if none. */
+char *wuos_ocr_text(WuView *v);
 /* Plugin manager inspection (host side): count + name of loaded plugin i. */
 int  wuos_plugin_count(void);
 const char *wuos_plugin_name(int i);

@@ -7,9 +7,9 @@
 #include "png.h"          /* ocr_image_from_png */
 #include "image.h"        /* OcrImage */
 #include "wubuocr.h"      /* ocr_page_analyze / OcrPage */
-#include "fontbank.h"     /* ocr_fontbank_recognizer */
+#include "fontbank.h"     /* ocr_fontbank_recognizer / OcrFontBank */
+#include "wubufont.h"     /* Font, font_open, font_free, font_rasterize */
 #include "page_compose.h" /* ocr_compose_line */
-#include "wubufont.h"     /* font_open */
 
 #include <stdlib.h>
 #include <string.h>
@@ -22,12 +22,43 @@ static uint8_t *read_file(const char *p, size_t *len){
     fclose(f); *len=(size_t)n; return b;
 }
 
-typedef struct { OcrImage *im; OcrPage *pg; int sel; char *sel_text; } OcrV;
+/* Build a real (training-free) multi-font recognizer bank from the system
+ * DejaVu fonts so the OCR panel shows actual recognized text instead of
+ * empty geometry. Returns NULL if no usable font is present (honest: the
+ * pipeline then reports geometry only). */
+static OcrFontBank *build_recognizer_bank(const void ***out_fonts, size_t *out_n){
+    static const char *cands[] = {
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+        "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
+        NULL
+    };
+    const void **fonts = malloc(OCR_FONTBANK_MAX * sizeof *fonts);
+    if (!fonts){ if(out_fonts)*out_fonts=NULL; if(out_n)*out_n=0; return NULL; }
+    size_t n = 0;
+    for (int i=0; cands[i] && n < OCR_FONTBANK_MAX; i++){
+        size_t fl=0; uint8_t *fb=read_file(cands[i],&fl);
+        if (!fb) continue;
+        Font *fn = font_open_owned(fb, fl, 1);
+        free(fb);
+        if (!fn) continue;
+        fonts[n++] = fn;
+    }
+    if (n == 0){ free(fonts); if(out_fonts)*out_fonts=NULL; if(out_n)*out_n=0; return NULL; }
+    OcrFontBank *bank = ocr_fontbank_build(fonts, n, 6, 32, NULL);
+    if (!bank){ for (size_t i=0;i<n;i++) font_free((Font*)fonts[i]); free(fonts);
+                if(out_fonts)*out_fonts=NULL; if(out_n)*out_n=0; return NULL; }
+    if(out_fonts)*out_fonts=fonts; if(out_n)*out_n=n;
+    return bank;
+}
+
+typedef struct { OcrImage *im; OcrPage *pg; OcrFontBank *bank; const void **fonts; size_t nfonts;
+                 int sel; char *sel_text; } OcrV;
 
 static OcrImage *make_sample(void){
     static const char *path="/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf";
     size_t fl=0; uint8_t *fb=read_file(path,&fl); if(!fb) return NULL;
-    Font *font = font_open(fb, fl); if(!font){ free(fb); return NULL; }
+    Font *font = font_open_owned(fb, fl, 1); if(!font){ free(fb); return NULL; }
     OcrImage *im = ocr_compose_line(font, "The quick brown fox 0123456789 jumps", 90);
     font_free(font); free(fb);
     return im;
@@ -113,6 +144,8 @@ static void destroy(WuView *v){
     OcrV *e = v->priv;
     if(e->pg) ocr_page_free(e->pg);
     if(e->im) ocr_image_free(e->im);
+    if(e->bank) ocr_fontbank_free(e->bank);
+    if(e->fonts){ for (size_t i=0;i<e->nfonts;i++) font_free((Font*)e->fonts[i]); free((void*)e->fonts); }
     free(e->sel_text);
     free(e);
 }
@@ -127,7 +160,9 @@ WuView *wuos_ocr_create(const char *path){
     if (e->im){
         OcrLayoutParams pr; memset(&pr,0,sizeof pr);
         pr.min_block_w=4; pr.min_block_h=4; pr.min_gutter_v=6; pr.min_gutter_h=6;
-        e->pg = ocr_page_analyze(e->im, &pr, ocr_fontbank_recognizer(), NULL);
+        e->bank = build_recognizer_bank(&e->fonts, &e->nfonts);
+        e->pg = ocr_page_analyze(e->im, &pr,
+                                 ocr_fontbank_recognizer(), e->bank);
     }
     e->sel = 0; e->sel_text = NULL;
     WuView *v = calloc(1, sizeof *v);
@@ -147,4 +182,16 @@ int wuos_ocr_blocks(WuView *v){
 char *wuos_ocr_selected(WuView *v){
     OcrV *e = v->priv; if(!e->sel_text) return NULL;
     size_t L=strlen(e->sel_text); char *r=malloc(L+1); if(r) memcpy(r,e->sel_text,L+1); return r;
+}
+char *wuos_ocr_text(WuView *v){
+    OcrV *e = v->priv;
+    if (!e->pg) return NULL;
+    size_t n = ocr_page_block_count(e->pg);
+    size_t total = 1;
+    for (size_t i=0;i<n;i++){ const char *t=ocr_page_block_text(e->pg,i); if(t) total += strlen(t)+1; }
+    char *out = malloc(total);
+    if (!out) return NULL;
+    out[0]=0;
+    for (size_t i=0;i<n;i++){ const char *t=ocr_page_block_text(e->pg,i); if(t&&*t){ strcat(out,t); strcat(out," "); } }
+    return out;
 }
