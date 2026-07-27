@@ -26,7 +26,13 @@ typedef enum {
     WUBUMODEL_LINK,
     WUBUMODEL_FOOTNOTE,   /* inline ref marker + collected note text */
     WUBUMODEL_ENDNOTE,
-    WUBUMODEL_IMAGE      /* inline raster (embedded RGBA) */
+    WUBUMODEL_IMAGE,     /* inline raster (embedded RGBA) */
+    WUBUMODEL_HEADER,    /* DOC-56: page header slot (per-page chrome) */
+    WUBUMODEL_FOOTER,    /* DOC-56: page footer slot (per-page chrome) */
+    WUBUMODEL_COMMENT,   /* DOC-63: review comment anchored to a run */
+    WUBUMODEL_TRACKCHANGE,/* DOC-64: redline insert/delete */
+    WUBUMODEL_SECTIONBREAK,/* DOC-57: section break (new page + reset cols) */
+    WUBUMODEL_PAGEBREAK  /* DOC-57: hard page break */
 } wubumodel_kind;
 
 typedef uint64_t wubumodel_id;
@@ -49,6 +55,11 @@ wubumodel_node *wubumodel_node_find(wubumodel_doc *doc, wubumodel_id id);
 /* ---- text (RUN) ---- */
 int  wubumodel_run_set_text(wubumodel_node *run, const char *utf8); /* 0 ok, -1 err */
 const char *wubumodel_run_text(const wubumodel_node *run);
+/* Node-level text: for non-RUN nodes (HEADER/FOOTER/COMMENT/TRACKCHANGE/
+ * FIELD/SHAPE) that carry a direct text payload on n->text. RUN nodes should
+ * use the run_* variants instead. */
+int  wubumodel_node_set_text(wubumodel_node *n, const char *utf8);
+const char *wubumodel_node_text(const wubumodel_node *n);
 
 /* ---- style (shared, copy-on-write) ---- */
 wubumodel_style *wubumodel_style_create(void);
@@ -90,6 +101,15 @@ wubumodel_node *wubumodel_node_parent(const wubumodel_node *n); /* RUN->owning b
  * layout box for an IMAGE node. w/h returned via out params. */
 int  wubumodel_node_set_image(wubumodel_node *n, const uint8_t *rgba, int w, int h);
 const uint8_t *wubumodel_node_image(const wubumodel_node *n, int *w, int *h);
+/* ---- review / field / break metadata (DOC-56..65) ---- */
+int  wubumodel_node_set_author(wubumodel_node *n, const char *a);  /* COMMENT/TRACKCHANGE */
+const char *wubumodel_node_author(const wubumodel_node *n);
+int  wubumodel_node_set_field(wubumodel_node *n, const char *f);   /* FIELD kind/value */
+const char *wubumodel_node_field(const wubumodel_node *n);
+int  wubumodel_node_set_tc(wubumodel_node *n, int t);   /* TRACKCHANGE 0=ins,1=del */
+int  wubumodel_node_tc(const wubumodel_node *n);
+int  wubumodel_node_set_break(wubumodel_node *n, int b); /* PAGEBREAK=0, SECTIONBREAK=1 */
+int  wubumodel_node_break(const wubumodel_node *n);
 typedef void (*wubumodel_change_cb)(wubumodel_doc *doc, wubumodel_id node,
                                     void *user);
 int wubumodel_on_change(wubumodel_doc *doc, wubumodel_change_cb cb, void *user);

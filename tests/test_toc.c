@@ -235,6 +235,83 @@ int main(void){
             }
         CK(img_boxes == 1, "image laid out as a box");
         wubulayout_destroy(L5);
+
+        /* DOC-57: page break creates a second page. */
+        {
+            wubumodel_doc *dd = wubumodel_doc_create();
+            wubumodel_node *ss = wubumodel_node_create(dd, WUBUMODEL_SECTION);
+            wubumodel_node *p1 = wubumodel_node_create(dd, WUBUMODEL_PARAGRAPH);
+            wubumodel_node *r1 = wubumodel_node_create(dd, WUBUMODEL_RUN);
+            wubumodel_run_set_text(r1,"A"); wubumodel_node_append(dd,p1,r1);
+            wubumodel_node_append(dd,ss,p1);
+            wubumodel_node *pb = wubumodel_node_create(dd, WUBUMODEL_PAGEBREAK);
+            wubumodel_node_set_break(pb,0); wubumodel_node_append(dd,ss,pb);
+            wubumodel_node *p2 = wubumodel_node_create(dd, WUBUMODEL_PARAGRAPH);
+            wubumodel_node *r2 = wubumodel_node_create(dd, WUBUMODEL_RUN);
+            wubumodel_run_set_text(r2,"B"); wubumodel_node_append(dd,p2,r2);
+            wubumodel_node_append(dd,ss,p2);
+            wubulayout_doc *Lb = wubulayout_create(dd, ss, meas, sty, NULL, 400, 400, 20,20,20,20);
+            CK(wubulayout_page_count(Lb) >= 2, "page break forces 2nd page");
+            wubulayout_destroy(Lb); wubumodel_doc_destroy(dd);
+        }
+        /* DOC-56: header/footer nodes are recognized and skipped in body flow. */
+        {
+            wubumodel_doc *dd = wubumodel_doc_create();
+            wubumodel_node *ss = wubumodel_node_create(dd, WUBUMODEL_SECTION);
+            wubumodel_node *hd = wubumodel_node_create(dd, WUBUMODEL_HEADER);
+            wubumodel_node_set_text(hd,"My Header"); wubumodel_node_append(dd,ss,hd);
+            wubumodel_node *ft = wubumodel_node_create(dd, WUBUMODEL_FOOTER);
+            wubumodel_node_set_text(ft,"My Footer"); wubumodel_node_append(dd,ss,ft);
+            CK(wubumodel_node_kind(hd)==WUBUMODEL_HEADER, "header kind");
+            CK(strcmp(wubumodel_node_text(hd),"My Header")==0, "header text");
+            CK(wubumodel_node_kind(ft)==WUBUMODEL_FOOTER, "footer kind");
+            wubumodel_doc_destroy(dd);
+        }
+        /* DOC-63: comment node carries author + text. */
+        {
+            wubumodel_doc *dd = wubumodel_doc_create();
+            wubumodel_node *ss = wubumodel_node_create(dd, WUBUMODEL_SECTION);
+            wubumodel_node *c = wubumodel_node_create(dd, WUBUMODEL_COMMENT);
+            wubumodel_node_set_text(c,"Fix this"); wubumodel_node_set_author(c,"Al");
+            wubumodel_node_append(dd,ss,c);
+            CK(strcmp(wubumodel_node_author(c),"Al")==0, "comment author");
+            wubulayout_doc *Lc = wubulayout_create(dd, ss, meas, sty, NULL, 400, 400, 20,20,20,20);
+            int cr=0; for (int pg=0;pg<wubulayout_page_count(Lc);pg++)
+                for (int i=0;i<wubulayout_run_count(Lc,pg);i++)
+                    if (wubulayout_run_at(Lc,pg,i)->user==(void*)c) cr++;
+            CK(cr>=1, "comment laid out");
+            wubulayout_destroy(Lc); wubumodel_doc_destroy(dd);
+        }
+        /* DOC-64: track-change node carries type + text. */
+        {
+            wubumodel_doc *dd = wubumodel_doc_create();
+            wubumodel_node *ss = wubumodel_node_create(dd, WUBUMODEL_SECTION);
+            wubumodel_node *t = wubumodel_node_create(dd, WUBUMODEL_TRACKCHANGE);
+            wubumodel_node_set_text(t,"new"); wubumodel_node_set_tc(t,0);
+            wubumodel_node_append(dd,ss,t);
+            CK(wubumodel_node_tc(t)==0, "trackchange type stored");
+            wubulayout_doc *Lt = wubulayout_create(dd, ss, meas, sty, NULL, 400, 400, 20,20,20,20);
+            int tr=0; for (int pg=0;pg<wubulayout_page_count(Lt);pg++)
+                for (int i=0;i<wubulayout_run_count(Lt,pg);i++)
+                    if (wubulayout_run_at(Lt,pg,i)->user==(void*)t) tr++;
+            CK(tr>=1, "trackchange laid out");
+            wubulayout_destroy(Lt); wubumodel_doc_destroy(dd);
+        }
+        /* DOC-65: field node carries kind + value. */
+        {
+            wubumodel_doc *dd = wubumodel_doc_create();
+            wubumodel_node *ss = wubumodel_node_create(dd, WUBUMODEL_SECTION);
+            wubumodel_node *f = wubumodel_node_create(dd, WUBUMODEL_FIELD);
+            wubumodel_node_set_field(f,"date"); wubumodel_node_set_text(f,"2026-07-27");
+            wubumodel_node_append(dd,ss,f);
+            CK(strcmp(wubumodel_node_field(f),"date")==0, "field kind stored");
+            wubulayout_doc *Lf = wubulayout_create(dd, ss, meas, sty, NULL, 400, 400, 20,20,20,20);
+            int fr=0; for (int pg=0;pg<wubulayout_page_count(Lf);pg++)
+                for (int i=0;i<wubulayout_run_count(Lf,pg);i++)
+                    if (wubulayout_run_at(Lf,pg,i)->user==(void*)f) fr++;
+            CK(fr>=1, "field laid out");
+            wubulayout_destroy(Lf); wubumodel_doc_destroy(dd);
+        }
         wubumodel_doc_destroy(d);
     }
     if (fails==0) printf("TOC + SETTINGS + FOOTNOTE TESTS PASSED\n");

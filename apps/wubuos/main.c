@@ -273,6 +273,13 @@ int main(int argc, char **argv){
                 else if (k==SDLK_l && (mod & KMOD_CTRL) && (mod & KMOD_SHIFT)) code=WUOS_KEY_INSERT_LIST; /* DOC-59 */
                 else if (k==SDLK_t && (mod & KMOD_CTRL) && (mod & KMOD_SHIFT)) code=WUOS_KEY_INSERT_TABLE; /* DOC-62 */
                 else if (k==SDLK_i && (mod & KMOD_CTRL) && (mod & KMOD_SHIFT)) code=WUOS_KEY_INSERT_IMAGE; /* DOC-61 */
+                else if (k==SDLK_b && (mod & KMOD_CTRL) && (mod & KMOD_SHIFT)) code=WUOS_KEY_INSERT_PAGEBREAK; /* DOC-57 */
+                else if (k==SDLK_s && (mod & KMOD_CTRL) && (mod & KMOD_SHIFT)) code=WUOS_KEY_INSERT_SECTIONBREAK; /* DOC-57 */
+                else if (k==SDLK_h && (mod & KMOD_CTRL) && (mod & KMOD_SHIFT)) code=WUOS_KEY_INSERT_HEADER; /* DOC-56 */
+                else if (k==SDLK_f && (mod & KMOD_CTRL) && (mod & KMOD_SHIFT)) code=WUOS_KEY_INSERT_FOOTER; /* DOC-56 */
+                else if (k==SDLK_c && (mod & KMOD_CTRL) && (mod & KMOD_SHIFT)) code=WUOS_KEY_INSERT_COMMENT; /* DOC-63 */
+                else if (k==SDLK_t && (mod & KMOD_CTRL) && (mod & KMOD_SHIFT) && (mod & KMOD_ALT)) code=WUOS_KEY_INSERT_TRACKCHANGE; /* DOC-64 */
+                else if (k==SDLK_d && (mod & KMOD_CTRL) && (mod & KMOD_SHIFT)) code=WUOS_KEY_INSERT_FIELD; /* DOC-65 */
                 else if (k==SDLK_F1) code=WUOS_KEY_CHEAT;   /* UI-36 */
                 else if (k>=SDLK_1 && k<=SDLK_6 && (mod & KMOD_CTRL))
                     code = WUOS_KEY_TOC1 + (k - SDLK_1);   /* DOC-54 jump */
@@ -451,10 +458,17 @@ int main(int argc, char **argv){
                 "Ctrl+Shift+L insert bullet list (Document)",
                 "Ctrl+Shift+T insert table (Document)",
                 "Ctrl+Shift+I insert image (Document)",
+                "Ctrl+Shift+B page break (Document)",
+                "Ctrl+Shift+S section break (Document)",
+                "Ctrl+Shift+H header (Document)",
+                "Ctrl+Shift+F footer (Document)",
+                "Ctrl+Shift+C comment (Document)",
+                "Ctrl+Shift+Alt+T track-change (Document)",
+                "Ctrl+Shift+D field (Document)",
                 "Right-click context menu",
                 "Drag & drop a file to open"
             };
-            for (int i=0;i<15;i++)
+            for (int i=0;i<23;i++)
                 sdl_text(ren, cx+14, cy+40+i*22, 200,203,210, keys[i]);
         }
         SDL_Delay(16);

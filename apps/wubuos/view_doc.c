@@ -214,6 +214,85 @@ static void doc_insert_image(DocV *e){
     wubumodel_node_append(e->doc, sec, im);
     e->toc_dirty = 1;
 }
+/* Insert a page break (DOC-57). */
+static void doc_insert_pagebreak(DocV *e){
+    if (!e->doc) return;
+    wubumodel_node *sec = wubumodel_node_first_child(wubumodel_doc_root(e->doc));
+    if (!sec) return;
+    wubumodel_node *b = wubumodel_node_create(e->doc, WUBUMODEL_PAGEBREAK);
+    wubumodel_node_set_break(b, 0);
+    wubumodel_node_append(e->doc, sec, b);
+    e->toc_dirty = 1;
+}
+/* Insert a section break (DOC-57). */
+static void doc_insert_sectionbreak(DocV *e){
+    if (!e->doc) return;
+    wubumodel_node *sec = wubumodel_node_first_child(wubumodel_doc_root(e->doc));
+    if (!sec) return;
+    wubumodel_node *b = wubumodel_node_create(e->doc, WUBUMODEL_SECTIONBREAK);
+    wubumodel_node_set_break(b, 1);
+    wubumodel_node_append(e->doc, sec, b);
+    e->toc_dirty = 1;
+}
+/* Insert a page header (DOC-56): a HEADER node with sample text. */
+static void doc_insert_header(DocV *e){
+    if (!e->doc) return;
+    wubumodel_node *sec = wubumodel_node_first_child(wubumodel_doc_root(e->doc));
+    if (!sec) return;
+    /* replace any existing header */
+    for (wubumodel_node *n = wubumodel_node_first_child(sec); n; n = wubumodel_node_next_sibling(n))
+        if (wubumodel_node_kind(n)==WUBUMODEL_HEADER){ wubumodel_node_set_text(n, "WuBuOffice Header"); return; }
+    wubumodel_node *hd = wubumodel_node_create(e->doc, WUBUMODEL_HEADER);
+    wubumodel_node_set_text(hd, "WuBuOffice Header");
+    wubumodel_node_append(e->doc, sec, hd);
+    e->toc_dirty = 1;
+}
+/* Insert a page footer (DOC-56). */
+static void doc_insert_footer(DocV *e){
+    if (!e->doc) return;
+    wubumodel_node *sec = wubumodel_node_first_child(wubumodel_doc_root(e->doc));
+    if (!sec) return;
+    for (wubumodel_node *n = wubumodel_node_first_child(sec); n; n = wubumodel_node_next_sibling(n))
+        if (wubumodel_node_kind(n)==WUBUMODEL_FOOTER){ wubumodel_node_set_text(n, "Page footer"); return; }
+    wubumodel_node *ft = wubumodel_node_create(e->doc, WUBUMODEL_FOOTER);
+    wubumodel_node_set_text(ft, "Page footer");
+    wubumodel_node_append(e->doc, sec, ft);
+    e->toc_dirty = 1;
+}
+/* Insert a review comment (DOC-63). */
+static void doc_insert_comment(DocV *e){
+    if (!e->doc) return;
+    wubumodel_node *sec = wubumodel_node_first_child(wubumodel_doc_root(e->doc));
+    if (!sec) return;
+    wubumodel_node *c = wubumodel_node_create(e->doc, WUBUMODEL_COMMENT);
+    wubumodel_node_set_text(c, "Please review this clause.");
+    wubumodel_node_set_author(c, "Reviewer");
+    wubumodel_node_append(e->doc, sec, c);
+    e->toc_dirty = 1;
+}
+/* Insert a track-change (DOC-64): a redline insertion. */
+static void doc_insert_trackchange(DocV *e){
+    if (!e->doc) return;
+    wubumodel_node *sec = wubumodel_node_first_child(wubumodel_doc_root(e->doc));
+    if (!sec) return;
+    wubumodel_node *t = wubumodel_node_create(e->doc, WUBUMODEL_TRACKCHANGE);
+    wubumodel_node_set_text(t, "proposed insertion");
+    wubumodel_node_set_tc(t, 0);
+    wubumodel_node_set_author(t, "Editor");
+    wubumodel_node_append(e->doc, sec, t);
+    e->toc_dirty = 1;
+}
+/* Insert a field (DOC-65): a date field whose value shows on render. */
+static void doc_insert_field(DocV *e){
+    if (!e->doc) return;
+    wubumodel_node *sec = wubumodel_node_first_child(wubumodel_doc_root(e->doc));
+    if (!sec) return;
+    wubumodel_node *f = wubumodel_node_create(e->doc, WUBUMODEL_FIELD);
+    wubumodel_node_set_field(f, "date");
+    wubumodel_node_set_text(f, "2026-07-27");
+    wubumodel_node_append(e->doc, sec, f);
+    e->toc_dirty = 1;
+}
 
 static int render(WuView *v, int w, int h, int scroll,
                   unsigned char **rgba, int *rw, int *rh){
@@ -243,8 +322,19 @@ static int render(WuView *v, int w, int h, int scroll,
             unsigned char MU[3] = { hc?0:120, hc?0:124, hc?0:132 };
             unsigned char LN[3] = { hc?127:150, hc?127:154, hc?127:162 };
             unsigned char TT[3] = { hc?0:200, hc?120:203, hc?200:210 };
-            /* page header */
-            char hdr[64]; snprintf(hdr,sizeof hdr,"Page %d / %d", pg+1, pages);
+            /* page header (DOC-56: use model HEADER if present) */
+            char hdr[128];
+            const char *hm = NULL, *fm = NULL;
+            if (e->doc){
+                for (wubumodel_node *n = wubumodel_node_first_child(
+                            wubumodel_doc_root(e->doc)); n; n = wubumodel_node_next_sibling(n)){
+                    wubumodel_kind k = wubumodel_node_kind(n);
+                    if (k==WUBUMODEL_HEADER && !hm) hm = wubumodel_node_text(n);
+                    else if (k==WUBUMODEL_FOOTER && !fm) fm = wubumodel_node_text(n);
+                }
+            }
+            snprintf(hdr,sizeof hdr,"%s   (Page %d / %d)",
+                     hm?hm:"WuBuOffice", pg+1, pages);
             wuos_font_draw(hdr, 56, 24, 0, MU[0],MU[1],MU[2], fb, w, h);
             /* DOC-62/61: draw table borders + blit embedded images from boxes */
             int nboxes = wubulayout_box_count(L, pg);
@@ -317,6 +407,23 @@ static int render(WuView *v, int w, int h, int scroll,
                         e->nlink++;
                     }
                 }
+                /* DOC-63/64/65: color review/field runs by node metadata */
+                int is_comment=0, is_tc_ins=0, is_tc_del=0, is_field=0;
+                unsigned char cm[3] = { hc?0:30, hc?120:120, hc?255:200 };   /* comment: blue */
+                unsigned char ti[3] = { hc?0:20, hc?160:150, hc?0:40 };       /* insert: green */
+                unsigned char td[3] = { hc?220:200, hc?40:30, hc?40:30 };     /* delete: red */
+                unsigned char fd[3] = { hc?160:120, hc?80:80, hc?200:200 };   /* field: purple */
+                if (r->user){
+                    wubumodel_node *rn = (wubumodel_node*)r->user;
+                    wubumodel_kind rk = wubumodel_node_kind(rn);
+                    if (rk == WUBUMODEL_COMMENT){ is_comment=1; lk[0]=cm[0];lk[1]=cm[1];lk[2]=cm[2]; }
+                    else if (rk == WUBUMODEL_TRACKCHANGE){
+                        is_tc_del = (wubumodel_node_tc(rn)==1);
+                        is_tc_ins = !is_tc_del;
+                        if (is_tc_del){ lk[0]=td[0];lk[1]=td[1];lk[2]=td[2]; }
+                        else { lk[0]=ti[0];lk[1]=ti[1];lk[2]=ti[2]; }
+                    } else if (rk == WUBUMODEL_FIELD){ is_field=1; lk[0]=fd[0];lk[1]=fd[1];lk[2]=fd[2]; }
+                }
                 wuos_font_draw(seg, r->x, r->y, r->bold, lk[0],lk[1],lk[2], fb, w, h);
                 if (is_link){ /* underline */
                     int yy = r->y + 2;
@@ -333,8 +440,16 @@ static int render(WuView *v, int w, int h, int scroll,
                 char ln2[16]; snprintf(ln2,sizeof ln2,"%d", li+1);
                 wuos_font_draw(ln2, 8, ln->y, 0, LN[0],LN[1],LN[2], fb, w, h);
             }
-            /* page footer */
-            char ftr[64]; snprintf(ftr,sizeof ftr,"WuBuOffice — %d lines", nl);
+            /* page footer (DOC-56: use model FOOTER if present) */
+            char ftr[128];
+            const char *ft = NULL;
+            if (e->doc){
+                for (wubumodel_node *n = wubumodel_node_first_child(
+                            wubumodel_doc_root(e->doc)); n; n = wubumodel_node_next_sibling(n)){
+                    if (wubumodel_node_kind(n)==WUBUMODEL_FOOTER){ ft = wubumodel_node_text(n); break; }
+                }
+            }
+            snprintf(ftr,sizeof ftr,"%s   — %d lines", ft?ft:"WuBuOffice", nl);
             wuos_font_draw(ftr, 56, h-30, 0, MU[0],MU[1],MU[2], fb, w, h);
             /* UI-34: minimap on the right edge — one tick per line, colored by
              * heading level if the TOC knows about it. */
@@ -469,6 +584,13 @@ static void on_key(WuView *v, int key, int down){
     if (key==WUOS_KEY_INSERT_LIST){ doc_insert_list(e); return; }
     if (key==WUOS_KEY_INSERT_TABLE){ doc_insert_table(e); return; }
     if (key==WUOS_KEY_INSERT_IMAGE){ doc_insert_image(e); return; }
+    if (key==WUOS_KEY_INSERT_PAGEBREAK){ doc_insert_pagebreak(e); return; }
+    if (key==WUOS_KEY_INSERT_SECTIONBREAK){ doc_insert_sectionbreak(e); return; }
+    if (key==WUOS_KEY_INSERT_HEADER){ doc_insert_header(e); return; }
+    if (key==WUOS_KEY_INSERT_FOOTER){ doc_insert_footer(e); return; }
+    if (key==WUOS_KEY_INSERT_COMMENT){ doc_insert_comment(e); return; }
+    if (key==WUOS_KEY_INSERT_TRACKCHANGE){ doc_insert_trackchange(e); return; }
+    if (key==WUOS_KEY_INSERT_FIELD){ doc_insert_field(e); return; }
     /* DOC-54: jump to a TOC entry with Ctrl+[1..6] */
     if (key>=WUOS_KEY_TOC1 && key<=WUOS_KEY_TOC6){
         int idx = key - WUOS_KEY_TOC1;

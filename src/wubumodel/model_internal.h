@@ -36,6 +36,10 @@ struct wubumodel_node {
     char *link;                 /* LINK href/target (DOC-60) */
     uint8_t *img;               /* IMAGE embedded RGBA (DOC-61) */
     int img_w, img_h;           /* IMAGE dimensions */
+    char *author;               /* COMMENT/TRACKCHANGE author (DOC-63/64) */
+    char *field;                /* FIELD kind/value, e.g. "date" (DOC-65) */
+    int tc;                     /* TRACKCHANGE type: 0 insert,1 delete (DOC-64) */
+    int brk;                    /* PAGEBREAK/SECTIONBREAK type (DOC-57) */
     wubumodel_style *style;     /* shared, may be NULL */
     struct wubumodel_node *next;/* bucket chain in doc->nodes */
     struct wubumodel_node *parent;     /* back-link (weak) */

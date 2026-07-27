@@ -33,6 +33,8 @@ void wubumodel_doc_destroy(wubumodel_doc *doc) {
             free(n->note);
             free(n->link);
             free(n->img);
+            free(n->author);
+            free(n->field);
             free(n);
             n = nx;
         }
@@ -79,6 +81,8 @@ void wubumodel_node_destroy(wubumodel_doc *doc, wubumodel_node *n) {
     free(n->note);
     free(n->link);
     free(n->img);
+    free(n->author);
+    free(n->field);
     free(n);
 }
 wubumodel_node *wubumodel_node_find(wubumodel_doc *doc, wubumodel_id id) {
@@ -99,6 +103,13 @@ int wubumodel_run_set_text(wubumodel_node *run, const char *utf8) {
 }
 const char *wubumodel_run_text(const wubumodel_node *run) {
     return run ? run->text : NULL;
+}
+int wubumodel_node_set_text(wubumodel_node *n, const char *utf8) {
+    if (!n) return -1;
+    return set_text_raw(n, utf8);
+}
+const char *wubumodel_node_text(const wubumodel_node *n) {
+    return n ? n->text : NULL;
 }
 
 /* ---- footnotes / endnotes (DOC-55) ---- */
@@ -165,6 +176,20 @@ const uint8_t *wubumodel_node_image(const wubumodel_node *n, int *w, int *h){
     if (w) *w = n->img_w; if (h) *h = n->img_h;
     return n->img;
 }
+
+/* ---- review/field/break metadata (DOC-56..65) ---- */
+int  wubumodel_node_set_author(wubumodel_node *n, const char *a){
+    if (!n) return -1; char *c = a?strdup(a):NULL; free(n->author); n->author=c; return 0;
+}
+const char *wubumodel_node_author(const wubumodel_node *n){ return n?n->author:NULL; }
+int  wubumodel_node_set_field(wubumodel_node *n, const char *f){
+    if (!n) return -1; char *c = f?strdup(f):NULL; free(n->field); n->field=c; return 0;
+}
+const char *wubumodel_node_field(const wubumodel_node *n){ return n?n->field:NULL; }
+int  wubumodel_node_set_tc(wubumodel_node *n, int t){ if(!n)return -1; n->tc=t; return 0; }
+int  wubumodel_node_tc(const wubumodel_node *n){ return n?(n->tc):0; }
+int  wubumodel_node_set_break(wubumodel_node *n, int b){ if(!n)return -1; n->brk=b; return 0; }
+int  wubumodel_node_break(const wubumodel_node *n){ return n?(n->brk):0; }
 
 wubumodel_style *wubumodel_style_create(void) {
     wubumodel_style *s = calloc(1, sizeof(*s));

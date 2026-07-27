@@ -365,6 +365,70 @@ static int lay_node(wubulayout_doc *L, void *node, int *pen_y){
         }
         return 0;
     }
+    /* DOC-56: HEADER/FOOTER are per-page chrome, not body flow. The view pulls
+     * them from the model directly, so the body layout skips them. */
+    if (k == WUBUMODEL_HEADER || k == WUBUMODEL_FOOTER){
+        return 0;
+    }
+    /* DOC-57: hard page / section break -> start a new page. */
+    if (k == WUBUMODEL_PAGEBREAK || k == WUBUMODEL_SECTIONBREAK){
+        new_page(L);
+        *pen_y = L->mt;
+        return 0;
+    }
+    /* DOC-63: comment -> a run of the comment text (view colors it + shows author). */
+    if (k == WUBUMODEL_COMMENT){
+        LPage *pg = cur_page(L);
+        const char *tx = wubumodel_node_text((const wubumodel_node*)node);
+        int fs=10, bold=0, it=1; wubulayout_dir d=WUBULAYOUT_LTR;
+        if (L->style) L->style(L->cb_user, node, &fs,&bold,&it,&d);
+        int ww = L->measure?L->measure(tx?tx:"",tx?strlen(tx):0,fs,bold,it,NULL,L->cb_user):(int)(tx?strlen(tx):0)*7;
+        wubulayout_run *R = push_run(pg);
+        if (R){
+            R->text = tx?tx:""; R->text_len = tx?strlen(tx):0;  /* borrowed */
+            R->font_size=fs; R->bold=bold; R->italic=it; R->dir=d;
+            R->x=L->ml; R->y=*pen_y; R->w=ww; R->h=fs+4;
+            R->page=L->npages-1; R->line=pg->line_seq++; R->user=node;
+        }
+        *pen_y += fs+8;
+        return 0;
+    }
+    /* DOC-64: track-changes redline -> run of the text (view colors by tc). */
+    if (k == WUBUMODEL_TRACKCHANGE){
+        LPage *pg = cur_page(L);
+        const char *tx = wubumodel_node_text((const wubumodel_node*)node);
+        int t = wubumodel_node_tc((const wubumodel_node*)node);
+        int fs=12, bold=0, it=0; wubulayout_dir d=WUBULAYOUT_LTR;
+        if (L->style) L->style(L->cb_user, node, &fs,&bold,&it,&d);
+        if (t==1) it=1;  /* deletions read struck-through */
+        int ww = L->measure?L->measure(tx?tx:"",tx?strlen(tx):0,fs,bold,it,NULL,L->cb_user):(int)(tx?strlen(tx):0)*7;
+        wubulayout_run *R = push_run(pg);
+        if (R){
+            R->text = tx?tx:""; R->text_len = tx?strlen(tx):0;  /* borrowed */
+            R->font_size=fs; R->bold=bold; R->italic=it; R->dir=d;
+            R->x=L->ml; R->y=*pen_y; R->w=ww; R->h=fs+4;
+            R->page=L->npages-1; R->line=pg->line_seq++; R->user=node;
+        }
+        *pen_y += fs+8;
+        return 0;
+    }
+    /* DOC-65: field -> its value text (set on the node by the author/insert helper). */
+    if (k == WUBUMODEL_FIELD){
+        LPage *pg = cur_page(L);
+        const char *tx = wubumodel_node_text((const wubumodel_node*)node);
+        int fs=12, bold=0, it=0; wubulayout_dir d=WUBULAYOUT_LTR;
+        if (L->style) L->style(L->cb_user, node, &fs,&bold,&it,&d);
+        int ww = L->measure?L->measure(tx?tx:"",tx?strlen(tx):0,fs,bold,it,NULL,L->cb_user):(int)(tx?strlen(tx):0)*7;
+        wubulayout_run *R = push_run(pg);
+        if (R){
+            R->text = tx?tx:""; R->text_len = tx?strlen(tx):0;  /* borrowed */
+            R->font_size=fs; R->bold=bold; R->italic=it; R->dir=d;
+            R->x=L->ml; R->y=*pen_y; R->w=ww; R->h=fs+4;
+            R->page=L->npages-1; R->line=pg->line_seq++; R->user=node;
+        }
+        *pen_y += fs+8;
+        return 0;
+    }
     /* generic container: recurse children */
     for (wubumodel_node *c = wubumodel_node_first_child((wubumodel_node*)node);
          c; c = wubumodel_node_next_sibling(c)){
@@ -413,7 +477,10 @@ static int lay_chain(wubulayout_doc *L, void *start, int *pen_y, void *resume, i
         wubumodel_kind k = wubumodel_node_kind(n);
         int is_container = (k!=WUBUMODEL_PARAGRAPH && k!=WUBUMODEL_TABLE &&
                             k!=WUBUMODEL_SHAPE && k!=WUBUMODEL_CHART && k!=WUBUMODEL_LINK &&
-                            k!=WUBUMODEL_IMAGE && k!=WUBUMODEL_FOOTNOTE && k!=WUBUMODEL_ENDNOTE);
+                            k!=WUBUMODEL_IMAGE && k!=WUBUMODEL_FOOTNOTE && k!=WUBUMODEL_ENDNOTE &&
+                            k!=WUBUMODEL_HEADER && k!=WUBUMODEL_FOOTER && k!=WUBUMODEL_COMMENT &&
+                            k!=WUBUMODEL_TRACKCHANGE && k!=WUBUMODEL_FIELD &&
+                            k!=WUBUMODEL_PAGEBREAK && k!=WUBUMODEL_SECTIONBREAK);
         if (is_container && depth==0 && wubumodel_node_first_child(n)){
             wubumodel_node *sib = wubumodel_node_next_sibling(n);
             void *res = sib ? (void*)sib : resume;
