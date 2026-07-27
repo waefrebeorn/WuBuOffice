@@ -17,7 +17,8 @@ add_executable(wubuos
     view_slide.c
     view_ocr.c
     view_editor.c
-    view_compare.c)
+    view_compare.c
+    view_settings.c)
 target_include_directories(wubuos PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}/src/wubumodel
@@ -46,13 +47,14 @@ target_compile_definitions(wubuos PRIVATE lex_free=wubupad_lex_free doc_create=w
 target_link_libraries(wubuos PRIVATE
     wubumodel wuburender wubuocr wubufont wubucell_app wubudoc wubuautosave
     wubuspell wubuchart wubudraw wubumath wubuepub wubua11y wubusvg
+    wubusettings wubushape
     ${SDL2_LIBRARIES} ${FREETYPE_LIBRARIES} m dl)
 target_compile_options(wubuos PRIVATE -Wall -Wextra -Wpedantic)
 
 # Headless smoke test: create + render every view (real engines, no GUI).
 # Verifies each WuView adapter renders without crashing and returns a buffer.
 add_executable(test_view test_view.c wuos_font.c wuos_file.c plugin.c view_doc.c view_cell.c
-    view_slide.c view_ocr.c view_editor.c view_compare.c)
+    view_slide.c view_ocr.c view_editor.c view_compare.c view_settings.c)
 target_include_directories(test_view PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}/src/wubumodel
@@ -71,6 +73,7 @@ target_compile_definitions(test_view PRIVATE lex_free=wubupad_lex_free doc_creat
 target_link_libraries(test_view PRIVATE
     wubumodel wuburender wubuocr wubufont wubucell_app wubudoc wubuautosave
     wubuspell wubuchart wubudraw wubumath wubuepub wubua11y wubusvg
+    wubusettings wubushape
     ${SDL2_LIBRARIES} ${FREETYPE_LIBRARIES} m dl)
 target_compile_options(test_view PRIVATE -Wall -Wextra -Wpedantic)
 add_test(NAME view COMMAND test_view)

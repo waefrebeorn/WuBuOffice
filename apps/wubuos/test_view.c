@@ -58,6 +58,17 @@ int main(void){
     wuos_write_file(mdp, md, strlen(md));
     wuos_write_file(codep, code, strlen(code));
 
+    WuView *sv = wuos_settings_create();
+    if (sv){ bad += render_check(sv, "settings");
+             /* UI-24/25: settings view edits the shared config; verify a render
+              * produced a buffer and status reports a theme. */
+             char *sts = sv->status(sv);
+             if (!sts || !strstr(sts, "Settings")){ fprintf(stderr,"[settings] status missing\n"); bad++; }
+             else fprintf(stderr,"[settings] ok (%s)\n", sts);
+             free(sts);
+             sv->destroy(sv); }
+    else { fprintf(stderr,"[settings] create FAILED\n"); bad++; }
+
     WuView *dv = wuos_doc_create(mdp);
     if (dv){ bad += render_check(dv, "doc(file)");
              if (dv->get_path && strcmp(dv->get_path(dv), mdp)!=0){ fprintf(stderr,"doc get_path mismatch\n"); bad++; }

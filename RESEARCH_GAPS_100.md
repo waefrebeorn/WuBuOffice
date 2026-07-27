@@ -42,12 +42,12 @@
 20. **P0** No scrollable page view with margins/ruler. Add page canvas + horizontal/vertical rulers. — CLOSED (Document page render + scroll).
 21. **P1** No status bar (page, word count, zoom, language). Add a bottom status bar. — **CLOSED**: each view has a status() builder.
 22. **P1** No side outline pane (document structure / headings). Drive from model headings. — CLOSED (function-list / outline panel in Editor/Document).
-23. **P1** No find/replace dialog (UI). `wubumodel` search exists; need the dialog + highlighting. — **CLOSED**: Editor find/replace dialog + highlight.
-24. **P1** No zoom control (UI). Model has no zoom; render scale needed in `ui_gfx`. — OPEN (zoom control UI).
-25. **P1** No preferences/settings dialog. Add a settings surface (theme, language, autosave interval). — OPEN (settings dialog).
-26. **P1** No document tab/MDI — open multiple docs. Add tab strip. — **CLOSED**: multi-doc tab strip in Editor.
-27. **P1** No context menu (right-click) on text/objects. — OPEN (context menu).
-28. **P1** No drag-and-drop file open. — OPEN (drag-drop).
+23. **P1** No find/replace dialog (UI). `wubumodel` search exists; need the dialog + highlighting. — CLOSED: Editor find/replace dialog + highlight.
+7.  **P0** `wubushape` (BIDI/text shaping) lives in WuBuPad only; WuBuOffice apps can't render RTL correctly. Share the shaping backend. — **CLOSED**: new src/wubushape module (codepoint-level Bidi visual reorder) linked into wubuos; available to all views. (Full UBA not in scope; common RTL/LTR mix correct.)
+24. **P1** No zoom control (UI). Model has no zoom; render scale needed in `ui_gfx`. — **CLOSED**: shell-level zoom (Ctrl +/-/0) scales the blit; persisted via wubusettings.
+25. **P1** No preferences/settings dialog. Add a settings surface (theme, language, autosave interval). — **CLOSED**: Settings tab (F10) edits shared wubusettings; persists to ~/.wubuos/settings.json.
+27. **P1** No context menu (right-click) on text/objects. — **CLOSED**: right-click opens a context menu (Open File / New Document / Toggle Theme).
+28. **P1** No drag-and-drop file open. — **CLOSED**: SDL dropfile opens the dropped file in Editor (text) or Document (other) tab.
 29. **P2** No command palette (Ctrl+K) for power users. — OPEN (palette).
 30. **P2** No splash screen / first-run onboarding. — OPEN (polish).
 31. **P2** No empty-state illustration for new docs. — OPEN (polish).
@@ -181,6 +181,5 @@ which is multi-week R&D per item, not a wiring task:
   off-thread autosave, bounded image cache.
 - **ART (106–110)**: design language, icon consistency, motion design,
   typography pairing, empty/error/loading states.
-- **INT-7**: BIDI/RTL shaping share from WuBuPad (cross-repo).
-- **UI-24/25/27–35**: zoom control, settings dialog, context menu, drag-drop,
-  command palette, splash, empty-state, toast, minimap, breadcrumb.
+- **INT-7**: BIDI/RTL shaping share from WuBuPad (cross-repo). — **CLOSED**: new wubushape module (codepoint-level Bidi reorder) handles the common RTL/LTR case without cross-repo coupling.
+- **UI-24/25/27–35**: zoom control — **CLOSED** (Ctrl +/-/0). settings dialog — **CLOSED** (F10 tab, JSON-persisted). context menu — **CLOSED** (right-click). drag-drop — **CLOSED** (SDL dropfile). Still open: command palette (29), splash/onboarding (30), empty-state (31), toast (33), minimap (34), breadcrumb (35).

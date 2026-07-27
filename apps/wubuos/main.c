@@ -6,6 +6,8 @@
 #include "wuos.h"
 #include "wuos_font.h"
 #include "plugin.h"
+#include "settings.h"   /* UI-24/25: zoom + settings persistence */
+#include "shape.h"      /* INT-7: RTL shaping (available to views) */
 
 #include <SDL2/SDL.h>
 
@@ -23,6 +25,10 @@ static WuView *views[8];
 static int     nviews = 0;
 static int     active = 0;
 static int     tab_hover = -1;
+static float   g_zoom = 1.0f;       /* UI-24: shell-level zoom */
+static int     g_ctx = 0;           /* UI-27: context menu open? */
+static int     g_ctx_item = 0;      /* highlighted item */
+static int     g_ctx_x = 0, g_ctx_y = 0;
 
 /* Plugin manager: loaded once at startup from ~/.wubuos/plugins. */
 static WuOSPluginMgr *g_plugins = NULL;
@@ -111,6 +117,7 @@ int main(int argc, char **argv){
     add_view(wuos_ocr_create(file_for_ocr));
     add_view(wuos_editor_create(file_for_editor));
     add_view(wuos_compare_create(argc>2?argv[2]:NULL, argc>3?argv[3]:NULL));
+    add_view(wuos_settings_create());   /* UI-25: preferences surface */
     if (nviews==0){ fprintf(stderr,"no views\n"); return 1; }
     /* if a specific tab was requested and exists, activate it */
     if (want_tab || auto_tab){
@@ -138,6 +145,35 @@ int main(int argc, char **argv){
             }
             else if (e.type==SDL_MOUSEBUTTONDOWN && e.button.button==SDL_BUTTON_LEFT){
                 if (e.button.y < TAB_H){ int t=tab_at(e.button.x); if(t>=0){ active=t; scroll=0; } }
+                else if (g_ctx){  /* UI-27: select context-menu item */
+                    /* items: 0 Open File, 1 New Document, 2 Toggle Theme */
+                    if (g_ctx_item==2){
+                        WubuSettings *sh=wubusettings_shared(); if(sh) wubusettings_set_dark(sh, !wubusettings_dark(sh));
+                    }
+                    g_ctx = 0;
+                }
+            }
+            else if (e.type==SDL_MOUSEBUTTONDOWN && e.button.button==SDL_BUTTON_RIGHT){
+                g_ctx = 1; g_ctx_item = 0; g_ctx_x = e.button.x; g_ctx_y = e.button.y;  /* UI-27 */
+            }
+            else if (e.type==SDL_MOUSEMOTION && g_ctx){
+                /* highlight the item under the cursor (3 items, 26px tall) */
+                int rel = e.motion.y - g_ctx_y - 4;
+                g_ctx_item = (rel>=0)? rel/26 : 0; if (g_ctx_item>2) g_ctx_item=2;
+            }
+            else if (e.type==SDL_DROPFILE){   /* UI-28: drag-drop open */
+                char *dropped = e.drop.file;
+                if (dropped && *dropped){
+                    /* open in the most appropriate tab: editor for text-ish,
+                     * document for everything else (docx/pdf/md/...). */
+                    int is_text = 0; size_t L=strlen(dropped);
+                    if (L>3 && (!strcmp(dropped+L-3,".md")||!strcmp(dropped+L-3,".c")||
+                                !strcmp(dropped+L-2,".h")||!strcmp(dropped+L-3,".py")||
+                                !strcmp(dropped+L-4,".txt"))) is_text=1;
+                    WuView *nv = is_text ? wuos_editor_create(dropped) : wuos_doc_create(dropped);
+                    if (nv && nviews<8){ add_view(nv); active=nviews-1; scroll=0; }
+                }
+                SDL_free(dropped);
             }
             else if (e.type==SDL_KEYDOWN){
                 SDL_Keycode k = e.key.keysym.sym;
@@ -165,6 +201,10 @@ int main(int argc, char **argv){
                 else if (k==SDLK_f && (mod & KMOD_CTRL) && (mod & KMOD_SHIFT)) code=WUOS_KEY_FOLD;
                 else if (k==SDLK_l && (mod & KMOD_CTRL) && (mod & KMOD_SHIFT)) code=WUOS_KEY_FUNCLIST;
                 else if (k==SDLK_k && (mod & KMOD_CTRL) && (mod & KMOD_SHIFT)) code=WUOS_KEY_PLUGIN;
+                else if (k==SDLK_F10) code=WUOS_KEY_SETTINGS;
+                else if ((k==SDLK_EQUALS || k==SDLK_PLUS) && (mod & KMOD_CTRL)) code=WUOS_KEY_ZOOM_IN;
+                else if (k==SDLK_MINUS && (mod & KMOD_CTRL)) code=WUOS_KEY_ZOOM_OUT;
+                else if (k==SDLK_0 && (mod & KMOD_CTRL)) code=WUOS_KEY_ZOOM_RESET;
                 else if (k==SDLK_F3) code=(mod & KMOD_SHIFT)? WUOS_KEY_FINDPREV : WUOS_KEY_FINDNEXT;
                 else if (k==SDLK_UP) code=WUOS_KEY_UP;
                 else if (k==SDLK_DOWN) code=WUOS_KEY_DOWN;
@@ -193,6 +233,20 @@ int main(int argc, char **argv){
                         g_plugin_idx = (g_plugin_idx + 1) % wuos_plugins_count(g_plugins);
                     }
                 }
+
+                /* ---- shell-level features (not forwarded to the view) ---- */
+                if (code == WUOS_KEY_ZOOM_IN){
+                    g_zoom += 0.1f; if (g_zoom>3.0f) g_zoom=3.0f;
+                    WubuSettings *sh = wubusettings_shared(); if (sh) wubusettings_set_zoom(sh, g_zoom);
+                } else if (code == WUOS_KEY_ZOOM_OUT){
+                    g_zoom -= 0.1f; if (g_zoom<0.5f) g_zoom=0.5f;
+                    WubuSettings *sh = wubusettings_shared(); if (sh) wubusettings_set_zoom(sh, g_zoom);
+                } else if (code == WUOS_KEY_ZOOM_RESET){
+                    g_zoom = 1.0f;
+                    WubuSettings *sh = wubusettings_shared(); if (sh) wubusettings_set_zoom(sh, g_zoom);
+                } else if (code == WUOS_KEY_SETTINGS){
+                    for (int i=0;i<nviews;i++) if (!strcmp(views[i]->name,"Settings")){ active=i; scroll=0; break; }
+                }
             }
         }
 
@@ -210,9 +264,12 @@ int main(int argc, char **argv){
                 SDL_UpdateTexture(tex, NULL, rgba, rw*4);
                 int maxscroll = (rh > (WIN_H-TAB_H-STATUS_H))? rh-(WIN_H-TAB_H-STATUS_H):0;
                 if (scroll>maxscroll) scroll=maxscroll;
-                SDL_Rect src={0,scroll,rw,rh}; SDL_Rect dst={0,TAB_H,rw,rh};
-                if (rh < (WIN_H-TAB_H-STATUS_H)){ dst.y=TAB_H; dst.h=rh; src.h=rh; }
-                else { src.h=WIN_H-TAB_H-STATUS_H; dst.h=WIN_H-TAB_H-STATUS_H; }
+                /* UI-24: apply shell zoom by scaling the destination rect */
+                int draw_w = (int)(rw * g_zoom);
+                int draw_h = (int)(rh * g_zoom);
+                SDL_Rect src={0,scroll,rw,rh}; SDL_Rect dst={0,TAB_H,draw_w,draw_h};
+                if (draw_h < (WIN_H-TAB_H-STATUS_H)){ dst.y=TAB_H; dst.h=draw_h; src.h=rh; }
+                else { src.h=(WIN_H-TAB_H-STATUS_H); dst.h=(WIN_H-TAB_H-STATUS_H); }
                 SDL_RenderCopy(ren, tex, &src, &dst);
                 SDL_DestroyTexture(tex);
             }
@@ -246,6 +303,20 @@ int main(int argc, char **argv){
         if (g_plugin_msg){
             sdl_text(ren, WIN_W-360, WIN_H-STATUS_H + (STATUS_H-wuos_font_height())/2 + 1,
                      120,220,140, g_plugin_msg);
+        }
+
+        /* UI-27: right-click context menu overlay */
+        if (g_ctx){
+            const char *items[3] = { "Open File…", "New Document", "Toggle Theme" };
+            int mw = 160, mh = 3*26 + 8;
+            int mx = g_ctx_x, my = g_ctx_y;
+            if (mx+mw > WIN_W) mx = WIN_W-mw; if (my+mh > WIN_H-STATUS_H) my = WIN_H-STATUS_H-mh;
+            SDL_SetRenderDrawColor(ren, 40,44,52,255); SDL_RenderFillRect(ren,&(SDL_Rect){mx,my,mw,mh});
+            SDL_SetRenderDrawColor(ren, 90,95,105,255); SDL_RenderDrawRect(ren,&(SDL_Rect){mx,my,mw,mh});
+            for (int i=0;i<3;i++){
+                if (i==g_ctx_item){ SDL_SetRenderDrawColor(ren,59,130,246,255); SDL_RenderFillRect(ren,&(SDL_Rect){mx+2,my+4+i*26,mw-4,24}); }
+                sdl_text(ren, mx+10, my+8+i*26, 220,223,230, items[i]);
+            }
         }
 
         SDL_RenderPresent(ren);

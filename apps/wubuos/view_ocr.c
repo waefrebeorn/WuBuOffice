@@ -110,13 +110,14 @@ static int render(WuView *v, int w, int h, int scroll,
         int ty = 54; int idx=0;
         for (size_t i=0;i<n && ty<h-60;i++){
             const char *t = ocr_page_block_text(e->pg,i);
-            if (!t || !*t){ continue; }
+            if (!t || !*t){ free((void*)t); continue; }
             int on = (idx==e->sel);
             int ry = ty;
             if (on){ for (int xx=panel_x+4; xx<w-6; xx++) for(int yy=ry-2; yy<ry+wuos_font_height()+4; yy++)
                         if(xx>=0&&yy>=0&&xx<w&&yy<h){ size_t ii=((size_t)yy*w+xx)*4; fb[ii]=210;fb[ii+1]=232;fb[ii+2]=255; } }
             wuos_font_draw(t, panel_x+10, ry, 0, on?20:30, on?30:33, on?40:38, fb,w,h);
             ty += wuos_font_height()+6; idx++;
+            free((void*)t);
         }
         /* detail strip */
         int dy = h-26;
@@ -141,7 +142,7 @@ static void on_key(WuView *v, int key, int down){
     if (!down || !e->pg) return;
     size_t n = ocr_page_block_count(e->pg);
     int visible = 0;
-    for (size_t i=0;i<n;i++){ const char *t=ocr_page_block_text(e->pg,i); if(t&&*t) visible++; }
+    for (size_t i=0;i<n;i++){ const char *t=ocr_page_block_text(e->pg,i); if(t&&*t) visible++; free((void*)t); }
     if (key==WUOS_KEY_DOWN){ if (e->sel < visible-1) e->sel++; }
     else if (key==WUOS_KEY_UP){ if (e->sel>0) e->sel--; }
     else if (key==WUOS_KEY_RETURN){
@@ -149,9 +150,9 @@ static void on_key(WuView *v, int key, int down){
         /* map selection to the i-th non-empty block */
         int idx=0;
         for (size_t i=0;i<n;i++){ const char *t=ocr_page_block_text(e->pg,i);
-            if(!t||!*t) continue;
-            if (idx==e->sel){ size_t L=strlen(t); e->sel_text=malloc(L+1); if(e->sel_text) memcpy(e->sel_text,t,L+1); break; }
-            idx++; }
+            if(!t||!*t){ free((void*)t); continue; }
+            if (idx==e->sel){ size_t L=strlen(t); e->sel_text=malloc(L+1); if(e->sel_text) memcpy(e->sel_text,t,L+1); free((void*)t); break; }
+            idx++; free((void*)t); }
     }
 }
 
@@ -204,10 +205,10 @@ char *wuos_ocr_text(WuView *v){
     if (!e->pg) return NULL;
     size_t n = ocr_page_block_count(e->pg);
     size_t total = 1;
-    for (size_t i=0;i<n;i++){ const char *t=ocr_page_block_text(e->pg,i); if(t) total += strlen(t)+1; }
+    for (size_t i=0;i<n;i++){ const char *t=ocr_page_block_text(e->pg,i); if(t) total += strlen(t)+1; free((void*)t); }
     char *out = malloc(total);
     if (!out) return NULL;
     out[0]=0;
-    for (size_t i=0;i<n;i++){ const char *t=ocr_page_block_text(e->pg,i); if(t&&*t){ strcat(out,t); strcat(out," "); } }
+    for (size_t i=0;i<n;i++){ const char *t=ocr_page_block_text(e->pg,i); if(t&&*t){ strcat(out,t); strcat(out," "); } free((void*)t); }
     return out;
 }

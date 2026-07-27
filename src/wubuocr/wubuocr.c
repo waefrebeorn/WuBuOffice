@@ -107,7 +107,7 @@ const OcrBlock *ocr_page_block(const OcrPage *pg, size_t i) {
     return &pg->blk[i].box;
 }
 
-const char *ocr_page_block_text(const OcrPage *pg, size_t i) {
+char *ocr_page_block_text(const OcrPage *pg, size_t i) {
     if (!pg || i >= pg->nblk) return NULL;
     PageBlock *pb = (PageBlock*)&pg->blk[i];
     if (!pb->text) pb->text = block_text(pb);  /* cached; owned by page */
@@ -116,7 +116,13 @@ const char *ocr_page_block_text(const OcrPage *pg, size_t i) {
         pb->text = malloc(1);
         if (pb->text) pb->text[0] = '\0';
     }
-    return pb->text;
+    /* Caller owns the returned string (documented contract: callers free it).
+     * Return a copy so freeing the caller's pointer can never double-free the
+     * page-owned cache, and the cache still avoids recomputing block_text. */
+    char *out = malloc(strlen(pb->text) + 1);
+    if (!out) return NULL;
+    memcpy(out, pb->text, strlen(pb->text) + 1);
+    return out;
 }
 
 /* Per-glyph box accessors: let a caller read the true document coordinates of

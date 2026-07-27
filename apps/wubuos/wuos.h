@@ -49,7 +49,9 @@ enum { WUOS_KEY_UP=2000, WUOS_KEY_DOWN, WUOS_KEY_LEFT, WUOS_KEY_RIGHT,
        WUOS_KEY_PREV_BK, WUOS_KEY_COLMODE, WUOS_KEY_REC, WUOS_KEY_PLAY, WUOS_KEY_AC,
  WUOS_KEY_SESSION, WUOS_KEY_FOLD, WUOS_KEY_FUNCLIST, WUOS_KEY_PLUGIN,
  WUOS_KEY_INSERT_CHART, WUOS_KEY_INSERT_DRAW, WUOS_KEY_INSERT_MATH,
- WUOS_KEY_EXPORT_EPUB, WUOS_KEY_A11Y_CHECK };
+ WUOS_KEY_EXPORT_EPUB, WUOS_KEY_A11Y_CHECK,
+ WUOS_KEY_ZOOM_IN, WUOS_KEY_ZOOM_OUT, WUOS_KEY_ZOOM_RESET,
+ WUOS_KEY_SETTINGS };
 
 /* ---- view factories ----
  * `path` is an optional file to load (NULL = use the bundled sample). */
@@ -111,6 +113,7 @@ WuView *wuos_cell_create(const char *path);         /* wubucell grid */
 WuView *wuos_ocr_create(const char *path);          /* wubuocr page */
 WuView *wuos_slide_create(const char *path);        /* simple slide */
 WuView *wuos_compare_create(const char *left, const char *right); /* diff view */
+WuView *wuos_settings_create(void);                        /* preferences view (UI-25) */
 
 #ifdef __cplusplus
 }

@@ -53,11 +53,10 @@ size_t          ocr_page_block_count(const OcrPage *pg);
 const OcrBlock *ocr_page_block(const OcrPage *pg, size_t i);
 
 /* Recognized text of the i-th reading-order block (concatenated glyph
- * text; "" if geometry-only). Returns an internal NUL-terminated
- * string owned by the page (caler must NOT free it). NULL if
- * out of range. Use this instead of scraping the JSON when you
- * need structured block text. */
-const char *ocr_page_block_text(const OcrPage *pg, size_t i);
+ * text; "" if geometry-only). Returns a malloc'd NUL-terminated string;
+ * CALLER FREES it (NULL if out of range). Use this instead of scraping the
+ * JSON when you need structured block text. */
+char *ocr_page_block_text(const OcrPage *pg, size_t i);
 
 /* Per-glyph box accessors: true document coordinates of each connected-
  * component glyph inside reading-order block `bi`. NULL/out-of-range safe. */
