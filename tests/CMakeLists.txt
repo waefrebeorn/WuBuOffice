@@ -424,6 +424,17 @@ set_property(TEST gru_gpu_gradcheck  PROPERTY LABELS gpu)
 set_property(TEST gemm_nt            PROPERTY LABELS gpu)
 set_property(TEST gru_cmp            PROPERTY LABELS gpu)
 
+# wubulayout (central pipeline) + wubuexp (EXP cluster)
+add_executable(test_layout test_layout.c)
+target_link_libraries(test_layout PRIVATE wubulayout)
+add_test(NAME layout COMMAND test_layout)
+set_property(TEST layout PROPERTY LABELS layout)
+
+add_executable(test_exp test_exp.c)
+target_link_libraries(test_exp PRIVATE wubuexp wubulayout)
+add_test(NAME exp COMMAND test_exp)
+set_property(TEST exp PROPERTY LABELS exp)
+
 # wubusettings (persistent config) + wubushape (INT-7: RTL reorder)
 add_executable(test_settings test_settings.c)
 target_link_libraries(test_settings PRIVATE wubusettings)

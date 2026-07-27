@@ -45,6 +45,24 @@ void wuos_font_quit(void){
 
 int wuos_font_height(void){ return g_size; }
 
+/* Pixel width of `s` at the current font size (no rasterization). */
+int wuos_font_text_width(const char *s, int size){
+    FT_Face face = g_reg;  /* width uses the regular face */
+    if (!face || !s) return 0;
+    int ox = 0;
+    const char *p = s;
+    while (*p){
+        uint32_t cp;
+        int k = wububase_utf8_decode(p, &cp);
+        if (k <= 0){ p++; continue; }
+        p += k;
+        if (FT_Load_Char(face, (FT_ULong)cp, FT_LOAD_DEFAULT)) continue;
+        ox += (int)face->glyph->advance.x >> 6;
+    }
+    (void)size;  /* size is applied via the global font size; kept for API symmetry */
+    return ox;
+}
+
 int wuos_font_draw(const char *s, int x, int y, int bold,
                    unsigned char r, unsigned char g, unsigned char b,
                    unsigned char *fb, int fbw, int fbh){

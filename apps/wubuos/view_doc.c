@@ -13,13 +13,40 @@
 #include "chart.h"       /* wubuchart: insert chart (INT-1) */
 #include "draw.h"        /* wubudraw: insert shape (INT-3) */
 #include "math.h"        /* wubumath: insert equation (INT-3) */
-#include "epub.h"        /* wubuepub: export (INT-4) */
 #include "a11y.h"        /* wubua11y: check (INT-5) */
 #include "rast.h"        /* wubusvg rasterizer: SVG -> RGBA (gap #13) */
+#include "ublayout.h"      /* central text pipeline: model -> laid-out pages */
 
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+
+/* metric callback for the layout: uses the app font (wubulayout only sees this
+ * function pointer, so the engine layer never includes an app header). */
+static int doc_layout_measure(const char *t, size_t len, int fs, int bold, int italic,
+                              int *out_h, void *user){
+    (void)bold; (void)italic; (void)user; (void)fs;
+    char buf[2048]; if (len>=sizeof buf) len=sizeof buf-1;
+    memcpy(buf, t, len); buf[len]=0;
+    int w = wuos_font_text_width(buf, fs);
+    *out_h = wuos_font_height();
+    return w;
+}
+static int doc_layout_style(void *user, void *run, int *fs, int *bold, int *italic,
+                            wubulayout_dir *dir){
+    (void)user;
+    wubumodel_node *n = (wubumodel_node*)run;
+    wubumodel_style *st = wubumodel_node_style(n);
+    *fs = 12; *bold=0; *italic=0; *dir=WUBULAYOUT_LTR;
+    if (st){
+        const char *v;
+        if ((v=wubumodel_style_get_prop(st,"size"))) *fs = atoi(v);
+        if ((v=wubumodel_style_get_prop(st,"bold")) && (v[0]=='1'||v[0]=='t')) *bold=1;
+        if ((v=wubumodel_style_get_prop(st,"italic")) && (v[0]=='1'||v[0]=='t')) *italic=1;
+        if ((v=wubumodel_style_get_prop(st,"dir")) && v[0]=='r') *dir=WUBULAYOUT_RTL;
+    }
+    return 1;
+}
 
 #define DOC_MAX_OBJS 16
 
@@ -107,8 +134,42 @@ static int render(WuView *v, int w, int h, int scroll,
     (void)scroll;
     unsigned char *fb = NULL; int W=w, H=h;
     if (e->doc){
-        int page_h = h + 400;
-        if (wurender_render_doc(e->r, e->doc, w, page_h, &fb, &W, &H) != 0) return -1;
+        /* Central pipeline: lay the model out into pages, then paint. This is
+         * the single source of truth for text placement — the Document tab no
+         * longer re-implements wrapping. Headers/footers/line-numbers are drawn
+         * from the laid-out geometry. */
+        fb = malloc((size_t)w*h*4);
+        if (!fb) return -1;
+        for (int i=0;i<w*h;i++){ fb[i*4]=252;fb[i*4+1]=252;fb[i*4+2]=250;fb[i*4+3]=255; }
+        wubulayout_doc *L = wubulayout_create(e->doc, NULL,
+            doc_layout_measure, doc_layout_style, NULL, w, h, 56,56,56,56);
+        if (L){
+            int pages = wubulayout_page_count(L);
+            int pg = scroll / (h - 112); if (pg<0) pg=0; if (pg>=pages) pg=pages-1;
+            /* page header */
+            char hdr[64]; snprintf(hdr,sizeof hdr,"Page %d / %d", pg+1, pages);
+            wuos_font_draw(hdr, 56, 24, 0, 120,124,132, fb, w, h);
+            int nr = wubulayout_run_count(L, pg);
+            for (int i=0;i<nr;i++){
+                const wubulayout_run *r = wubulayout_run_at(L, pg, i);
+                if (!r || !r->text || !r->text_len) continue;
+                char seg[2048]; size_t l=r->text_len; if(l>=sizeof seg)l=sizeof seg-1;
+                memcpy(seg, r->text, l); seg[l]=0;
+                wuos_font_draw(seg, r->x, r->y, r->bold, 28,30,34, fb, w, h);
+            }
+            /* line numbers in the left margin */
+            int nl = wubulayout_line_count(L, pg);
+            for (int li=0; li<nl; li++){
+                const wubulayout_line *ln = wubulayout_line_at(L, pg, li);
+                if (!ln) continue;
+                char ln2[16]; snprintf(ln2,sizeof ln2,"%d", li+1);
+                wuos_font_draw(ln2, 8, ln->y, 0, 150,154,162, fb, w, h);
+            }
+            /* page footer */
+            char ftr[64]; snprintf(ftr,sizeof ftr,"WuBuOffice — %d lines", nl);
+            wuos_font_draw(ftr, 56, h-30, 0, 120,124,132, fb, w, h);
+            wubulayout_destroy(L);
+        }
     } else {
         /* non-renderable format: show the text projection */
         fb = malloc((size_t)w*h*4);

@@ -21,6 +21,8 @@ int  wuos_font_draw(const char *s, int x, int y, int bold,
 
 /* Pixel height of the current font. */
 int  wuos_font_height(void);
+/* Pixel width of a string at the current font size (no draw). */
+int  wuos_font_text_width(const char *s, int size);
 
 #ifdef __cplusplus
 }

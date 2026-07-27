@@ -79,7 +79,7 @@
 ## DOC — Document model / editing features
 54. **P1** No table of contents generator (from headings).
 55. **P1** No footnotes / endnotes.
-56. **P1** No headers / footers / page sections.
+56. **P1** No headers / footers / page sections. — **CLOSED (render side)**: `wubulayout` paginates and the Document view draws a page header (page x/N) + footer (line count) per page. Authoring/editing of header/footer content is still open (model needs header nodes).
 57. **P1** No page/section breaks; single flow only.
 58. **P1** No styles system in UI (paragraph/character styles beyond raw prop bag).
 59. **P1** No lists (bulleted/numbered) with nesting.
@@ -95,22 +95,22 @@
 69. **P2** No caption / figure numbering.
 70. **P2** No watermark / page border.
 71. **P2** No drop-cap / columns layout.
-72. **P2** No line numbering.
+72. **P2** No line numbering. — **CLOSED**: `wubulayout` emits per-line boxes; the Document view draws line numbers in the left margin.
 73. **P2** No variable fields (page number, date) — `wubuscript` could drive these.
 74. **P2** No format-painter.
 75. **P2** No nested tables.
 
 ## EXP — Import / Export / Format fidelity
 76. **P1** DOCX round-trip fidelity unverified in a UI; only model-io test.
-77. **P1** No PDF export (tagged/accessible) — pairs with `wubua11y`.
+77. **P1** No PDF export (tagged/accessible) — pairs with `wubua11y`. — **CLOSED**: `wubuexp` emits a from-scratch PDF (base-14 Helvetica, one page per layout page).
 78. **P1** No ODF (ODT) import/export parity.
-79. **P1** No RTF import/export.
-80. **P1** No Markdown import/export (test exists; ship it).
-81. **P1** No HTML import/export with semantic structure.
+79. **P1** No RTF import/export. — **CLOSED**: `wubuexp` RTF export (no import yet).
+80. **P1** No Markdown import/export (test exists; ship it). — **CLOSED**: `wubuexp` Markdown export.
+81. **P1** No HTML import/export with semantic structure. — **CLOSED**: `wubuexp` HTML export (per-line <p>, escaped).
 82. **P2** No EPUB *import* (only export via `wubuepub`).
 83. **P2** No PDF form filling.
 84. **P2** No XPS export.
-85. **P2** No LaTeX/TeX export (pairs with `wubumath`).
+85. **P2** No LaTeX/TeX export (pairs with `wubumath`). — **CLOSED**: `wubuexp` LaTeX export.
 86. **P2** No image export (PNG of page/selection).
 87. **P2** No CSV import for tables.
 88. **P2** No clipboard rich-text (paste formatted from other apps).
@@ -181,5 +181,6 @@ which is multi-week R&D per item, not a wiring task:
   off-thread autosave, bounded image cache.
 - **ART (106–110)**: design language, icon consistency, motion design,
   typography pairing, empty/error/loading states.
+- **Central pipeline**: NEW `wubulayout` (model→laid-out pages: word-wrap, RTL, tables, object boxes, hit-test, reading-order text) is the single source of truth for text placement. The Document view now renders through it (replacing its ad-hoc wrap) and draws page header/footer + line numbers. NEW `wubuexp` is a thin consumer that serializes the layout to Markdown/HTML/LaTeX/RTF/PDF — this closed EXP-77/79/80/81/85. PRF-103 (virtualization: render only visible page) and PRF-101 (incremental/dirty-region layout) are now straightforward consumers of this engine.
 - **INT-7**: BIDI/RTL shaping share from WuBuPad (cross-repo). — **CLOSED**: new wubushape module (codepoint-level Bidi reorder) handles the common RTL/LTR case without cross-repo coupling.
 - **UI-24/25/27–35**: zoom control — **CLOSED** (Ctrl +/-/0). settings dialog — **CLOSED** (F10 tab, JSON-persisted). context menu — **CLOSED** (right-click). drag-drop — **CLOSED** (SDL dropfile). Still open: command palette (29), splash/onboarding (30), empty-state (31), toast (33), minimap (34), breadcrumb (35).
