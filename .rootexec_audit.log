@@ -1,0 +1,17 @@
+2026-07-26T11:58:37Z euid=1000 decision=ALLOWED cmd='id' identity probe (sanity check of root channel)
+2026-07-26T11:58:37Z euid=1000 decision=NO_SUDO cmd='id' rootexec: passwordless sudo unavailable -- this command requires root. Grant passwordless sudo for the build host, or run the harness as root. Refusing to prompt interactively.
+2026-07-26T11:58:37Z euid=1000 decision=BLOCKED cmd='rm -rf /' not in allowlist
+2026-07-26T11:58:47Z euid=1000 decision=ALLOWED cmd='apt-get install -y ccache' install ccache (compiler cache) for fast incremental builds
+2026-07-26T11:58:47Z euid=1000 decision=NO_SUDO cmd='apt-get install -y ccache' rootexec: passwordless sudo unavailable -- this command requires root. Grant passwordless sudo for the build host, or run the harness as root. Refusing to prompt interactively.
+2026-07-26T12:00:34Z euid=1000 decision=ALLOWED cmd='id' identity probe (sanity check of root channel)
+2026-07-26T12:00:34Z euid=1000 decision=ALLOWED cmd='apt-get install -y ccache' install ccache (compiler cache) for fast incremental builds
+2026-07-26T12:00:47Z euid=1000 decision=ALLOWED cmd='id' identity probe (sanity check of root channel)
+2026-07-26T12:00:47Z euid=1000 decision=ALLOWED cmd='apt-get install -y ccache' install ccache (compiler cache) for fast incremental builds
+2026-07-26T12:12:44Z euid=1000 decision=BLOCKED cmd='apt-get install -y libsdl2-dev libfreetype6-dev' not in allowlist
+2026-07-26T12:12:52Z euid=1000 decision=ALLOWED cmd='apt-get install -y libsdl2-dev' install known build toolchain deps for WuBuOffice/WuBuPad
+2026-07-26T12:13:03Z euid=1000 decision=ALLOWED cmd='apt-get install -y libfreetype6-dev' install known build toolchain deps for WuBuOffice/WuBuPad
+2026-07-26T17:36:25Z euid=1000 decision=BLOCKED cmd='apt-get install -y libharfbuzz-dev libfribidi-dev' not in allowlist
+2026-07-26T17:36:49Z euid=1000 decision=BLOCKED cmd='apt-get install -y libharfbuzz-dev libfribidi-dev' not in allowlist
+2026-07-26T17:37:17Z euid=1000 decision=ALLOWED cmd='apt-get install -y libharfbuzz-dev libfribidi-dev' install known build toolchain deps for WuBuOffice/WuBuPad (incl. shaping/i18n/charts/spell)
+2026-07-26T17:37:17Z euid=1000 decision=NO_PW cmd='apt-get install -y libharfbuzz-dev libfribidi-dev' rootexec: no sudo password available -- set ROOTEXEC_PW env var or pass --pw. Refusing to prompt interactively (that is the dumb-model guard).
+2026-07-26T17:37:22Z euid=1000 decision=ALLOWED cmd='apt-get install -y libharfbuzz-dev libfribidi-dev' install known build toolchain deps for WuBuOffice/WuBuPad (incl. shaping/i18n/charts/spell)
