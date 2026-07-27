@@ -117,6 +117,8 @@ add_executable(test_convnet3 ${CMAKE_SOURCE_DIR}/tests/test_convnet3.c
 target_include_directories(test_convnet3 PRIVATE ${CMAKE_SOURCE_DIR}/src/wubuocr)
 target_link_libraries(test_convnet3 PRIVATE m)
 add_test(NAME convnet3 COMMAND test_convnet3)
+set_property(TEST convnet  PROPERTY LABELS ocr)
+set_property(TEST convnet3 PROPERTY LABELS ocr)
 
 # im2col+GEMM conv rewrite: numeric equivalence to brute-force conv + bias-grad FD check.
 add_executable(test_convnet3_im2col test_convnet3_im2col.c
@@ -126,6 +128,7 @@ add_executable(test_convnet3_im2col test_convnet3_im2col.c
 target_include_directories(test_convnet3_im2col PRIVATE ${CMAKE_SOURCE_DIR}/src/wubuocr)
 target_link_libraries(test_convnet3_im2col PRIVATE m)
 add_test(NAME convnet3_im2col COMMAND test_convnet3_im2col)
+set_property(TEST convnet3_im2col PROPERTY LABELS ocr)
 
 # instance-norm (batch-free BatchNorm) gamma/beta gradient finite-diff check.
 add_executable(gradcheck_inorm ${CMAKE_SOURCE_DIR}/tests/gradcheck_inorm.c

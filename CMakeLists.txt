@@ -71,3 +71,9 @@ add_subdirectory(src)
 add_subdirectory(apps)
 add_subdirectory(tools)
 add_subdirectory(tests)
+
+# Modular smoke target: run every test EXCEPT the slow OCR/CNN battery.
+# `cmake --build build --target smoke` or `./tools/smoke.sh <module>`.
+add_custom_target(smoke
+    COMMAND ${CMAKE_CTEST_COMMAND} --test-dir ${CMAKE_BINARY_DIR} -LE ocr --output-on-failure
+    COMMENT "smoke: all module tests except the slow ocr suite (use tools/smoke.sh <module> for one module)")
