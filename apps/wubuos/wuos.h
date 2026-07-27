@@ -118,6 +118,8 @@ int  wuos_doc_obj_count(WuView *v);
 const char *wuos_doc_epub_msg(WuView *v);
 /* Document view: a11y issue count from last check, or -1 if not run (INT-5). */
 int  wuos_doc_a11y_issues(WuView *v);
+/* The i-th a11y issue string from the last check (NULL if none / out of range). */
+const char *wuos_doc_a11y_item(WuView *v, int i);
 /* Document view: TOC entry count for the current render (DOC-54), or -1. */
 int  wuos_doc_toc_count(WuView *v);
 /* Document view: high-contrast setting (UXA-41). */

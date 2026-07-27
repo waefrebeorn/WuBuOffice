@@ -592,6 +592,29 @@ static int render(WuView *v, int w, int h, int scroll,
         char am[128]; snprintf(am,sizeof am,"a11y: %d issue(s)", e->a11y.count);
         wuos_font_draw(am, 8, fy2, 0, e->a11y.count?200:40, e->a11y.count?60:120, e->a11y.count?40:60, fb, W, H);
     }
+    /* DOC-46: report a11y issues inline (list the actual findings, not just a
+     * count). Drawn as a translucent panel stacked above the status footer. */
+    if (e->a11y_done && e->a11y.count > 0){
+        int line_h = 16, maxlines = 8;
+        int n = e->a11y.count < maxlines ? e->a11y.count : maxlines;
+        int ph = 10 + n*line_h + (e->a11y.count>maxlines? line_h:0);
+        int px = 8, py = H - 26 - ph, pw = 460;
+        /* panel background */
+        for (int yy=py; yy<py+ph && yy<H; yy++)
+            for (int xx=px; xx<px+pw && xx<W; xx++){
+                if (xx<0||yy<0) continue;
+                size_t di=((size_t)yy*W+xx)*4;
+                fb[di]=28; fb[di+1]=26; fb[di+2]=34;
+            }
+        for (int i=0;i<n;i++){
+            const char *it = e->a11y.items[i] ? e->a11y.items[i] : "(issue)";
+            wuos_font_draw(it, px+8, py+6+i*line_h, 0, 255,180,120, fb, W, H);
+        }
+        if (e->a11y.count > maxlines){
+            char more[32]; snprintf(more,sizeof more,"... +%d more", e->a11y.count-maxlines);
+            wuos_font_draw(more, px+8, py+6+n*line_h, 0, 200,200,210, fb, W, H);
+        }
+    }
     *rgba = fb; *rw = W; *rh = H;
     return 0;
 }
@@ -701,6 +724,7 @@ static void destroy(WuView *v){
     for (int i=0;i<e->nobj;i++) free(e->obj[i]);
     if (e->a11y_done) a11y_report_free(&e->a11y);
     toc_free(e->toc);
+    if (e->r) wurender_destroy(e->r);
     free(e);
     free(v);
 }
@@ -773,6 +797,11 @@ int wuos_doc_obj_count(WuView *v){ return ((DocV*)v->priv)->nobj; }
 const char *wuos_doc_epub_msg(WuView *v){ return ((DocV*)v->priv)->epub_msg; }
 /* a11y issue count from the last check (0 if not run). */
 int wuos_doc_a11y_issues(WuView *v){ return ((DocV*)v->priv)->a11y_done ? ((DocV*)v->priv)->a11y.count : -1; }
+const char *wuos_doc_a11y_item(WuView *v, int i){
+    DocV *e = (DocV*)v->priv;
+    if (!e->a11y_done || i<0 || i>=e->a11y.count) return NULL;
+    return e->a11y.items[i];
+}
 /* TOC entry count for the current render (DOC-54), or -1 if no model. */
 int wuos_doc_toc_count(WuView *v){
     DocV *e = v->priv;

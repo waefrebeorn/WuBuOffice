@@ -93,7 +93,14 @@ int main(void){
              dv->on_key(dv, WUOS_KEY_A11Y_CHECK, 1);
              int ai = wuos_doc_a11y_issues(dv);
              if (ai < 0){ fprintf(stderr,"[doc] a11y check not run\n"); bad++; }
-             else fprintf(stderr,"[doc] a11y ok (%d issues)\n", ai);
+             else {
+                 fprintf(stderr,"[doc] a11y ok (%d issues)\n", ai);
+                 /* DOC-46: issues are reported inline with real text */
+                 int have_text=0;
+                 for (int i=0;i<ai;i++){ const char *s=wuos_doc_a11y_item(dv,i); if (s && *s) have_text=1; }
+                 if (ai>0 && !have_text){ fprintf(stderr,"[doc] a11y issues missing text\n"); bad++; }
+                 else fprintf(stderr,"[doc] a11y inline report ok\n");
+             }
              dv->destroy(dv); }
     else { fprintf(stderr,"[doc(file)] create FAILED\n"); bad++; }
 

@@ -67,7 +67,7 @@
 43. **P1** No `prefers-reduced-motion` handling for animations/transitions.
 44. **P1** No color-contrast audit in theme engine (WCAG AA 4.5:1). Validate palettes.
 45. **P1** No font-size scaling for low-vision (UI zoom independent of doc zoom).
-46. **P1** `wubua11y` must run on live doc and report inline (not just unit test).
+46. **P1** `wubua11y` must run on live doc and report inline (not just unit test). — **CLOSED**: the Document view already runs `a11y_check_doc` on its live model (Ctrl+F9 / palette "Accessibility Check") and now renders the actual findings inline as a translucent panel listing each issue string (with a "+N more" overflow), on top of the prior count-in-status. `wuos_doc_a11y_item(i)` exposes the i-th issue for testing. The test harness also had a pre-existing Wurender leak (never freed on view destroy) — fixed so `test_view` is ASan-clean.
 47. **P2** No alt-text prompt when inserting images/shapes.
 48. **P2** No language attribute per paragraph (needed for TTS / a11y).
 49. **P2** No table header scope markup in EPUB/HTML export.
