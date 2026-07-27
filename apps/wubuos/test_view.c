@@ -384,6 +384,97 @@ int main(void){
         remove(ap); remove(bp);
     }
 
+    /* ---- CELL interactive: navigate + edit a cell, engine recomputes ---- */
+    {
+        WuView *cv = wuos_cell_create(NULL);
+        if (!cv){ fprintf(stderr,"[cell] create FAILED\n"); bad++; }
+        else {
+            bad += render_check(cv, "cell");
+            /* active cell starts at A1 (1,1) showing 10 */
+            int c=0,r=0; wuos_cell_active(cv,&c,&r);
+            char v[64]; wuos_cell_value(cv,v,sizeof v);
+            if (c!=1||r!=1){ fprintf(stderr,"[cell] active %d,%d want 1,1\n",c,r); bad++; }
+            else if (atoi(v)!=10){ fprintf(stderr,"[cell] A1='%s' want 10\n",v); bad++; }
+            /* move to E1 (the SUM formula cell) */
+            cv->on_key(cv, WUOS_KEY_RIGHT, 1); /* B1 */
+            cv->on_key(cv, WUOS_KEY_RIGHT, 1); /* C1 */
+            cv->on_key(cv, WUOS_KEY_RIGHT, 1); /* D1 */
+            cv->on_key(cv, WUOS_KEY_RIGHT, 1); /* E1 */
+            wuos_cell_active(cv,&c,&r);
+            wuos_cell_value(cv,v,sizeof v);
+            if (c!=5||r!=1){ fprintf(stderr,"[cell] active %d,%d want 5,1\n",c,r); bad++; }
+            else if (atoi(v)!=79){ fprintf(stderr,"[cell] E1(SUM)='%s' want 79\n",v); bad++; }
+            else fprintf(stderr,"[cell] ok (nav + SUM=%s)\n", v);
+            /* live edit: move DOWN to row 2, type a formula, Enter -> engine stores it */
+            cv->on_key(cv, WUOS_KEY_DOWN, 1);  /* row 2, same column (E2) */
+            wuos_cell_active(cv,&c,&r);
+            if (r!=2){ fprintf(stderr,"[cell] active %d,%d want col5,row2\n",c,r); bad++; }
+            else {
+                cv->on_key(cv, '=', 1);            /* start editing */
+                if (!wuos_cell_editing(cv)){ fprintf(stderr,"[cell] not editing after '='\n"); bad++; }
+                for (const char *p="A1+A1"; *p; p++) cv->on_key(cv,(unsigned char)*p,1);
+                cv->on_key(cv, WUOS_KEY_RETURN, 1);
+                if (wuos_cell_editing(cv)){ fprintf(stderr,"[cell] still editing after Enter\n"); bad++; }
+                char f[64]; wuos_cell_formula(cv,f,sizeof f);
+                if (strcmp(f,"A1+A1")!=0){ fprintf(stderr,"[cell] formula stored='%s' want 'A1+A1'\n",f); bad++; }
+                else fprintf(stderr,"[cell] ok (live edit at %c%d formula='%s')\n", 'A'+c-1, r, f);
+            }
+            cv->destroy(cv);
+        }
+    }
+
+    /* ---- OCR interactive: blocks detected + selection navigation ---- */
+    {
+        WuView *ov = wuos_ocr_create(NULL);
+        if (!ov){ fprintf(stderr,"[ocr] create FAILED\n"); bad++; }
+        else {
+            bad += render_check(ov, "ocr");
+            int n = wuos_ocr_blocks(ov);
+            if (n < 1){ fprintf(stderr,"[ocr] no blocks detected\n"); bad++; }
+            else {
+                /* navigation must be safe + change selection without crashing */
+                ov->on_key(ov, WUOS_KEY_DOWN, 1);
+                ov->on_key(ov, WUOS_KEY_UP, 1);
+                ov->on_key(ov, WUOS_KEY_RETURN, 1);  /* copy selected block */
+                char *sel = wuos_ocr_selected(ov);    /* may be empty if recognizer
+                                                        has no model in this env */
+                fprintf(stderr,"[ocr] ok (%d blocks; selected '%s')\n", n, sel?sel:"(empty)");
+                free(sel);
+            }
+            ov->destroy(ov);
+        }
+    }
+
+    /* ---- DOC interactive: office-format open + find-in-doc ---- */
+    {
+        /* synthesize a tiny docx via the facade's create path is heavy; instead
+         * verify find works on the markdown sample and on a loaded text file. */
+        WuView *dv = wuos_doc_create(NULL);
+        if (!dv){ fprintf(stderr,"[doc-i] create FAILED\n"); bad++; }
+        else {
+            bad += render_check(dv, "doc");
+            int rendered = wuos_doc_is_rendered(dv);
+            if (!rendered){ fprintf(stderr,"[doc-i] sample not rendered\n"); bad++; }
+            else fprintf(stderr,"[doc-i] ok (sample rendered page)\n");
+            dv->destroy(dv);
+        }
+        /* real text doc: write one, open, find a known token */
+        char dp[256]; sprintf(dp,"/tmp/wuos_doc_%d.txt",(int)getpid());
+        wuos_write_file(dp, "alpha bravo charlie delta\nsecond line here\n", 41);
+        WuView *dv2 = wuos_doc_create(dp);
+        if (!dv2){ fprintf(stderr,"[doc-i] open FAILED\n"); bad++; }
+        else {
+            int has_txt = wuos_doc_has_text(dv2);
+            int hit = wuos_doc_find(dv2, "bravo");
+            if (!has_txt){ fprintf(stderr,"[doc-i] no text model\n"); bad++; }
+            else if (!hit){ fprintf(stderr,"[doc-i] find 'bravo' failed\n"); bad++; }
+            else fprintf(stderr,"[doc-i] ok (text opened, find 'bravo' hit)\n");
+            dv2->destroy(dv2);
+        }
+        remove(dp);
+    }
+
+
     /* plugin ABI: load sample .so via explicit path, exec, verify string */
     {
         char sop[512];

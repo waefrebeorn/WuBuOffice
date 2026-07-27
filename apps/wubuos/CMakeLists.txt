@@ -42,9 +42,9 @@ target_sources(wubuos PRIVATE
     ${WUBUPAD_SRC}/docs.c
     ${WUBUPAD_SRC}/json.c
     ${WUBUPAD_SRC}/lex.c)
-target_compile_definitions(wubuos PRIVATE lex_free=wubupad_lex_free)
+target_compile_definitions(wubuos PRIVATE lex_free=wubupad_lex_free doc_create=wubupad_doc_create doc_text=wubupad_doc_text)
 target_link_libraries(wubuos PRIVATE
-    wubumodel wuburender wubuocr wubufont wubucell_app ${SDL2_LIBRARIES} ${FREETYPE_LIBRARIES} m)
+    wubumodel wuburender wubuocr wubufont wubucell_app wubudoc ${SDL2_LIBRARIES} ${FREETYPE_LIBRARIES} m dl)
 target_compile_options(wubuos PRIVATE -Wall -Wextra -Wpedantic)
 
 # Headless smoke test: create + render every view (real engines, no GUI).
@@ -65,9 +65,9 @@ target_sources(test_view PRIVATE
     ${WUBUPAD_SRC}/buffer.c ${WUBUPAD_SRC}/doc.c ${WUBUPAD_SRC}/search.c
     ${WUBUPAD_SRC}/encode.c ${WUBUPAD_SRC}/diff.c ${WUBUPAD_SRC}/docs.c ${WUBUPAD_SRC}/json.c
     ${WUBUPAD_SRC}/lex.c)
-target_compile_definitions(test_view PRIVATE lex_free=wubupad_lex_free)
+target_compile_definitions(test_view PRIVATE lex_free=wubupad_lex_free doc_create=wubupad_doc_create doc_text=wubupad_doc_text)
 target_link_libraries(test_view PRIVATE
-    wubumodel wuburender wubuocr wubufont wubucell_app ${SDL2_LIBRARIES} ${FREETYPE_LIBRARIES} m dl)
+    wubumodel wuburender wubuocr wubufont wubucell_app wubudoc ${SDL2_LIBRARIES} ${FREETYPE_LIBRARIES} m dl)
 target_compile_options(test_view PRIVATE -Wall -Wextra -Wpedantic)
 add_test(NAME view COMMAND test_view)
 set_tests_properties(view PROPERTIES LABELS "view")

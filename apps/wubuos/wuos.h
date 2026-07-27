@@ -76,12 +76,24 @@ int wuos_editor_ac(WuView *v, int *n, int *sel);
 /* Test accessor: folded-line count + function-list panel state. */
 int wuos_editor_fold(WuView *v, int *count);
 int wuos_editor_sym(WuView *v, int *n);
+/* Document view inspection: 1 if rendered page (md/model), else 0; text model. */
+int  wuos_doc_is_rendered(WuView *v);
+int  wuos_doc_has_text(WuView *v);
+int  wuos_doc_find(WuView *v, const char *q);   /* returns 1 if match found */
+/* Cell view inspection: active cell + editing state + cell value as string. */
+int  wuos_cell_active(WuView *v, int *col, int *row);
+int  wuos_cell_editing(WuView *v);
+void wuos_cell_value(WuView *v, char *out, int outn);   /* current active cell text */
+int  wuos_cell_kind(WuView *v);                         /* -1 empty, 0 str,1 num,2 form */
+void wuos_cell_formula(WuView *v, char *out, int outn); /* stored formula (if FORM) */
+/* OCR view inspection: block count + selected block text (caller frees). */
+int  wuos_ocr_blocks(WuView *v);
+char *wuos_ocr_selected(WuView *v);
 /* Plugin manager inspection (host side): count + name of loaded plugin i. */
 int  wuos_plugin_count(void);
 const char *wuos_plugin_name(int i);
-/* Load a plugin from an explicit .so path (test helper; bypasses ~/.wubuos). */
 int  wuos_plugin_load_path(const char *so);
-char *wuos_plugin_run(int i, const char *args);  /* returns malloc'd str */
+char *wuos_plugin_run(int i, const char *args);
 WuView *wuos_cell_create(const char *path);         /* wubucell grid */
 WuView *wuos_ocr_create(const char *path);          /* wubuocr page */
 WuView *wuos_slide_create(const char *path);        /* simple slide */
