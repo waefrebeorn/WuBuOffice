@@ -11,6 +11,7 @@
 #include "wubufont.h"   /* Font, font_open, font_rasterize */
 #include "wubuocr.h"    /* OcrPage, ocr_page_from_netpbm, ocr_page_to_json, ocr_page_block_count, ocr_page_free */
 #include "page_compose.h" /* ocr_compose_page, ocr_compose_line */
+#include "lexicon.h"   /* utf8_decode (codepoint decode for correct glyph rasterization) */
 
 #include <stdlib.h>
 #include <string.h>
@@ -49,20 +50,27 @@ static OcrImage *render_page(const Font *fo, const char *text, int ppm) {
     uint8_t **gs = malloc((n + 1) * sizeof *gs);
     if (!ws || !hs || !gs) { free(ws); free(hs); free(gs); return NULL; }
     int maxh = 0, totalw = 0;
-    for (size_t i = 0; i < n; i++) {
+    size_t ng = 0;
+    size_t i = 0;
+    while (i < n) {
+        uint32_t cp;
+        int k = utf8_decode(text + i, &cp);   /* decode codepoint, NOT a raw byte */
+        if (k <= 0) { cp = (unsigned char)text[i]; k = 1; }
+        i += (size_t)k;
         int w = 0, h = 0; uint8_t *b = NULL;
-        if (!font_rasterize(fo, (uint32_t)text[i], ppm, &b, &w, &h)) { w = 1; h = 1; b = calloc(1, 1); }
-        gs[i] = b; ws[i] = w; hs[i] = h;
+        if (!font_rasterize(fo, cp, ppm, &b, &w, &h)) { w = 1; h = 1; b = calloc(1, 1); }
+        gs[ng] = b; ws[ng] = w; hs[ng] = h;
         if (h > maxh) maxh = h;
         totalw += w ? w : 1;
+        ng++;
     }
     int gutter = ppm / 4 > 2 ? ppm / 4 : 2;
-    int W = totalw + (int)n * gutter;
+    int W = totalw + (int)ng * gutter;
     int H = maxh + 4;
     OcrImage *im = ocr_image_create((size_t)W, (size_t)H);
-    if (!im) { for (size_t i = 0; i < n; i++) free(gs[i]); free(ws); free(hs); free(gs); return NULL; }
+    if (!im) { for (size_t i = 0; i < ng; i++) free(gs[i]); free(ws); free(hs); free(gs); return NULL; }
     int cx = gutter;
-    for (size_t i = 0; i < n; i++) {
+    for (size_t i = 0; i < ng; i++) {
         int gy = (H - hs[i]) / 2;
         for (int y = 0; y < hs[i]; y++)
             for (int x = 0; x < ws[i]; x++) {
