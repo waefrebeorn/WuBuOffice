@@ -47,7 +47,7 @@ enum { WUOS_KEY_UP=2000, WUOS_KEY_DOWN, WUOS_KEY_LEFT, WUOS_KEY_RIGHT,
        WUOS_KEY_EOL, WUOS_KEY_THEME, WUOS_KEY_NEWDOC, WUOS_KEY_CLOSE,
        WUOS_KEY_DOCPREV, WUOS_KEY_DOCNEXT, WUOS_KEY_TOGGLE_BK, WUOS_KEY_NEXT_BK,
        WUOS_KEY_PREV_BK, WUOS_KEY_COLMODE, WUOS_KEY_REC, WUOS_KEY_PLAY, WUOS_KEY_AC,
- WUOS_KEY_SESSION, WUOS_KEY_FOLD, WUOS_KEY_FUNCLIST };
+ WUOS_KEY_SESSION, WUOS_KEY_FOLD, WUOS_KEY_FUNCLIST, WUOS_KEY_PLUGIN };
 
 /* ---- view factories ----
  * `path` is an optional file to load (NULL = use the bundled sample). */
@@ -76,6 +76,12 @@ int wuos_editor_ac(WuView *v, int *n, int *sel);
 /* Test accessor: folded-line count + function-list panel state. */
 int wuos_editor_fold(WuView *v, int *count);
 int wuos_editor_sym(WuView *v, int *n);
+/* Plugin manager inspection (host side): count + name of loaded plugin i. */
+int  wuos_plugin_count(void);
+const char *wuos_plugin_name(int i);
+/* Load a plugin from an explicit .so path (test helper; bypasses ~/.wubuos). */
+int  wuos_plugin_load_path(const char *so);
+char *wuos_plugin_run(int i, const char *args);  /* returns malloc'd str */
 WuView *wuos_cell_create(const char *path);         /* wubucell grid */
 WuView *wuos_ocr_create(const char *path);          /* wubuocr page */
 WuView *wuos_slide_create(const char *path);        /* simple slide */

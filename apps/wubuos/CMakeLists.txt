@@ -11,6 +11,7 @@ add_executable(wubuos
     main.c
     wuos_font.c
     wuos_file.c
+    plugin.c
     view_doc.c
     view_cell.c
     view_slide.c
@@ -48,7 +49,7 @@ target_compile_options(wubuos PRIVATE -Wall -Wextra -Wpedantic)
 
 # Headless smoke test: create + render every view (real engines, no GUI).
 # Verifies each WuView adapter renders without crashing and returns a buffer.
-add_executable(test_view test_view.c wuos_font.c wuos_file.c view_doc.c view_cell.c
+add_executable(test_view test_view.c wuos_font.c wuos_file.c plugin.c view_doc.c view_cell.c
     view_slide.c view_ocr.c view_editor.c view_compare.c)
 target_include_directories(test_view PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
@@ -66,7 +67,24 @@ target_sources(test_view PRIVATE
     ${WUBUPAD_SRC}/lex.c)
 target_compile_definitions(test_view PRIVATE lex_free=wubupad_lex_free)
 target_link_libraries(test_view PRIVATE
-    wubumodel wuburender wubuocr wubufont wubucell_app ${SDL2_LIBRARIES} ${FREETYPE_LIBRARIES} m)
+    wubumodel wuburender wubuocr wubufont wubucell_app ${SDL2_LIBRARIES} ${FREETYPE_LIBRARIES} m dl)
 target_compile_options(test_view PRIVATE -Wall -Wextra -Wpedantic)
 add_test(NAME view COMMAND test_view)
 set_tests_properties(view PROPERTIES LABELS "view")
+
+# Reference plugin: builds to a loadable .so demonstrating the C ABI.
+add_library(sample_plugin MODULE plugins/sample/sample_plugin.c)
+set_target_properties(sample_plugin PROPERTIES
+    PREFIX "" OUTPUT_NAME "sample_plugin" LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/plugins")
+target_include_directories(sample_plugin PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_options(sample_plugin PRIVATE -fvisibility=hidden -Wall -Wextra)
+# plugin exposes only wuos_plugin_init (visibility default via macro)
+
+# Headless plugin ABI test: build a tiny loader-less driver that dlopens the
+# sample .so and exercises load->init->exec end to end.
+add_executable(test_plugin_abi test_plugin_abi.c plugin.c)
+target_include_directories(test_plugin_abi PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(test_plugin_abi PRIVATE dl)
+target_compile_options(test_plugin_abi PRIVATE -Wall -Wextra)
+add_test(NAME plugin_abi COMMAND test_plugin_abi "${CMAKE_CURRENT_BINARY_DIR}/plugins/sample_plugin.so")
+set_tests_properties(plugin_abi PROPERTIES LABELS "plugin")

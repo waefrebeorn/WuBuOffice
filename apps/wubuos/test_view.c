@@ -384,6 +384,30 @@ int main(void){
         remove(ap); remove(bp);
     }
 
+    /* plugin ABI: load sample .so via explicit path, exec, verify string */
+    {
+        char sop[512];
+        snprintf(sop, sizeof sop, "%s/plugins/sample_plugin.so",
+                 getenv("WUBUOS_PLUGIN_DIR") ? getenv("WUBUOS_PLUGIN_DIR")
+                                             : "/tmp");
+        if (wuos_plugin_load_path(sop) != 0){
+            fprintf(stderr, "[plugin] load %s FAILED (build step missing?)\n", sop);
+            bad++;
+        } else {
+            int n = wuos_plugin_count();
+            if (n != 1){ fprintf(stderr, "[plugin] count=%d want 1\n", n); bad++; }
+            else if (strcmp(wuos_plugin_name(0), "hello") != 0){
+                fprintf(stderr, "[plugin] name='%s' want 'hello'\n", wuos_plugin_name(0)); bad++;
+            } else {
+                char *r = wuos_plugin_run(0, NULL);
+                int ok = r && strstr(r, "hello from hello v1.0.0 (host-ok)");
+                if (!ok){ fprintf(stderr, "[plugin] exec='%s' WRONG\n", r?r:"(null)"); bad++; }
+                else fprintf(stderr, "[plugin] ok (loaded '%s', exec ok)\n", wuos_plugin_name(0));
+                free(r);
+            }
+        }
+    }
+
     /* cleanup temp files */
     remove(mdp); remove(codep);
 

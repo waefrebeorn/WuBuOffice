@@ -5,6 +5,7 @@
  * wuburender / WuBuPad core / wubucell / wubuocr engines -- no mockups. */
 #include "wuos.h"
 #include "wuos_font.h"
+#include "plugin.h"
 
 #include <SDL2/SDL.h>
 
@@ -22,6 +23,11 @@ static WuView *views[8];
 static int     nviews = 0;
 static int     active = 0;
 static int     tab_hover = -1;
+
+/* Plugin manager: loaded once at startup from ~/.wubuos/plugins. */
+static WuOSPluginMgr *g_plugins = NULL;
+static char   *g_plugin_msg = NULL;   /* last exec() result toast */
+static int     g_plugin_idx = 0;      /* next plugin to run via Ctrl+Shift+K */
 
 static void add_view(WuView *v){ if (v && nviews<8) views[nviews++]=v; }
 
@@ -94,6 +100,11 @@ int main(int argc, char **argv){
     SDL_Renderer *ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
     if (!ren){ fprintf(stderr,"renderer: %s\n",SDL_GetError()); SDL_DestroyWindow(win); SDL_Quit(); return 1; }
 
+    /* load plugins from ~/.wubuos/plugins (if present) */
+    g_plugins = wuos_plugins_load(NULL);
+    if (g_plugins && wuos_plugins_count(g_plugins)==0)
+        fprintf(stderr, "[plugin] no modules in ~/.wubuos/plugins (ok)\n");
+
     add_view(wuos_doc_create(file_for_doc));
     add_view(wuos_cell_create(file_for_cell));
     add_view(wuos_slide_create(NULL));
@@ -153,6 +164,7 @@ int main(int argc, char **argv){
                 else if (k==SDLK_s && (mod & KMOD_CTRL) && (mod & KMOD_SHIFT)) code=WUOS_KEY_SESSION;
                 else if (k==SDLK_f && (mod & KMOD_CTRL) && (mod & KMOD_SHIFT)) code=WUOS_KEY_FOLD;
                 else if (k==SDLK_l && (mod & KMOD_CTRL) && (mod & KMOD_SHIFT)) code=WUOS_KEY_FUNCLIST;
+                else if (k==SDLK_k && (mod & KMOD_CTRL) && (mod & KMOD_SHIFT)) code=WUOS_KEY_PLUGIN;
                 else if (k==SDLK_F3) code=(mod & KMOD_SHIFT)? WUOS_KEY_FINDPREV : WUOS_KEY_FINDNEXT;
                 else if (k==SDLK_UP) code=WUOS_KEY_UP;
                 else if (k==SDLK_DOWN) code=WUOS_KEY_DOWN;
@@ -168,6 +180,19 @@ int main(int argc, char **argv){
                 else if (k==SDLK_DELETE) code=WUOS_KEY_DEL;
                 else if (k>=32 && k<128) code=(int)k;
                 if (code && views[active]->on_key) views[active]->on_key(views[active], code, 1);
+
+                /* plugin action: Ctrl+Shift+K runs the next loaded plugin */
+                if (code == WUOS_KEY_PLUGIN){
+                    if (!g_plugins || wuos_plugins_count(g_plugins)==0){
+                        free(g_plugin_msg);
+                        g_plugin_msg = strdup("no plugins loaded");
+                    } else {
+                        char *r = wuos_plugins_exec(g_plugins, g_plugin_idx, NULL);
+                        free(g_plugin_msg);
+                        g_plugin_msg = r;
+                        g_plugin_idx = (g_plugin_idx + 1) % wuos_plugins_count(g_plugins);
+                    }
+                }
             }
         }
 
@@ -217,11 +242,19 @@ int main(int argc, char **argv){
             free(st);
         }
 
+        /* plugin toast (Ctrl+Shift+K result) */
+        if (g_plugin_msg){
+            sdl_text(ren, WIN_W-360, WIN_H-STATUS_H + (STATUS_H-wuos_font_height())/2 + 1,
+                     120,220,140, g_plugin_msg);
+        }
+
         SDL_RenderPresent(ren);
         SDL_Delay(16);
     }
 
     for (int i=0;i<nviews;i++) views[i]->destroy(views[i]);
+    free(g_plugin_msg);
+    wuos_plugins_free(g_plugins);
     wuos_font_quit();
     SDL_DestroyRenderer(ren);
     SDL_DestroyWindow(win);
