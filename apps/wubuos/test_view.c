@@ -258,6 +258,32 @@ int main(void){
         }
     }
 
+    /* macro record/play: Ctrl+Shift+R record "Hi<ret>", play into new doc */
+    {
+        WuView *m1 = wuos_editor_create(NULL);
+        if (!m1){ fprintf(stderr,"[macro] create FAILED\n"); bad++; }
+        else {
+            m1->on_key(m1, WUOS_KEY_REC, 1);              /* start recording */
+            if (!wuos_editor_macro(m1, NULL)){ fprintf(stderr,"[macro] rec flag off\n"); bad++; }
+            m1->on_key(m1, (unsigned char)'H', 1);
+            m1->on_key(m1, (unsigned char)'i', 1);
+            m1->on_key(m1, WUOS_KEY_RETURN, 1);
+            m1->on_key(m1, WUOS_KEY_REC, 1);              /* stop */
+            int ops=0; wuos_editor_macro(m1, &ops);
+            if (ops != 3){ fprintf(stderr,"[macro] wrong op count %d\n", ops); bad++; }
+            else {
+                WuView *m2 = wuos_editor_create(NULL);
+                m2->on_key(m2, WUOS_KEY_PLAY, 1);          /* replay */
+                char *t = wuos_editor_text(m2);
+                int ok = (strstr(t, "Hi\n") != NULL);
+                if (!ok){ fprintf(stderr,"[macro] replay='%s'\n", t); bad++; }
+                else fprintf(stderr,"[macro] ok (replayed 'Hi\\n', ops=%d)\n", ops);
+                free(t); m2->destroy(m2);
+            }
+            m1->destroy(m1);
+        }
+    }
+
     /* cell view: load a real CSV via wubucell reader */
     {
         char csvp[256]; sprintf(csvp, "/tmp/wuos_cell_%d.csv", (int)getpid());

@@ -46,7 +46,7 @@ enum { WUOS_KEY_UP=2000, WUOS_KEY_DOWN, WUOS_KEY_LEFT, WUOS_KEY_RIGHT,
        WUOS_KEY_FINDNEXT, WUOS_KEY_FINDPREV, WUOS_KEY_REPLACEALL, WUOS_KEY_GOTO,
        WUOS_KEY_EOL, WUOS_KEY_THEME, WUOS_KEY_NEWDOC, WUOS_KEY_CLOSE,
        WUOS_KEY_DOCPREV, WUOS_KEY_DOCNEXT, WUOS_KEY_TOGGLE_BK, WUOS_KEY_NEXT_BK,
-       WUOS_KEY_PREV_BK, WUOS_KEY_COLMODE };
+       WUOS_KEY_PREV_BK, WUOS_KEY_COLMODE, WUOS_KEY_REC, WUOS_KEY_PLAY };
 
 /* ---- view factories ----
  * `path` is an optional file to load (NULL = use the bundled sample). */
@@ -68,6 +68,8 @@ size_t wuos_editor_doc_active(WuView *v);
 int wuos_editor_bookmarks(WuView *v);
 /* Test accessor: column/block selection state (mode + block bounds). */
 int wuos_editor_col(WuView *v, int *l0, int *c0, int *l1, int *c1);
+/* Test accessor: macro record state (recording flag + recorded op count). */
+int wuos_editor_macro(WuView *v, int *ops);
 WuView *wuos_cell_create(const char *path);         /* wubucell grid */
 WuView *wuos_ocr_create(const char *path);          /* wubuocr page */
 WuView *wuos_slide_create(const char *path);        /* simple slide */

@@ -68,10 +68,17 @@ typedef struct {
     int   col_mode;          /* 0 = stream, 1 = column */
     int   sel_l0, sel_c0;    /* anchor line/col */
     int   sel_l1, sel_c1;    /* active line/col */
+
+    /* macro record/play (op buffer is process-global, like Notepad++) */
+    int   rec;               /* recording flag */
 } Editor;
 
 /* Notepad++-style token palette (RGB) */
 static unsigned char g_def_r=36, g_def_g=41, g_def_b=47;  /* theme-aware default */
+/* session-global macro op buffer (Notepad++ macros are global) */
+static unsigned char g_rec_ops[8192];
+static int g_rec_len = 0;
+static int g_rec_n   = 0;
 static void tok_color(LexTok k, unsigned char *r, unsigned char *g, unsigned char *b){
     switch (k){
         case TK_KEYWORD:  *r=86;  *g=156; *b=214; break;   /* blue */
@@ -634,6 +641,11 @@ static void on_key(WuView *v, int key, int down){
 
     /* ---- normal editing ---- */
     size_t cur = doc_cursor(e->doc);
+    /* macro capture: while recording, log edit ops (skip meta keys) */
+    if (e->rec && key >= 32 && key < 127 && g_rec_len < 8191){
+        g_rec_ops[g_rec_len++] = 1; g_rec_ops[g_rec_len++] = (unsigned char)key; g_rec_n++;
+    } else if (e->rec && key==WUOS_KEY_RETURN && g_rec_len<8191){ g_rec_ops[g_rec_len++]=2; g_rec_n++; }
+    else if (e->rec && key==WUOS_KEY_BACKSPACE && g_rec_len<8191){ g_rec_ops[g_rec_len++]=3; g_rec_n++; }
     switch (key){
         case WUOS_KEY_FIND:    find_open(v, 1); return;
         case WUOS_KEY_REPLACE: find_open(v, 2); return;
@@ -676,6 +688,22 @@ static void on_key(WuView *v, int key, int down){
                 e->sel_c0 = e->sel_c1 = editor_col_of(e);
             }
             return;
+        case WUOS_KEY_REC:
+            e->rec ^= 1;
+            if (e->rec){ g_rec_len = 0; g_rec_n = 0; }
+            return;
+        case WUOS_KEY_PLAY: {
+            if (!g_rec_n) return;
+            int was = e->rec; e->rec = 0;   /* don't re-record the playback */
+            for (int i=0; i<g_rec_len; ){
+                unsigned char op = g_rec_ops[i++];
+                if (op==1){ unsigned char ch = g_rec_ops[i++]; on_key(v, ch, 1); }
+                else if (op==2){ on_key(v, WUOS_KEY_RETURN, 1); }
+                else if (op==3){ on_key(v, WUOS_KEY_BACKSPACE, 1); }
+            }
+            e->rec = was;
+            return;
+        }
         case WUOS_KEY_BACKSPACE:
             if (cur>0) doc_delete(e->doc, cur-1, 1);
             break;
@@ -833,6 +861,13 @@ int wuos_editor_col(WuView *v, int *l0, int *c0, int *l1, int *c1){
     if (l1) *l1 = e->sel_l1;
     if (c1) *c1 = e->sel_c1;
     return e->col_mode;
+}
+/* Test accessor: macro record state (recording flag + recorded op count). */
+int wuos_editor_macro(WuView *v, int *ops){
+    Editor *e = v ? v->priv : NULL;
+    if (!e) return 0;
+    if (ops) *ops = g_rec_n;
+    return e->rec;
 }
 
 WuView *wuos_editor_create(const char *path){
