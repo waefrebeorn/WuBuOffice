@@ -51,7 +51,10 @@ enum { WUOS_KEY_UP=2000, WUOS_KEY_DOWN, WUOS_KEY_LEFT, WUOS_KEY_RIGHT,
  WUOS_KEY_INSERT_CHART, WUOS_KEY_INSERT_DRAW, WUOS_KEY_INSERT_MATH,
  WUOS_KEY_EXPORT_EPUB, WUOS_KEY_A11Y_CHECK,
  WUOS_KEY_ZOOM_IN, WUOS_KEY_ZOOM_OUT, WUOS_KEY_ZOOM_RESET,
- WUOS_KEY_SETTINGS };
+ WUOS_KEY_SETTINGS,
+ WUOS_KEY_TOC1, WUOS_KEY_TOC2, WUOS_KEY_TOC3,
+ WUOS_KEY_TOC4, WUOS_KEY_TOC5, WUOS_KEY_TOC6,
+ WUOS_KEY_CHEAT };
 
 /* ---- view factories ----
  * `path` is an optional file to load (NULL = use the bundled sample). */
@@ -93,6 +96,10 @@ int  wuos_doc_obj_count(WuView *v);
 const char *wuos_doc_epub_msg(WuView *v);
 /* Document view: a11y issue count from last check, or -1 if not run (INT-5). */
 int  wuos_doc_a11y_issues(WuView *v);
+/* Document view: TOC entry count for the current render (DOC-54), or -1. */
+int  wuos_doc_toc_count(WuView *v);
+/* Document view: high-contrast setting (UXA-41). */
+int  wuos_doc_high_contrast(WuView *v);
 /* Cell view inspection: active cell + editing state + cell value as string. */
 int  wuos_cell_active(WuView *v, int *col, int *row);
 int  wuos_cell_editing(WuView *v);

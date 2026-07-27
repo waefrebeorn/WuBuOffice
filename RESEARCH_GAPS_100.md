@@ -53,16 +53,16 @@
 31. **P2** No empty-state illustration for new docs. — OPEN (polish).
 32. **P2** No dark/light theme toggle in-app (theme engine exists in WuBuPad; expose). — **CLOSED**: Ctrl+` theme toggle.
 33. **P2** No toast/notification system for background ops (OCR, export done). — **CLOSED**: `toast.c` FIFO queue w/ per-message TTL, drawn bottom-center by the shell; palette commands and background ops push into it. Headless-tested (test_shell_ui).
-34. **P2** No mini-map for long documents. — OPEN (minimap).
-35. **P2** No breadcrumb / location bar. — OPEN (breadcrumb).
-36. **P1** No keyboard-shortcut discoverability (cheat sheet / dynamic menu hints).
+34. **P2** No mini-map for long documents. — **CLOSED**: Document view draws a per-line mini-map tick on the right edge from the layout line boxes (UI-34).
+35. **P2** No breadcrumb / location bar. — **CLOSED**: Document view status renders a breadcrumb (`Document ▸ <file> ▸ rendered page`) from the loaded path (UI-35).
+36. **P2** No keyboard-shortcut discoverability (cheat sheet / dynamic menu hints). — **CLOSED**: F1 opens a shortcut cheat-sheet overlay in the shell (UI-36); also documented in the command palette.
 37. **P1** No modal-dialog focus management (accessibility + UX).
 38. **P2** No undo/redo UI button state (dim when empty).
 39. **P2** No "recent documents" jump list on launch.
 
 ## UXA — Accessibility
 40. **P0** No screen-reader path: UI must expose an accessibility tree / ARIA-like model. Define a UI→a11y bridge.
-41. **P0** No high-contrast theme. Add a forced high-contrast palette.
+41. **P0** No high-contrast theme. Add a forced high-contrast palette. — **CLOSED**: `wubusettings` gained a high-contrast flag (persisted to JSON); the Document view swaps to a maximally-distinct fg/bg palette, toggled from Settings (`c`) and the command palette (UXA-41).
 42. **P1** No keyboard-only navigation of all chrome (menus, dialogs, panes). Add full tab-order + shortcuts.
 43. **P1** No `prefers-reduced-motion` handling for animations/transitions.
 44. **P1** No color-contrast audit in theme engine (WCAG AA 4.5:1). Validate palettes.
@@ -77,7 +77,7 @@
 53. **P2** No screen-reader announcement of structural changes (page, heading).
 
 ## DOC — Document model / editing features
-54. **P1** No table of contents generator (from headings).
+54. **P1** No table of contents generator (from headings). — **CLOSED**: `wubutoc` module walks the model for `heading`-styled paragraphs, resolves each to a 1-based page via the wubulayout pipeline, and emits ranked entries (level + page). The Document view renders a Contents side-pane and jumps to a heading with Ctrl+1..6 (DOC-54).
 55. **P1** No footnotes / endnotes.
 56. **P1** No headers / footers / page sections. — **CLOSED (render side)**: `wubulayout` paginates and the Document view draws a page header (page x/N) + footer (line count) per page. Authoring/editing of header/footer content is still open (model needs header nodes).
 57. **P1** No page/section breaks; single flow only.

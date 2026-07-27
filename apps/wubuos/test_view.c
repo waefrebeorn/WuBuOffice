@@ -2,6 +2,8 @@
  * Also exercises file open (doc markdown + editor code) and Ctrl+S save. */
 #include "wuos.h"
 #include "wuos_font.h"
+#include "settings.h"
+#include "toc.h"
 #include "wuos_file.h"
 #include "autosave.h"   /* wubuautosave: editor crash-recovery test */
 #include "model.h"      /* wubumodel_doc: build snapshot in autosave test */
@@ -545,6 +547,26 @@ int main(void){
             if (!rendered){ fprintf(stderr,"[doc-i] sample not rendered\n"); bad++; }
             else fprintf(stderr,"[doc-i] ok (sample rendered page)\n");
             dv->destroy(dv);
+        }
+        /* Document view + DOC-54 TOC + UXA-41 high-contrast: render the
+         * sample, expect a TOC (headings present) and a toggleable HC flag. */
+        {
+            WuView *dv = wuos_doc_create(NULL);
+            if (!dv){ fprintf(stderr,"[doc-toc] create FAILED\n"); bad++; }
+            else {
+                bad += render_check(dv, "doc-toc");
+                int tc = wuos_doc_toc_count(dv);
+                if (tc < 0){ fprintf(stderr,"[doc-toc] no TOC\n"); bad++; }
+                else fprintf(stderr,"[doc-toc] ok (toc=%d entries)\n", tc);
+                int hc0 = wuos_doc_high_contrast(dv);
+                WubuSettings *sh = wubusettings_shared();
+                if (sh) wubusettings_set_high_contrast(sh, !hc0);
+                int hc1 = wuos_doc_high_contrast(dv);
+                if (hc1 == hc0){ fprintf(stderr,"[doc-hc] toggle no-op\n"); bad++; }
+                else fprintf(stderr,"[doc-hc] ok (toggled %d->%d)\n", hc0, hc1);
+                if (sh) wubusettings_set_high_contrast(sh, hc0);
+                dv->destroy(dv);
+            }
         }
         /* real text doc: write one, open, find a known token */
         char dp[256]; sprintf(dp,"/tmp/wuos_doc_%d.txt",(int)getpid());

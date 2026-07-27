@@ -16,20 +16,31 @@ struct WubuSettings {
     int    autosave_ms;
     char   language[8];
     int    font_size;
+    int    high_contrast;
 };
 
 WubuSettings *wubusettings_create(void){
-    WubuSettings *s = calloc(1, sizeof *s);
+    WubuSettings *s = calloc(1, sizeof(WubuSettings));
     if (!s) return NULL;
     s->zoom        = 1.0;
     s->dark        = 1;
     s->autosave_ms = 5000;
     s->language[0] = 'e'; s->language[1] = 'n'; s->language[2] = '\0';
     s->font_size   = 16;
+    s->high_contrast = 0;
     return s;
 }
 
-void wubusettings_destroy(WubuSettings *s){ free(s); }
+/* process-wide singleton (declared below; forward reference via this static) */
+static WubuSettings *g_shared = NULL;
+
+void wubusettings_destroy(WubuSettings *s){
+    if (!s) return;
+    /* if this is the shared singleton, clear the global so a later
+     * wubusettings_shared() re-creates it (don't leave a dangling ptr). */
+    if (s == g_shared) g_shared = NULL;
+    free(s);
+}
 
 static char *expand_path(const char *p){
     /* support a leading ~/ by swapping in $HOME. Caller frees. */
@@ -72,6 +83,7 @@ int wubusettings_load(WubuSettings *s, const char *path){
             const char *l = j_as_str(v); strncpy(s->language, l, sizeof s->language-1); s->language[sizeof s->language-1]='\0';
         }
         if ((v = j_obj_get(root,"font_size")) && j_type(v)==J_NUM) s->font_size = (int)j_as_num(v);
+        if ((v = j_obj_get(root,"high_contrast")) && j_type(v)==J_NUM) s->high_contrast = j_as_num(v)!=0;
         rc = 0;
     }
     j_free(root);
@@ -88,6 +100,7 @@ int wubusettings_save(const WubuSettings *s, const char *path){
     j_obj_put(root, "autosave_ms", j_num((double)s->autosave_ms));
     j_obj_put(root, "language", j_str(s->language));
     j_obj_put(root, "font_size", j_num((double)s->font_size));
+    j_obj_put(root, "high_contrast", j_num((double)s->high_contrast));
     char *txt = j_emit(root);
     j_free(root);
     if (!txt) return -1;
@@ -123,8 +136,10 @@ void wubusettings_set_language(WubuSettings *s, const char *lang){
 int  wubusettings_font_size(const WubuSettings *s){ return s ? s->font_size : 16; }
 void wubusettings_set_font_size(WubuSettings *s, int px){ if (s){ if(px<8)px=8; if(px>48)px=48; s->font_size=px; } }
 
-/* process-wide singleton */
-static WubuSettings *g_shared = NULL;
+int  wubusettings_high_contrast(const WubuSettings *s){ return s ? s->high_contrast : 0; }
+void wubusettings_set_high_contrast(WubuSettings *s, int on){ if (s) s->high_contrast = on?1:0; }
+
+/* process-wide singleton (defined near top of this file) */
 WubuSettings *wubusettings_shared(void){
     if (!g_shared){
         g_shared = wubusettings_create();

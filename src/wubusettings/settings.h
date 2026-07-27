@@ -37,6 +37,10 @@ void   wubusettings_set_language(WubuSettings *s, const char *lang);
 int    wubusettings_font_size(const WubuSettings *s);       /* px */
 void   wubusettings_set_font_size(WubuSettings *s, int px);
 
+/* UXA-41: high-contrast mode (maximally distinct fg/bg, WCAG-style). 1 on. */
+int    wubusettings_high_contrast(const WubuSettings *s);
+void   wubusettings_set_high_contrast(WubuSettings *s, int on);
+
 /* Process-wide singleton (lazy). Returns NULL only on OOM. */
 WubuSettings *wubusettings_shared(void);
 

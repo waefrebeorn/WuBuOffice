@@ -33,6 +33,7 @@ static int     g_ctx_item = 0;      /* highlighted item */
 static int     g_ctx_x = 0, g_ctx_y = 0;
 static Toasts  *g_toasts = NULL;    /* UI-33: toast queue */
 static Palette *g_palette = NULL;   /* UI-29: command palette (Ctrl+K) */
+static int      g_cheat = 0;       /* UI-36: shortcut cheat-sheet overlay */
 
 /* Plugin manager: loaded once at startup from ~/.wubuos/plugins. */
 static WuOSPluginMgr *g_plugins = NULL;
@@ -137,6 +138,7 @@ int main(int argc, char **argv){
     palette_add(g_palette, "Open Settings",  7);
     palette_add(g_palette, "Export EPUB",    8);
     palette_add(g_palette, "Accessibility Check", 9);
+    palette_add(g_palette, "High Contrast", 10);
     /* if a specific tab was requested and exists, activate it */
     if (want_tab || auto_tab){
         const char *t = want_tab? want_tab : auto_tab;
@@ -223,6 +225,9 @@ int main(int argc, char **argv){
                                 toast_push(g_toasts, "EPUB export requested", 120); break;
                         case 9: if (views[active]->on_key) views[active]->on_key(views[active], WUOS_KEY_A11Y_CHECK, 1);
                                 toast_push(g_toasts, "Accessibility check run", 120); break;
+                        case 10: { WubuSettings *sh=wubusettings_shared();
+                                  if (sh) wubusettings_set_high_contrast(sh, !wubusettings_high_contrast(sh));
+                                  toast_push(g_toasts, "High contrast toggled", 90); } break;
                         default: break;
                         }
                     }
@@ -259,6 +264,9 @@ int main(int argc, char **argv){
                 else if ((k==SDLK_EQUALS || k==SDLK_PLUS) && (mod & KMOD_CTRL)) code=WUOS_KEY_ZOOM_IN;
                 else if (k==SDLK_MINUS && (mod & KMOD_CTRL)) code=WUOS_KEY_ZOOM_OUT;
                 else if (k==SDLK_0 && (mod & KMOD_CTRL)) code=WUOS_KEY_ZOOM_RESET;
+                else if (k==SDLK_F1) code=WUOS_KEY_CHEAT;   /* UI-36 */
+                else if (k>=SDLK_1 && k<=SDLK_6 && (mod & KMOD_CTRL))
+                    code = WUOS_KEY_TOC1 + (k - SDLK_1);   /* DOC-54 jump */
                 else if (k==SDLK_F3) code=(mod & KMOD_SHIFT)? WUOS_KEY_FINDPREV : WUOS_KEY_FINDNEXT;
                 else if (k==SDLK_UP) code=WUOS_KEY_UP;
                 else if (k==SDLK_DOWN) code=WUOS_KEY_DOWN;
@@ -300,6 +308,8 @@ int main(int argc, char **argv){
                     WubuSettings *sh = wubusettings_shared(); if (sh) wubusettings_set_zoom(sh, g_zoom);
                 } else if (code == WUOS_KEY_SETTINGS){
                     for (int i=0;i<nviews;i++) if (!strcmp(views[i]->name,"Settings")){ active=i; scroll=0; break; }
+                } else if (code == WUOS_KEY_CHEAT){
+                    g_cheat = !g_cheat;   /* UI-36 toggle */
                 }
             }
         }
@@ -408,7 +418,32 @@ int main(int argc, char **argv){
             }
         }
 
-        SDL_RenderPresent(ren);
+        /* UI-36: shortcut cheat-sheet overlay (F1) */
+        if (g_cheat){
+            int cw = 460, cx = (WIN_W-cw)/2, cy = TAB_H + 40;
+            int ch = 320;
+            SDL_SetRenderDrawColor(ren, 20,22,28,250);
+            SDL_RenderFillRect(ren,&(SDL_Rect){cx,cy,cw,ch});
+            SDL_SetRenderDrawColor(ren, 90,95,105,255);
+            SDL_RenderDrawRect(ren,&(SDL_Rect){cx,cy,cw,ch});
+            sdl_text(ren, cx+14, cy+10, 240,243,250, "Keyboard shortcuts");
+            const char *keys[] = {
+                "Ctrl+K   command palette",
+                "Ctrl+`   toggle dark/light theme",
+                "Ctrl+C    high-contrast (in Settings)",
+                "F1        this cheat sheet",
+                "Ctrl+1..6 jump to TOC heading (Document)",
+                "Ctrl+F    find   Ctrl+G go-to line",
+                "Ctrl+=/-  zoom in / out   Ctrl+0 reset",
+                "Ctrl+S    save   Ctrl+W close tab",
+                "Ctrl+Tab  next tab  Ctrl+Shift+Tab prev",
+                "F10        open Settings",
+                "Right-click context menu",
+                "Drag & drop a file to open"
+            };
+            for (int i=0;i<12;i++)
+                sdl_text(ren, cx+14, cy+40+i*22, 200,203,210, keys[i]);
+        }
         SDL_Delay(16);
     }
 
