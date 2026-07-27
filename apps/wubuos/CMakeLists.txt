@@ -26,10 +26,10 @@ target_include_directories(wubuos PRIVATE
     ${CMAKE_SOURCE_DIR}/src/wubuxml
     ${WUBUPAD_SRC})
 # WuBuPad headless core sources (SDL-free) compiled in directly.
-# NOTE: lex.c and complete.c are intentionally excluded -- lex.c's lex_free()
-# collides with wubuocr's lexicon.c lex_free(), and complete.c depends on the
-# lexer. The Editor renders plain text this pass (syntax highlighting +
-# completion are a follow-up). doc.c has no dependency on lex.c/complete.c.
+# lex.c is included for the editor's syntax highlighter. Its lex_free() name
+# collides with wubuocr's lexicon.c lex_free(); we mangle only that one symbol
+# via a compile definition so WuBuPad's repo is left untouched. complete.c is
+# still excluded (depends on the lexer + not needed for the shell).
 target_sources(wubuos PRIVATE
     ${WUBUPAD_SRC}/buffer.c
     ${WUBUPAD_SRC}/doc.c
@@ -37,7 +37,9 @@ target_sources(wubuos PRIVATE
     ${WUBUPAD_SRC}/encode.c
     ${WUBUPAD_SRC}/diff.c
     ${WUBUPAD_SRC}/docs.c
-    ${WUBUPAD_SRC}/json.c)
+    ${WUBUPAD_SRC}/json.c
+    ${WUBUPAD_SRC}/lex.c)
+target_compile_definitions(wubuos PRIVATE lex_free=wubupad_lex_free)
 target_link_libraries(wubuos PRIVATE
     wubumodel wuburender wubuocr wubufont wubucell_app ${SDL2_LIBRARIES} ${FREETYPE_LIBRARIES} m)
 target_compile_options(wubuos PRIVATE -Wall -Wextra -Wpedantic)
@@ -58,7 +60,9 @@ target_include_directories(test_view PRIVATE
     ${WUBUPAD_SRC})
 target_sources(test_view PRIVATE
     ${WUBUPAD_SRC}/buffer.c ${WUBUPAD_SRC}/doc.c ${WUBUPAD_SRC}/search.c
-    ${WUBUPAD_SRC}/encode.c ${WUBUPAD_SRC}/diff.c ${WUBUPAD_SRC}/docs.c ${WUBUPAD_SRC}/json.c)
+    ${WUBUPAD_SRC}/encode.c ${WUBUPAD_SRC}/diff.c ${WUBUPAD_SRC}/docs.c ${WUBUPAD_SRC}/json.c
+    ${WUBUPAD_SRC}/lex.c)
+target_compile_definitions(test_view PRIVATE lex_free=wubupad_lex_free)
 target_link_libraries(test_view PRIVATE
     wubumodel wuburender wubuocr wubufont wubucell_app ${SDL2_LIBRARIES} ${FREETYPE_LIBRARIES} m)
 target_compile_options(test_view PRIVATE -Wall -Wextra -Wpedantic)

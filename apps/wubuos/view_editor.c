@@ -12,20 +12,36 @@
 #include "wuos_font.h"
 
 #include "doc.h"    /* cross-repo: ~/WuBuPad/src */
+#include "lex.h"
 
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 
-#define TAB_W 4
-
 typedef struct {
     Doc  *doc;
+    Lex  *lex;
     int   top;        /* first visible line */
     int   caret_line, caret_col;
     int   blink;      /* caret phase */
     int   frames;     /* for blink timing */
 } Editor;
+
+/* Notepad++-style token palette (RGB) */
+static void tok_color(LexTok k, unsigned char *r, unsigned char *g, unsigned char *b){
+    switch (k){
+        case TK_KEYWORD:  *r=86;  *g=156; *b=214; break;   /* blue */
+        case TK_TYPE:     *r=78;  *g=201; *b=176; break;   /* teal */
+        case TK_STRING:   *r=152; *g=195; *b=121; break;   /* green */
+        case TK_CHAR:     *r=209; *g=154; *b=102; break;   /* orange */
+        case TK_NUMBER:   *r=181; *g=206; *b=168; break;   /* light green */
+        case TK_COMMENT:  *r=128; *g=128; *b=128; break;   /* grey */
+        case TK_PREPROC:  *r=215; *g=186; *b=125; break;   /* tan */
+        case TK_OPERATOR:
+        case TK_PUNCT:    *r=120; *g=120; *b=130; break;   /* slate */
+        default:          *r=36;  *g=41;  *b=47;  break;   /* near-black */
+    }
+}
 
 static int render(WuView *v, int w, int h, int scroll,
                   unsigned char **rgba, int *rw, int *rh){
@@ -51,10 +67,10 @@ static int render(WuView *v, int w, int h, int scroll,
     size_t pos = 0, line = 0;
     size_t line_start = 0;
     size_t caret = doc_cursor(e->doc);
-    /* find caret line/col */
     e->caret_line = 0; e->caret_col = 0;
     { size_t cl=0, cc=0; for (size_t p=0;p<caret;p++){ if (text && text[p]=='\n'){cl++;cc=0;} else cc++; } e->caret_line=cl; e->caret_col=cc; }
 
+    LexSpan spans[256];
     while (y < H - lh){
         char num[16]; snprintf(num,sizeof num,"%zu",line+1);
         wuos_font_draw(num, 6, y+fh, 0, 120,124,130, fb, w, H);
@@ -63,11 +79,24 @@ static int render(WuView *v, int w, int h, int scroll,
         while (pos < tlen && text[pos] != '\n'){ pos++; }
         le = pos;
 
-        /* draw the whole line as plain text */
-        char seg[512]; size_t sl=0;
-        for (size_t q=line_start; q<le && sl<511; q++){ seg[sl++]=text[q]; }
-        seg[sl]=0;
-        wuos_font_draw(seg, gutter+6, y+fh, 0, 36,41,47, fb, w, H);
+        /* syntax highlight: lex the line, paint each span */
+        size_t nsp = 0;
+        if (e->lex && le > line_start)
+            nsp = lex_run(e->lex, text+line_start, le-line_start, spans, 256);
+        size_t sp = 0;
+        size_t col = line_start;
+        while (col < le){
+            LexTok k = TK_TEXT;
+            size_t seg_end = le;
+            if (sp < nsp){ k = spans[sp].kind; seg_end = line_start + spans[sp].end; sp++; }
+            unsigned char cr,cg,cb; tok_color(k, &cr,&cg,&cb);
+            /* draw this token span */
+            char seg[512]; size_t sl=0;
+            for (size_t q=col; q<seg_end && sl<511; q++){ seg[sl++]=text[q]; }
+            seg[sl]=0;
+            wuos_font_draw(seg, gutter+6, y+fh, 0, cr,cg,cb, fb, w, H);
+            col = seg_end;
+        }
 
         /* caret */
         if ((int)line == e->caret_line && (e->frames/30)%2==0){
@@ -146,15 +175,17 @@ static char *status(WuView *v){
     size_t cur = doc_cursor(e->doc);
     size_t line=1,col=1; for (size_t q=0;q<cur && t && t[q];q++){ if(t[q]=='\n'){line++;col=1;}else col++; }
     free(t);
-    char buf[128];
-    snprintf(buf,sizeof buf,"Ln %zu  Col %zu  %s  %s",
+    const char *lang = e->lex? lex_lang(e->lex) : "none";
+    char buf[160];
+    snprintf(buf,sizeof buf,"Ln %zu  Col %zu  %s  %s  [%s]",
              line, col, doc_has_selection(e->doc)?"SEL":"   ",
-             doc_can_undo(e->doc)?"*":" ");
+             doc_can_undo(e->doc)?"*":" ", lang);
     return strdup(buf);
 }
 
 static void destroy(WuView *v){
     Editor *e = v->priv;
+    if (e->lex) lex_free(e->lex);
     doc_free(e->doc);
     free(e);
 }
@@ -170,11 +201,13 @@ WuView *wuos_editor_create(void){
         "    int total = 0;\n"
         "    for (int i = 1; i <= 10; i++) {\n"
         "        total += i;            /* sum 1..10 */\n"
+        "        if (total > 50) break; // early out\n"
         "    }\n"
         "    printf(\"sum=%d\\n\", total);\n"
         "    return 0;\n"
         "}\n";
     e->doc = doc_create(seed);
+    e->lex = lex_create("c");
     e->frames = 0;
     WuView *v = calloc(1, sizeof *v);
     v->name = "Editor";
