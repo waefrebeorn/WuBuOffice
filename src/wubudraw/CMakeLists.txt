@@ -4,4 +4,4 @@ add_library(wubudraw STATIC draw.c)
 target_include_directories(wubudraw PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}/src/wubusvg)
-target_link_libraries(wubudraw PUBLIC wubusvg)
+target_link_libraries(wubudraw PUBLIC wubusvg wububase)

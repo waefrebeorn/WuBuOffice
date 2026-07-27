@@ -4,6 +4,7 @@
 #include "eval.h"             /* optional formula subtitle */
 #include "funcs.h"            /* wubu_formula_register_all */
 #include "value_util.h"
+#include "wububase.h"         /* shared Buf + wububase_xml_escape (was private here) */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -32,48 +33,6 @@ struct Chart {
     ChartType type;
     int      w, h;
 };
-
-/* ---------- small dynamic string builder ---------- */
-typedef struct { char *p; size_t len, cap; } Buf;
-static void buf_init(Buf *b){ b->p=NULL; b->len=0; b->cap=0; }
-static void buf_free(Buf *b){ free(b->p); b->p=NULL; b->len=b->cap=0; }
-static int buf_push(Buf *b, const char *s){
-    size_t al = strlen(s);
-    if (b->len + al + 1 > b->cap){
-        size_t nc = (b->cap ? b->cap*2 : 256);
-        while (nc < b->len + al + 1) nc *= 2;
-        char *np = realloc(b->p, nc);
-        if(!np) return -1;
-        b->p = np; b->cap = nc;
-    }
-    memcpy(b->p + b->len, s, al+1);
-    b->len += al;
-    return 0;
-}
-/* printf into the buffer */
-static int buf_printf(Buf *b, const char *fmt, ...){
-    char tmp[512];
-    va_list ap; va_start(ap, fmt);
-    int n = vsnprintf(tmp, sizeof tmp, fmt, ap);
-    va_end(ap);
-    if (n < 0) return -1;
-    if ((size_t)n >= sizeof tmp){
-        char *big = malloc((size_t)n+1); if(!big) return -1;
-        va_start(ap, fmt); vsnprintf(big, (size_t)n+1, fmt, ap); va_end(ap);
-        int r = buf_push(b, big); free(big); return r;
-    }
-    return buf_push(b, tmp);
-}
-/* append an escaped double for an attribute value (quotes -> &quot;) */
-static void esc_attr(Buf *b, const char *s){
-    for (const char *p=s; *p; p++){
-        if (*p=='"') buf_push(b, "&quot;");
-        else if (*p=='&') buf_push(b, "&amp;");
-        else if (*p=='<') buf_push(b, "&lt;");
-        else if (*p=='>') buf_push(b, "&gt;");
-        else { char t[2]={*p,0}; buf_push(b, t); }
-    }
-}
 
 /* ---------- creation ---------- */
 Chart *chart_create(const char *title){
@@ -156,8 +115,8 @@ static void draw_background(Buf *b, Chart *c){
 static void draw_title(Buf *b, Chart *c, int y){
     buf_printf(b, "<text x=\"%d\" y=\"%d\" font-family=\"sans-serif\" font-size=\"16\" "
                   "font-weight=\"bold\" text-anchor=\"middle\" fill=\"#222\">", c->w/2, y);
-    esc_attr(b, c->title ? c->title : "Chart");
-    buf_push(b, "</text>\n");
+    wububase_xml_escape(b, c->title ? c->title : "Chart");
+    buf_add(b, "</text>\n");
 }
 
 /* pie wedge path from angle a0->a1 (radians) at center cx,cy radius r */
@@ -207,7 +166,7 @@ char *chart_render_svg(Chart *c){
                 buf_printf(&b, "<rect x=\"%d\" y=\"%d\" width=\"12\" height=\"12\" fill=\"%s\"/>"
                                "<text x=\"%d\" y=\"%d\" font-family=\"sans-serif\" font-size=\"12\" fill=\"#222\">",
                            right+4, top + si*18, palette[si%pc], right+20, top+si*18+10);
-                esc_attr(&b, lab); buf_push(&b, "</text>\n");
+                wububase_xml_escape(&b, lab); buf_add(&b, "</text>\n");
                 a = a1; si++;
             }
         }
@@ -249,7 +208,7 @@ char *chart_render_svg(Chart *c){
                     buf_printf(&b, "<text x=\"%.2f\" y=\"%d\" font-family=\"sans-serif\" "
                                        "font-size=\"10\" text-anchor=\"middle\" fill=\"#222\">",
                                left + (j+0.5)*catw, bottom+14);
-                    esc_attr(&b, lab); buf_push(&b, "</text>\n");
+                    wububase_xml_escape(&b, lab); buf_add(&b, "</text>\n");
                 }
             }
         } else if (c->type == CHART_LINE){
@@ -276,7 +235,7 @@ char *chart_render_svg(Chart *c){
                             double x = left + (ncat>1 ? (double)j/(ncat-1)*(right-left) : left);
                             buf_printf(&b, "<text x=\"%.2f\" y=\"%d\" font-family=\"sans-serif\" "
                                        "font-size=\"10\" text-anchor=\"middle\" fill=\"#222\">", x, bottom+14);
-                            esc_attr(&b, lab); buf_push(&b, "</text>\n");
+                            wububase_xml_escape(&b, lab); buf_add(&b, "</text>\n");
                         }
                     }
                 }
@@ -309,11 +268,11 @@ char *chart_render_svg(Chart *c){
         }
     }
 
-    buf_push(&b, "</svg>\n");
+    buf_add(&b, "</svg>\n");
 
     /* Finalize through wubusvg (validate well-formed + canonicalize output). */
     char *out = NULL;
-    SvgDoc *doc = svg_parse(b.p, b.len);
+    SvgDoc *doc = svg_parse(buf_str(&b), buf_len(&b));
     if (doc){
         out = svg_regurgitate(doc);
         svg_free(doc);

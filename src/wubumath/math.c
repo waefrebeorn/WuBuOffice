@@ -1,5 +1,6 @@
 /* math.c -- dependency-free C11 math expression renderer (see math.h). */
 #include "math.h"
+#include "wububase.h"         /* shared Buf + wububase_xml_escape (was private Buf2 here) */
 #include "wubusvg.h"
 
 #include <stdio.h>
@@ -210,21 +211,6 @@ static void layout(Box *b){
 }
 
 /* ---- render: position pass + SVG ---- */
-typedef struct { char *p; size_t len, cap; } Buf2;
-static void b2_init(Buf2 *b){ b->p=NULL; b->len=0; b->cap=0; }
-static void b2_free(Buf2 *b){ free(b->p); b->p=NULL; }
-static int b2_add(Buf2 *b, const char *s){
-    size_t al=strlen(s);
-    if (b->len+al+1>b->cap){ size_t nc=b->cap?b->cap*2:256; while(nc<b->len+al+1)nc*=2;
-        char *np=realloc(b->p,nc); if(!np)return -1; b->p=np; b->cap=nc; }
-    memcpy(b->p+b->len,s,al+1); b->len+=al; return 0;
-}
-static int b2_pf(Buf2 *b, const char *fmt, ...){
-    char t[256]; va_list ap; va_start(ap,fmt); int n=vsnprintf(t,sizeof t,fmt,ap); va_end(ap);
-    if(n<0)return -1;
-    if((size_t)n>=sizeof t){ char *big=malloc((size_t)n+1); if(!big)return -1; va_start(ap,fmt); vsnprintf(big,(size_t)n+1,fmt,ap); va_end(ap); int r=b2_add(b,big); free(big); return r; }
-    return b2_add(b,t);
-}
 
 /* assign absolute positions: cursor x advances; vertically align by baseline */
 static double place(Box *b, double x, double y_top){
@@ -275,17 +261,14 @@ static double place(Box *b, double x, double y_top){
     return x0 + b->w;
 }
 
-static void emit(Buf2 *o, Box *b){
+static void emit(Buf *o, Box *b){
     if (!b) return;
     switch (b->kind){
     case BOX_TEXT: {
-        b2_pf(o, "<text x=\"%.2f\" y=\"%.2f\" font-family=\"serif\" font-size=\"%.2f\" "
+        buf_printf(o, "<text x=\"%.2f\" y=\"%.2f\" font-family=\"serif\" font-size=\"%.2f\" "
                  "fill=\"#000\">", b->x, b->y + b->baseline, b->size);
-        for (const char *p=b->text; *p; p++){
-            if (*p=='&') b2_add(o,"&amp;"); else if(*p=='<') b2_add(o,"&lt;");
-            else if (*p=='>') b2_add(o,"&gt;"); else { char t[2]={*p,0}; b2_add(o,t); }
-        }
-        b2_add(o, "</text>\n");
+        wububase_xml_escape(o, b->text);
+        buf_add(o, "</text>\n");
         break;
     }
     case BOX_GROUP:
@@ -294,7 +277,7 @@ static void emit(Buf2 *o, Box *b){
     case BOX_FRAC: {
         /* fraction rule between numerator and denominator */
         double rule_y = b->y + (b->a?b->a->h:0) + b->size*0.12;
-        b2_pf(o, "<line x1=\"%.2f\" y1=\"%.2f\" x2=\"%.2f\" y2=\"%.2f\" stroke=\"#000\" stroke-width=\"1.2\"/>\n",
+        buf_printf(o, "<line x1=\"%.2f\" y1=\"%.2f\" x2=\"%.2f\" y2=\"%.2f\" stroke=\"#000\" stroke-width=\"1.2\"/>\n",
               b->x, rule_y, b->x + b->w, rule_y);
         emit(o, b->a); emit(o, b->b);
         break;
@@ -317,17 +300,17 @@ char *math_render_svg(const char *expr){
     double W = root->w + 4, H = root->h + 4;
     place(root, 2, 2);
 
-    Buf2 o; b2_init(&o);
-    b2_pf(&o, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-    b2_pf(&o, "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"%.2f\" height=\"%.2f\" "
+    Buf o; buf_init(&o);
+    buf_printf(&o, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+    buf_printf(&o, "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"%.2f\" height=\"%.2f\" "
               "viewBox=\"0 0 %.2f %.2f\">\n", W, H, W, H);
     emit(&o, root);
-    b2_add(&o, "</svg>\n");
+    buf_add(&o, "</svg>\n");
 
     char *out = NULL;
-    SvgDoc *doc = svg_parse(o.p, o.len);
+    SvgDoc *doc = svg_parse(buf_str(&o), buf_len(&o));
     if (doc){ out = svg_regurgitate(doc); svg_free(doc); }
-    b2_free(&o);
+    buf_free(&o);
     box_free(root);
     return out;
 }

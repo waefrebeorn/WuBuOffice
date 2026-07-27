@@ -1,5 +1,6 @@
 /* draw.c -- dependency-free C11 vector drawing model (see draw.h). */
 #include "draw.h"
+#include "wububase.h"         /* shared Buf (was private here) */
 #include "wubusvg.h"
 
 #include <stdio.h>
@@ -24,32 +25,6 @@ struct DrawScene {
     int w, h;
     Shape *head, *tail;
 };
-
-/* ---- small dynamic string builder (shared shape with charts) ---- */
-typedef struct { char *p; size_t len, cap; } Buf;
-static void buf_init(Buf *b){ b->p=NULL; b->len=0; b->cap=0; }
-static void buf_free(Buf *b){ free(b->p); b->p=NULL; b->len=b->cap=0; }
-static int buf_push(Buf *b, const char *s){
-    size_t al = strlen(s);
-    if (b->len + al + 1 > b->cap){
-        size_t nc = b->cap ? b->cap*2 : 256;
-        while (nc < b->len + al + 1) nc *= 2;
-        char *np = realloc(b->p, nc); if(!np) return -1;
-        b->p = np; b->cap = nc;
-    }
-    memcpy(b->p + b->len, s, al+1); b->len += al; return 0;
-}
-static int buf_printf(Buf *b, const char *fmt, ...){
-    char tmp[512]; va_list ap; va_start(ap, fmt);
-    int n = vsnprintf(tmp, sizeof tmp, fmt, ap); va_end(ap);
-    if (n < 0) return -1;
-    if ((size_t)n >= sizeof tmp){
-        char *big = malloc((size_t)n+1); if(!big) return -1;
-        va_start(ap, fmt); vsnprintf(big, (size_t)n+1, fmt, ap); va_end(ap);
-        int r = buf_push(b, big); free(big); return r;
-    }
-    return buf_push(b, tmp);
-}
 
 DrawScene *draw_create(int w, int h){
     DrawScene *s = calloc(1, sizeof *s);
@@ -163,21 +138,15 @@ char *draw_render_svg(DrawScene *s){
         case SH_TEXT:
             buf_printf(&b, "<text x=\"%.2f\" y=\"%.2f\" font-family=\"sans-serif\" "
                            "font-size=\"%.2f\" fill=\"%s\">", sh->a, sh->b, sh->size, sh->fill);
-            /* minimal XML-escape */
-            for (const char *p=sh->text; *p; p++){
-                if (*p=='&') buf_push(&b, "&amp;");
-                else if (*p=='<') buf_push(&b, "&lt;");
-                else if (*p=='>') buf_push(&b, "&gt;");
-                else { char t[2]={*p,0}; buf_push(&b, t); }
-            }
-            buf_push(&b, "</text>\n");
+            wububase_xml_escape(&b, sh->text);
+            buf_add(&b, "</text>\n");
             break;
         }
     }
-    buf_push(&b, "</svg>\n");
+    buf_add(&b, "</svg>\n");
 
     char *out = NULL;
-    SvgDoc *doc = svg_parse(b.p, b.len);
+    SvgDoc *doc = svg_parse(buf_str(&b), buf_len(&b));
     if (doc){ out = svg_regurgitate(doc); svg_free(doc); }
     buf_free(&b);
     return out;

@@ -6,4 +6,4 @@ target_include_directories(wubuchart PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}/src/wubusvg
     ${CMAKE_SOURCE_DIR}/src/wubuformula)
-target_link_libraries(wubuchart PUBLIC wubusvg wubuformula m)
+target_link_libraries(wubuchart PUBLIC wubusvg wubuformula wububase m)
