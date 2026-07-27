@@ -14,8 +14,16 @@ static int render_check(WuView *v, const char *name){
     if (rc!=0 || !rgba){ fprintf(stderr,"[%s] render FAILED rc=%d\n", name, rc); free(rgba); return 1; }
     fprintf(stderr,"[%s] ok %dx%d\n", name, w, h);
     free(rgba);
+    /* status bar text must be produced (the live shell paints it) */
     char *st = v->status? v->status(v): NULL;
-    if (st) free(st);
+    if (st){
+        if (st[0]=='\0'){ fprintf(stderr,"[%s] status empty\n", name); free(st); return 1; }
+        free(st);
+    }
+    /* tab label must be measurable text (the live shell paints it) */
+    static unsigned char scratch[8*64*4];
+    int adv = wuos_font_draw(name, 0, 0, 0, 0,0,0, scratch, 8, 64);
+    if (adv <= 0){ fprintf(stderr,"[%s] tab label unmeasurable\n", name); return 1; }
     return 0;
 }
 

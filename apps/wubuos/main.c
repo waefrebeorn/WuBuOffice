@@ -31,6 +31,31 @@ static int tab_at(int mx){
     return -1;
 }
 
+/* Paint UTF-8 `text` at (px,py) directly onto the SDL renderer using the
+ * shared FreeType helper (draws into a 1-line RGBA strip, uploads as texture). */
+static void sdl_text(SDL_Renderer *ren, int px, int py,
+                     unsigned char r, unsigned char g, unsigned char b,
+                     const char *text){
+    if (!text || !*text) return;
+    int fh = wuos_font_height();
+    int wpx = wuos_font_draw(text, 0, 0, 0, 0,0,0, NULL, 0, 0);
+    if (wpx <= 0) return;
+    int W = wpx + 4, H = fh + 6;
+    unsigned char *buf = calloc((size_t)W*H*4, 1);
+    if (!buf) return;
+    for (int y=0;y<H;y++) for (int x=0;x<W;x++){ size_t i=((size_t)y*W+x)*4; buf[i]=0;buf[i+1]=0;buf[i+2]=0;buf[i+3]=0; }
+    wuos_font_draw(text, 2, fh, 0, r, g, b, buf, W, H);
+    SDL_Texture *tex = SDL_CreateTexture(ren, SDL_PIXELFORMAT_ABGR8888,
+                                        SDL_TEXTUREACCESS_STATIC, W, H);
+    if (tex){
+        SDL_SetTextureBlendMode(tex, SDL_BLENDMODE_BLEND);
+        SDL_UpdateTexture(tex, NULL, buf, W*4);
+        SDL_RenderCopy(ren, tex, NULL, &(SDL_Rect){px, py, W, H});
+        SDL_DestroyTexture(tex);
+    }
+    free(buf);
+}
+
 int main(int argc, char **argv){
     /* Usage: wubuos [doc|editor|cell|slide|ocr] [file]
      * A bare file path is routed by extension: code/text -> editor,
@@ -154,14 +179,22 @@ int main(int argc, char **argv){
         for (int i=0;i<nviews;i++){
             int tw=(int)strlen(views[i]->name)*14+24;
             int on = (i==active);
-            SDL_SetRenderDrawColor(ren, on?59:200, on?130:205, on?246:210, 255);
+            int hov = (i==tab_hover);
+            SDL_SetRenderDrawColor(ren, on?59:(hov?225:200), on?130:(hov?228:205),
+                                      on?246:(hov?232:210), 255);
             SDL_RenderFillRect(ren,&(SDL_Rect){x,0,tw,TAB_H});
+            sdl_text(ren, x+12, (TAB_H-wuos_font_height())/2 + 2,
+                     on?255:70, on?255:80, on?255:90, views[i]->name);
             x+=tw;
         }
         /* status bar */
         char *st = views[active]->status? views[active]->status(views[active]) : NULL;
         SDL_SetRenderDrawColor(ren, 30,33,40,255); SDL_RenderFillRect(ren,&(SDL_Rect){0,WIN_H-STATUS_H,WIN_W,STATUS_H});
-        if (st) free(st);
+        if (st){
+            sdl_text(ren, 8, WIN_H-STATUS_H + (STATUS_H-wuos_font_height())/2 + 1,
+                     200,203,210, st);
+            free(st);
+        }
 
         SDL_RenderPresent(ren);
         SDL_Delay(16);
