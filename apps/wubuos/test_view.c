@@ -3,6 +3,8 @@
 #include "wuos.h"
 #include "wuos_font.h"
 #include "wuos_file.h"
+#include "autosave.h"   /* wubuautosave: editor crash-recovery test */
+#include "model.h"      /* wubumodel_doc: build snapshot in autosave test */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -73,6 +75,42 @@ int main(void){
              free(saved);
              ev->destroy(ev); }
     else { fprintf(stderr,"[editor(file)] create FAILED\n"); bad++; }
+
+    /* INT-2 P0: crash-recovery autosave is actually wired into the editor.
+     * Simulate a crash (write a snapshot, drop the live lock), then reopen
+     * the editor and confirm the recovered text is spliced into the buffer. */
+    {
+        const char *recp = "/tmp/wubuos_as_rec.txt";
+        wuos_write_file(recp, "RECOVER_ME_LINE\n", 16);
+        /* build a snapshot via the same engine the editor uses */
+        Autosave *a = wubuautosave_create(recp, 0);
+        wubumodel_doc *m = wubumodel_doc_create();
+        wubumodel_node *sec = wubumodel_node_create(m, WUBUMODEL_SECTION);
+        wubumodel_node *para= wubumodel_node_create(m, WUBUMODEL_PARAGRAPH);
+        wubumodel_node *run = wubumodel_node_create(m, WUBUMODEL_RUN);
+        wubumodel_run_set_text(run, "CRASH_RECOVERED_TEXT");
+        wubumodel_node_append(m, para, run);
+        wubumodel_node_append(m, sec, para);
+        wubuautosave_flush(a, m);
+        wubumodel_doc_destroy(m);
+        wubuautosave_destroy(a);
+        unlink("/tmp/wubuos_as_rec.txt.lock");  /* simulate dead PID */
+        /* reopen: editor should detect + recover */
+        WuView *rv = wuos_editor_create(recp);
+        if (!rv){ fprintf(stderr,"[autosave] reopen FAILED\n"); bad++; }
+        else {
+            char *t = wuos_editor_text(rv);
+            if (!t || !strstr(t, "CRASH_RECOVERED_TEXT")){
+                fprintf(stderr,"[autosave] recovery NOT spliced (text='%s')\n", t?t:"(null)");
+                bad++;
+            } else {
+                fprintf(stderr,"[autosave] ok (recovered text present)\n");
+            }
+            free(t);
+            rv->destroy(rv);
+        }
+        unlink(recp); unlink("/tmp/wubuos_as_rec.txt.asd"); unlink("/tmp/wubuos_as_rec.txt.lock");
+    }
 
     /* find/replace logic: build a doc, find all 'int', replace-all -> 'INT' */
     {

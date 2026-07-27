@@ -17,12 +17,17 @@
 #include "search.h" /* WuBuPad regex/literal engine */
 #include "encode.h" /* WuBuPad encoding detect */
 #include "docs.h"   /* WuBuPad multi-document session (DONE engine) */
+#include "autosave.h" /* wubuautosave: crash-recovery (INT-2 P0) */
 
 #include <stdlib.h>
 #include <string.h>
 #include <strings.h>
 #include <stdio.h>
 #include <ctype.h>
+
+/* forward decls: wubuautosave bridge helpers (defined below wuos_editor_create) */
+static wubumodel_doc *editor_doc_to_model(const void *d);
+static char *editor_model_text(const wubumodel_doc *m);
 
 typedef struct {
     Doc  *doc;
@@ -84,9 +89,12 @@ typedef struct {
     char  folded[4096];      /* per-line hide flag */
     /* function-list panel */
     int   sym_mode;          /* 0 off, 1 on */
-} Editor;
 
-/* Notepad++-style token palette (RGB) */
+    /* crash-recovery autosave (INT-2 P0: was never attached to any app) */
+    Autosave *asv;
+    int   asv_tick;          /* frame counter for periodic snapshot */
+    size_t asv_len;          /* last seen doc length (detect edits) */
+} Editor;
 static unsigned char g_def_r=36, g_def_g=41, g_def_b=47;  /* theme-aware default */
 /* session-global macro op buffer (Notepad++ macros are global) */
 static unsigned char g_rec_ops[8192];
@@ -657,6 +665,18 @@ static int render(WuView *v, int w, int h, int scroll,
     e->frames++;
     if (e->find_msg_t > 0) e->find_msg_t--;
 
+    /* INT-2 P0: periodic crash-recovery snapshot. Detect edits by doc length
+     * change (catches typing/paste/replace/delete uniformly), then tick. */
+    if (e->asv){
+        size_t len = doc_length(e->doc);
+        if (len != e->asv_len){ wubuautosave_mark_dirty(e->asv); e->asv_len = len; }
+        e->asv_tick++;
+        if (e->asv_tick >= 60){ e->asv_tick = 0;
+            wubumodel_doc *m = editor_doc_to_model(e->doc);
+            if (m){ wubuautosave_tick(e->asv, m); wubumodel_doc_destroy(m); }
+        }
+    }
+
     /* ---- find bar (drawn over the bottom of the buffer) ---- */
     if (e->find_mode){
         int bh = lh + 4;
@@ -989,6 +1009,7 @@ static void destroy(WuView *v){
     Editor *e = v->priv;
     if (e->lex) lex_free(e->lex);
     if (e->docs) docs_free(e->docs);
+    if (e->asv){ wubuautosave_clear(e->asv); wubuautosave_destroy(e->asv); }
     free(e);
     free(v);
 }
@@ -1002,6 +1023,12 @@ static void save(WuView *v){
         wuos_write_file(e->path, t, strlen(t));
         docs_set_dirty(e->docs, docs_active(e->docs), 0);
         free(t);
+    }
+    /* INT-2 P0: work was committed to the real file — drop the crash snapshot. */
+    if (e->asv){
+        wubumodel_doc *m = editor_doc_to_model(e->doc);
+        if (m){ wubuautosave_flush(e->asv, m); wubumodel_doc_destroy(m); }
+        wubuautosave_clear(e->asv);
     }
 }
 
@@ -1096,6 +1123,48 @@ int wuos_editor_sym(WuView *v, int *n){
     return e->sym_mode;
 }
 
+/* ---- wubuautosave bridge (INT-2 P0) ----
+ * The Editor's live buffer is a WuBuPad Doc (piece table); wubuautosave
+ * snapshots a wubumodel_doc. These two helpers cross the model boundary so
+ * the real crash-recovery engine actually protects the edited text. */
+
+/* Build a single-section wubumodel_doc holding the Doc's current text. */
+static wubumodel_doc *editor_doc_to_model(const void *d){
+    wubumodel_doc *m = wubumodel_doc_create();
+    if (!m) return NULL;
+    wubumodel_node *sec  = wubumodel_node_create(m, WUBUMODEL_SECTION);
+    wubumodel_node *para = wubumodel_node_create(m, WUBUMODEL_PARAGRAPH);
+    wubumodel_node *run  = wubumodel_node_create(m, WUBUMODEL_RUN);
+    char *t = doc_text((void*)d);
+    if (t){ wubumodel_run_set_text(run, t); free(t); }
+    wubumodel_node_append(m, para, run);
+    wubumodel_node_append(m, sec, para);
+    return m;
+}
+
+/* Walk a wubumodel_doc's runs, returning a malloc'd concatenation (caller frees). */
+static char *editor_model_text(const wubumodel_doc *m){
+    wubumodel_node *sec = wubumodel_doc_root(m);
+    if (!sec) return NULL;
+    size_t cap = 256, len = 0;
+    char *out = malloc(cap);
+    if (!out) return NULL;
+    out[0] = 0;
+    for (wubumodel_node *p = wubumodel_node_first_child(sec); p;
+         p = wubumodel_node_next_sibling(p)){
+        for (wubumodel_node *r = wubumodel_node_first_child(p); r;
+             r = wubumodel_node_next_sibling(r)){
+            const char *rt = wubumodel_run_text(r);
+            if (!rt) continue;
+            size_t rl = strlen(rt);
+            if (len + rl + 1 >= cap){ cap = len + rl + 256; char *n = realloc(out, cap); if(!n){ free(out); return NULL; } out = n; }
+            memcpy(out + len, rt, rl + 1);
+            len += rl;
+        }
+    }
+    return out;
+}
+
 WuView *wuos_editor_create(const char *path){
     Editor *e = calloc(1, sizeof *e);
     if (!e) return NULL;
@@ -1132,6 +1201,24 @@ WuView *wuos_editor_create(const char *path){
         docs_open(e->docs, NULL, seed, "c");
     }
     editor_sync_active(e);
+
+    /* INT-2 P0: attach real crash-recovery autosave to the live editor.
+     * Only meaningful for a real on-disk file; the seed/blank doc has no
+     * path to snapshot against. Offer to recover a previous crash snapshot. */
+    if (e->path){
+        if (wubuautosave_has_recovery(e->path)){
+            wubumodel_doc *rec = NULL;
+            if (wubuautosave_recover(e->path, &rec) > 0 && rec){
+                /* splice recovered text over the active doc */
+                char *rt = editor_model_text(rec);
+                if (rt){ doc_replace(e->doc, 0, doc_length(e->doc), rt); free(rt); }
+                wubumodel_doc_destroy(rec);
+                wubuautosave_discard_recovery(e->path);
+            }
+        }
+        e->asv = wubuautosave_create(e->path, 5000);  /* 5s min gap */
+        e->asv_len = doc_length(e->doc);
+    }
 
     /* pick lexer by active doc extension (default c) */
     const char *lang = "c";

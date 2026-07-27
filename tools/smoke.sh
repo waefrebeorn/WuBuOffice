@@ -7,6 +7,7 @@
 #
 # Usage:
 #   ./tools/smoke.sh                 # fast: everything EXCEPT the slow ocr suite
+#   ./tools/smoke.sh apps           # GUI-shell interactive suite (wubuos views + plugin ABI)
 #   ./tools/smoke.sh spell           # only the spell module
 #   ./tools/smoke.sh chart math draw # several modules at once
 #   ./tools/smoke.sh ocr             # the full (slow) OCR/CNN battery
@@ -28,6 +29,11 @@ if [ "$MODE" = "fast" ]; then
   echo "== smoke: fast (all modules except 'ocr') =="
   cmake --build "$BUILD_DIR" -j"$(nproc)" >/dev/null
   ctest --test-dir "$BUILD_DIR" -LE ocr --output-on-failure
+elif [ "$MODE" = "apps" ]; then
+  echo "== smoke: GUI-shell interactive suite (apps_smoke) =="
+  cmake --build "$BUILD_DIR" --target apps_smoke -j"$(nproc)" >/dev/null
+  cmake --build "$BUILD_DIR" -j"$(nproc)" >/dev/null
+  ctest --test-dir "$BUILD_DIR" -R "^(view|plugin_abi)$" --output-on-failure
 elif [ "$MODE" = "all" ]; then
   echo "== smoke: ALL tests (including slow ocr) =="
   cmake --build "$BUILD_DIR" -j"$(nproc)" >/dev/null

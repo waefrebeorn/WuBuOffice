@@ -59,7 +59,22 @@ static OcrImage *make_sample(void){
     static const char *path="/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf";
     size_t fl=0; uint8_t *fb=read_file(path,&fl); if(!fb) return NULL;
     Font *font = font_open_owned(fb, fl, 1); if(!font){ free(fb); return NULL; }
-    OcrImage *im = ocr_compose_line(font, "The quick brown fox 0123456789 jumps", 90);
+    /* Multi-line page: several short lines of real text so the layout stage
+     * segments into lines + words (a single long line over-splits into many
+     * tiny blocks and starves the recognizer of word context). Use the page
+     * composer with zero warp for deterministic, readable output. */
+    static const char *lines[] = {
+        "The quick brown fox",
+        "jumps over 1234 dogs",
+        "Pack my box with",
+        "five dozen 5678 quill",
+        NULL
+    };
+    size_t n=0; while (lines[n]) n++;
+    const Font *fonts[16]; for (size_t i=0;i<n;i++) fonts[i]=font;
+    size_t placed=0;
+    OcrImage *im = ocr_compose_page(fonts, n, lines, n, 900, 320, 90, 1u,
+                                    0.0, 0.0, 0.0, &placed);
     font_free(font); free(fb);
     return im;
 }

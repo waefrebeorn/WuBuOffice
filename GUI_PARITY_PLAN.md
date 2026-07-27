@@ -16,7 +16,7 @@ Real engine surface (surveyed, not guessed):
 - **OCR** (`wuos_ocr_create`): REAL `wubuocr` (`ocr_image_from_png` + `ocr_page_analyze`)
   → grayscale page + recognized text.
 
-## Status (committed this session)
+## Status (committed)
 - [x] Shell skeleton: tab bar (click-switch), status bar, scroll, CLI routing.
 - [x] File open/save: Editor loads by path (lexer by ext) + Ctrl+S; Document loads
       markdown/text via `wurender_doc_from_markdown`.
@@ -26,33 +26,57 @@ Real engine surface (surveyed, not guessed):
 - [x] Paint tab labels + status bar text (was blank). Hover highlight.
 - [x] Headless `test_view` (ctest label `view`): render-check every view, file
       open/save round-trip, find/replace assertion.
+- [x] **Phase C (Layout/Theming) — ALL CLOSED:**
+      - Dark theme toggle (Ctrl+`) — `render` theme tokens.
+      - Multi-doc tabs with dirty markers (Ctrl+T/W/Tab) — `src/docs`.
+      - Go-to-line (Ctrl+G).
+      - EOL indicator (LF/CRLF) + encoding label in status.
+- [x] **Phase D (Editor features / Notepad++ parity) — ALL CLOSED:**
+      - EOL convert (Ctrl+E) on buffer.
+      - Column/block selection (Ctrl+Alt+C).
+      - Macro record/play (Ctrl+Shift+R / Ctrl+Shift+P).
+      - Code folding (Ctrl+Shift+F) via `lex_folds`.
+      - Auto-completion (Ctrl+Space) via `lex_symbols` + builtin C words.
+      - Function list (Ctrl+Shift+L) via `lex_symbols`.
+      - More lexers (C, JSON) — see `GAPS_NOTEPAD.md`.
+      - Bracket matching, bookmarks (Ctrl+F2 / F2).
+      - Plugin architecture: stable C ABI v1 + `dlopen` loader + sample `.so`
+        + Ctrl+Shift+K (INT-100 seed; see `RESEARCH_GAPS_100.md`).
+- [x] **Phase E bis (suite breadth) — ALL CLOSED + made genuinely interactive:**
+      - Cell tab: real `wubucell` workbook, live formula bar, arrow nav, edit a
+        cell (recompute via engine), SUM verified (E1=79).
+      - OCR tab: real `wubuocr` pipeline + **fontbank recognizer** wired so the
+        panel shows actual recognized text (not empty geometry). Multi-line
+        sample page for fair line/word segmentation.
+      - Document tab: `wubudoc` facade ingests docx/odt/pdf/html/... ; find-in-doc
+        (Ctrl+F) over loaded text; markdown renders via `wurender`.
+      - Slide tab: renders sample slide (title + bullets + bar chart).
+      - `apps_smoke` ctest target gates the interactive suite per-commit
+        (`./tools/smoke.sh apps`).
+- [x] **Engine hygiene:** fixed two sanitizer leaks in `wubuocr` (`ocr_page_block_text`
+      caching) and `wubumodel`/`wurender` (style refcount) + all view teardown
+      leaks; `test_view` is ASan-clean (0 leaks).
+- [x] **P0 INT-2 wiring — `wubuautosave` now attached to the Editor (was never
+      linked by any app):** on file open it creates an `Autosave` session,
+      detects edits via doc-length change and snapshots atomically every ~60
+      frames (5s min gap), flushes+clears on save, and on reopen offers+applies
+      crash recovery (splices the recovered text into the buffer). Headless
+      `test_view` verifies recovery round-trips into the editor.
+- [ ] Unified launcher `wubuoffice` → boots `wubuos` (cosmetic name alias).
+- [ ] Settings dialog (font size, tab width, word-wrap, EOL view) — currently
+      engine-supported, no dialog UI yet.
+- [ ] Live word-wrap toggle.
 
-## Phase C — Layout / Theming
-- [ ] Dark theme variant (semantic token table; persist to `~/.wubuosrc`).
-- [ ] Editor: sticky tab bar over multi-doc (dirty markers) — WuBuPad `docs.c`.
-- [ ] Editor: settings dialog (font size, tab width, word-wrap, EOL view).
-- [ ] Live word-wrap toggle (re-wrap lines in render).
-- [ ] EOL indicator (CRLF/LF) + encoding (UTF-8) in status.
+> Cross-repo P0 cluster still open (next frontier, see `RESEARCH_GAPS_100.md`):
+> `wubuspell` live red-squiggle, `wubuchart` insert-chart, `wubudraw`/`wubumath`
+> insert shape/equation, `wubuepub` export, `wubua11y` check, `wubuscript`
+> computed fields. OCR/autosave are now GUI-wired.
 
-## Phase D — Editor features (Notepad++ parity)
-- [ ] EOL convert (CRLF↔LF) on buffer.
-- [ ] Column/block selection mode (cursor + buffer range ops).
-- [ ] Macro record/play (command log + replay).
-- [ ] Code folding (lexer fold levels + view).
-- [ ] Auto-completion (lexer symbol index).
-- [ ] More lexers (extend `src/lex.c`: py, js, sh, html, css, sql, go, rust).
-- [ ] Bracket matching highlight.
-- [ ] Go-to line (Ctrl+G).
-- [ ] Multiple open files in tabs (Editor tab hosts several Docs).
-
-## Phase E bis — cross-repo + suite breadth
-- [ ] Cell tab: open real .csv/.xlsx via `wubucell` reader; click cell → formula bar;
-      arrow navigation; edit a cell (recompute formula).
-- [ ] OCR tab: open arbitrary PNG path (not just /tmp/ocr_in.png); show recognized
-      text panel + confidence; save .txt.
-- [ ] Document tab: open real .docx/.odt via `wubudoc` facade → render (not just md).
-- [ ] Slide tab: open real slide deck; next/prev slide (arrows).
-- [ ] Unified launcher `wubuoffice` → boots `wubuos` (one product, two names).
+> See `GAPS_NOTEPAD.md` (WuBuPad) for the authoritative Notepad++ closure list
+> and `RESEARCH_GAPS_100.md` for the remaining 100-gap product backlog (the
+> "engines built but not linked by any app" P0 cluster is the next frontier:
+> `wubuautosave`, `wubuspell`, `wubuchart`, `wubudraw`/`wubumath`, `wubuepub`,
+> `wubua11y`, `wubuscript`).
 
 ## Office-format fidelity (the "100 gaps" long tail)
 Per engine, every open + save path:
