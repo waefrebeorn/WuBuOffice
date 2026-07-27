@@ -99,7 +99,7 @@
 75. **P2** No nested tables.
 
 ## EXP — Import / Export / Format fidelity
-76. **P1** DOCX round-trip fidelity unverified in a UI; only model-io test.
+76. **P1** DOCX round-trip fidelity unverified in a UI; only model-io test. — **CLOSED**: the Document view now opens `.docx`/`.docm` into a real, round-trippable model via `wubumodel_load_docx` (structural: SECTION/PARAGRAPH/RUN, headings preserved), and `Ctrl+S` saves the model back via `wubumodel_write_docx` (overwriting the .docx or writing `<path>.docx`). The headless test writes a heading+paragraph doc to DOCX, reloads it, and asserts the paragraphs and both text strings survive — exercising the exact model-io path the UI uses.
 77. **P1** No PDF export (tagged/accessible) — pairs with `wubua11y`. — **CLOSED**: `wubuexp` emits a from-scratch PDF (base-14 Helvetica, one page per layout page).
 78. **P1** No ODF (ODT) import/export parity.
 79. **P1** No RTF import/export. — **CLOSED**: `wubuexp` RTF export (no import yet).

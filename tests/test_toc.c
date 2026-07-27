@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>   /* unlink (DOC-76 round-trip temp file) */
 
 static int fails = 0;
 #define CK(c,m) do{ if(!(c)){ printf("FAIL: %s\n", m); fails++; } }while(0)
@@ -343,6 +344,47 @@ int main(void){
                 }
             CK(big>=1, "heading font size reflected in layout");
             wubulayout_destroy(Lst); wubumodel_doc_destroy(dd);
+        }
+        /* DOC-76: DOCX round-trip fidelity through the real model-io path the
+         * UI uses (write_docx -> load_docx -> inspect reloaded model). */
+        {
+            wubumodel_doc *dd = wubumodel_doc_create();
+            wubumodel_node *sec = wubumodel_node_create(dd, WUBUMODEL_SECTION);
+            wubumodel_node *h = wubumodel_node_create(dd, WUBUMODEL_PARAGRAPH);
+            wubumodel_node *hr = wubumodel_node_create(dd, WUBUMODEL_RUN);
+            wubumodel_run_set_text(hr,"Round Trip Title"); wubumodel_node_append(dd,h,hr);
+            wubumodel_node_apply_named_style(h,"Heading1");
+            wubumodel_node *p = wubumodel_node_create(dd, WUBUMODEL_PARAGRAPH);
+            wubumodel_node *pr = wubumodel_node_create(dd, WUBUMODEL_RUN);
+            wubumodel_run_set_text(pr,"The quick brown fox jumps."); wubumodel_node_append(dd,p,pr);
+            wubumodel_node_append(dd,sec,h); wubumodel_node_append(dd,sec,p);
+            const char *tmp = "/tmp/wubuos_rt76.docx";
+            CK(wubumodel_write_docx(dd, tmp)==0, "docx write");
+            wubumodel_doc_destroy(dd);
+            wubumodel_doc *back = NULL;
+            CK(wubumodel_load_docx(tmp, &back)==0 && back, "docx read back");
+            /* walk reloaded model, collect run text, assert fidelity.
+             * wubumodel_doc_root() returns the top-level SECTION (first
+             * parentless node), whose children are the paragraphs. */
+            int paras=0; char buf[1024]; buf[0]=0;
+            wubumodel_node *rsec = wubumodel_doc_root(back);
+            for (wubumodel_node *n = rsec?wubumodel_node_first_child(rsec):NULL; n;
+                 n = wubumodel_node_next_sibling(n)){
+                if (wubumodel_node_kind(n)!=WUBUMODEL_PARAGRAPH) continue;
+                paras++;
+                for (wubumodel_node *r = wubumodel_node_first_child(n); r;
+                     r = wubumodel_node_next_sibling(r)){
+                    if (wubumodel_node_kind(r)==WUBUMODEL_RUN){
+                        const char *t = wubumodel_run_text(r);
+                        if (t){ strncat(buf, t, sizeof buf-1-strlen(buf)); }
+                    }
+                }
+            }
+            CK(paras>=2, "reloaded paragraphs preserved");
+            CK(strstr(buf,"Round Trip Title")!=NULL, "heading text survived round-trip");
+            CK(strstr(buf,"quick brown fox")!=NULL, "fox sentence survived round-trip");
+            wubumodel_doc_destroy(back);
+            unlink(tmp);
         }
         wubumodel_doc_destroy(d);
     }

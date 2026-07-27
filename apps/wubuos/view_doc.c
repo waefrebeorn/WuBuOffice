@@ -137,6 +137,27 @@ static void doc_export_epub(DocV *e){
         e->epub_msg = strdup("EPUB export failed");
     }
 }
+/* DOC-76: save the model back to DOCX (round-trip). If the current path is a
+ * .docx/.docm, overwrite it; otherwise write "<path>.docx" alongside. The model
+ * is the same one we loaded from DOCX (or built), so structure is preserved. */
+static void doc_save(DocV *e){
+    free(e->epub_msg); e->epub_msg = NULL;
+    if (!e->doc){ e->epub_msg = strdup("no model doc to save"); return; }
+    char out[512];
+    if (e->path && (strstr(e->path,".docx")||strstr(e->path,".docm")||strstr(e->path,".dotx")))
+        snprintf(out,sizeof out,"%s", e->path);
+    else if (e->path)
+        snprintf(out,sizeof out,"%s.docx", e->path);
+    else
+        snprintf(out,sizeof out,"/tmp/wubuos_document.docx");
+    int rc = wubumodel_write_docx(e->doc, out);
+    if (rc==0){
+        char b[512]; snprintf(b,sizeof b,"DOCX saved: %s", out);
+        e->epub_msg = strdup(b);
+    } else {
+        e->epub_msg = strdup("DOCX save failed");
+    }
+}
 /* Run an a11y check on the current model doc (INT-5). */
 static void doc_a11y_check(DocV *e){
     if (e->a11y_done) a11y_report_free(&e->a11y);
@@ -644,6 +665,7 @@ static void on_key(WuView *v, int key, int down){
     if (key==WUOS_KEY_INSERT_DRAW){ doc_insert_draw(e); return; }
     if (key==WUOS_KEY_INSERT_MATH){ doc_insert_math(e); return; }
     if (key==WUOS_KEY_EXPORT_EPUB){ doc_export_epub(e); return; }
+    if (key==WUOS_KEY_SAVE){ doc_save(e); return; }
     if (key==WUOS_KEY_A11Y_CHECK){ doc_a11y_check(e); return; }
     if (key==WUOS_KEY_INSERT_LINK){ doc_insert_link(e); return; }
     if (key==WUOS_KEY_INSERT_LIST){ doc_insert_list(e); return; }
@@ -753,7 +775,16 @@ WuView *wuos_doc_create(const char *path){
             e->doc = wurender_doc_from_markdown(e->text);
         }
         if (!e->doc){
-            /* ingest via the real document facade (docx/odt/pdf/html/...) */
+            /* DOC-76: open Word files into a real, round-trippable model so
+             * save-as-DOCX preserves structure (headings/paragraphs/runs). */
+            int is_docx = (strstr(path,".docx")||strstr(path,".docm")||strstr(path,".dotx"));
+            if (is_docx){
+                wubumodel_doc *md = NULL;
+                if (wubumodel_load_docx(path, &md) == 0 && md) e->doc = md;
+            }
+        }
+        if (!e->doc){
+            /* ingest via the real document facade (odt/pdf/html/...) */
             DocSession *s = doc_session_create();
             long id = doc_open(s, path);
             if (id >= 0){
@@ -780,6 +811,7 @@ WuView *wuos_doc_create(const char *path){
     v->on_key   = on_key;
     v->on_click = on_click;
     v->get_path = get_path;
+    v->save    = doc_save;   /* DOC-76: Ctrl+S writes DOCX round-trip */
     return v;
 }
 
