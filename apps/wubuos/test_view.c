@@ -284,6 +284,32 @@ int main(void){
         }
     }
 
+    /* auto-completion: type 'pri', Ctrl+Space, Tab -> 'printf' */
+    {
+        WuView *av = wuos_editor_create(NULL);
+        if (!av){ fprintf(stderr,"[ac] create FAILED\n"); bad++; }
+        else {
+            av->on_key(av, (unsigned char)'p', 1);
+            av->on_key(av, (unsigned char)'r', 1);
+            av->on_key(av, (unsigned char)'i', 1);
+            av->on_key(av, WUOS_KEY_AC, 1);          /* open popup */
+            int n=0, sel=0; int opened = wuos_editor_ac(av, &n, &sel);
+            if (!opened || n==0){ fprintf(stderr,"[ac] popup not opened (n=%d)\n", n); bad++; }
+            else {
+                char *before = wuos_editor_text(av);
+                int has_pri = (strstr(before, "pri") != NULL);
+                free(before);
+                av->on_key(av, WUOS_KEY_TAB, 1);      /* accept top candidate */
+                char *after = wuos_editor_text(av);
+                int has_printf = (strstr(after, "printf") != NULL);
+                if (!has_pri || !has_printf){ fprintf(stderr,"[ac] fail pri=%d printf=%d\n", has_pri, has_printf); bad++; }
+                else fprintf(stderr,"[ac] ok (popup n=%d, accepted 'printf')\n", n);
+                free(after);
+            }
+            av->destroy(av);
+        }
+    }
+
     /* cell view: load a real CSV via wubucell reader */
     {
         char csvp[256]; sprintf(csvp, "/tmp/wuos_cell_%d.csv", (int)getpid());

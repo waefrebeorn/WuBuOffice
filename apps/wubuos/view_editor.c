@@ -22,6 +22,7 @@
 #include <string.h>
 #include <strings.h>
 #include <stdio.h>
+#include <ctype.h>
 
 typedef struct {
     Doc  *doc;
@@ -71,6 +72,13 @@ typedef struct {
 
     /* macro record/play (op buffer is process-global, like Notepad++) */
     int   rec;               /* recording flag */
+
+    /* auto-completion popup */
+    int   ac_mode;           /* 0 off, 1 on */
+    char  ac_list[64][32];   /* candidate words */
+    int   ac_n;
+    int   ac_sel;            /* selected index */
+    char  ac_prefix[32];     /* word being completed */
 } Editor;
 
 /* Notepad++-style token palette (RGB) */
@@ -313,6 +321,61 @@ static void editor_caret_vert(Editor *e, int dl){
     free(t);
 }
 
+/* ---- auto-completion (collect identifiers from doc + builtins) ---- */
+static const char *AC_BUILTIN[] = {
+    "int","char","float","double","void","long","short","unsigned","signed",
+    "if","else","for","while","do","switch","case","break","continue","return",
+    "struct","union","enum","typedef","static","const","sizeof","printf","malloc",
+    "NULL","true","false","include","define","strlen","strcpy","strcat",NULL };
+
+/* membership test + insert into e->ac_list if it matches prefix and is new */
+static void ac_try_add(Editor *e, char *buf, size_t len){
+    if (len==0 || len>=32) return;
+    buf[len]=0;
+    size_t pl = strlen(e->ac_prefix);
+    if (pl && strncmp(buf, e->ac_prefix, pl)!=0) return;   /* must start with prefix */
+    if (strcmp(buf, e->ac_prefix)==0) return;              /* skip exact prefix */
+    for (int i=0;i<e->ac_n;i++) if (!strcmp(e->ac_list[i], buf)) return;
+    if (e->ac_n < 64){ size_t c = len<31? len:31; memcpy(e->ac_list[e->ac_n], buf, c); e->ac_list[e->ac_n][c]=0; e->ac_n++; }
+}
+
+/* open the completion popup for the word under/before the caret */
+static void ac_open(Editor *e){
+    char *t = doc_text(e->doc);
+    size_t cur = doc_cursor(e->doc);
+    int s = (int)cur; while (s>0 && (isalnum((unsigned char)t[s-1])||t[s-1]=='_')) s--;
+    int plen = (int)cur - s;
+    if (plen >= (int)sizeof e->ac_prefix) plen = (int)sizeof e->ac_prefix - 1;
+    memcpy(e->ac_prefix, t+s, plen); e->ac_prefix[plen]=0;
+    free(t);
+    e->ac_n = 0; e->ac_sel = 0;
+    for (int i=0; AC_BUILTIN[i]; i++){ char b[32]; size_t bl=strlen(AC_BUILTIN[i]); size_t c=bl<31?bl:31; memcpy(b, AC_BUILTIN[i], c); b[c]=0; ac_try_add(e, b, c); }
+    char *doc = doc_text(e->doc);
+    size_t n = doc_length(e->doc), q=0;
+    while (q<n){
+        if (isalpha((unsigned char)doc[q]) || doc[q]=='_'){
+            size_t e2=q; while (e2<n && (isalnum((unsigned char)doc[e2])||doc[e2]=='_')) e2++;
+            char buf[32]; size_t L=e2-q; if (L>31) L=31;
+            memcpy(buf, doc+q, L); buf[L]=0; ac_try_add(e, buf, L); q=e2;
+        } else q++;
+    }
+    free(doc);
+    e->ac_mode = (e->ac_n>0);
+}
+
+/* accept the selected completion: delete the prefix, insert the full word */
+static void ac_accept(Editor *e){
+    if (!e->ac_mode || e->ac_sel<0 || e->ac_sel>=e->ac_n){ e->ac_mode=0; return; }
+    char *t = doc_text(e->doc);
+    size_t cur = doc_cursor(e->doc);
+    int s = (int)cur; while (s>0 && (isalnum((unsigned char)t[s-1])||t[s-1]=='_')) s--;
+    free(t);
+    int plen = (int)cur - s;
+    if (plen>0) doc_delete(e->doc, s, plen);
+    doc_type(e->doc, e->ac_list[e->ac_sel], strlen(e->ac_list[e->ac_sel]));
+    e->ac_mode = 0;
+}
+
 static void bk_toggle(Editor *e, int line){
     if (line<0) return;
     for (int i=0;i<e->bk_n;i++){
@@ -536,6 +599,27 @@ static int render(WuView *v, int w, int h, int scroll,
         for (int xx=ulx0; xx<ulx1 && xx<w; xx++){ size_t i=((size_t)(by+bh-3)*w+xx)*4; fb[i]=180;fb[i+1]=184;fb[i+2]=192; }
     }
 
+    /* ---- auto-completion popup ---- */
+    if (e->ac_mode && e->ac_n>0){
+        int pw = 200, ph = 18 + e->ac_n*18, px = gutter+8, py = H - ph - 8;
+        if (py < 24) py = 24;
+        /* panel bg */
+        for (int yy=py; yy<py+ph && yy<H; yy++) for (int xx=px; xx<px+pw && xx<w; xx++){
+            size_t i=((size_t)yy*w+xx)*4; fb[i]=245;fb[i+1]=246;fb[i+2]=250;
+        }
+        for (int yy=py; yy<py+ph && yy<H; yy++){ size_t i=((size_t)yy*w+px)*4; fb[i]=120;fb[i+1]=124;fb[i+2]=132;
+                                                  size_t j=((size_t)yy*w+(px+pw-1))*4; fb[j]=120;fb[j+1]=124;fb[j+2]=132; }
+        for (int k=0; k<e->ac_n; k++){
+            int ry = py + 14 + k*18;
+            if (k==e->ac_sel){
+                for (int xx=px; xx<px+pw && xx<w; xx++){ size_t i=((size_t)ry*w+xx)*4; fb[i]=210;fb[i+1]=224;fb[i+2]=245; }
+                wuos_font_draw(e->ac_list[k], px+8, ry+4, 0, 20,40,90, fb,w,H);
+            } else {
+                wuos_font_draw(e->ac_list[k], px+8, ry+4, 0, 40,44,52, fb,w,H);
+            }
+        }
+    }
+
     /* ---- go-to-line bar ---- */
     if (e->goto_mode){
         int bh = lh + 4, by = H - bh;
@@ -556,6 +640,19 @@ static void on_key(WuView *v, int key, int down){
     Editor *e = v->priv;
     if (!down) return;
     e->frames = 0;  /* reset blink on activity */
+
+    /* ---- auto-completion popup intercepts keys ---- */
+    if (e->ac_mode){
+        switch (key){
+            case WUOS_KEY_ESC: e->ac_mode = 0; return;
+            case WUOS_KEY_UP:   if (e->ac_sel>0) e->ac_sel--; return;
+            case WUOS_KEY_DOWN: if (e->ac_sel<e->ac_n-1) e->ac_sel++; return;
+            case WUOS_KEY_TAB:
+            case WUOS_KEY_RETURN: ac_accept(e); return;
+            default: break;  /* typing closes the popup and falls through */
+        }
+        e->ac_mode = 0;
+    }
 
     /* ---- go-to-line mode intercepts keys ---- */
     if (e->goto_mode){
@@ -696,7 +793,7 @@ static void on_key(WuView *v, int key, int down){
             if (!g_rec_n) return;
             int was = e->rec; e->rec = 0;   /* don't re-record the playback */
             for (int i=0; i<g_rec_len; ){
-                unsigned char op = g_rec_ops[i++];
+                unsigned char op = (unsigned char)g_rec_ops[i++];
                 if (op==1){ unsigned char ch = g_rec_ops[i++]; on_key(v, ch, 1); }
                 else if (op==2){ on_key(v, WUOS_KEY_RETURN, 1); }
                 else if (op==3){ on_key(v, WUOS_KEY_BACKSPACE, 1); }
@@ -704,6 +801,7 @@ static void on_key(WuView *v, int key, int down){
             e->rec = was;
             return;
         }
+        case WUOS_KEY_AC: ac_open(e); return;
         case WUOS_KEY_BACKSPACE:
             if (cur>0) doc_delete(e->doc, cur-1, 1);
             break;
@@ -868,6 +966,14 @@ int wuos_editor_macro(WuView *v, int *ops){
     if (!e) return 0;
     if (ops) *ops = g_rec_n;
     return e->rec;
+}
+/* Test accessor: auto-completion popup state (open + candidate count + sel). */
+int wuos_editor_ac(WuView *v, int *n, int *sel){
+    Editor *e = v ? v->priv : NULL;
+    if (!e) return 0;
+    if (n) *n = e->ac_n;
+    if (sel) *sel = e->ac_sel;
+    return e->ac_mode;
 }
 
 WuView *wuos_editor_create(const char *path){
