@@ -81,5 +81,5 @@ add_custom_target(smoke
 # Live GUI-shell interactive suite (headless): the wubuos views + plugin ABI.
 # Fast; safe to gate per-commit. `cmake --build build --target apps_smoke`.
 add_custom_target(apps_smoke
-    COMMAND ${CMAKE_CTEST_COMMAND} --test-dir ${CMAKE_BINARY_DIR} -R "view|plugin_abi" --output-on-failure
+    COMMAND ${CMAKE_CTEST_COMMAND} --test-dir ${CMAKE_BINARY_DIR} -L apps --output-on-failure
     COMMENT "apps_smoke: wubuos interactive views (cell/ocr/doc/editor/...) + plugin ABI")

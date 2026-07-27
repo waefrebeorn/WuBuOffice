@@ -33,7 +33,7 @@ elif [ "$MODE" = "apps" ]; then
   echo "== smoke: GUI-shell interactive suite (apps_smoke) =="
   cmake --build "$BUILD_DIR" --target apps_smoke -j"$(nproc)" >/dev/null
   cmake --build "$BUILD_DIR" -j"$(nproc)" >/dev/null
-  ctest --test-dir "$BUILD_DIR" -R "view|plugin_abi" --output-on-failure
+  ctest --test-dir "$BUILD_DIR" -L apps --output-on-failure
 elif [ "$MODE" = "all" ]; then
   echo "== smoke: ALL tests (including slow ocr) =="
   cmake --build "$BUILD_DIR" -j"$(nproc)" >/dev/null

@@ -70,7 +70,7 @@ target_link_libraries(test_view PRIVATE
     wubumodel wuburender wubuocr wubufont wubucell_app wubudoc wubuautosave ${SDL2_LIBRARIES} ${FREETYPE_LIBRARIES} m dl)
 target_compile_options(test_view PRIVATE -Wall -Wextra -Wpedantic)
 add_test(NAME view COMMAND test_view)
-set_tests_properties(view PROPERTIES LABELS "view")
+set_tests_properties(view PROPERTIES LABELS "view;apps")
 
 # Reference plugin: builds to a loadable .so demonstrating the C ABI.
 add_library(sample_plugin MODULE plugins/sample/sample_plugin.c)
@@ -96,4 +96,4 @@ target_compile_options(badabi_plugin PRIVATE -fvisibility=hidden -Wall -Wextra)
 add_test(NAME plugin_abi COMMAND test_plugin_abi
     "${CMAKE_CURRENT_BINARY_DIR}/plugins/sample_plugin.so"
     "${CMAKE_CURRENT_BINARY_DIR}/plugins/badabi_plugin.so")
-set_tests_properties(plugin_abi PROPERTIES LABELS "plugin")
+set_tests_properties(plugin_abi PROPERTIES LABELS "plugin;apps")
