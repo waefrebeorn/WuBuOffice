@@ -171,6 +171,29 @@ int main(void){
             }
         CK(link_runs == 1, "link laid out once");
         wubulayout_destroy(L2);
+
+        /* DOC-59: bullet list paragraph laying out a bullet prefix run. */
+        wubumodel_node *li = wubumodel_node_create(d, WUBUMODEL_PARAGRAPH);
+        wubumodel_style *ls = wubumodel_style_create();
+        wubumodel_style_set_prop(ls, "list", "bullet");
+        wubumodel_node_set_style(li, ls);
+        wubumodel_style_destroy(ls);
+        wubumodel_node *lir = wubumodel_node_create(d, WUBUMODEL_RUN);
+        wubumodel_run_set_text(lir, "An item");
+        wubumodel_node_append(d, li, lir);
+        wubumodel_node_append(d, sec, li);
+        wubulayout_doc *L3 = wubulayout_create(d, sec, meas, sty, NULL, 400, 400, 20,20,20,20);
+        int bullet_runs = 0, item_runs = 0;
+        for (int pg=0; pg<wubulayout_page_count(L3); pg++)
+            for (int i=0;i<wubulayout_run_count(L3,pg); i++){
+                const wubulayout_run *ru = wubulayout_run_at(L3, pg, i);
+                if (!ru || !ru->text || !ru->text_len) continue;
+                if (ru->text[0]==(char)0xe2 && ru->text[1]==(char)0x80 && ru->text[2]==(char)0xa2) bullet_runs++;
+                if (ru->user == (void*)lir) item_runs++;
+            }
+        CK(bullet_runs >= 1, "bullet prefix emitted");
+        CK(item_runs >= 1, "list item text laid out");
+        wubulayout_destroy(L3);
         wubumodel_doc_destroy(d);
     }
     if (fails==0) printf("TOC + SETTINGS + FOOTNOTE TESTS PASSED\n");

@@ -61,6 +61,7 @@ static wubulayout_dir g_dir = WUBULAYOUT_LTR;
 
 static int style_of(wubulayout_doc *L, void *run){
     if (!L->style) return 0;
+    if (!run) return 0;   /* DOC-59: marker run has no source node */
     return L->style(L->cb_user, run, &g_font_size, &g_bold, &g_italic, &g_dir);
 }
 
@@ -131,9 +132,34 @@ static LOb *push_obj(LPage *p){
  * Word-level greedy wrapping: each word carries the style of its source run.
  * For an RTL paragraph the WORD ORDER on a line is reversed (words stay LTR). */
 static int lay_paragraph(wubulayout_doc *L, void *para, int *pen_y){
+    /* DOC-59: list paragraphs get a bullet / number prefix run. */
+    static int list_seq = 0;
+    const char *marker = NULL; char markerbuf[8];
+    wubumodel_style *pst = wubumodel_node_style((wubumodel_node*)para);
+    if (pst){
+        const char *lv = wubumodel_style_get_prop(pst, "list");
+        if (lv && *lv){
+            if (!strcmp(lv, "bullet") || !strcmp(lv, "ul"))
+                marker = "\xe2\x80\xa2 ";   /* • */
+            else if (!strcmp(lv, "1") || !strcmp(lv, "ol")){
+                list_seq++;   /* consecutive numbered paragraphs */
+                snprintf(markerbuf, sizeof markerbuf, "%d. ", list_seq);
+                marker = markerbuf;
+            }
+        } else {
+            list_seq = 0;  /* reset on non-list */
+        }
+    } else {
+        list_seq = 0;
+    }
     /* gather segments {text, len, run} from the paragraph's RUN children */
     typedef struct { const char *t; size_t off; size_t len; void *run; } Seg;
     Seg segs[1024]; int nseg=0;
+    int marker_seg = -1;
+    if (marker){
+        if (nseg < 1024){ segs[nseg].t=marker; segs[nseg].off=0; segs[nseg].len=strlen(marker);
+                          segs[nseg].run=NULL; marker_seg=nseg; nseg++; }
+    }
     for (wubumodel_node *r = wubumodel_node_first_child((wubumodel_node*)para);
          r; r = wubumodel_node_next_sibling(r)){
         if (wubumodel_node_kind(r) != WUBUMODEL_RUN) continue;

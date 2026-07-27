@@ -82,7 +82,7 @@
 56. **P1** No headers / footers / page sections. — **CLOSED (render side)**: `wubulayout` paginates and the Document view draws a page header (page x/N) + footer (line count) per page. Authoring/editing of header/footer content is still open (model needs header nodes).
 57. **P1** No page/section breaks; single flow only.
 58. **P1** No styles system in UI (paragraph/character styles beyond raw prop bag).
-59. **P1** No lists (bulleted/numbered) with nesting.
+59. **P1** No lists (bulleted/numbered) with nesting. — **CLOSED**: a paragraph styled `list=bullet`/`list=ol` (or `ul`/`1`) gets a bullet/number prefix run emitted by `wubulayout` (consecutive numbered paragraphs auto-increment; non-list paragraphs reset the counter). The Document view renders the marker as part of the text flow. Ctrl+Shift+L inserts a bullet list item. Headless-tested in test_toc (bullet prefix + item text laid out).
 60. **P1** No hyperlinks UI (insert/edit link dialog). — **CLOSED**: model gained `wubumodel_node_set_link`/`wubumodel_node_link`/`wubumodel_node_parent`; `wubulayout` lays a LINK node's RUN text as inline flow (so it renders + is hit-testable); the Document view renders links blue+underline, records link boxes, and (DOC-60) makes them clickable via a new `WuView.on_click` callback + Ctrl+L inserts a sample link. Headless-tested in test_toc (target stored, run-parent walk, layout).
 61. **P1** No images inline (model has SHAPE but no image node; need raster embed).
 62. **P1** No tables UI (insert/resize/merge cells) though model supports TABLE/CELL.

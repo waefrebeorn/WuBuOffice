@@ -270,6 +270,7 @@ int main(int argc, char **argv){
                 else if (k==SDLK_MINUS && (mod & KMOD_CTRL)) code=WUOS_KEY_ZOOM_OUT;
                 else if (k==SDLK_0 && (mod & KMOD_CTRL)) code=WUOS_KEY_ZOOM_RESET;
                 else if (k==SDLK_l && (mod & KMOD_CTRL) && !(mod & KMOD_SHIFT)) code=WUOS_KEY_INSERT_LINK; /* DOC-60 */
+                else if (k==SDLK_l && (mod & KMOD_CTRL) && (mod & KMOD_SHIFT)) code=WUOS_KEY_INSERT_LIST; /* DOC-59 */
                 else if (k==SDLK_F1) code=WUOS_KEY_CHEAT;   /* UI-36 */
                 else if (k>=SDLK_1 && k<=SDLK_6 && (mod & KMOD_CTRL))
                     code = WUOS_KEY_TOC1 + (k - SDLK_1);   /* DOC-54 jump */
@@ -445,6 +446,7 @@ int main(int argc, char **argv){
                 "Ctrl+Tab  next tab  Ctrl+Shift+Tab prev",
                 "F10        open Settings",
                 "Ctrl+L    insert hyperlink (Document)",
+                "Ctrl+Shift+L insert bullet list (Document)",
                 "Right-click context menu",
                 "Drag & drop a file to open"
             };

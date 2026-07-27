@@ -153,6 +153,23 @@ static void doc_insert_link(DocV *e){
     wubumodel_node_append(e->doc, sec, lk);
     e->toc_dirty = 1;
 }
+/* Insert a bullet-list item into the model (DOC-59): a paragraph styled
+ * list=bullet whose RUN is the item text. */
+static void doc_insert_list(DocV *e){
+    if (!e->doc) return;
+    wubumodel_node *sec = wubumodel_node_first_child(wubumodel_doc_root(e->doc));
+    if (!sec) return;
+    wubumodel_node *p = wubumodel_node_create(e->doc, WUBUMODEL_PARAGRAPH);
+    wubumodel_style *st = wubumodel_style_create();
+    wubumodel_style_set_prop(st, "list", "bullet");
+    wubumodel_node_set_style(p, st);
+    wubumodel_style_destroy(st);
+    wubumodel_node *r = wubumodel_node_create(e->doc, WUBUMODEL_RUN);
+    wubumodel_run_set_text(r, "List item");
+    wubumodel_node_append(e->doc, p, r);
+    wubumodel_node_append(e->doc, sec, p);
+    e->toc_dirty = 1;
+}
 
 static int render(WuView *v, int w, int h, int scroll,
                   unsigned char **rgba, int *rw, int *rh){
@@ -363,6 +380,7 @@ static void on_key(WuView *v, int key, int down){
     if (key==WUOS_KEY_EXPORT_EPUB){ doc_export_epub(e); return; }
     if (key==WUOS_KEY_A11Y_CHECK){ doc_a11y_check(e); return; }
     if (key==WUOS_KEY_INSERT_LINK){ doc_insert_link(e); return; }
+    if (key==WUOS_KEY_INSERT_LIST){ doc_insert_list(e); return; }
     /* DOC-54: jump to a TOC entry with Ctrl+[1..6] */
     if (key>=WUOS_KEY_TOC1 && key<=WUOS_KEY_TOC6){
         int idx = key - WUOS_KEY_TOC1;

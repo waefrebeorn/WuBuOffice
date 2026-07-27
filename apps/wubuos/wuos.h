@@ -58,7 +58,8 @@ enum { WUOS_KEY_UP=2000, WUOS_KEY_DOWN, WUOS_KEY_LEFT, WUOS_KEY_RIGHT,
  WUOS_KEY_TOC1, WUOS_KEY_TOC2, WUOS_KEY_TOC3,
  WUOS_KEY_TOC4, WUOS_KEY_TOC5, WUOS_KEY_TOC6,
  WUOS_KEY_CHEAT,
- WUOS_KEY_INSERT_LINK };
+ WUOS_KEY_INSERT_LINK,
+ WUOS_KEY_INSERT_LIST };
 
 /* ---- view factories ----
  * `path` is an optional file to load (NULL = use the bundled sample). */
