@@ -310,6 +310,29 @@ int main(void){
         }
     }
 
+    /* session save/restore: save 2 docs, restore on new editor */
+    {
+        char sp[256]; sprintf(sp, "/tmp/wuos_sess_%d.txt", (int)getpid());
+        setenv("WUBUOS_SESSION", sp, 1);
+        WuView *sv = wuos_editor_create(NULL);
+        if (!sv){ fprintf(stderr,"[sess] create FAILED\n"); bad++; }
+        else {
+            sv->on_key(sv, WUOS_KEY_NEWDOC, 1);     /* 2 docs (seed + new) */
+            sv->on_key(sv, WUOS_KEY_SESSION, 1);     /* save session */
+            size_t saved = wuos_editor_doc_count(sv);
+            setenv("WUBUOS_RESTORE", "1", 1);
+            WuView *sv2 = wuos_editor_create(NULL);  /* restore */
+            size_t restored = wuos_editor_doc_count(sv2);
+            unsetenv("WUBUOS_RESTORE");
+            if (restored < saved || saved < 2){ fprintf(stderr,"[sess] save=%zu restore=%zu\n", saved, restored); bad++; }
+            else fprintf(stderr,"[sess] ok (saved %zu, restored %zu)\n", saved, restored);
+            sv2->destroy(sv2);
+            sv->destroy(sv);
+            remove(sp);
+        }
+        unsetenv("WUBUOS_SESSION");
+    }
+
     /* cell view: load a real CSV via wubucell reader */
     {
         char csvp[256]; sprintf(csvp, "/tmp/wuos_cell_%d.csv", (int)getpid());

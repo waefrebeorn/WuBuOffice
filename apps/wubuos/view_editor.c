@@ -289,6 +289,49 @@ static void editor_sync_active(Editor *e){
     e->enc_label = "UTF-8";
 }
 
+/* ---- session save/restore (Notepad++ session model) ---- */
+static const char *session_path(void){
+    const char *e = getenv("WUBUOS_SESSION");
+    return e && *e ? e : "~/.wubuos_session";
+}
+/* write the open document list (one path per line, "(untitled)" for none) */
+static void session_save(Editor *e){
+    if (!e->docs) return;
+    char *fn = strdup(session_path());
+    /* expand leading ~ */
+    if (fn[0]=='~'){ const char *home=getenv("HOME"); size_t hl=home?strlen(home):0;
+        char *exp=malloc(hl+strlen(fn)+2); if(home) strcpy(exp,home); strcat(exp, fn+1);
+        free(fn); fn=exp; }
+    FILE *f = fopen(fn, "w");
+    if (f){
+        size_t n = docs_count(e->docs);
+        for (size_t i=0;i<n;i++){
+            const char *p = docs_path(e->docs, i);
+            fprintf(f, "%s\n", (p && *p)? p : "(untitled)");
+        }
+        fclose(f);
+    }
+    free(fn);
+}
+/* reopen the saved document list (called when launching with no file arg) */
+static void session_restore(Editor *e){
+    char *fn = strdup(session_path());
+    if (fn[0]=='~'){ const char *home=getenv("HOME"); size_t hl=home?strlen(home):0;
+        char *exp=malloc(hl+strlen(fn)+2); if(home) strcpy(exp,home); strcat(exp, fn+1);
+        free(fn); fn=exp; }
+    FILE *f = fopen(fn, "r");
+    free(fn);
+    if (!f) return;
+    char line[1024];
+    while (fgets(line, sizeof line, f)){
+        size_t L = strlen(line); while (L>0 && (line[L-1]=='\n'||line[L-1]=='\r')) line[--L]=0;
+        if (!*line) continue;
+        if (!strcmp(line, "(untitled)")) docs_open(e->docs, NULL, "", "c");
+        else docs_open(e->docs, line, "", "c");
+    }
+    fclose(f);
+}
+
 /* current caret line (0-based) */
 static int editor_line_of(Editor *e){
     char *t = doc_text(e->doc);
@@ -802,6 +845,7 @@ static void on_key(WuView *v, int key, int down){
             return;
         }
         case WUOS_KEY_AC: ac_open(e); return;
+        case WUOS_KEY_SESSION: session_save(e); return;
         case WUOS_KEY_BACKSPACE:
             if (cur>0) doc_delete(e->doc, cur-1, 1);
             break;
@@ -1004,6 +1048,9 @@ WuView *wuos_editor_create(const char *path){
             /* read failed: open blank with the requested name */
             docs_open(e->docs, path, "", "c");
         }
+    } else if (getenv("WUBUOS_RESTORE")){
+        /* no file arg + restore requested: reopen the saved session */
+        session_restore(e);
     }
     if (docs_count(e->docs) == 0){
         docs_open(e->docs, NULL, seed, "c");
