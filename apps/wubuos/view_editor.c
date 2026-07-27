@@ -79,6 +79,11 @@ typedef struct {
     int   ac_n;
     int   ac_sel;            /* selected index */
     char  ac_prefix[32];     /* word being completed */
+
+    /* code folding (brace regions from lex_folds) */
+    char  folded[4096];      /* per-line hide flag */
+    /* function-list panel */
+    int   sym_mode;          /* 0 off, 1 on */
 } Editor;
 
 /* Notepad++-style token palette (RGB) */
@@ -408,7 +413,7 @@ static void ac_open(Editor *e){
 
 /* accept the selected completion: delete the prefix, insert the full word */
 static void ac_accept(Editor *e){
-    if (!e->ac_mode || e->ac_sel<0 || e->ac_sel>=e->ac_n){ e->ac_mode=0; return; }
+    if (!e->ac_mode || e->ac_sel<0 || e->ac_sel>=e->ac_n){ e->ac_mode = 0; return; }
     char *t = doc_text(e->doc);
     size_t cur = doc_cursor(e->doc);
     int s = (int)cur; while (s>0 && (isalnum((unsigned char)t[s-1])||t[s-1]=='_')) s--;
@@ -418,6 +423,26 @@ static void ac_accept(Editor *e){
     doc_type(e->doc, e->ac_list[e->ac_sel], strlen(e->ac_list[e->ac_sel]));
     e->ac_mode = 0;
 }
+
+/* ---- code folding: fold the brace block containing the cursor line ---- */
+static void fold_toggle_block(Editor *e){
+    int cl = editor_line_of(e);     /* cursor line (0-based) */
+    char *t = doc_text(e->doc);
+    size_t n = doc_length(e->doc);
+    free(t);
+    LexFold fs[256];
+    size_t nf = lex_folds(t = doc_text(e->doc), n, fs, 256);
+    free(t);
+    int region = -1;
+    for (size_t i=0;i<nf;i++) if ((int)fs[i].start <= cl && (int)fs[i].end > cl){ region = (int)i; break; }
+    if (region < 0) return;
+    size_t a = fs[region].start, b = fs[region].end;
+    int is_folded = (a+1 < 4096) ? e->folded[a+1] : 0;
+    for (size_t ln = a+1; ln < b && ln < 4096; ln++) e->folded[ln] = is_folded ? 0 : 1;
+}
+
+/* toggle the function-list panel */
+static void sym_toggle(Editor *e){ e->sym_mode ^= 1; }
 
 static void bk_toggle(Editor *e, int line){
     if (line<0) return;
@@ -509,8 +534,20 @@ static int render(WuView *v, int w, int h, int scroll,
 
     LexSpan spans[256];
     while (y < H - lh){
+        /* skip hidden (folded) body lines entirely */
+        if (line < 4096 && e->folded[line]){
+            while (pos < tlen && text[pos] != '\n') pos++;
+            line++;
+            if (pos < tlen){ pos++; line_start = pos; }
+            else break;
+            continue;
+        }
         char num[16]; snprintf(num,sizeof num,"%zu",line+1);
         wuos_font_draw(num, 6, y+fh, 0, num_r,num_g,num_b, fb, w, H);
+        /* fold marker: ▾ on a header line whose body is hidden */
+        if (line+1 < 4096 && e->folded[line+1]){
+            wuos_font_draw("v", 30, y+fh, 0, 120,200,140, fb, w, H);  /* 'v' glyph as ▾ */
+        }
         /* bookmark marker (cyan disc) in the gutter */
         for (int bi=0; bi<e->bk_n; bi++) if (e->bk[bi]==(int)line){
             int cx=30, cy=y+fh, cr=4;
@@ -596,6 +633,26 @@ static int render(WuView *v, int w, int h, int scroll,
         y += lh;
     }
     free(text);
+
+    /* ---- function-list panel (right gutter) ---- */
+    if (e->sym_mode){
+        char *st = doc_text(e->doc);
+        size_t sl = doc_length(e->doc);
+        LexSym syms[256];
+        size_t ns = lex_symbols(st, sl, syms, 256);
+        free(st);
+        int pw = 220, px = w - pw;
+        for (int yy=0; yy<H; yy++) for (int xx=px; xx<w; xx++){ size_t i=((size_t)yy*w+xx)*4; fb[i]=238;fb[i+1]=240;fb[i+2]=244; }
+        for (int xx=px; xx<w; xx++){ size_t i=((size_t)px*w+xx)*4; fb[i]=140;fb[i+1]=144;fb[i+2]=152; }
+        char title[64]; snprintf(title,sizeof title,"Functions (%zu)", ns);
+        wuos_font_draw(title, px+8, 4+fh, 0, 60,64,72, fb,w,H);
+        for (size_t k=0; k<ns && k<60; k++){
+            char nm[64]; size_t L = syms[k].name_len; if (L>63) L=63;
+            char *dt = doc_text(e->doc); memcpy(nm, dt+syms[k].name_off, L); nm[L]=0; free(dt);
+            char row[96]; snprintf(row,sizeof row,"%s : L%zu", nm, syms[k].line+1);
+            wuos_font_draw(row, px+8, 4+fh + (int)(k+1)*lh, 0, 30,34,42, fb,w,H);
+        }
+    }
 
     e->frames++;
     if (e->find_msg_t > 0) e->find_msg_t--;
@@ -846,6 +903,8 @@ static void on_key(WuView *v, int key, int down){
         }
         case WUOS_KEY_AC: ac_open(e); return;
         case WUOS_KEY_SESSION: session_save(e); return;
+        case WUOS_KEY_FOLD: fold_toggle_block(e); return;
+        case WUOS_KEY_FUNCLIST: sym_toggle(e); return;
         case WUOS_KEY_BACKSPACE:
             if (cur>0) doc_delete(e->doc, cur-1, 1);
             break;
@@ -1018,6 +1077,22 @@ int wuos_editor_ac(WuView *v, int *n, int *sel){
     if (n) *n = e->ac_n;
     if (sel) *sel = e->ac_sel;
     return e->ac_mode;
+}
+/* Test accessor: folded-line count + function-list panel state. */
+int wuos_editor_fold(WuView *v, int *count){
+    Editor *e = v ? v->priv : NULL;
+    if (!e) return 0;
+    int c = 0;
+    for (int i=0;i<4096;i++) if (e->folded[i]) c++;
+    if (count) *count = c;
+    return c;   /* nonzero if anything folded */
+}
+int wuos_editor_sym(WuView *v, int *n){
+    Editor *e = v ? v->priv : NULL;
+    if (!e) return 0;
+    if (n){ char *t=doc_text(e->doc); size_t len=doc_length(e->doc); LexSym s[256];
+            size_t k=lex_symbols(t,len,s,256); free(t); *n=(int)k; }
+    return e->sym_mode;
 }
 
 WuView *wuos_editor_create(const char *path){

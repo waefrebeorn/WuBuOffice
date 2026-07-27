@@ -47,7 +47,7 @@ enum { WUOS_KEY_UP=2000, WUOS_KEY_DOWN, WUOS_KEY_LEFT, WUOS_KEY_RIGHT,
        WUOS_KEY_EOL, WUOS_KEY_THEME, WUOS_KEY_NEWDOC, WUOS_KEY_CLOSE,
        WUOS_KEY_DOCPREV, WUOS_KEY_DOCNEXT, WUOS_KEY_TOGGLE_BK, WUOS_KEY_NEXT_BK,
        WUOS_KEY_PREV_BK, WUOS_KEY_COLMODE, WUOS_KEY_REC, WUOS_KEY_PLAY, WUOS_KEY_AC,
- WUOS_KEY_SESSION };
+ WUOS_KEY_SESSION, WUOS_KEY_FOLD, WUOS_KEY_FUNCLIST };
 
 /* ---- view factories ----
  * `path` is an optional file to load (NULL = use the bundled sample). */
@@ -73,6 +73,9 @@ int wuos_editor_col(WuView *v, int *l0, int *c0, int *l1, int *c1);
 int wuos_editor_macro(WuView *v, int *ops);
 /* Test accessor: auto-completion popup state (open + candidate count + sel). */
 int wuos_editor_ac(WuView *v, int *n, int *sel);
+/* Test accessor: folded-line count + function-list panel state. */
+int wuos_editor_fold(WuView *v, int *count);
+int wuos_editor_sym(WuView *v, int *n);
 WuView *wuos_cell_create(const char *path);         /* wubucell grid */
 WuView *wuos_ocr_create(const char *path);          /* wubuocr page */
 WuView *wuos_slide_create(const char *path);        /* simple slide */

@@ -333,6 +333,27 @@ int main(void){
         unsetenv("WUBUOS_SESSION");
     }
 
+    /* code folding: Ctrl+Shift+F folds the block at the cursor line */
+    {
+        WuView *fv = wuos_editor_create(NULL);
+        if (!fv){ fprintf(stderr,"[fold] create FAILED\n"); bad++; }
+        else {
+            fv->on_key(fv, WUOS_KEY_GOTO, 1);       /* go to line */
+            fv->on_key(fv, (unsigned char)'4', 1);
+            fv->on_key(fv, WUOS_KEY_RETURN, 1);
+            fv->on_key(fv, WUOS_KEY_FOLD, 1);      /* fold main() block (cursor inside it) */
+            int fc=0; int folded = wuos_editor_fold(fv, &fc);
+            if (!folded || fc < 1){ fprintf(stderr,"[fold] no lines folded (count=%d)\n", fc); bad++; }
+            else fprintf(stderr,"[fold] ok (%d lines collapsed)\n", fc);
+            /* function list: Ctrl+Shift+L shows panel + symbols */
+            fv->on_key(fv, WUOS_KEY_FUNCLIST, 1);
+            int ns=0; int on = wuos_editor_sym(fv, &ns);
+            if (!on || ns < 1){ fprintf(stderr,"[funclist] panel=%d syms=%d\n", on, ns); bad++; }
+            else fprintf(stderr,"[funclist] ok (panel on, %d symbols)\n", ns);
+            fv->destroy(fv);
+        }
+    }
+
     /* cell view: load a real CSV via wubucell reader */
     {
         char csvp[256]; sprintf(csvp, "/tmp/wuos_cell_%d.csv", (int)getpid());
