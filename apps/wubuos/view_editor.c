@@ -45,6 +45,10 @@ typedef struct {
     int   find_idx;          /* 1-based index of active match */
     char  find_msg[64];      /* transient status (e.g. "bad pattern") */
     int   find_msg_t;        /* frames remaining to show msg */
+
+    /* ---- go to line (Ctrl+G) ---- */
+    int   goto_mode;
+    char  goto_buf[32];
 } Editor;
 
 /* Notepad++-style token palette (RGB) */
@@ -193,6 +197,20 @@ static void find_replace_all(WuView *v){
     doc_set_selection(e->doc, doc_cursor(e->doc), doc_cursor(e->doc));
 }
 
+/* Byte offset of the start of 1-based line `lineN` (clamped to last line). */
+static size_t doc_offset_of_line(Doc *d, int lineN){
+    char *t = doc_text(d);
+    size_t n = doc_length(d);
+    int cur = 1;
+    if (lineN <= 1){ free(t); return 0; }
+    for (size_t q=0; q<n; q++){
+        if (t[q]=='\n'){ cur++; if (cur == lineN){ free(t); return q+1; } }
+    }
+    free(t);
+    /* lineN beyond end: return end of doc */
+    return n;
+}
+
 static int render(WuView *v, int w, int h, int scroll,
                   unsigned char **rgba, int *rw, int *rh){
     Editor *e = v->priv;
@@ -335,6 +353,18 @@ static int render(WuView *v, int w, int h, int scroll,
         for (int xx=ulx0; xx<ulx1 && xx<w; xx++){ size_t i=((size_t)(by+bh-3)*w+xx)*4; fb[i]=180;fb[i+1]=184;fb[i+2]=192; }
     }
 
+    /* ---- go-to-line bar ---- */
+    if (e->goto_mode){
+        int bh = lh + 4, by = H - bh;
+        for (int yy=by; yy<H; yy++) for (int xx=0; xx<w; xx++){
+            size_t i=((size_t)yy*w+xx)*4; fb[i]=245; fb[i+1]=245; fb[i+2]=248;
+        }
+        char gl[64]; snprintf(gl,sizeof gl,"Go to line: %s", e->goto_buf);
+        wuos_font_draw(gl, gutter+6, by+4+fh, 0, 30,32,40, fb, w, H);
+        wuos_font_draw("Enter jump | Esc cancel", w - (int)wuos_font_draw("Enter jump | Esc cancel",w,0,0,0,0,0,NULL,0,0) - 8,
+                       by+4+fh, 0, 110,114,122, fb, w, H);
+    }
+
     *rgba = fb; *rw = w; *rh = H;
     return 0;
 }
@@ -343,6 +373,37 @@ static void on_key(WuView *v, int key, int down){
     Editor *e = v->priv;
     if (!down) return;
     e->frames = 0;  /* reset blink on activity */
+
+    /* ---- go-to-line mode intercepts keys ---- */
+    if (e->goto_mode){
+        switch (key){
+            case WUOS_KEY_ESC: e->goto_mode = 0; return;
+            case WUOS_KEY_RETURN: {
+                int ln = atoi(e->goto_buf);
+                if (ln >= 1){
+                    size_t off = doc_offset_of_line(e->doc, ln);
+                    doc_set_cursor(e->doc, off);
+                    doc_set_selection(e->doc, off, off);
+                }
+                e->goto_mode = 0;
+                return;
+            }
+            case WUOS_KEY_BACKSPACE: {
+                size_t l = strlen(e->goto_buf);
+                if (l) e->goto_buf[l-1]=0;
+                return;
+            }
+            default:
+                if (key>='0' && key<='9'){
+                    size_t l = strlen(e->goto_buf);
+                    if (l < sizeof(e->goto_buf)-1){ e->goto_buf[l]=(char)key; e->goto_buf[l+1]=0; }
+                    return;
+                }
+                if (key==WUOS_KEY_GOTO) return; /* ignore re-trigger */
+                e->goto_mode = 0;  /* any other key dismisses */
+                break;
+        }
+    }
 
     /* ---- find / replace mode intercepts keys ---- */
     if (e->find_mode){
@@ -400,6 +461,7 @@ static void on_key(WuView *v, int key, int down){
     switch (key){
         case WUOS_KEY_FIND:    find_open(v, 1); return;
         case WUOS_KEY_REPLACE: find_open(v, 2); return;
+        case WUOS_KEY_GOTO:    e->goto_mode = 1; e->goto_buf[0]=0; return;
         case WUOS_KEY_BACKSPACE:
             if (cur>0) doc_delete(e->doc, cur-1, 1);
             break;
@@ -488,11 +550,18 @@ int wuos_editor_find_stats(WuView *v, int *active, int *total){
     return 0;
 }
 
-/* Test accessor: return the current document text (caller frees with free()). */
+/* Test accessor: returns the editor's current document text (caller frees). */
 char *wuos_editor_text(WuView *v){
     Editor *e = v ? v->priv : NULL;
     if (!e) return NULL;
     return doc_text(e->doc);
+}
+
+/* Test accessor: current caret byte offset (for go-to-line assertions). */
+size_t wuos_editor_cursor(WuView *v){
+    Editor *e = v ? v->priv : NULL;
+    if (!e) return 0;
+    return doc_cursor(e->doc);
 }
 
 WuView *wuos_editor_create(const char *path){

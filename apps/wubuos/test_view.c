@@ -106,6 +106,25 @@ int main(void){
         }
     }
 
+    /* go-to-line: Ctrl+G, type "3", Enter -> caret at start of line 3 */
+    {
+        WuView *gv = wuos_editor_create(NULL);
+        if (!gv){ fprintf(stderr,"[goto] create FAILED\n"); bad++; }
+        else {
+            gv->on_key(gv, WUOS_KEY_GOTO, 1);
+            for (const char *p="3"; *p; p++) gv->on_key(gv, (unsigned char)*p, 1);
+            gv->on_key(gv, WUOS_KEY_RETURN, 1);
+            size_t c = wuos_editor_cursor(gv);
+            char *t = wuos_editor_text(gv);
+            /* count newlines before c; must be exactly 2 (start of line 3) */
+            int nl=0; for (size_t q=0;q<c && t && t[q];q++) if (t[q]=='\n') nl++;
+            if (nl != 2){ fprintf(stderr,"[goto] line=%d want 3 (cursor %zu)\n", nl+1, c); bad++; }
+            else fprintf(stderr,"[goto] ok (line 3, cursor %zu)\n", c);
+            free(t);
+            gv->destroy(gv);
+        }
+    }
+
     /* cell view: load a real CSV via wubucell reader */
     {
         char csvp[256]; sprintf(csvp, "/tmp/wuos_cell_%d.csv", (int)getpid());
