@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <strings.h>
 
 #define WIN_W 960
 #define WIN_H 720
@@ -31,7 +32,32 @@ static int tab_at(int mx){
 }
 
 int main(int argc, char **argv){
-    (void)argc; (void)argv;
+    /* Usage: wubuos [doc|editor|cell|slide|ocr] [file]
+     * A bare file path is routed by extension: code/text -> editor,
+     * .md/.txt/.html -> document. */
+    const char *want_tab = NULL, *want_file = NULL;
+    for (int i=1; i<argc; i++){
+        if (!want_tab && (!strcmp(argv[i],"doc")||!strcmp(argv[i],"document")||
+                          !strcmp(argv[i],"editor")||!strcmp(argv[i],"cell")||
+                          !strcmp(argv[i],"slide")||!strcmp(argv[i],"ocr")))
+            want_tab = argv[i];
+        else if (!want_file) want_file = argv[i];
+    }
+    /* extension-based auto-routing for a bare file */
+    const char *auto_tab = NULL;
+    if (want_file && !want_tab){
+        const char *dot = strrchr(want_file, '.');
+        if (dot && (!strcasecmp(dot,".md")||!strcasecmp(dot,".txt")||
+                    !strcasecmp(dot,".html")||!strcasecmp(dot,".htm")))
+            auto_tab = "doc";
+        else
+            auto_tab = "editor";
+    }
+    const char *file_for_doc = (want_tab && !strcmp(want_tab,"doc"))? want_file
+                              : (auto_tab && !strcmp(auto_tab,"doc"))? want_file : NULL;
+    const char *file_for_editor = (want_tab && !strcmp(want_tab,"editor"))? want_file
+                                : (auto_tab && !strcmp(auto_tab,"editor"))? want_file : NULL;
+
     if (SDL_Init(SDL_INIT_VIDEO)!=0){ fprintf(stderr,"SDL init: %s\n",SDL_GetError()); return 1; }
     if (wuos_font_init()!=0){ fprintf(stderr,"font init failed\n"); SDL_Quit(); return 1; }
 
@@ -40,12 +66,19 @@ int main(int argc, char **argv){
     SDL_Renderer *ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
     if (!ren){ fprintf(stderr,"renderer: %s\n",SDL_GetError()); SDL_DestroyWindow(win); SDL_Quit(); return 1; }
 
-    add_view(wuos_doc_create());
+    add_view(wuos_doc_create(file_for_doc));
     add_view(wuos_cell_create());
     add_view(wuos_slide_create());
     add_view(wuos_ocr_create());
-    add_view(wuos_editor_create());
+    add_view(wuos_editor_create(file_for_editor));
     if (nviews==0){ fprintf(stderr,"no views\n"); return 1; }
+    /* if a specific tab was requested and exists, activate it */
+    if (want_tab || auto_tab){
+        const char *t = want_tab? want_tab : auto_tab;
+        for (int i=0;i<nviews;i++) if (!strcmp(views[i]->name, t) ||
+                                      (t && !strcmp(t,"document") && !strcmp(views[i]->name,"Document")) ||
+                                      (t && !strcmp(t,"editor") && !strcmp(views[i]->name,"Editor"))){ active=i; break; }
+    }
 
     int scroll = 0;
     int running = 1;
@@ -67,8 +100,10 @@ int main(int argc, char **argv){
             }
             else if (e.type==SDL_KEYDOWN){
                 SDL_Keycode k = e.key.keysym.sym;
+                SDL_Keymod mod = SDL_GetModState();
                 int code=0;
                 if (k==SDLK_ESCAPE){ running=0; }
+                else if (k==SDLK_s && (mod & KMOD_CTRL)) code=WUOS_KEY_SAVE;
                 else if (k==SDLK_UP) code=WUOS_KEY_UP;
                 else if (k==SDLK_DOWN) code=WUOS_KEY_DOWN;
                 else if (k==SDLK_LEFT) code=WUOS_KEY_LEFT;

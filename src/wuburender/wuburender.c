@@ -153,6 +153,67 @@ wubumodel_doc *wurender_sample_doc(void){
     return d;
 }
 
+/* Build a document from Markdown-ish text. '#' -> Heading 1, '##' -> Heading 2,
+ * a blank line starts a new paragraph, other lines accumulate into a paragraph. */
+wubumodel_doc *wurender_doc_from_markdown(const char *text){
+    wubumodel_doc *d = wubumodel_doc_create();
+    wubumodel_node *sec = wubumodel_node_create(d, WUBUMODEL_SECTION);
+
+    wubumodel_node *cur = NULL;   /* current paragraph being filled */
+    const char *p = text;
+    while (p && *p){
+        /* read one line */
+        const char *nl = p;
+        while (*nl && *nl != '\n') nl++;
+        size_t len = (size_t)(nl - p);
+        /* strip trailing \r */
+        while (len > 0 && p[len-1] == '\r') len--;
+
+        int is_blank = (len == 0);
+        const char *body = p;
+        int heading = 0;
+        if (len >= 2 && p[0]=='#' && p[1]=='#'){ heading = 2; body = p+2; }
+        else if (len >= 1 && p[0]=='#'){ heading = 1; body = p+1; }
+        if (heading){ while (body < nl && (*body==' '||*body=='\t')) body++; }
+
+        if (is_blank){ cur = NULL; }
+        else {
+            if (!cur){
+                cur = wubumodel_node_create(d, WUBUMODEL_PARAGRAPH);
+                if (heading){
+                    wubumodel_style *hs = wubumodel_style_create();
+                    char nm[16]; snprintf(nm,sizeof nm,"Heading %d",heading);
+                    wubumodel_style_set_prop(hs, "name", nm);
+                    wubumodel_node_set_style(cur, hs);
+                }
+                wubumodel_node_append(d, sec, cur);
+            }
+            /* append a run for this line (with a space if not the first) */
+            wubumodel_node *r = wubumodel_node_create(d, WUBUMODEL_RUN);
+            /* build run text: optional leading space + body */
+            size_t blen = (size_t)(nl - body);
+            char *rt = malloc(blen + 2);
+            if (rt){
+                size_t k = 0;
+                if (wubumodel_node_first_child(cur)) rt[k++] = ' ';
+                memcpy(rt+k, body, blen); k += blen; rt[k]=0;
+                wubumodel_run_set_text(r, rt);
+                free(rt);
+            }
+            wubumodel_node_append(d, cur, r);
+        }
+        if (*nl == '\n'){ p = nl + 1; } else { p = nl; break; }
+    }
+    if (!cur){  /* ensure at least one paragraph so the page isn't empty */
+        wubumodel_node *par = wubumodel_node_create(d, WUBUMODEL_PARAGRAPH);
+        wubumodel_node *r = wubumodel_node_create(d, WUBUMODEL_RUN);
+        wubumodel_run_set_text(r, "(empty document)");
+        wubumodel_node_append(d, par, r);
+        wubumodel_node_append(d, sec, par);
+    }
+    return d;
+}
+
 int wurender_render_doc(Wurender *r, const wubumodel_doc *doc, int W, int H,
                         unsigned char **rgba, int *w, int *h){
     if (!r || !doc || !rgba || !w || !h) return -1;

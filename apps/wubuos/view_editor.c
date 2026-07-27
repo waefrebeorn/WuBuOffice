@@ -10,17 +10,20 @@
  */
 #include "wuos.h"
 #include "wuos_font.h"
+#include "wuos_file.h"
 
 #include "doc.h"    /* cross-repo: ~/WuBuPad/src */
 #include "lex.h"
 
 #include <stdlib.h>
 #include <string.h>
+#include <strings.h>
 #include <stdio.h>
 
 typedef struct {
     Doc  *doc;
     Lex  *lex;
+    char *path;       /* loaded file, or NULL */
     int   top;        /* first visible line */
     int   caret_line, caret_col;
     int   blink;      /* caret phase */
@@ -42,6 +45,8 @@ static void tok_color(LexTok k, unsigned char *r, unsigned char *g, unsigned cha
         default:          *r=36;  *g=41;  *b=47;  break;   /* near-black */
     }
 }
+
+static void save(WuView *v);   /* forward decl (used by on_key) */
 
 static int render(WuView *v, int w, int h, int scroll,
                   unsigned char **rgba, int *rw, int *rh){
@@ -161,6 +166,9 @@ static void on_key(WuView *v, int key, int down){
             break; }
         case WUOS_KEY_PGUP: for(int i=0;i<20;i++){ key=WUOS_KEY_UP; on_key(v,WUOS_KEY_UP,1);} break;
         case WUOS_KEY_PGDN: for(int i=0;i<20;i++) on_key(v,WUOS_KEY_DOWN,1); break;
+        case WUOS_KEY_SAVE:
+            save(v);
+            break;
         default:
             if (key>=32 && key<128){ char c=(char)key; doc_type(e->doc,&c,1); }
             break;
@@ -176,9 +184,10 @@ static char *status(WuView *v){
     size_t line=1,col=1; for (size_t q=0;q<cur && t && t[q];q++){ if(t[q]=='\n'){line++;col=1;}else col++; }
     free(t);
     const char *lang = e->lex? lex_lang(e->lex) : "none";
-    char buf[160];
-    snprintf(buf,sizeof buf,"Ln %zu  Col %zu  %s  %s  [%s]",
-             line, col, doc_has_selection(e->doc)?"SEL":"   ",
+    const char *fn = e->path? e->path : "(unsaved)";
+    char buf[256];
+    snprintf(buf,sizeof buf,"%s  Ln %zu  Col %zu  %s  %s  [%s]",
+             fn, line, col, doc_has_selection(e->doc)?"SEL":"   ",
              doc_can_undo(e->doc)?"*":" ", lang);
     return strdup(buf);
 }
@@ -187,12 +196,26 @@ static void destroy(WuView *v){
     Editor *e = v->priv;
     if (e->lex) lex_free(e->lex);
     doc_free(e->doc);
+    free(e->path);
     free(e);
 }
 
-WuView *wuos_editor_create(void){
+static void save(WuView *v){
+    Editor *e = v->priv;
+    if (!e->path) return;
+    char *t = doc_text(e->doc);
+    if (t){
+        wuos_write_file(e->path, t, strlen(t));
+        free(t);
+    }
+}
+
+static const char *get_path(WuView *v){ return ((Editor*)v->priv)->path; }
+
+WuView *wuos_editor_create(const char *path){
     Editor *e = calloc(1, sizeof *e);
     if (!e) return NULL;
+
     const char *seed =
         "/* WuBuPad -- Notepad++ parity, embedded in WuBuOffice */\n"
         "#include <stdio.h>\n"
@@ -206,16 +229,37 @@ WuView *wuos_editor_create(void){
         "    printf(\"sum=%d\\n\", total);\n"
         "    return 0;\n"
         "}\n";
-    e->doc = doc_create(seed);
-    e->lex = lex_create("c");
+
+    if (path){
+        e->path = strdup(path);
+        size_t len = 0;
+        char *txt = wuos_read_file(path, &len);
+        if (txt){ e->doc = doc_create(txt); free(txt); }
+    }
+    if (!e->doc) e->doc = doc_create(seed);
+
+    /* pick lexer by extension (default c) */
+    const char *lang = "c";
+    if (path){
+        const char *dot = strrchr(path, '.');
+        if (dot){
+            if      (!strcasecmp(dot, ".json")) lang = "json";
+            else if (!strcasecmp(dot, ".h") || !strcasecmp(dot, ".cxx") ||
+                     !strcasecmp(dot, ".cpp") || !strcasecmp(dot, ".cc")) lang = "c";
+            else if (!strcasecmp(dot, ".py")) lang = "c"; /* lexer has no python; reuse c */
+        }
+    }
+    e->lex = lex_create(lang);
     e->frames = 0;
     WuView *v = calloc(1, sizeof *v);
     v->name = "Editor";
     v->priv = e;
-    v->destroy = destroy;
-    v->render  = render;
-    v->on_key  = on_key;
-    v->on_wheel= on_wheel;
-    v->status  = status;
+    v->destroy  = destroy;
+    v->render   = render;
+    v->on_key   = on_key;
+    v->on_wheel = on_wheel;
+    v->status   = status;
+    v->save     = save;
+    v->get_path = get_path;
     return v;
 }

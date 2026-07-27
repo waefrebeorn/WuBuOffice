@@ -10,6 +10,7 @@ set(WUBUPAD_SRC ${CMAKE_SOURCE_DIR}/../WuBuPad/src)
 add_executable(wubuos
     main.c
     wuos_font.c
+    wuos_file.c
     view_doc.c
     view_cell.c
     view_slide.c
@@ -46,7 +47,7 @@ target_compile_options(wubuos PRIVATE -Wall -Wextra -Wpedantic)
 
 # Headless smoke test: create + render every view (real engines, no GUI).
 # Verifies each WuView adapter renders without crashing and returns a buffer.
-add_executable(test_view test_view.c wuos_font.c view_doc.c view_cell.c
+add_executable(test_view test_view.c wuos_font.c wuos_file.c view_doc.c view_cell.c
     view_slide.c view_ocr.c view_editor.c)
 target_include_directories(test_view PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}

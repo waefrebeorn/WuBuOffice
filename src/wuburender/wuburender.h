@@ -39,6 +39,11 @@ int wurender_render_doc(Wurender *r, const wubumodel_doc *doc,
  * Caller owns the returned doc and must wubumodel_doc_destroy() it. */
 wubumodel_doc *wurender_sample_doc(void);
 
+/* Build a document from Markdown-ish text (headings via '#'/'##', blank
+ * lines separate paragraphs, everything else is body text). Caller owns
+ * the returned doc. Used by the shell's Document tab to render real files. */
+wubumodel_doc *wurender_doc_from_markdown(const char *text);
+
 #ifdef __cplusplus
 }
 #endif

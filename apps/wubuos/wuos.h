@@ -31,20 +31,26 @@ struct WuView {
     void      (*on_wheel)(WuView *, int dy);
     /* Optional status string builder (caller frees). May be NULL. */
     char     *(*status)(WuView *);
+    /* Optional: save the current buffer to its loaded path (Ctrl+S). May be NULL. */
+    void      (*save)(WuView *);
+    /* Optional: return the loaded file path (for the title/status), or NULL. */
+    const char *(*get_path)(WuView *);
     void      *priv;
 };
 
 /* Control key sentinels (kept out of the printable range). */
 enum { WUOS_KEY_UP=2000, WUOS_KEY_DOWN, WUOS_KEY_LEFT, WUOS_KEY_RIGHT,
        WUOS_KEY_BACKSPACE, WUOS_KEY_RETURN, WUOS_KEY_HOME, WUOS_KEY_END,
-       WUOS_KEY_TAB, WUOS_KEY_PGUP, WUOS_KEY_PGDN, WUOS_KEY_DEL, WUOS_KEY_ESC };
+       WUOS_KEY_TAB, WUOS_KEY_PGUP, WUOS_KEY_PGDN, WUOS_KEY_DEL, WUOS_KEY_ESC,
+       WUOS_KEY_SAVE, WUOS_KEY_OPEN };
 
-/* ---- view factories ---- */
-WuView *wuos_doc_create(void);       /* wurender document */
-WuView *wuos_editor_create(void);    /* WuBuPad core (Notepad++ parity) */
-WuView *wuos_cell_create(void);      /* wubucell grid */
-WuView *wuos_ocr_create(void);       /* wubuocr page */
-WuView *wuos_slide_create(void);     /* simple slide */
+/* ---- view factories ----
+ * `path` is an optional file to load (NULL = use the bundled sample). */
+WuView *wuos_doc_create(const char *path);    /* wurender document */
+WuView *wuos_editor_create(const char *path); /* WuBuPad core (Notepad++ parity) */
+WuView *wuos_cell_create(void);               /* wubucell grid */
+WuView *wuos_ocr_create(void);                /* wubuocr page */
+WuView *wuos_slide_create(void);              /* simple slide */
 
 #ifdef __cplusplus
 }
