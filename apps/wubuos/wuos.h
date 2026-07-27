@@ -60,6 +60,7 @@ size_t wuos_editor_cursor(WuView *v);
 WuView *wuos_cell_create(const char *path);         /* wubucell grid */
 WuView *wuos_ocr_create(const char *path);          /* wubuocr page */
 WuView *wuos_slide_create(const char *path);        /* simple slide */
+WuView *wuos_compare_create(const char *left, const char *right); /* diff view */
 
 #ifdef __cplusplus
 }

@@ -162,6 +162,22 @@ int main(void){
         remove(csvp);
     }
 
+    /* compare view: diff two temp files via WuBuPad Myers engine */
+    {
+        char ap[256], bp[256];
+        sprintf(ap,"/tmp/wuos_cmp_a_%d.txt",(int)getpid());
+        sprintf(bp,"/tmp/wuos_cmp_b_%d.txt",(int)getpid());
+        wuos_write_file(ap, "line one\nline two\nline three\n", 29);
+        wuos_write_file(bp, "line one\nline TWO\nline three\n", 29);
+        WuView *cmp = wuos_compare_create(ap, bp);
+        if (!cmp){ fprintf(stderr,"[compare] create FAILED\n"); bad++; }
+        else {
+            bad += render_check(cmp, "compare");
+            cmp->destroy(cmp);
+        }
+        remove(ap); remove(bp);
+    }
+
     /* cleanup temp files */
     remove(mdp); remove(codep);
 

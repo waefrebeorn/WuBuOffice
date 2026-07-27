@@ -64,7 +64,8 @@ int main(int argc, char **argv){
     for (int i=1; i<argc; i++){
         if (!want_tab && (!strcmp(argv[i],"doc")||!strcmp(argv[i],"document")||
                           !strcmp(argv[i],"editor")||!strcmp(argv[i],"cell")||
-                          !strcmp(argv[i],"slide")||!strcmp(argv[i],"ocr")))
+                          !strcmp(argv[i],"slide")||!strcmp(argv[i],"ocr")||
+                          !strcmp(argv[i],"compare")))
             want_tab = argv[i];
         else if (!want_file) want_file = argv[i];
     }
@@ -98,13 +99,15 @@ int main(int argc, char **argv){
     add_view(wuos_slide_create(NULL));
     add_view(wuos_ocr_create(file_for_ocr));
     add_view(wuos_editor_create(file_for_editor));
+    add_view(wuos_compare_create(argc>2?argv[2]:NULL, argc>3?argv[3]:NULL));
     if (nviews==0){ fprintf(stderr,"no views\n"); return 1; }
     /* if a specific tab was requested and exists, activate it */
     if (want_tab || auto_tab){
         const char *t = want_tab? want_tab : auto_tab;
         for (int i=0;i<nviews;i++) if (!strcmp(views[i]->name, t) ||
                                       (t && !strcmp(t,"document") && !strcmp(views[i]->name,"Document")) ||
-                                      (t && !strcmp(t,"editor") && !strcmp(views[i]->name,"Editor"))){ active=i; break; }
+                                      (t && !strcmp(t,"editor") && !strcmp(views[i]->name,"Editor")) ||
+                                      (t && !strcmp(t,"compare") && !strcmp(views[i]->name,"Compare"))){ active=i; break; }
     }
 
     int scroll = 0;
