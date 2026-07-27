@@ -16,6 +16,7 @@
 #include "lex.h"
 #include "search.h" /* WuBuPad regex/literal engine */
 #include "encode.h" /* WuBuPad encoding detect */
+#include "docs.h"   /* WuBuPad multi-document session (DONE engine) */
 
 #include <stdlib.h>
 #include <string.h>
@@ -55,6 +56,9 @@ typedef struct {
     int   eol_crlf;        /* 0 = LF, 1 = CRLF */
     const char *enc_label; /* detected encoding label, or NULL */
     int   dark;            /* 0 = light, 1 = dark theme */
+
+    /* multi-document session (DONE engine: src/docs) */
+    Docs *docs;
 } Editor;
 
 /* Notepad++-style token palette (RGB) */
@@ -245,6 +249,22 @@ static void convert_eol(Editor *e, int to_crlf){
     e->eol_crlf = to_crlf;
 }
 
+/* Point e->doc at the active document in the session and refresh EOL/encoding
+ * from its current text. Called after any doc switch. */
+static void editor_sync_active(Editor *e){
+    if (!e->docs) return;
+    size_t a = docs_active(e->docs);
+    e->doc = docs_doc(e->docs, a);
+    if (e->doc){
+        char *t = doc_text(e->doc);
+        e->eol_crlf = detect_eol(t);
+        free(t);
+    }
+    const char *p = docs_path(e->docs, a);
+    e->path = (p && *p)? (char*)p : NULL;   /* docs owns the string; we only read */
+    e->enc_label = "UTF-8";
+}
+
 static int render(WuView *v, int w, int h, int scroll,
                   unsigned char **rgba, int *rw, int *rh){
     Editor *e = v->priv;
@@ -276,10 +296,31 @@ static int render(WuView *v, int w, int h, int scroll,
     for (int y=0;y<H;y++) for (int x=0;x<gutter;x++){ size_t i=((size_t)y*w+x)*4; fb[i]=gut_r;fb[i+1]=gut_g;fb[i+2]=gut_b; }
     for (int y=0;y<H;y++){ size_t i=((size_t)y*(w)+gutter)*4; fb[i]=sepr;fb[i+1]=sepg;fb[i+2]=sepb; }
 
+    /* ---- document tab strip (multi-doc) ---- */
+    int dofst = 0;
+    if (e->docs && docs_count(e->docs) > 1){
+        dofst = 22;
+        int dx = 0; size_t n = docs_count(e->docs), act = docs_active(e->docs);
+        for (size_t di=0; di<n; di++){
+            const char *dp = docs_path(e->docs, di);
+            const char *nm = (dp && *dp)? dp : "untitled";
+            const char *bn = strrchr(nm, '/'); if (bn) nm = bn+1;
+            char lab[64]; snprintf(lab,sizeof lab," %s ", nm);
+            int tw = (int)strlen(lab)*9 + 12;
+            int on = (di==act);
+            for (int yy=0; yy<dofst; yy++) for (int xx=dx; xx<dx+tw && xx<w; xx++){
+                size_t i=((size_t)yy*w+xx)*4;
+                if (on){ fb[i]=230;fb[i+1]=235;fb[i+2]=245; } else { fb[i]=gut_r;fb[i+1]=gut_g;fb[i+2]=gut_b; }
+            }
+            wuos_font_draw(lab, dx+6, dofst-6, 0, on?20:80, on?24:90, on?30:90, fb,w,H);
+            dx += tw;
+        }
+    }
+
     char *text = doc_text(e->doc);
     size_t tlen = text? strlen(text):0;
 
-    int y = 6;
+    int y = 6 + dofst;
     size_t pos = 0, line = 0;
     size_t line_start = 0;
     size_t caret = doc_cursor(e->doc);
@@ -512,6 +553,32 @@ static void on_key(WuView *v, int key, int down){
         case WUOS_KEY_GOTO:    e->goto_mode = 1; e->goto_buf[0]=0; return;
         case WUOS_KEY_EOL:     convert_eol(e, e->eol_crlf? 0 : 1); return;
         case WUOS_KEY_THEME:  e->dark ^= 1; return;
+        case WUOS_KEY_NEWDOC: {
+            size_t i = docs_open(e->docs, NULL, "", "c");
+            if (i != SIZE_MAX){ docs_set_active(e->docs, i); editor_sync_active(e); }
+            return;
+        }
+        case WUOS_KEY_CLOSE: {
+            if (docs_count(e->docs) > 1){
+                size_t a = docs_active(e->docs);
+                docs_close(e->docs, a);
+                if (a >= docs_count(e->docs)) a = docs_count(e->docs)-1;
+                docs_set_active(e->docs, a);
+                editor_sync_active(e);
+            }
+            return;
+        }
+        case WUOS_KEY_DOCNEXT:
+        case WUOS_KEY_DOCPREV: {
+            size_t n = docs_count(e->docs);
+            if (n > 1){
+                size_t a = docs_active(e->docs);
+                a = (key==WUOS_KEY_DOCNEXT)? (a+1)%n : (a+n-1)%n;
+                docs_set_active(e->docs, a);
+                editor_sync_active(e);
+            }
+            return;
+        }
         case WUOS_KEY_BACKSPACE:
             if (cur>0) doc_delete(e->doc, cur-1, 1);
             break;
@@ -566,9 +633,12 @@ static char *status(WuView *v){
     const char *fn = e->path? e->path : "(unsaved)";
     const char *eol = e->eol_crlf? "CRLF" : "LF";
     const char *enc = e->enc_label? e->enc_label : "UTF-8";
+    char docn[32]; docn[0]=0;
+    if (e->docs && docs_count(e->docs) > 1)
+        snprintf(docn,sizeof docn,"[doc %zu/%zu] ", docs_active(e->docs)+1, docs_count(e->docs));
     char buf[256];
-    snprintf(buf,sizeof buf,"%s  Ln %zu  Col %zu  %s  %s  %s  %s  [%s]",
-             fn, line, col, doc_has_selection(e->doc)?"SEL":"   ",
+    snprintf(buf,sizeof buf,"%s%s  Ln %zu  Col %zu  %s  %s  %s  %s  [%s]",
+             docn, fn, line, col, doc_has_selection(e->doc)?"SEL":"   ",
              doc_can_undo(e->doc)?"*":" ", eol, enc, lang);
     return strdup(buf);
 }
@@ -576,17 +646,18 @@ static char *status(WuView *v){
 static void destroy(WuView *v){
     Editor *e = v->priv;
     if (e->lex) lex_free(e->lex);
-    doc_free(e->doc);
-    free(e->path);
+    if (e->docs) docs_free(e->docs);
     free(e);
 }
 
 static void save(WuView *v){
     Editor *e = v->priv;
+    if (!e->docs) return;
     if (!e->path) return;
     char *t = doc_text(e->doc);
     if (t){
         wuos_write_file(e->path, t, strlen(t));
+        docs_set_dirty(e->docs, docs_active(e->docs), 0);
         free(t);
     }
 }
@@ -623,6 +694,18 @@ int wuos_editor_dark(WuView *v){
     return e->dark;
 }
 
+/* Test accessor: multi-doc session size + active index (for doc-tab tests). */
+size_t wuos_editor_doc_count(WuView *v){
+    Editor *e = v ? v->priv : NULL;
+    if (!e || !e->docs) return 0;
+    return docs_count(e->docs);
+}
+size_t wuos_editor_doc_active(WuView *v){
+    Editor *e = v ? v->priv : NULL;
+    if (!e || !e->docs) return 0;
+    return docs_active(e->docs);
+}
+
 WuView *wuos_editor_create(const char *path){
     Editor *e = calloc(1, sizeof *e);
     if (!e) return NULL;
@@ -641,26 +724,27 @@ WuView *wuos_editor_create(const char *path){
         "    return 0;\n"
         "}\n";
 
+    e->docs = docs_create();
+    if (!e->docs){ free(e); return NULL; }
+
     if (path){
-        e->path = strdup(path);
-        size_t len = 0;
-        char *raw = wuos_read_file(path, &len);
-        if (raw){
-            /* detect encoding of the raw bytes, normalize to UTF-8 for the Doc */
-            EncKind ek = enc_detect((const unsigned char*)raw, len);
-            e->enc_label = enc_name(ek);
-            char *txt = enc_to_utf8((const unsigned char*)raw, len, ek, NULL);
-            if (txt){ e->doc = doc_create(txt); e->eol_crlf = detect_eol(txt); free(txt); }
-            free(raw);
+        /* load via docs (detects encoding, seeds Doc); sets active doc */
+        size_t idx = docs_load_file(e->docs, path, NULL);
+        if (idx == SIZE_MAX){
+            /* read failed: open blank with the requested name */
+            docs_open(e->docs, path, "", "c");
         }
     }
-    if (!e->doc) e->doc = doc_create(seed);
-    if (!e->enc_label) e->enc_label = "UTF-8";
+    if (docs_count(e->docs) == 0){
+        docs_open(e->docs, NULL, seed, "c");
+    }
+    editor_sync_active(e);
 
-    /* pick lexer by extension (default c) */
+    /* pick lexer by active doc extension (default c) */
     const char *lang = "c";
-    if (path){
-        const char *dot = strrchr(path, '.');
+    const char *ap = e->path;
+    if (ap){
+        const char *dot = strrchr(ap, '.');
         if (dot){
             if      (!strcasecmp(dot, ".json")) lang = "json";
             else if (!strcasecmp(dot, ".h") || !strcasecmp(dot, ".cxx") ||

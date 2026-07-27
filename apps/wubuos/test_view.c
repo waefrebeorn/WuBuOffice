@@ -170,6 +170,38 @@ int main(void){
         }
     }
 
+    /* multi-doc: Ctrl+T new, Ctrl+Tab cycle, Ctrl+W close */
+    {
+        WuView *mv = wuos_editor_create(NULL);
+        if (!mv){ fprintf(stderr,"[multidoc] create FAILED\n"); bad++; }
+        else {
+            size_t c0 = wuos_editor_doc_count(mv);
+            mv->on_key(mv, WUOS_KEY_NEWDOC, 1);
+            size_t c1 = wuos_editor_doc_count(mv);
+            if (c1 != c0+1){ fprintf(stderr,"[multidoc] new failed (%zu->%zu)\n", c0, c1); bad++; }
+            else {
+                /* type into the new (active) doc */
+                for (const char *p="NEWDOC_MARKER"; *p; p++) mv->on_key(mv, (unsigned char)*p, 1);
+                /* cycle to previous doc (seed) */
+                mv->on_key(mv, WUOS_KEY_DOCPREV, 1);
+                size_t a2 = wuos_editor_doc_active(mv);
+                char *t0 = wuos_editor_text(mv);
+                int has_seed = (strstr(t0, "WuBuPad -- Notepad++") != NULL);
+                if (a2 != 0 || !has_seed){ fprintf(stderr,"[multidoc] cycle fail a=%zu seed=%d\n", a2, has_seed); bad++; }
+                free(t0);
+                /* close the seed doc -> new doc (with marker) remains */
+                mv->on_key(mv, WUOS_KEY_CLOSE, 1);
+                size_t c2 = wuos_editor_doc_count(mv);
+                char *t1 = wuos_editor_text(mv);
+                int has_marker = (strstr(t1, "NEWDOC_MARKER") != NULL);
+                if (c2 != c1-1 || !has_marker){ fprintf(stderr,"[multidoc] close fail c=%zu marker=%d\n", c2, has_marker); bad++; }
+                else fprintf(stderr,"[multidoc] ok (count %zu->%zu, cycle+close)\n", c0, c2);
+                free(t1);
+            }
+            mv->destroy(mv);
+        }
+    }
+
     /* cell view: load a real CSV via wubucell reader */
     {
         char csvp[256]; sprintf(csvp, "/tmp/wuos_cell_%d.csv", (int)getpid());
