@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 static int render_check(WuView *v, const char *name){
     unsigned char *rgba=NULL; int w=0,h=0;
@@ -24,9 +25,9 @@ int main(void){
     /* no-path views */
     struct { const char *name; WuView *(*mk)(const char*); } tbl[] = {
         {"doc", wuos_doc_create},
-        {"cell", (WuView*(*)(const char*))wuos_cell_create},
-        {"slide",(WuView*(*)(const char*))wuos_slide_create},
-        {"ocr",  (WuView*(*)(const char*))wuos_ocr_create},
+        {"cell", wuos_cell_create},
+        {"slide", wuos_slide_create},
+        {"ocr",  wuos_ocr_create},
         {"editor", wuos_editor_create},
         {NULL,NULL}
     };
@@ -64,6 +65,38 @@ int main(void){
              free(saved);
              ev->destroy(ev); }
     else { fprintf(stderr,"[editor(file)] create FAILED\n"); bad++; }
+
+    /* find/replace logic: build a doc, find all 'int', replace-all -> 'INT' */
+    {
+        WuView *fv = wuos_editor_create(NULL);
+        if (!fv){ fprintf(stderr,"[find] create FAILED\n"); bad++; }
+        else {
+            /* type a known text (appended after the sample) */
+            const char *src = "int a; int b; int c;";
+            for (const char *p=src; *p; p++) fv->on_key(fv, (unsigned char)*p, 1);
+            /* open find + set query 'int' + activate via F3 */
+            fv->on_key(fv, WUOS_KEY_FIND, 1);
+            for (const char *p="int"; *p; p++) fv->on_key(fv, (unsigned char)*p, 1);
+            fv->on_key(fv, WUOS_KEY_FINDNEXT, 1);
+            int active=0, total=0;
+            wuos_editor_find_stats(fv, &active, &total);
+            if (!active){ fprintf(stderr,"[find] no match found\n"); bad++; }
+            else if (total < 3){ fprintf(stderr,"[find] total=%d want >=3\n", total); bad++; }
+            /* replace-all: open replace mode, Tab to replace field, set 'INT', Ctrl+R */
+            fv->on_key(fv, WUOS_KEY_REPLACE, 1);
+            fv->on_key(fv, WUOS_KEY_TAB, 1);          /* focus replace field */
+            for (const char *p="INT"; *p; p++) fv->on_key(fv, (unsigned char)*p, 1);
+            fv->on_key(fv, WUOS_KEY_REPLACEALL, 1);
+            char *ft = wuos_editor_text(fv);
+            int cnt = 0; const char *q = ft;
+            while ((q = strstr(q, "INT"))){ cnt++; q++; }
+            if (cnt < 3){ fprintf(stderr,"[find] replace-all INT count=%d want >=3\n", cnt); bad++; }
+            if (strstr(ft, "int ")){ fprintf(stderr,"[find] lowercase 'int ' still present\n"); bad++; }
+            free(ft);
+            fv->destroy(fv);
+            fprintf(stderr,"[find] ok (%d matches, %d replaced)\n", total, cnt);
+        }
+    }
 
     /* cleanup temp files */
     remove(mdp); remove(codep);

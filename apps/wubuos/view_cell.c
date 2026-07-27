@@ -65,7 +65,7 @@ static int render(WuView *v, int w, int h, int scroll,
 
 static void destroy(WuView *v){ CellV *e = v->priv; wubucell_free(e->b); free(e); }
 
-WuView *wuos_cell_create(void){
+WuView *wuos_cell_create(const char *path){
     CellV *e = calloc(1, sizeof *e);
     e->b = wubucell_create();
     int s = wubucell_sheet(e->b, "Sheet1");

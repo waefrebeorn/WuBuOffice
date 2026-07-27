@@ -67,9 +67,9 @@ int main(int argc, char **argv){
     if (!ren){ fprintf(stderr,"renderer: %s\n",SDL_GetError()); SDL_DestroyWindow(win); SDL_Quit(); return 1; }
 
     add_view(wuos_doc_create(file_for_doc));
-    add_view(wuos_cell_create());
-    add_view(wuos_slide_create());
-    add_view(wuos_ocr_create());
+    add_view(wuos_cell_create(NULL));
+    add_view(wuos_slide_create(NULL));
+    add_view(wuos_ocr_create(NULL));
     add_view(wuos_editor_create(file_for_editor));
     if (nviews==0){ fprintf(stderr,"no views\n"); return 1; }
     /* if a specific tab was requested and exists, activate it */
@@ -104,6 +104,10 @@ int main(int argc, char **argv){
                 int code=0;
                 if (k==SDLK_ESCAPE){ running=0; }
                 else if (k==SDLK_s && (mod & KMOD_CTRL)) code=WUOS_KEY_SAVE;
+                else if (k==SDLK_f && (mod & KMOD_CTRL)) code=WUOS_KEY_FIND;
+                else if (k==SDLK_h && (mod & KMOD_CTRL)) code=WUOS_KEY_REPLACE;
+                else if (k==SDLK_r && (mod & KMOD_CTRL)) code=WUOS_KEY_REPLACEALL;
+                else if (k==SDLK_F3) code=(mod & KMOD_SHIFT)? WUOS_KEY_FINDPREV : WUOS_KEY_FINDNEXT;
                 else if (k==SDLK_UP) code=WUOS_KEY_UP;
                 else if (k==SDLK_DOWN) code=WUOS_KEY_DOWN;
                 else if (k==SDLK_LEFT) code=WUOS_KEY_LEFT;

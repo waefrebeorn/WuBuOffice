@@ -72,7 +72,7 @@ static int render(WuView *v, int w, int h, int scroll,
 
 static void destroy(WuView *v){ OcrV *e = v->priv; if(e->pg) ocr_page_free(e->pg); if(e->im) ocr_image_free(e->im); free(e); }
 
-WuView *wuos_ocr_create(void){
+WuView *wuos_ocr_create(const char *path){
     OcrV *e = calloc(1, sizeof *e);
     /* prefer an external page, else synthesize */
     size_t pl=0; uint8_t *pb=read_file("/tmp/ocr_in.png",&pl);
