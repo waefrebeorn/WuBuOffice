@@ -88,6 +88,13 @@ void wubulayout_destroy(wubulayout_doc *L);
 /* Re-run pagination (after model edits). Cheap enough to call on every idle. */
 int wubulayout_rebuild(wubulayout_doc *L);
 
+/* Incremental re-lay (PRF-101): re-lay ONLY from the given block onward.
+ * `block` is a model node that received a checkpoint during the last
+ * (re)build — paragraphs, tables, and object nodes all qualify. Geometry of
+ * everything before it is preserved and the measure callback is NOT called
+ * again for those blocks. Unknown nodes fall back to a full rebuild. */
+int wubulayout_invalidate(wubulayout_doc *L, void *block);
+
 /* ---- queries ---- */
 int   wubulayout_page_count(const wubulayout_doc *L);
 const wubulayout_page_info *wubulayout_page(const wubulayout_doc *L, int page);

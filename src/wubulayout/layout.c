@@ -30,6 +30,18 @@ typedef struct {
     int line_seq;   /* globally-unique line index on this page */
 } LPage;
 
+/* checkpoint taken immediately BEFORE laying a top-level block: everything
+ * needed to truncate the layout back to this point and re-lay from here.
+ * This is what makes wubulayout_invalidate() incremental (PRF-101). */
+typedef struct {
+    void *node;      /* the top-level block */
+    int page;        /* page index the block started on */
+    int pen_y;       /* pen position at block start */
+    int nrun, nobj;  /* run/obj counts of that page at block start */
+    int line_seq;    /* line counter of that page at block start */
+    void *resume;    /* continuation after this chain ends (parent's next sib) */
+} LCheck;
+
 struct wubulayout_doc {
     void *model_doc;
     void *model_root;
@@ -40,6 +52,7 @@ struct wubulayout_doc {
     LPage *pages[LAY_MAX_PAGES];
     int npages;
     int total_runs;
+    LCheck *checks; int nchecks, capchecks;
 };
 
 /* ---- internal helpers ---- */
@@ -277,22 +290,90 @@ wubulayout_doc *wubulayout_create(void *model_doc, void *model_root,
     return L;
 }
 
+/* ---- checkpoints (PRF-101 incremental layout) ---- */
+static int push_check(wubulayout_doc *L, void *node, int pen_y, void *resume){
+    if (L->nchecks >= L->capchecks){
+        int nc = L->capchecks? L->capchecks*2 : 64;
+        LCheck *c = realloc(L->checks, nc*sizeof *c);
+        if (!c) return -1;
+        L->checks=c; L->capchecks=nc;
+    }
+    LPage *p = L->pages[L->npages-1];
+    LCheck *c = &L->checks[L->nchecks++];
+    c->node=node; c->page=L->npages-1; c->pen_y=pen_y; c->resume=resume;
+    c->nrun=p->nrun; c->nobj=p->nobj; c->line_seq=p->line_seq;
+    return 0;
+}
+
+/* Lay a sibling chain of blocks, checkpointing each. Containers at depth 0
+ * are descended one level so PARAGRAPHS get their own checkpoints (the usual
+ * document shape is one SECTION of many paragraphs). `resume` is the
+ * continuation a restarted chain must proceed to after its last sibling —
+ * recorded per checkpoint so wubulayout_invalidate() can resume the walk. */
+static int lay_chain(wubulayout_doc *L, void *start, int *pen_y, void *resume, int depth){
+    for (wubumodel_node *n = (wubumodel_node*)start;
+         n; n = wubumodel_node_next_sibling(n)){
+        wubumodel_kind k = wubumodel_node_kind(n);
+        int is_container = (k!=WUBUMODEL_PARAGRAPH && k!=WUBUMODEL_TABLE &&
+                            k!=WUBUMODEL_SHAPE && k!=WUBUMODEL_CHART && k!=WUBUMODEL_LINK);
+        if (is_container && depth==0 && wubumodel_node_first_child(n)){
+            wubumodel_node *sib = wubumodel_node_next_sibling(n);
+            void *res = sib ? (void*)sib : resume;
+            if (lay_chain(L, wubumodel_node_first_child(n), pen_y, res, 1)!=0) return -1;
+        } else {
+            if (push_check(L, n, *pen_y, resume)!=0) return -1;
+            if (lay_node(L, n, pen_y)!=0) return -1;
+        }
+    }
+    return 0;
+}
+
+static void recount_runs(wubulayout_doc *L){
+    L->total_runs = 0;
+    for (int i=0;i<L->npages;i++) L->total_runs += L->pages[i]->nrun;
+}
+
 int wubulayout_rebuild(wubulayout_doc *L){
     /* free old pages */
     for (int i=0;i<L->npages;i++){
         free(L->pages[i]->run); free(L->pages[i]->obj); free(L->pages[i]);
     }
-    L->npages=0; L->total_runs=0;
+    L->npages=0; L->total_runs=0; L->nchecks=0;
     if (!new_page(L)) return -1;
     void *root = L->model_root ? L->model_root
                  : wubumodel_doc_root((wubumodel_doc*)L->model_doc);
     int pen_y = L->mt;
-    for (wubumodel_node *n = (wubumodel_node*)root;
-         n; n = wubumodel_node_next_sibling(n)){
-        lay_node(L, n, &pen_y);
+    int rc = lay_chain(L, root, &pen_y, NULL, 0);
+    recount_runs(L);
+    return rc;
+}
+
+/* Incremental re-lay (PRF-101): truncate the layout back to the checkpoint of
+ * the given block and re-lay ONLY from there. Blocks before it keep their
+ * geometry and the measure callback is never re-invoked for them. Falls back
+ * to a full rebuild when the node has no checkpoint. */
+int wubulayout_invalidate(wubulayout_doc *L, void *block){
+    int ci = -1;
+    for (int i=0;i<L->nchecks;i++) if (L->checks[i].node==block){ ci=i; break; }
+    if (ci < 0) return wubulayout_rebuild(L);
+    LCheck c = L->checks[ci];
+    /* drop pages after the checkpoint page */
+    for (int i=c.page+1; i<L->npages; i++){
+        free(L->pages[i]->run); free(L->pages[i]->obj); free(L->pages[i]);
     }
-    for (int i=0;i<L->npages;i++) L->total_runs += L->pages[i]->nrun;
-    return 0;
+    L->npages = c.page+1;
+    /* truncate the checkpoint page back to the recorded state */
+    LPage *p = L->pages[c.page];
+    p->nrun = c.nrun; p->nobj = c.nobj; p->line_seq = c.line_seq;
+    /* drop this checkpoint and everything after (re-recorded below) */
+    L->nchecks = ci;
+    int pen_y = c.pen_y;
+    /* re-lay the invalidated block's sibling chain, then continue the walk at
+     * the recorded continuation (e.g. the parent section's next sibling). */
+    int rc = lay_chain(L, block, &pen_y, c.resume, c.resume? 1:0);
+    if (rc==0 && c.resume) rc = lay_chain(L, c.resume, &pen_y, NULL, 0);
+    recount_runs(L);
+    return rc;
 }
 
 void wubulayout_destroy(wubulayout_doc *L){
@@ -300,6 +381,7 @@ void wubulayout_destroy(wubulayout_doc *L){
     for (int i=0;i<L->npages;i++){
         free(L->pages[i]->run); free(L->pages[i]->obj); free(L->pages[i]);
     }
+    free(L->checks);
     free(L);
 }
 

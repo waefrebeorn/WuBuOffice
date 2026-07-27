@@ -8,6 +8,8 @@
 #include "plugin.h"
 #include "settings.h"   /* UI-24/25: zoom + settings persistence */
 #include "shape.h"      /* INT-7: RTL shaping (available to views) */
+#include "toast.h"      /* UI-33: toast queue */
+#include "palette.h"    /* UI-29: command palette */
 
 #include <SDL2/SDL.h>
 
@@ -29,6 +31,8 @@ static float   g_zoom = 1.0f;       /* UI-24: shell-level zoom */
 static int     g_ctx = 0;           /* UI-27: context menu open? */
 static int     g_ctx_item = 0;      /* highlighted item */
 static int     g_ctx_x = 0, g_ctx_y = 0;
+static Toasts  *g_toasts = NULL;    /* UI-33: toast queue */
+static Palette *g_palette = NULL;   /* UI-29: command palette (Ctrl+K) */
 
 /* Plugin manager: loaded once at startup from ~/.wubuos/plugins. */
 static WuOSPluginMgr *g_plugins = NULL;
@@ -119,6 +123,20 @@ int main(int argc, char **argv){
     add_view(wuos_compare_create(argc>2?argv[2]:NULL, argc>3?argv[3]:NULL));
     add_view(wuos_settings_create());   /* UI-25: preferences surface */
     if (nviews==0){ fprintf(stderr,"no views\n"); return 1; }
+
+    /* UI-33 toast queue + UI-29 command palette */
+    g_toasts = toast_create();
+    g_palette = palette_create();
+    /* palette command ids: 1 open-file, 2 new-doc, 3 theme, 4 zoom-in,
+     * 5 zoom-out, 6 zoom-reset, 7 settings, 8 export-epub, 9 a11y-check */
+    palette_add(g_palette, "New Document",   2);
+    palette_add(g_palette, "Toggle Theme",   3);
+    palette_add(g_palette, "Zoom In",        4);
+    palette_add(g_palette, "Zoom Out",       5);
+    palette_add(g_palette, "Zoom Reset",     6);
+    palette_add(g_palette, "Open Settings",  7);
+    palette_add(g_palette, "Export EPUB",    8);
+    palette_add(g_palette, "Accessibility Check", 9);
     /* if a specific tab was requested and exists, activate it */
     if (want_tab || auto_tab){
         const char *t = want_tab? want_tab : auto_tab;
@@ -179,6 +197,42 @@ int main(int argc, char **argv){
                 SDL_Keycode k = e.key.keysym.sym;
                 SDL_Keymod mod = SDL_GetModState();
                 int code=0;
+                /* ---- UI-29: command palette captures input while open ---- */
+                if (palette_is_open(g_palette)){
+                    if (k==SDLK_ESCAPE) palette_close(g_palette);
+                    else if (k==SDLK_BACKSPACE) palette_backspace(g_palette);
+                    else if (k==SDLK_DOWN) palette_next(g_palette);
+                    else if (k==SDLK_UP) palette_prev(g_palette);
+                    else if (k==SDLK_RETURN||k==SDLK_KP_ENTER){
+                        int cmd = palette_confirm(g_palette);
+                        switch (cmd){
+                        case 2: { WuView *nv = wuos_doc_create(NULL);
+                                  if (nv && nviews<8){ add_view(nv); active=nviews-1; scroll=0; }
+                                  toast_push(g_toasts, "New document", 90); } break;
+                        case 3: { WubuSettings *sh=wubusettings_shared();
+                                  if (sh) wubusettings_set_dark(sh, !wubusettings_dark(sh));
+                                  toast_push(g_toasts, "Theme toggled", 90); } break;
+                        case 4: g_zoom += 0.1f; if (g_zoom>3.0f) g_zoom=3.0f;
+                                toast_push(g_toasts, "Zoom in", 60); break;
+                        case 5: g_zoom -= 0.1f; if (g_zoom<0.5f) g_zoom=0.5f;
+                                toast_push(g_toasts, "Zoom out", 60); break;
+                        case 6: g_zoom = 1.0f; toast_push(g_toasts, "Zoom reset", 60); break;
+                        case 7: for (int i=0;i<nviews;i++) if (!strcmp(views[i]->name,"Settings")){ active=i; scroll=0; break; }
+                                break;
+                        case 8: if (views[active]->on_key) views[active]->on_key(views[active], WUOS_KEY_EXPORT_EPUB, 1);
+                                toast_push(g_toasts, "EPUB export requested", 120); break;
+                        case 9: if (views[active]->on_key) views[active]->on_key(views[active], WUOS_KEY_A11Y_CHECK, 1);
+                                toast_push(g_toasts, "Accessibility check run", 120); break;
+                        default: break;
+                        }
+                    }
+                    else if (k>=32 && k<128 && !(mod & KMOD_CTRL)) palette_input(g_palette, (char)k);
+                    continue;  /* palette swallows the event */
+                }
+                if (k==SDLK_k && (mod & KMOD_CTRL) && !(mod & KMOD_SHIFT)){
+                    palette_open(g_palette);   /* UI-29: Ctrl+K */
+                    continue;
+                }
                 if (k==SDLK_ESCAPE){ running=0; }
                 else if (k==SDLK_s && (mod & KMOD_CTRL)) code=WUOS_KEY_SAVE;
                 else if (k==SDLK_f && (mod & KMOD_CTRL)) code=WUOS_KEY_FIND;
@@ -319,12 +373,49 @@ int main(int argc, char **argv){
             }
         }
 
+        /* UI-33: toast overlay (bottom-center) + tick */
+        toast_tick(g_toasts);
+        const char *tt = toast_text(g_toasts);
+        if (tt){
+            int tw = (int)strlen(tt)*8 + 24;
+            int tx = (WIN_W - tw)/2, ty = WIN_H - STATUS_H - 42;
+            SDL_SetRenderDrawColor(ren, 30,33,40,235);
+            SDL_RenderFillRect(ren,&(SDL_Rect){tx,ty,tw,30});
+            SDL_SetRenderDrawColor(ren, 59,130,246,255);
+            SDL_RenderDrawRect(ren,&(SDL_Rect){tx,ty,tw,30});
+            sdl_text(ren, tx+12, ty+8, 220,223,230, tt);
+        }
+
+        /* UI-29: command palette overlay (top-center) */
+        if (palette_is_open(g_palette)){
+            int pw = 420, px = (WIN_W-pw)/2, py = TAB_H + 24;
+            int rows = palette_result_count(g_palette); if (rows>8) rows=8;
+            int ph = 40 + rows*26 + 8;
+            SDL_SetRenderDrawColor(ren, 40,44,52,245);
+            SDL_RenderFillRect(ren,&(SDL_Rect){px,py,pw,ph});
+            SDL_SetRenderDrawColor(ren, 90,95,105,255);
+            SDL_RenderDrawRect(ren,&(SDL_Rect){px,py,pw,ph});
+            char qline[96];
+            snprintf(qline,sizeof qline,"> %s", palette_query(g_palette));
+            sdl_text(ren, px+12, py+10, 240,243,250, qline);
+            for (int i=0;i<rows;i++){
+                if (i==palette_selected(g_palette)){
+                    SDL_SetRenderDrawColor(ren,59,130,246,255);
+                    SDL_RenderFillRect(ren,&(SDL_Rect){px+4,py+40+i*26,pw-8,24});
+                }
+                sdl_text(ren, px+14, py+44+i*26, 220,223,230,
+                         palette_result_label(g_palette, i));
+            }
+        }
+
         SDL_RenderPresent(ren);
         SDL_Delay(16);
     }
 
     for (int i=0;i<nviews;i++) views[i]->destroy(views[i]);
     free(g_plugin_msg);
+    toast_destroy(g_toasts);
+    palette_destroy(g_palette);
     wuos_plugins_free(g_plugins);
     wuos_font_quit();
     SDL_DestroyRenderer(ren);

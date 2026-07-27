@@ -12,6 +12,8 @@ add_executable(wubuos
     wuos_font.c
     wuos_file.c
     plugin.c
+    toast.c
+    palette.c
     view_doc.c
     view_cell.c
     view_slide.c
@@ -64,7 +66,7 @@ target_compile_options(wubuos PRIVATE -Wall -Wextra -Wpedantic)
 
 # Headless smoke test: create + render every view (real engines, no GUI).
 # Verifies each WuView adapter renders without crashing and returns a buffer.
-add_executable(test_view test_view.c wuos_font.c wuos_file.c plugin.c view_doc.c view_cell.c
+add_executable(test_view test_view.c wuos_font.c wuos_file.c plugin.c toast.c palette.c view_doc.c view_cell.c
     view_slide.c view_ocr.c view_editor.c view_compare.c view_settings.c)
 target_include_directories(test_view PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
@@ -100,6 +102,13 @@ target_link_libraries(test_view PRIVATE
 target_compile_options(test_view PRIVATE -Wall -Wextra -Wpedantic)
 add_test(NAME view COMMAND test_view)
 set_tests_properties(view PROPERTIES LABELS "view;apps")
+
+# Headless test for the shell's pure-logic UI modules (toast UI-33, palette UI-29).
+add_executable(test_shell_ui test_shell_ui.c toast.c palette.c)
+target_include_directories(test_shell_ui PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_options(test_shell_ui PRIVATE -Wall -Wextra -Wpedantic)
+add_test(NAME shell_ui COMMAND test_shell_ui)
+set_tests_properties(shell_ui PROPERTIES LABELS "view;apps")
 
 # Reference plugin: builds to a loadable .so demonstrating the C ABI.
 add_library(sample_plugin MODULE plugins/sample/sample_plugin.c)

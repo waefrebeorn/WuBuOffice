@@ -48,11 +48,11 @@
 25. **P1** No preferences/settings dialog. Add a settings surface (theme, language, autosave interval). — **CLOSED**: Settings tab (F10) edits shared wubusettings; persists to ~/.wubuos/settings.json.
 27. **P1** No context menu (right-click) on text/objects. — **CLOSED**: right-click opens a context menu (Open File / New Document / Toggle Theme).
 28. **P1** No drag-and-drop file open. — **CLOSED**: SDL dropfile opens the dropped file in Editor (text) or Document (other) tab.
-29. **P2** No command palette (Ctrl+K) for power users. — OPEN (palette).
+29. **P2** No command palette (Ctrl+K) for power users. — **CLOSED**: `palette.c` module (ranked fuzzy filter: prefix > word-start > subsequence), Ctrl+K overlay in the shell; Enter dispatches New Doc/Theme/Zoom/Settings/EPUB/a11y. Headless-tested (test_shell_ui).
 30. **P2** No splash screen / first-run onboarding. — OPEN (polish).
 31. **P2** No empty-state illustration for new docs. — OPEN (polish).
 32. **P2** No dark/light theme toggle in-app (theme engine exists in WuBuPad; expose). — **CLOSED**: Ctrl+` theme toggle.
-33. **P2** No toast/notification system for background ops (OCR, export done). — OPEN (toast).
+33. **P2** No toast/notification system for background ops (OCR, export done). — **CLOSED**: `toast.c` FIFO queue w/ per-message TTL, drawn bottom-center by the shell; palette commands and background ops push into it. Headless-tested (test_shell_ui).
 34. **P2** No mini-map for long documents. — OPEN (minimap).
 35. **P2** No breadcrumb / location bar. — OPEN (breadcrumb).
 36. **P1** No keyboard-shortcut discoverability (cheat sheet / dynamic menu hints).
@@ -132,9 +132,9 @@
 100. **P2** No plugin/extension API (sandboxed; `wubuscript` is the seed).
 
 ## PRF — Performance / architecture
-101. *(bonus)* No incremental layout — full relayout per edit will not scale to large docs. Need dirty-region layout.
+101. *(bonus)* No incremental layout — full relayout per edit will not scale to large docs. Need dirty-region layout. — **CLOSED**: `wubulayout_invalidate(block)` — per-block checkpoints (page/pen/run/line state + resume continuation); re-lays ONLY from the dirty block onward, verified by measure-call counting (tail re-lay ≪ half of full cost) with geometry identical to a full rebuild.
 102. *(bonus)* No GPU text rendering path (WuBuPad uses SDL2/Freetype CPU blit).
-103. *(bonus)* No document virtualization (render only visible pages).
+103. *(bonus)* No document virtualization (render only visible pages). — **CLOSED**: the Document view paints ONLY the page selected by scroll (scroll→page index into wubulayout); off-screen pages cost zero draw calls, and with PRF-101 their geometry isn't even recomputed on tail edits.
 104. *(bonus)* No background autosave off main thread (POSIX worker) to avoid jank.
 105. *(bonus)* No memory-bounded image cache.
 

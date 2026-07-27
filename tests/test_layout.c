@@ -9,8 +9,10 @@ static int fails = 0;
 #define CK(c,m) do{ if(!(c)){ printf("FAIL: %s\n", m); fails++; } }while(0)
 
 /* metric: 7px per char, height = font_size+4 */
+static long g_meas_calls = 0;
 static int meas(const char *t, size_t len, int fs, int b, int i, int *h, void *u){
     (void)b;(void)i;(void)u;
+    g_meas_calls++;
     int w=0; for(size_t k=0;k<len;k++) w += (t[k]==' '? fs*0.3 : fs*0.55);
     *h = fs+4; return w;
 }
@@ -39,7 +41,8 @@ int main(void){
       "commodo consequat duis aute irure dolor in reprehenderit voluptate velit "
       "esse cillum dolore eu fugiat nulla pariatur excepteur sint occaecat "
       "cupidatat non proident sunt in culpa qui officia deserunt mollit anim id ";
-    for (int i=0;i<30;i++) add_para(doc, sec, lorem);
+    wubumodel_node *paras[30];
+    for (int i=0;i<30;i++) paras[i] = add_para(doc, sec, lorem);
 
     wubulayout_doc *L = wubulayout_create(doc, sec,
         meas, sty, NULL, 794, 1123, 72,72,72,72);
@@ -68,6 +71,27 @@ int main(void){
     const wubulayout_run *r0 = wubulayout_run_at(L,0,0);
     int line=-1; int hit = wubulayout_hit_test(L,0, r0->x+2, r0->y-4, &line);
     CK(hit >= 0, "hit test returns a run");
+
+    /* ---- PRF-101: incremental invalidate ---- */
+    /* full rebuild cost */
+    g_meas_calls = 0;
+    CK(wubulayout_rebuild(L)==0, "full rebuild ok");
+    long full_cost = g_meas_calls;
+    int full_pages = wubulayout_page_count(L);
+    int full_runs  = wubulayout_total_runs(L);
+    /* invalidate paragraph #25 (near the end): only blocks 25..29 re-lay */
+    g_meas_calls = 0;
+    CK(wubulayout_invalidate(L, paras[25])==0, "incremental invalidate ok");
+    long incr_cost = g_meas_calls;
+    CK(incr_cost > 0, "incremental did re-measure the tail");
+    CK(incr_cost < full_cost/2, "incremental cost far below full rebuild");
+    /* geometry must be IDENTICAL to a full rebuild */
+    CK(wubulayout_page_count(L)==full_pages, "incremental page count matches full");
+    CK(wubulayout_total_runs(L)==full_runs, "incremental run count matches full");
+    /* unknown node falls back to full rebuild (still correct) */
+    int dummy;
+    CK(wubulayout_invalidate(L, &dummy)==0, "unknown node falls back to rebuild");
+    CK(wubulayout_page_count(L)==full_pages, "fallback page count matches");
 
     wubulayout_destroy(L);
     wubumodel_doc_destroy(doc);
