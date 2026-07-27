@@ -34,7 +34,17 @@ static int meas(const char *t, size_t len, int fs, int b, int i, int *h, void *u
     int w=0; for(size_t k=0;k<len;k++) w += (t[k]==' '?4:7); if (h) *h=12+4; return w;
 }
 static int sty(void *u, void *run, int *fs,int *b,int *it,wubulayout_dir *d){
-    (void)u;(void)run;(void)b;(void)it;(void)d; *fs=12; *b=0; *it=0; *d=WUBULAYOUT_LTR; return 1;
+    (void)u; *fs=12; *b=0; *it=0; *d=WUBULAYOUT_LTR;
+    /* honor the same style props the real Document view callback does */
+    wubumodel_style *st = wubumodel_node_style((wubumodel_node*)run);
+    if (!st) st = wubumodel_node_style(wubumodel_node_parent((wubumodel_node*)run));
+    if (st){
+        const char *v;
+        if ((v=wubumodel_style_get_prop(st,"size"))) *fs = atoi(v);
+        if ((v=wubumodel_style_get_prop(st,"bold")) && (v[0]=='1'||v[0]=='t')) *b=1;
+        if ((v=wubumodel_style_get_prop(st,"italic")) && (v[0]=='1'||v[0]=='t')) *it=1;
+    }
+    return 1;
 }
 
 int main(void){
@@ -311,6 +321,28 @@ int main(void){
                     if (wubulayout_run_at(Lf,pg,i)->user==(void*)f) fr++;
             CK(fr>=1, "field laid out");
             wubulayout_destroy(Lf); wubumodel_doc_destroy(dd);
+        }
+        /* DOC-58: named-style presets apply heading/size props end-to-end. */
+        {
+            wubumodel_doc *dd = wubumodel_doc_create();
+            wubumodel_node *ss = wubumodel_node_create(dd, WUBUMODEL_SECTION);
+            wubumodel_node *p = wubumodel_node_create(dd, WUBUMODEL_PARAGRAPH);
+            wubumodel_node *r = wubumodel_node_create(dd, WUBUMODEL_RUN);
+            wubumodel_run_set_text(r,"Title"); wubumodel_node_append(dd,p,r);
+            wubumodel_node_append(dd,ss,p);
+            CK(wubumodel_node_apply_named_style(p,"Heading1")==0, "apply Heading1");
+            wubumodel_style *st = wubumodel_node_style(p);
+            CK(st && strcmp(wubumodel_style_get_prop(st,"heading"),"1")==0, "heading=1 prop");
+            CK(st && strcmp(wubumodel_style_get_prop(st,"size"),"26")==0, "size=26 prop");
+            /* layout must report the larger font size via the style callback */
+            wubulayout_doc *Lst = wubulayout_create(dd, ss, meas, sty, NULL, 400, 400, 20,20,20,20);
+            int big=0; for (int pg=0;pg<wubulayout_page_count(Lst);pg++)
+                for (int i=0;i<wubulayout_run_count(Lst,pg);i++){
+                    const wubulayout_run *R = wubulayout_run_at(Lst,pg,i);
+                    if (R && R->user==(void*)r && R->font_size>=26) big++;
+                }
+            CK(big>=1, "heading font size reflected in layout");
+            wubulayout_destroy(Lst); wubumodel_doc_destroy(dd);
         }
         wubumodel_doc_destroy(d);
     }

@@ -234,6 +234,39 @@ int wubumodel_node_set_style(wubumodel_node *n, wubumodel_style *s) {
     if (s) s->refcount++;
     return 0;
 }
+/* DOC-58: named style presets. Returns a freshly-allocated style the caller
+ * attaches via wubumodel_node_set_style (it takes ownership of the refcount).
+ * Recognized names: Heading1/2/3, Body, Quote, Code. Unknown -> Body. */
+wubumodel_style *wubumodel_style_named(const char *name){
+    wubumodel_style *s = wubumodel_style_create();
+    if (!s) return NULL;
+    if (!name || !*name) name = "Body";
+    if (strcmp(name,"Heading1")==0 || strcmp(name,"H1")==0){
+        wubumodel_style_set_prop(s,"heading","1");
+        wubumodel_style_set_prop(s,"size","26"); wubumodel_style_set_prop(s,"bold","1");
+    } else if (strcmp(name,"Heading2")==0 || strcmp(name,"H2")==0){
+        wubumodel_style_set_prop(s,"heading","2");
+        wubumodel_style_set_prop(s,"size","20"); wubumodel_style_set_prop(s,"bold","1");
+    } else if (strcmp(name,"Heading3")==0 || strcmp(name,"H3")==0){
+        wubumodel_style_set_prop(s,"heading","3");
+        wubumodel_style_set_prop(s,"size","16"); wubumodel_style_set_prop(s,"bold","1");
+    } else if (strcmp(name,"Quote")==0){
+        wubumodel_style_set_prop(s,"italic","1"); wubumodel_style_set_prop(s,"size","13");
+    } else if (strcmp(name,"Code")==0){
+        wubumodel_style_set_prop(s,"size","12"); wubumodel_style_set_prop(s,"mono","1");
+    } else { /* Body */
+        wubumodel_style_set_prop(s,"size","12");
+    }
+    return s;
+}
+int wubumodel_node_apply_named_style(wubumodel_node *n, const char *name){
+    if (!n) return -1;
+    wubumodel_style *s = wubumodel_style_named(name);
+    if (!s) return -1;
+    wubumodel_node_set_style(n, s);   /* node takes a ref (refcount -> 2) */
+    wubumodel_style_destroy(s);       /* drop our caller ref (refcount -> 1, node-owned) */
+    return 0;
+}
 
 int wubumodel_cmd_set_text(wubumodel_doc *doc, wubumodel_node *run,
                            const char *new_text) {

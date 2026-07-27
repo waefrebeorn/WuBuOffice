@@ -139,6 +139,12 @@ int main(int argc, char **argv){
     palette_add(g_palette, "Export EPUB",    8);
     palette_add(g_palette, "Accessibility Check", 9);
     palette_add(g_palette, "High Contrast", 10);
+ palette_add(g_palette, "Style: Heading 1", 20);
+ palette_add(g_palette, "Style: Heading 2", 21);
+ palette_add(g_palette, "Style: Heading 3", 22);
+ palette_add(g_palette, "Style: Body",      23);
+ palette_add(g_palette, "Style: Quote",     24);
+ palette_add(g_palette, "Style: Code",      25);
     /* if a specific tab was requested and exists, activate it */
     if (want_tab || auto_tab){
         const char *t = want_tab? want_tab : auto_tab;
@@ -233,6 +239,18 @@ int main(int argc, char **argv){
                         case 10: { WubuSettings *sh=wubusettings_shared();
                                   if (sh) wubusettings_set_high_contrast(sh, !wubusettings_high_contrast(sh));
                                   toast_push(g_toasts, "High contrast toggled", 90); } break;
+                        case 20: if (views[active]->on_key) views[active]->on_key(views[active], WUOS_KEY_STYLE_H1, 1);
+                                 toast_push(g_toasts, "Style: Heading 1", 90); break;
+                        case 21: if (views[active]->on_key) views[active]->on_key(views[active], WUOS_KEY_STYLE_H2, 1);
+                                 toast_push(g_toasts, "Style: Heading 2", 90); break;
+                        case 22: if (views[active]->on_key) views[active]->on_key(views[active], WUOS_KEY_STYLE_H3, 1);
+                                 toast_push(g_toasts, "Style: Heading 3", 90); break;
+                        case 23: if (views[active]->on_key) views[active]->on_key(views[active], WUOS_KEY_STYLE_BODY, 1);
+                                 toast_push(g_toasts, "Style: Body", 90); break;
+                        case 24: if (views[active]->on_key) views[active]->on_key(views[active], WUOS_KEY_STYLE_QUOTE, 1);
+                                 toast_push(g_toasts, "Style: Quote", 90); break;
+                        case 25: if (views[active]->on_key) views[active]->on_key(views[active], WUOS_KEY_STYLE_CODE, 1);
+                                 toast_push(g_toasts, "Style: Code", 90); break;
                         default: break;
                         }
                     }
@@ -280,6 +298,11 @@ int main(int argc, char **argv){
                 else if (k==SDLK_c && (mod & KMOD_CTRL) && (mod & KMOD_SHIFT)) code=WUOS_KEY_INSERT_COMMENT; /* DOC-63 */
                 else if (k==SDLK_t && (mod & KMOD_CTRL) && (mod & KMOD_SHIFT) && (mod & KMOD_ALT)) code=WUOS_KEY_INSERT_TRACKCHANGE; /* DOC-64 */
                 else if (k==SDLK_d && (mod & KMOD_CTRL) && (mod & KMOD_SHIFT)) code=WUOS_KEY_INSERT_FIELD; /* DOC-65 */
+                else if (k==SDLK_1 && (mod & KMOD_CTRL) && (mod & KMOD_ALT)) code=WUOS_KEY_STYLE_H1; /* DOC-58 */
+                else if (k==SDLK_2 && (mod & KMOD_CTRL) && (mod & KMOD_ALT)) code=WUOS_KEY_STYLE_H2; /* DOC-58 */
+                else if (k==SDLK_3 && (mod & KMOD_CTRL) && (mod & KMOD_ALT)) code=WUOS_KEY_STYLE_H3; /* DOC-58 */
+                else if (k==SDLK_UP && (mod & KMOD_CTRL) && (mod & KMOD_SHIFT)) code=WUOS_KEY_PARA_PREV; /* DOC-58 */
+                else if (k==SDLK_DOWN && (mod & KMOD_CTRL) && (mod & KMOD_SHIFT)) code=WUOS_KEY_PARA_NEXT; /* DOC-58 */
                 else if (k==SDLK_F1) code=WUOS_KEY_CHEAT;   /* UI-36 */
                 else if (k>=SDLK_1 && k<=SDLK_6 && (mod & KMOD_CTRL))
                     code = WUOS_KEY_TOC1 + (k - SDLK_1);   /* DOC-54 jump */
@@ -465,10 +488,13 @@ int main(int argc, char **argv){
                 "Ctrl+Shift+C comment (Document)",
                 "Ctrl+Shift+Alt+T track-change (Document)",
                 "Ctrl+Shift+D field (Document)",
+                "Ctrl+Alt+1/2/3 Heading 1/2/3 style (Document)",
+                "Ctrl+Shift+Up/Down move style target para",
+                "Ctrl+K then 'Style:' pick a preset",
                 "Right-click context menu",
                 "Drag & drop a file to open"
             };
-            for (int i=0;i<23;i++)
+            for (int i=0;i<26;i++)
                 sdl_text(ren, cx+14, cy+40+i*22, 200,203,210, keys[i]);
         }
         SDL_Delay(16);

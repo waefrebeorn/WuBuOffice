@@ -42,7 +42,10 @@ static int doc_layout_style(void *user, void *run, int *fs, int *bold, int *ital
                             wubulayout_dir *dir){
     (void)user;
     wubumodel_node *n = (wubumodel_node*)run;
+    /* DOC-58: a paragraph-level style must inherit to its runs. If the run
+     * itself has no style, fall back to the parent (paragraph) style. */
     wubumodel_style *st = wubumodel_node_style(n);
+    if (!st && n) st = wubumodel_node_style(wubumodel_node_parent(n));
     *fs = 12; *bold=0; *italic=0; *dir=WUBULAYOUT_LTR;
     if (st){
         const char *v;
@@ -68,6 +71,8 @@ typedef struct { Wurender *r; wubumodel_doc *doc; char *path;
                  int toc_dirty;       /* TOC needs rebuild */
                  Toc *toc;            /* DOC-54 side pane */
                  int jump_page;        /* pending TOC jump (set by on_key) */
+                 /* DOC-58: current paragraph index for style application */
+                 int cur_para;
                  /* DOC-60: recorded link boxes (for click hit-testing) */
                  struct { int x, y, w, h; const char *target; } linkbox[32];
                  int nlink;
@@ -292,6 +297,43 @@ static void doc_insert_field(DocV *e){
     wubumodel_node_set_text(f, "2026-07-27");
     wubumodel_node_append(e->doc, sec, f);
     e->toc_dirty = 1;
+}
+/* DOC-58: return the Nth top-level paragraph in the document body. */
+static wubumodel_node *doc_nth_paragraph(DocV *e, int idx){
+    if (!e->doc) return NULL;
+    wubumodel_node *sec = wubumodel_node_first_child(wubumodel_doc_root(e->doc));
+    if (!sec) return NULL;
+    int i = 0;
+    for (wubumodel_node *n = wubumodel_node_first_child(sec); n;
+         n = wubumodel_node_next_sibling(n)){
+        if (wubumodel_node_kind(n) == WUBUMODEL_PARAGRAPH){
+            if (i == idx) return n;
+            i++;
+        }
+    }
+    return NULL;
+}
+/* DOC-58: apply a named style preset to the current paragraph. */
+static void doc_apply_named_style(DocV *e, const char *name){
+    if (!e->doc) return;
+    wubumodel_node *p = doc_nth_paragraph(e, e->cur_para);
+    if (!p) return;
+    wubumodel_node_apply_named_style(p, name);
+    e->toc_dirty = 1;
+}
+/* DOC-58: move the current-paragraph cursor (for the style picker target). */
+static void doc_move_para(DocV *e, int dx){
+    if (!e->doc) return;
+    int n = 0;
+    wubumodel_node *sec = wubumodel_node_first_child(wubumodel_doc_root(e->doc));
+    if (!sec) return;
+    for (wubumodel_node *m = wubumodel_node_first_child(sec); m;
+         m = wubumodel_node_next_sibling(m))
+        if (wubumodel_node_kind(m) == WUBUMODEL_PARAGRAPH) n++;
+    if (n == 0) return;
+    e->cur_para += dx;
+    if (e->cur_para < 0) e->cur_para = 0;
+    if (e->cur_para >= n) e->cur_para = n - 1;
 }
 
 static int render(WuView *v, int w, int h, int scroll,
@@ -591,6 +633,14 @@ static void on_key(WuView *v, int key, int down){
     if (key==WUOS_KEY_INSERT_COMMENT){ doc_insert_comment(e); return; }
     if (key==WUOS_KEY_INSERT_TRACKCHANGE){ doc_insert_trackchange(e); return; }
     if (key==WUOS_KEY_INSERT_FIELD){ doc_insert_field(e); return; }
+    if (key==WUOS_KEY_STYLE_H1){ doc_apply_named_style(e, "Heading1"); return; }
+    if (key==WUOS_KEY_STYLE_H2){ doc_apply_named_style(e, "Heading2"); return; }
+    if (key==WUOS_KEY_STYLE_H3){ doc_apply_named_style(e, "Heading3"); return; }
+    if (key==WUOS_KEY_STYLE_BODY){ doc_apply_named_style(e, "Body"); return; }
+    if (key==WUOS_KEY_STYLE_QUOTE){ doc_apply_named_style(e, "Quote"); return; }
+    if (key==WUOS_KEY_STYLE_CODE){ doc_apply_named_style(e, "Code"); return; }
+    if (key==WUOS_KEY_PARA_PREV){ doc_move_para(e, -1); return; }
+    if (key==WUOS_KEY_PARA_NEXT){ doc_move_para(e, +1); return; }
     /* DOC-54: jump to a TOC entry with Ctrl+[1..6] */
     if (key>=WUOS_KEY_TOC1 && key<=WUOS_KEY_TOC6){
         int idx = key - WUOS_KEY_TOC1;
