@@ -148,6 +148,28 @@ int main(void){
         }
     }
 
+    /* dark theme: Ctrl+` toggles; dark render has dark background pixels */
+    {
+        WuView *tv = wuos_editor_create(NULL);
+        if (!tv){ fprintf(stderr,"[theme] create FAILED\n"); bad++; }
+        else {
+            if (wuos_editor_dark(tv) != 0){ fprintf(stderr,"[theme] default not light\n"); bad++; }
+            tv->on_key(tv, WUOS_KEY_THEME, 1);
+            if (wuos_editor_dark(tv) != 1){ fprintf(stderr,"[theme] toggle failed\n"); bad++; }
+            unsigned char *rgba=NULL; int w=0,h=0;
+            int rc = tv->render(tv, 960, 664, 0, &rgba, &w, &h);
+            if (rc!=0 || !rgba){ fprintf(stderr,"[theme] render FAILED\n"); bad++; }
+            else {
+                /* top-left pixel should be dark (~30,33,40) */
+                int dr=(int)rgba[0], dg=(int)rgba[1], db=(int)rgba[2];
+                if (!(dr<80 && dg<80 && db<80)){ fprintf(stderr,"[theme] bg not dark (%d,%d,%d)\n",dr,dg,db); bad++; }
+                else fprintf(stderr,"[theme] ok (dark bg %d,%d,%d)\n", dr,dg,db);
+            }
+            free(rgba);
+            tv->destroy(tv);
+        }
+    }
+
     /* cell view: load a real CSV via wubucell reader */
     {
         char csvp[256]; sprintf(csvp, "/tmp/wuos_cell_%d.csv", (int)getpid());

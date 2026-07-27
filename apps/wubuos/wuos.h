@@ -44,7 +44,7 @@ enum { WUOS_KEY_UP=2000, WUOS_KEY_DOWN, WUOS_KEY_LEFT, WUOS_KEY_RIGHT,
        WUOS_KEY_TAB, WUOS_KEY_PGUP, WUOS_KEY_PGDN, WUOS_KEY_DEL, WUOS_KEY_ESC,
        WUOS_KEY_SAVE, WUOS_KEY_OPEN, WUOS_KEY_FIND, WUOS_KEY_REPLACE,
        WUOS_KEY_FINDNEXT, WUOS_KEY_FINDPREV, WUOS_KEY_REPLACEALL, WUOS_KEY_GOTO,
-       WUOS_KEY_EOL };
+       WUOS_KEY_EOL, WUOS_KEY_THEME };
 
 /* ---- view factories ----
  * `path` is an optional file to load (NULL = use the bundled sample). */
@@ -57,6 +57,8 @@ int wuos_editor_find_stats(WuView *v, int *active, int *total);
 char *wuos_editor_text(WuView *v);
 /* Test accessor: current caret byte offset (for go-to-line assertions). */
 size_t wuos_editor_cursor(WuView *v);
+/* Test accessor: current dark-theme state (for theme-toggle assertion). */
+int wuos_editor_dark(WuView *v);
 WuView *wuos_cell_create(const char *path);         /* wubucell grid */
 WuView *wuos_ocr_create(const char *path);          /* wubuocr page */
 WuView *wuos_slide_create(const char *path);        /* simple slide */

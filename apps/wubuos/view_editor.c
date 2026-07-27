@@ -54,9 +54,11 @@ typedef struct {
     /* ---- EOL + encoding (Notepad++ parity) ---- */
     int   eol_crlf;        /* 0 = LF, 1 = CRLF */
     const char *enc_label; /* detected encoding label, or NULL */
+    int   dark;            /* 0 = light, 1 = dark theme */
 } Editor;
 
 /* Notepad++-style token palette (RGB) */
+static unsigned char g_def_r=36, g_def_g=41, g_def_b=47;  /* theme-aware default */
 static void tok_color(LexTok k, unsigned char *r, unsigned char *g, unsigned char *b){
     switch (k){
         case TK_KEYWORD:  *r=86;  *g=156; *b=214; break;   /* blue */
@@ -68,7 +70,7 @@ static void tok_color(LexTok k, unsigned char *r, unsigned char *g, unsigned cha
         case TK_PREPROC:  *r=215; *g=186; *b=125; break;   /* tan */
         case TK_OPERATOR:
         case TK_PUNCT:    *r=120; *g=120; *b=130; break;   /* slate */
-        default:          *r=36;  *g=41;  *b=47;  break;   /* near-black */
+        default:          *r=g_def_r; *g=g_def_g; *b=g_def_b; break;   /* theme default */
     }
 }
 
@@ -252,13 +254,27 @@ static int render(WuView *v, int w, int h, int scroll,
     int H = h;
     unsigned char *fb = malloc((size_t)w*H*4);
     if (!fb) return -1;
-    for (int i=0;i<w*H;i++){ fb[i*4]=255; fb[i*4+1]=255; fb[i*4+2]=255; fb[i*4+3]=255; }
+    /* theme: dark mode flips background/text/gutter */
+    unsigned char bg_r=255,bg_g=255,bg_b=255;
+    unsigned char gut_r=238,gut_g=240,gut_b=244;
+    unsigned char sepr=210,sepg=214,sepb=220;
+    unsigned char def_r=36,def_g=41,def_b=47;        /* default token text */
+    unsigned char num_r=120,num_g=124,num_b=130;     /* line numbers */
+    if (e->dark){
+        bg_r=30;bg_g=33;bg_b=40;
+        gut_r=40;gut_g=43;gut_b=50;
+        sepr=64;sepg=68;sepb=76;
+        def_r=200;def_g=203;def_b=210;
+        num_r=120;num_g=124;num_b=132;
+    }
+    g_def_r = def_r; g_def_g = def_g; g_def_b = def_b;
+    for (int i=0;i<w*H;i++){ fb[i*4]=bg_r; fb[i*4+1]=bg_g; fb[i*4+2]=bg_b; fb[i*4+3]=255; }
     e->top = 0;
 
     /* gutter */
     int gutter = 52;
-    for (int y=0;y<H;y++) for (int x=0;x<gutter;x++){ size_t i=((size_t)y*w+x)*4; fb[i]=238;fb[i+1]=240;fb[i+2]=244; }
-    for (int y=0;y<H;y++){ size_t i=((size_t)y*(w)+gutter)*4; fb[i]=210;fb[i+1]=214;fb[i+2]=220; }
+    for (int y=0;y<H;y++) for (int x=0;x<gutter;x++){ size_t i=((size_t)y*w+x)*4; fb[i]=gut_r;fb[i+1]=gut_g;fb[i+2]=gut_b; }
+    for (int y=0;y<H;y++){ size_t i=((size_t)y*(w)+gutter)*4; fb[i]=sepr;fb[i+1]=sepg;fb[i+2]=sepb; }
 
     char *text = doc_text(e->doc);
     size_t tlen = text? strlen(text):0;
@@ -273,7 +289,7 @@ static int render(WuView *v, int w, int h, int scroll,
     LexSpan spans[256];
     while (y < H - lh){
         char num[16]; snprintf(num,sizeof num,"%zu",line+1);
-        wuos_font_draw(num, 6, y+fh, 0, 120,124,130, fb, w, H);
+        wuos_font_draw(num, 6, y+fh, 0, num_r,num_g,num_b, fb, w, H);
 
         size_t le = pos;
         while (pos < tlen && text[pos] != '\n'){ pos++; }
@@ -495,6 +511,7 @@ static void on_key(WuView *v, int key, int down){
         case WUOS_KEY_REPLACE: find_open(v, 2); return;
         case WUOS_KEY_GOTO:    e->goto_mode = 1; e->goto_buf[0]=0; return;
         case WUOS_KEY_EOL:     convert_eol(e, e->eol_crlf? 0 : 1); return;
+        case WUOS_KEY_THEME:  e->dark ^= 1; return;
         case WUOS_KEY_BACKSPACE:
             if (cur>0) doc_delete(e->doc, cur-1, 1);
             break;
@@ -597,6 +614,13 @@ size_t wuos_editor_cursor(WuView *v){
     Editor *e = v ? v->priv : NULL;
     if (!e) return 0;
     return doc_cursor(e->doc);
+}
+
+/* Test accessor: current dark-theme state (for theme-toggle assertion). */
+int wuos_editor_dark(WuView *v){
+    Editor *e = v ? v->priv : NULL;
+    if (!e) return 0;
+    return e->dark;
 }
 
 WuView *wuos_editor_create(const char *path){
