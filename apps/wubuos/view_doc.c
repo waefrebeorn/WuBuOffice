@@ -191,6 +191,29 @@ static void doc_insert_table(DocV *e){
     wubumodel_node_append(e->doc, sec, tbl);
     e->toc_dirty = 1;
 }
+/* Insert a sample embedded image into the model (DOC-61): an IMAGE node
+ * carrying a small RGBA raster (here a generated checker; real use would
+ * decode a PNG via the in-tree wubuimage decoder and set the plane). The
+ * Document view blits it into the layout box. */
+static void doc_insert_image(DocV *e){
+    if (!e->doc) return;
+    wubumodel_node *sec = wubumodel_node_first_child(wubumodel_doc_root(e->doc));
+    if (!sec) return;
+    wubumodel_node *im = wubumodel_node_create(e->doc, WUBUMODEL_IMAGE);
+    const int W=96, H=64;
+    uint8_t *px = malloc((size_t)W*H*4);
+    if (!px) return;
+    for (int y=0; y<H; y++)
+        for (int x=0; x<W; x++){
+            uint8_t *p = px + ((size_t)y*W+x)*4;
+            int chk = ((x/8)+(y/8)) & 1;
+            p[0] = chk? 60:220; p[1] = chk? 140:80; p[2] = chk? 220:60; p[3] = 255;
+        }
+    wubumodel_node_set_image(im, px, W, H);
+    free(px);
+    wubumodel_node_append(e->doc, sec, im);
+    e->toc_dirty = 1;
+}
 
 static int render(WuView *v, int w, int h, int scroll,
                   unsigned char **rgba, int *rw, int *rh){
@@ -223,11 +246,37 @@ static int render(WuView *v, int w, int h, int scroll,
             /* page header */
             char hdr[64]; snprintf(hdr,sizeof hdr,"Page %d / %d", pg+1, pages);
             wuos_font_draw(hdr, 56, 24, 0, MU[0],MU[1],MU[2], fb, w, h);
-            /* DOC-62: draw table/cell borders from the layout boxes (under text) */
+            /* DOC-62/61: draw table borders + blit embedded images from boxes */
             int nboxes = wubulayout_box_count(L, pg);
             for (int bi=0; bi<nboxes; bi++){
                 const wubulayout_box *bx = wubulayout_box_at(L, pg, bi);
                 if (!bx) continue;
+                /* DOC-61: an IMAGE node -> blit its RGBA into the box */
+                if (bx->user && wubumodel_node_kind((wubumodel_node*)bx->user) == WUBUMODEL_IMAGE){
+                    int iw=0, ih=0;
+                    const uint8_t *px = wubumodel_node_image((const wubumodel_node*)bx->user, &iw, &ih);
+                    if (px && iw>0 && ih>0){
+                        int dw = bx->w, dh = bx->h;
+                        for (int yy=0; yy<dh; yy++){
+                            int sy = (iw>0)? (yy*dh<ih*dw ? yy*ih/dh : ih-1) : 0;
+                            if (sy<0) sy=0; if (sy>=ih) sy=ih-1;
+                            for (int xx=0; xx<dw; xx++){
+                                int sx = (iw>0)? (xx*dw<iw*dh ? xx*iw/dw : iw-1) : 0;
+                                if (sx<0) sx=0; if (sx>=iw) sx=iw-1;
+                                const uint8_t *p = px + ((size_t)sy*iw+sx)*4;
+                                int dx = bx->x + xx, dy = bx->y + yy;
+                                if (dx<0||dy<0||dx>=w||dy>=h) continue;
+                                size_t di=((size_t)dy*w+dx)*4;
+                                /* alpha blend over page bg */
+                                float a = p[3]/255.0f;
+                                fb[di]   = (uint8_t)(fb[di]*(1-a) + p[0]*a);
+                                fb[di+1] = (uint8_t)(fb[di+1]*(1-a) + p[1]*a);
+                                fb[di+2] = (uint8_t)(fb[di+2]*(1-a) + p[2]*a);
+                            }
+                        }
+                        continue;
+                    }
+                }
                 /* box border: 1px rect in a muted ink */
                 unsigned char bc[3] = { hc?90:170, hc?120:175, hc?150:185 };
                 for (int xx=bx->x; xx<bx->x+bx->w && xx<w; xx++)
@@ -419,6 +468,7 @@ static void on_key(WuView *v, int key, int down){
     if (key==WUOS_KEY_INSERT_LINK){ doc_insert_link(e); return; }
     if (key==WUOS_KEY_INSERT_LIST){ doc_insert_list(e); return; }
     if (key==WUOS_KEY_INSERT_TABLE){ doc_insert_table(e); return; }
+    if (key==WUOS_KEY_INSERT_IMAGE){ doc_insert_image(e); return; }
     /* DOC-54: jump to a TOC entry with Ctrl+[1..6] */
     if (key>=WUOS_KEY_TOC1 && key<=WUOS_KEY_TOC6){
         int idx = key - WUOS_KEY_TOC1;

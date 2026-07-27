@@ -217,6 +217,24 @@ int main(void){
             }
         CK(cell_boxes == 2, "two cell boxes laid out");
         wubulayout_destroy(L4);
+
+        /* DOC-61: image node retains its RGBA and lays out as an object box. */
+        wubumodel_node *im = wubumodel_node_create(d, WUBUMODEL_IMAGE);
+        const int IW=8, IH=4; uint8_t pix[IW*IH*4];
+        for (int i=0;i<IW*IH;i++){ pix[i*4]=10; pix[i*4+1]=20; pix[i*4+2]=30; pix[i*4+3]=255; }
+        CK(wubumodel_node_set_image(im, pix, IW, IH)==0, "image set");
+        int gw=0, gh=0; const uint8_t *gp = wubumodel_node_image(im, &gw, &gh);
+        CK(gp && gw==IW && gh==IH, "image retrieved");
+        wubumodel_node_append(d, sec, im);
+        wubulayout_doc *L5 = wubulayout_create(d, sec, meas, sty, NULL, 400, 400, 20,20,20,20);
+        int img_boxes = 0;
+        for (int pg=0; pg<wubulayout_page_count(L5); pg++)
+            for (int i=0;i<wubulayout_box_count(L5,pg); i++){
+                const wubulayout_box *bx = wubulayout_box_at(L5, pg, i);
+                if (bx && bx->user==(void*)im) img_boxes++;
+            }
+        CK(img_boxes == 1, "image laid out as a box");
+        wubulayout_destroy(L5);
         wubumodel_doc_destroy(d);
     }
     if (fails==0) printf("TOC + SETTINGS + FOOTNOTE TESTS PASSED\n");

@@ -295,8 +295,8 @@ static int lay_node(wubulayout_doc *L, void *node, int *pen_y){
             lay_node(L, c, pen_y);
         return 0;
     }
-    if (k == WUBUMODEL_SHAPE || k == WUBUMODEL_CHART){
-        /* object box: reserve space, view overlays it */
+    if (k == WUBUMODEL_SHAPE || k == WUBUMODEL_CHART || k == WUBUMODEL_IMAGE){
+        /* object box: reserve space, view overlays it (image blitted by view) */
         LPage *pg = cur_page(L);
         LOb *o = push_obj(pg);
         if (o){
@@ -413,7 +413,7 @@ static int lay_chain(wubulayout_doc *L, void *start, int *pen_y, void *resume, i
         wubumodel_kind k = wubumodel_node_kind(n);
         int is_container = (k!=WUBUMODEL_PARAGRAPH && k!=WUBUMODEL_TABLE &&
                             k!=WUBUMODEL_SHAPE && k!=WUBUMODEL_CHART && k!=WUBUMODEL_LINK &&
-                            k!=WUBUMODEL_FOOTNOTE && k!=WUBUMODEL_ENDNOTE);
+                            k!=WUBUMODEL_IMAGE && k!=WUBUMODEL_FOOTNOTE && k!=WUBUMODEL_ENDNOTE);
         if (is_container && depth==0 && wubumodel_node_first_child(n)){
             wubumodel_node *sib = wubumodel_node_next_sibling(n);
             void *res = sib ? (void*)sib : resume;

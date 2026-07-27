@@ -25,7 +25,8 @@ typedef enum {
     WUBUMODEL_FIELD,
     WUBUMODEL_LINK,
     WUBUMODEL_FOOTNOTE,   /* inline ref marker + collected note text */
-    WUBUMODEL_ENDNOTE
+    WUBUMODEL_ENDNOTE,
+    WUBUMODEL_IMAGE      /* inline raster (embedded RGBA) */
 } wubumodel_kind;
 
 typedef uint64_t wubumodel_id;
@@ -84,6 +85,11 @@ int  wubumodel_doc_notes(const wubumodel_doc *doc, const char ***out);
 int  wubumodel_node_set_link(wubumodel_node *n, const char *target); /* 0 ok */
 const char *wubumodel_node_link(const wubumodel_node *n);
 wubumodel_node *wubumodel_node_parent(const wubumodel_node *n); /* RUN->owning block */
+/* ---- embedded image (DOC-61) ----
+ * Stores a COPY of an RGBA plane (w*h*4 bytes). The view blits it into the
+ * layout box for an IMAGE node. w/h returned via out params. */
+int  wubumodel_node_set_image(wubumodel_node *n, const uint8_t *rgba, int w, int h);
+const uint8_t *wubumodel_node_image(const wubumodel_node *n, int *w, int *h);
 typedef void (*wubumodel_change_cb)(wubumodel_doc *doc, wubumodel_id node,
                                     void *user);
 int wubumodel_on_change(wubumodel_doc *doc, wubumodel_change_cb cb, void *user);

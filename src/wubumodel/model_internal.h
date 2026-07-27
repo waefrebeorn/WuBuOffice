@@ -34,6 +34,8 @@ struct wubumodel_node {
     char *text;                 /* valid for RUN */
     char *note;                 /* FOOTNOTE/ENDNOTE body (DOC-55) */
     char *link;                 /* LINK href/target (DOC-60) */
+    uint8_t *img;               /* IMAGE embedded RGBA (DOC-61) */
+    int img_w, img_h;           /* IMAGE dimensions */
     wubumodel_style *style;     /* shared, may be NULL */
     struct wubumodel_node *next;/* bucket chain in doc->nodes */
     struct wubumodel_node *parent;     /* back-link (weak) */

@@ -272,6 +272,7 @@ int main(int argc, char **argv){
                 else if (k==SDLK_l && (mod & KMOD_CTRL) && !(mod & KMOD_SHIFT)) code=WUOS_KEY_INSERT_LINK; /* DOC-60 */
                 else if (k==SDLK_l && (mod & KMOD_CTRL) && (mod & KMOD_SHIFT)) code=WUOS_KEY_INSERT_LIST; /* DOC-59 */
                 else if (k==SDLK_t && (mod & KMOD_CTRL) && (mod & KMOD_SHIFT)) code=WUOS_KEY_INSERT_TABLE; /* DOC-62 */
+                else if (k==SDLK_i && (mod & KMOD_CTRL) && (mod & KMOD_SHIFT)) code=WUOS_KEY_INSERT_IMAGE; /* DOC-61 */
                 else if (k==SDLK_F1) code=WUOS_KEY_CHEAT;   /* UI-36 */
                 else if (k>=SDLK_1 && k<=SDLK_6 && (mod & KMOD_CTRL))
                     code = WUOS_KEY_TOC1 + (k - SDLK_1);   /* DOC-54 jump */
@@ -449,10 +450,11 @@ int main(int argc, char **argv){
                 "Ctrl+L    insert hyperlink (Document)",
                 "Ctrl+Shift+L insert bullet list (Document)",
                 "Ctrl+Shift+T insert table (Document)",
+                "Ctrl+Shift+I insert image (Document)",
                 "Right-click context menu",
                 "Drag & drop a file to open"
             };
-            for (int i=0;i<14;i++)
+            for (int i=0;i<15;i++)
                 sdl_text(ren, cx+14, cy+40+i*22, 200,203,210, keys[i]);
         }
         SDL_Delay(16);

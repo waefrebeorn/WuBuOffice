@@ -32,6 +32,7 @@ void wubumodel_doc_destroy(wubumodel_doc *doc) {
             free(n->text);
             free(n->note);
             free(n->link);
+            free(n->img);
             free(n);
             n = nx;
         }
@@ -77,6 +78,7 @@ void wubumodel_node_destroy(wubumodel_doc *doc, wubumodel_node *n) {
     free(n->text);
     free(n->note);
     free(n->link);
+    free(n->img);
     free(n);
 }
 wubumodel_node *wubumodel_node_find(wubumodel_doc *doc, wubumodel_id id) {
@@ -143,6 +145,25 @@ const char *wubumodel_node_link(const wubumodel_node *n) {
 }
 wubumodel_node *wubumodel_node_parent(const wubumodel_node *n) {
     return n ? n->parent : NULL;
+}
+
+/* ---- embedded image (DOC-61) ----
+ * Stores a copy of an RGBA plane (w*h*4 bytes) on the node. The layout treats
+ * an IMAGE node as an object box; the view blits the raster into it. */
+int wubumodel_node_set_image(wubumodel_node *n, const uint8_t *rgba,
+                             int w, int h){
+    if (!n || w<=0 || h<=0 || !rgba) return -1;
+    uint8_t *cp = malloc((size_t)w*h*4);
+    if (!cp) return -1;
+    memcpy(cp, rgba, (size_t)w*h*4);
+    free(n->img);
+    n->img = cp; n->img_w = w; n->img_h = h;
+    return 0;
+}
+const uint8_t *wubumodel_node_image(const wubumodel_node *n, int *w, int *h){
+    if (!n || !n->img) return NULL;
+    if (w) *w = n->img_w; if (h) *h = n->img_h;
+    return n->img;
 }
 
 wubumodel_style *wubumodel_style_create(void) {
