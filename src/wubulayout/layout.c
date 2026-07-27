@@ -268,6 +268,37 @@ static int lay_node(wubulayout_doc *L, void *node, int *pen_y){
         *pen_y += 170;
         return 0;
     }
+    /* DOC-55: footnote / endnote -> superscript reference marker run.
+     * In this block model a FOOTNOTE/ENDNOTE node is a standalone block whose
+     * RUN child holds the marker (e.g. "1"); its note body is collected via
+     * wubumodel_doc_notes() for the notes pane / export. We emit the marker as
+     * a small raised run at the current pen and advance the pen. */
+    if (k == WUBUMODEL_FOOTNOTE || k == WUBUMODEL_ENDNOTE){
+        LPage *pg = cur_page(L);
+        /* marker text lives on the node's RUN child */
+        const char *mark = NULL;
+        for (wubumodel_node *rc = wubumodel_node_first_child((wubumodel_node*)node);
+             rc; rc = wubumodel_node_next_sibling(rc)){
+            if (wubumodel_node_kind(rc) == WUBUMODEL_RUN){ mark = wubumodel_run_text(rc); break; }
+        }
+        if (pg && mark && *mark){
+            int fs=10, bold=1, it=0; wubulayout_dir d=WUBULAYOUT_LTR;
+            if (L->style) L->style(L->cb_user, node, &fs,&bold,&it,&d);
+            int mw = L->measure ? L->measure(mark, strlen(mark), fs, bold, it, NULL, L->cb_user) : (int)strlen(mark)*7;
+            int hh = fs + 4;
+            wubulayout_run *R = push_run(pg);
+            if (!R) return -1;
+            R->text = mark; R->text_len = strlen(mark);
+            R->font_size = fs; R->bold = bold; R->italic = it;
+            R->dir = d; R->rtl = (d==WUBULAYOUT_RTL);
+            R->x = L->ml; R->y = *pen_y - 4;   /* raised superscript */
+            R->w = mw; R->h = hh;
+            R->page = L->npages - 1; R->line = pg->line_seq++;
+            R->user = node;
+            *pen_y += hh + 2;
+        }
+        return 0;
+    }
     /* generic container: recurse children */
     for (wubumodel_node *c = wubumodel_node_first_child((wubumodel_node*)node);
          c; c = wubumodel_node_next_sibling(c)){
@@ -315,7 +346,8 @@ static int lay_chain(wubulayout_doc *L, void *start, int *pen_y, void *resume, i
          n; n = wubumodel_node_next_sibling(n)){
         wubumodel_kind k = wubumodel_node_kind(n);
         int is_container = (k!=WUBUMODEL_PARAGRAPH && k!=WUBUMODEL_TABLE &&
-                            k!=WUBUMODEL_SHAPE && k!=WUBUMODEL_CHART && k!=WUBUMODEL_LINK);
+                            k!=WUBUMODEL_SHAPE && k!=WUBUMODEL_CHART && k!=WUBUMODEL_LINK &&
+                            k!=WUBUMODEL_FOOTNOTE && k!=WUBUMODEL_ENDNOTE);
         if (is_container && depth==0 && wubumodel_node_first_child(n)){
             wubumodel_node *sib = wubumodel_node_next_sibling(n);
             void *res = sib ? (void*)sib : resume;

@@ -73,6 +73,7 @@ void wubumodel_node_destroy(wubumodel_doc *doc, wubumodel_node *n) {
     }
     if (n->style) wubumodel_style_destroy(n->style);
     free(n->text);
+    free(n->note);
     free(n);
 }
 wubumodel_node *wubumodel_node_find(wubumodel_doc *doc, wubumodel_id id) {
@@ -93,6 +94,34 @@ int wubumodel_run_set_text(wubumodel_node *run, const char *utf8) {
 }
 const char *wubumodel_run_text(const wubumodel_node *run) {
     return run ? run->text : NULL;
+}
+
+/* ---- footnotes / endnotes (DOC-55) ---- */
+int wubumodel_node_set_note(wubumodel_node *n, const char *body) {
+    if (!n) return -1;
+    char *cp = body ? strdup(body) : NULL;
+    if (body && !cp) return -1;
+    free(n->note); n->note = cp;
+    return 0;
+}
+const char *wubumodel_node_note(const wubumodel_node *n) {
+    return n ? n->note : NULL;
+}
+
+/* iterate every footnote/endnote body in document order */
+int wubumodel_doc_notes(const wubumodel_doc *doc, const char ***out) {
+    if (!doc || !out) return -1;
+    /* worst-case sizing: every node could be a note */
+    const char **arr = calloc(1, sizeof(*arr) * 2048);
+    if (!arr) return -1;
+    int n = 0;
+    for (size_t b = 0; b < WUBUMODEL_BUCKETS; b++)
+        for (wubumodel_node *p = doc->nodes[b]; p; p = p->next)
+            if ((p->kind == WUBUMODEL_FOOTNOTE ||
+                  p->kind == WUBUMODEL_ENDNOTE) && p->note)
+                if (n < 2048) arr[n++] = p->note;
+    *out = arr;
+    return n;
 }
 
 wubumodel_style *wubumodel_style_create(void) {

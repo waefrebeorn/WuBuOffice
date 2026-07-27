@@ -4,6 +4,7 @@
 #include "ublayout.h"
 #include "settings.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 static int fails = 0;
@@ -89,7 +90,66 @@ int main(void){
     wubusettings_destroy(s);
 
     wubumodel_doc_destroy(doc);
-    if (fails==0) printf("TOC + SETTINGS TESTS PASSED\n");
-    else printf("TOC + SETTINGS TESTS FAILED (%d)\n", fails);
+
+    /* DOC-55: footnotes / endnotes */
+    {
+        wubumodel_doc *d = wubumodel_doc_create();
+        wubumodel_node *sec = wubumodel_node_create(d, WUBUMODEL_SECTION);
+        /* footnote / endnote are block-level (siblings of paragraphs) in this
+         * layout: lay_node visits them via the generic recursion. */
+        wubumodel_node *para = wubumodel_node_create(d, WUBUMODEL_PARAGRAPH);
+        wubumodel_node *r0 = wubumodel_node_create(d, WUBUMODEL_RUN);
+        wubumodel_run_set_text(r0, "Body text.");
+        wubumodel_node_append(d, para, r0);
+        wubumodel_node_append(d, sec, para);
+
+        wubumodel_node *mark = wubumodel_node_create(d, WUBUMODEL_FOOTNOTE);
+        wubumodel_node *r = wubumodel_node_create(d, WUBUMODEL_RUN);
+        wubumodel_run_set_text(r, "1");
+        wubumodel_node_append(d, mark, r);
+        wubumodel_node_set_note(mark, "First footnote body text.");
+        wubumodel_node_append(d, sec, mark);
+
+        wubumodel_node *para2 = wubumodel_node_create(d, WUBUMODEL_PARAGRAPH);
+        wubumodel_node *r1 = wubumodel_node_create(d, WUBUMODEL_RUN);
+        wubumodel_run_set_text(r1, "More body.");
+        wubumodel_node_append(d, para2, r1);
+        wubumodel_node_append(d, sec, para2);
+
+        wubumodel_node *en = wubumodel_node_create(d, WUBUMODEL_ENDNOTE);
+        wubumodel_node *r2 = wubumodel_node_create(d, WUBUMODEL_RUN);
+        wubumodel_run_set_text(r2, "A");
+        wubumodel_node_append(d, en, r2);
+        wubumodel_node_set_note(en, "Endnote body.");
+        wubumodel_node_append(d, sec, en);
+
+        /* note marker text survives */
+        CK(strcmp(wubumodel_run_text(r), "1")==0, "footnote marker text");
+        CK(strcmp(wubumodel_node_note(mark), "First footnote body text.")==0, "footnote body stored");
+        /* collected notes in document order */
+        const char **arr = NULL;
+        int n = wubumodel_doc_notes(d, &arr);
+        CK(n == 2, "two notes collected");
+        if (n == 2){
+            CK(strcmp(arr[0], "First footnote body text.")==0, "note[0] order");
+            CK(strcmp(arr[1], "Endnote body.")==0, "note[1] order");
+        }
+        free(arr);
+
+        /* layout emits a marker run for the footnote */
+        wubulayout_doc *L = wubulayout_create(d, sec, meas, sty, NULL, 400, 400, 20,20,20,20);
+        CK(L != NULL, "footnote doc lays out");
+        int mark_runs = 0;
+        for (int pg=0; pg<wubulayout_page_count(L); pg++)
+            for (int i=0;i<wubulayout_run_count(L,pg); i++){
+                const wubulayout_run *ru = wubulayout_run_at(L, pg, i);
+                if (ru && ru->user == (void*)mark) mark_runs++;
+            }
+        CK(mark_runs == 1, "footnote marker laid out once");
+        wubulayout_destroy(L);
+        wubumodel_doc_destroy(d);
+    }
+    if (fails==0) printf("TOC + SETTINGS + FOOTNOTE TESTS PASSED\n");
+    else printf("TOC + SETTINGS + FOOTNOTE TESTS FAILED (%d)\n", fails);
     return fails?1:0;
 }

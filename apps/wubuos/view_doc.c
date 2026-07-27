@@ -292,7 +292,13 @@ static char *status(WuView *v){
     char *s = malloc(160); if(!s) return NULL;
     const char *base = strrchr(src, '/');
     base = base ? base+1 : src;
-    if (e->doc) snprintf(s,160,"Document ▸ %s ▸ rendered page", base);
+    int notes = wuos_doc_footnote_count(v);
+    if (e->doc){
+        if (notes > 0)
+            snprintf(s,160,"Document ▸ %s ▸ rendered page ▸ %d note(s)", base, notes);
+        else
+            snprintf(s,160,"Document ▸ %s ▸ rendered page", base);
+    }
     else snprintf(s,160,"Document ▸ %s ▸ %s text", base, e->text?"recognized":"no");
     return s;
 }
@@ -430,4 +436,13 @@ int wuos_doc_high_contrast(WuView *v){
     (void)v;
     WubuSettings *s = wubusettings_shared();
     return s ? wubusettings_high_contrast(s) : 0;
+}
+/* Footnote/endnote count for the current model (DOC-55), or -1 if no model. */
+int wuos_doc_footnote_count(WuView *v){
+    DocV *e = v->priv;
+    if (!e->doc) return -1;
+    const char **out = NULL;
+    int n = wubumodel_doc_notes(e->doc, &out);
+    free(out);
+    return n;
 }

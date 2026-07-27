@@ -78,7 +78,7 @@
 
 ## DOC — Document model / editing features
 54. **P1** No table of contents generator (from headings). — **CLOSED**: `wubutoc` module walks the model for `heading`-styled paragraphs, resolves each to a 1-based page via the wubulayout pipeline, and emits ranked entries (level + page). The Document view renders a Contents side-pane and jumps to a heading with Ctrl+1..6 (DOC-54).
-55. **P1** No footnotes / endnotes.
+55. **P1** No footnotes / endnotes. — **CLOSED**: model gained `WUBUMODEL_FOOTNOTE`/`WUBUMODEL_ENDNOTE` kinds + `wubumodel_node_set_note`/`wubumodel_doc_notes` (collected in document order); `wubulayout` emits a raised superscript marker run; the Document view surfaces the note count in its status breadcrumb. Headless-tested in test_toc (marker text, note bodies, document-order collection, layout marker).
 56. **P1** No headers / footers / page sections. — **CLOSED (render side)**: `wubulayout` paginates and the Document view draws a page header (page x/N) + footer (line count) per page. Authoring/editing of header/footer content is still open (model needs header nodes).
 57. **P1** No page/section breaks; single flow only.
 58. **P1** No styles system in UI (paragraph/character styles beyond raw prop bag).

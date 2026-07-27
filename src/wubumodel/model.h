@@ -23,7 +23,9 @@ typedef enum {
     WUBUMODEL_CHART,
     WUBUMODEL_TABLE,
     WUBUMODEL_FIELD,
-    WUBUMODEL_LINK
+    WUBUMODEL_LINK,
+    WUBUMODEL_FOOTNOTE,   /* inline ref marker + collected note text */
+    WUBUMODEL_ENDNOTE
 } wubumodel_kind;
 
 typedef uint64_t wubumodel_id;
@@ -65,7 +67,16 @@ int wubumodel_cmd_set_text(wubumodel_doc *doc, wubumodel_node *run,
                            const char *new_text);
 int wubumodel_doc_undo(wubumodel_doc *doc);   /* returns 0 ok, -1 nothing-to-undo */
 
-/* ---- observers (reactive) ---- */
+/* ---- footnotes / endnotes (DOC-55) ----
+ * A footnote node carries a reference marker (its RUN text, e.g. "1") and a
+ * note body (set via wubumodel_node_set_note). The layout emits an inline
+ * marker; the collected notes are available via wubumodel_doc_notes(). */
+int  wubumodel_node_set_note(wubumodel_node *n, const char *body); /* 0 ok */
+const char *wubumodel_node_note(const wubumodel_node *n);
+
+/* Collect all footnote/endnote bodies in document order (caller frees the
+ * returned array of pointers; each string is owned by its node). Returns count. */
+int  wubumodel_doc_notes(const wubumodel_doc *doc, const char ***out);
 typedef void (*wubumodel_change_cb)(wubumodel_doc *doc, wubumodel_id node,
                                     void *user);
 int wubumodel_on_change(wubumodel_doc *doc, wubumodel_change_cb cb, void *user);
