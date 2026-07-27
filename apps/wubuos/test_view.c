@@ -236,6 +236,28 @@ int main(void){
         }
     }
 
+    /* column/block selection: Ctrl+Alt+C on, Shift+Right/Down extends block */
+    {
+        WuView *cv2 = wuos_editor_create(NULL);
+        if (!cv2){ fprintf(stderr,"[col] create FAILED\n"); bad++; }
+        else {
+            cv2->on_key(cv2, WUOS_KEY_GOTO, 1);          /* go to line 1 (top) */
+            cv2->on_key(cv2, (unsigned char)'1', 1);
+            cv2->on_key(cv2, WUOS_KEY_RETURN, 1);
+            cv2->on_key(cv2, WUOS_KEY_COLMODE, 1);       /* enter block mode */
+            cv2->on_key(cv2, WUOS_KEY_RIGHT, 1);
+            cv2->on_key(cv2, WUOS_KEY_RIGHT, 1);
+            cv2->on_key(cv2, WUOS_KEY_DOWN, 1);
+            cv2->on_key(cv2, WUOS_KEY_DOWN, 1);
+            int l0,c0,l1,c1;
+            int mode = wuos_editor_col(cv2, &l0,&c0,&l1,&c1);
+            if (!mode){ fprintf(stderr,"[col] mode not on\n"); bad++; }
+            else if (l1<=l0 || c1<=c0){ fprintf(stderr,"[col] block not extended l%d-%d c%d-%d\n",l0,l1,c0,c1); bad++; }
+            else fprintf(stderr,"[col] ok (block L%d-%d C%d-%d)\n", l0,l1,c0,c1);
+            cv2->destroy(cv2);
+        }
+    }
+
     /* cell view: load a real CSV via wubucell reader */
     {
         char csvp[256]; sprintf(csvp, "/tmp/wuos_cell_%d.csv", (int)getpid());

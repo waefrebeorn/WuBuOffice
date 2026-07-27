@@ -63,6 +63,11 @@ typedef struct {
     /* bookmarks (Notepad++ line ops) */
     int   bk[256];   /* sorted line numbers (0-based) */
     int   bk_n;
+
+    /* column / block selection mode */
+    int   col_mode;          /* 0 = stream, 1 = column */
+    int   sel_l0, sel_c0;    /* anchor line/col */
+    int   sel_l1, sel_c1;    /* active line/col */
 } Editor;
 
 /* Notepad++-style token palette (RGB) */
@@ -277,6 +282,29 @@ static int editor_line_of(Editor *e){
     free(t);
     return (int)ln;
 }
+/* current caret column (0-based, in chars) */
+static int editor_col_of(Editor *e){
+    char *t = doc_text(e->doc);
+    size_t cur = doc_cursor(e->doc), c = 0;
+    while (cur>0 && t[cur-1]!='\n'){ cur--; c++; }
+    free(t);
+    return (int)c;
+}
+/* move caret up/down `dl` lines, keeping the same char column */
+static void editor_caret_vert(Editor *e, int dl){
+    char *t = doc_text(e->doc);
+    size_t n = doc_length(e->doc);
+    int cl = editor_line_of(e), cc = editor_col_of(e);
+    cl += dl; if (cl<0) cl=0;
+    /* find start of line cl */
+    size_t p=0; int ln=0;
+    while (ln<cl && p<n){ if (t[p]=='\n') ln++; p++; }
+    /* advance cc chars (or to EOL) */
+    size_t q=p; int c=0;
+    while (q<n && t[q]!='\n' && c<cc){ q++; c++; }
+    doc_set_cursor(e->doc, q);
+    free(t);
+}
 
 static void bk_toggle(Editor *e, int line){
     if (line<0) return;
@@ -438,6 +466,20 @@ static int render(WuView *v, int w, int h, int scroll,
         line++;
         if (pos < tlen){ pos++; line_start = pos; }
         else break;
+
+        /* column / block selection overlay (Notepad++ Alt+drag analogue) */
+        if (e->col_mode && e->sel_l1 >= e->sel_l0){
+            int lo = e->sel_l0, hi = e->sel_l1, c0 = e->sel_c0, c1 = e->sel_c1;
+            if (c1 < c0){ int t=c0; c0=c1; c1=t; }
+            if ((int)line-1 >= lo && (int)line-1 <= hi){
+                int x0 = gutter + c0*9, x1 = gutter + c1*9;
+                for (int yy=y; yy<y+lh; yy++) for (int xx=x0; xx<x1 && xx<w; xx++){
+                    if (xx>=0&&yy>=0){ size_t i=((size_t)yy*w+xx)*4;
+                        fb[i]=(fb[i]+60)>>1; fb[i+1]=(fb[i+1]+120)>>1; fb[i+2]=(fb[i+2]+180)>>1; }
+                }
+            }
+        }
+
         y += lh;
     }
     free(text);
@@ -627,6 +669,13 @@ static void on_key(WuView *v, int key, int down){
         case WUOS_KEY_TOGGLE_BK: bk_toggle(e, editor_line_of(e)); return;
         case WUOS_KEY_NEXT_BK:   bk_jump(e, +1); return;
         case WUOS_KEY_PREV_BK:   bk_jump(e, -1); return;
+        case WUOS_KEY_COLMODE:
+            e->col_mode ^= 1;
+            if (e->col_mode){
+                e->sel_l0 = e->sel_l1 = editor_line_of(e);
+                e->sel_c0 = e->sel_c1 = editor_col_of(e);
+            }
+            return;
         case WUOS_KEY_BACKSPACE:
             if (cur>0) doc_delete(e->doc, cur-1, 1);
             break;
@@ -636,8 +685,18 @@ static void on_key(WuView *v, int key, int down){
         case WUOS_KEY_TAB:
             doc_type(e->doc, "    ", 4);
             break;
-        case WUOS_KEY_LEFT:  if (cur>0) doc_set_cursor(e->doc, cur-1); break;
-        case WUOS_KEY_RIGHT: doc_set_cursor(e->doc, cur+1); break;
+        case WUOS_KEY_LEFT:
+            if (e->col_mode){
+                int c = editor_col_of(e);
+                if (c>0){ e->sel_c1 = c-1; e->sel_l1 = editor_line_of(e); doc_set_cursor(e->doc, doc_offset_of_line(e->doc, e->sel_l1+1)+e->sel_c1); }
+            } else if (cur>0) doc_set_cursor(e->doc, cur-1);
+            break;
+        case WUOS_KEY_RIGHT:
+            if (e->col_mode){
+                int c = editor_col_of(e);
+                e->sel_c1 = c+1; e->sel_l1 = editor_line_of(e); doc_set_cursor(e->doc, doc_offset_of_line(e->doc, e->sel_l1+1)+e->sel_c1);
+            } else doc_set_cursor(e->doc, cur+1);
+            break;
         case WUOS_KEY_HOME: {
             char *t = doc_text(e->doc); size_t p=doc_cursor(e->doc);
             while (p>0 && t[p-1]!='\n') p--;
@@ -649,14 +708,20 @@ static void on_key(WuView *v, int key, int down){
             doc_set_cursor(e->doc, p); free(t);
             break; }
         case WUOS_KEY_UP: case WUOS_KEY_DOWN: {
-            char *t = doc_text(e->doc); size_t p=doc_cursor(e->doc), n=doc_length(e->doc);
-            size_t line=0,col=0; for (size_t q=0;q<p;q++){ if(t[q]=='\n'){line++;col=0;}else col++; }
-            size_t target = (key==WUOS_KEY_UP)? (line>0?line-1:0) : line+1;
-            size_t lstart=0, curline=0;
-            for (size_t q=0;q<n;q++){ if (curline==target){lstart=q;break;} if(t[q]=='\n')curline++; }
-            size_t lend=lstart; while (lend<n && t[lend]!='\n') lend++;
-            size_t newp = lstart + (col < (lend-lstart)? col : (lend-lstart));
-            doc_set_cursor(e->doc, newp); free(t);
+            int dl = (key==WUOS_KEY_UP)? -1 : 1;
+            if (e->col_mode){
+                editor_caret_vert(e, dl);
+                e->sel_l1 = editor_line_of(e);
+            } else {
+                char *t = doc_text(e->doc); size_t p=doc_cursor(e->doc), n=doc_length(e->doc);
+                size_t line=0,col=0; for (size_t q=0;q<p;q++){ if(t[q]=='\n'){line++;col=0;}else col++; }
+                size_t target = (key==WUOS_KEY_UP)? (line>0?line-1:0) : line+1;
+                size_t lstart=0, curline=0;
+                for (size_t q=0;q<n;q++){ if (curline==target){lstart=q;break;} if(t[q]=='\n')curline++; }
+                size_t lend=lstart; while (lend<n && t[lend]!='\n') lend++;
+                size_t newp = lstart + (col < (lend-lstart)? col : (lend-lstart));
+                doc_set_cursor(e->doc, newp); free(t);
+            }
             break; }
         case WUOS_KEY_PGUP: for(int i=0;i<20;i++) on_key(v,WUOS_KEY_UP,1); break;
         case WUOS_KEY_PGDN: for(int i=0;i<20;i++) on_key(v,WUOS_KEY_DOWN,1); break;
@@ -758,6 +823,16 @@ int wuos_editor_bookmarks(WuView *v){
     Editor *e = v ? v->priv : NULL;
     if (!e) return 0;
     return e->bk_n;
+}
+/* Test accessor: column/block selection state (mode + block bounds). */
+int wuos_editor_col(WuView *v, int *l0, int *c0, int *l1, int *c1){
+    Editor *e = v ? v->priv : NULL;
+    if (!e) return 0;
+    if (l0) *l0 = e->sel_l0;
+    if (c0) *c0 = e->sel_c0;
+    if (l1) *l1 = e->sel_l1;
+    if (c1) *c1 = e->sel_c1;
+    return e->col_mode;
 }
 
 WuView *wuos_editor_create(const char *path){
