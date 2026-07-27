@@ -15,6 +15,7 @@
 #include "doc.h"    /* cross-repo: ~/WuBuPad/src */
 #include "lex.h"
 #include "search.h" /* WuBuPad regex/literal engine */
+#include "encode.h" /* WuBuPad encoding detect */
 
 #include <stdlib.h>
 #include <string.h>
@@ -49,6 +50,10 @@ typedef struct {
     /* ---- go to line (Ctrl+G) ---- */
     int   goto_mode;
     char  goto_buf[32];
+
+    /* ---- EOL + encoding (Notepad++ parity) ---- */
+    int   eol_crlf;        /* 0 = LF, 1 = CRLF */
+    const char *enc_label; /* detected encoding label, or NULL */
 } Editor;
 
 /* Notepad++-style token palette (RGB) */
@@ -209,6 +214,33 @@ static size_t doc_offset_of_line(Doc *d, int lineN){
     free(t);
     /* lineN beyond end: return end of doc */
     return n;
+}
+
+/* Detect current EOL style from text (1 if any CRLF present, else 0=LF). */
+static int detect_eol(const char *t){
+    if (!t) return 0;
+    for (size_t q=0; t[q]; q++) if (t[q]=='\r' && t[q+1]=='\n') return 1;
+    return 0;
+}
+
+/* Convert the whole document between LF and CRLF in place. */
+static void convert_eol(Editor *e, int to_crlf){
+    if (e->eol_crlf == to_crlf) return;
+    char *t = doc_text(e->doc);
+    size_t n = doc_length(e->doc);
+    /* worst case: every char is '\n' -> doubles (+1 for NUL) */
+    char *out = malloc(n*2 + 1);
+    if (!out){ free(t); return; }
+    size_t o=0;
+    for (size_t q=0; q<n; q++){
+        if (to_crlf && t[q]=='\n' && (q==0 || t[q-1]!='\r')) out[o++]='\r';
+        else if (!to_crlf && t[q]=='\r' && t[q+1]=='\n') continue; /* drop \r */
+        out[o++] = t[q];
+    }
+    out[o]=0;
+    doc_replace(e->doc, 0, n, out);
+    free(out); free(t);
+    e->eol_crlf = to_crlf;
 }
 
 static int render(WuView *v, int w, int h, int scroll,
@@ -462,6 +494,7 @@ static void on_key(WuView *v, int key, int down){
         case WUOS_KEY_FIND:    find_open(v, 1); return;
         case WUOS_KEY_REPLACE: find_open(v, 2); return;
         case WUOS_KEY_GOTO:    e->goto_mode = 1; e->goto_buf[0]=0; return;
+        case WUOS_KEY_EOL:     convert_eol(e, e->eol_crlf? 0 : 1); return;
         case WUOS_KEY_BACKSPACE:
             if (cur>0) doc_delete(e->doc, cur-1, 1);
             break;
@@ -514,10 +547,12 @@ static char *status(WuView *v){
     free(t);
     const char *lang = e->lex? lex_lang(e->lex) : "none";
     const char *fn = e->path? e->path : "(unsaved)";
+    const char *eol = e->eol_crlf? "CRLF" : "LF";
+    const char *enc = e->enc_label? e->enc_label : "UTF-8";
     char buf[256];
-    snprintf(buf,sizeof buf,"%s  Ln %zu  Col %zu  %s  %s  [%s]",
+    snprintf(buf,sizeof buf,"%s  Ln %zu  Col %zu  %s  %s  %s  %s  [%s]",
              fn, line, col, doc_has_selection(e->doc)?"SEL":"   ",
-             doc_can_undo(e->doc)?"*":" ", lang);
+             doc_can_undo(e->doc)?"*":" ", eol, enc, lang);
     return strdup(buf);
 }
 
@@ -585,10 +620,18 @@ WuView *wuos_editor_create(const char *path){
     if (path){
         e->path = strdup(path);
         size_t len = 0;
-        char *txt = wuos_read_file(path, &len);
-        if (txt){ e->doc = doc_create(txt); free(txt); }
+        char *raw = wuos_read_file(path, &len);
+        if (raw){
+            /* detect encoding of the raw bytes, normalize to UTF-8 for the Doc */
+            EncKind ek = enc_detect((const unsigned char*)raw, len);
+            e->enc_label = enc_name(ek);
+            char *txt = enc_to_utf8((const unsigned char*)raw, len, ek, NULL);
+            if (txt){ e->doc = doc_create(txt); e->eol_crlf = detect_eol(txt); free(txt); }
+            free(raw);
+        }
     }
     if (!e->doc) e->doc = doc_create(seed);
+    if (!e->enc_label) e->enc_label = "UTF-8";
 
     /* pick lexer by extension (default c) */
     const char *lang = "c";

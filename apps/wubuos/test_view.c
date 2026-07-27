@@ -125,6 +125,29 @@ int main(void){
         }
     }
 
+    /* EOL convert: Ctrl+E toggles LF <-> CRLF */
+    {
+        WuView *ev2 = wuos_editor_create(NULL);
+        if (!ev2){ fprintf(stderr,"[eol] create FAILED\n"); bad++; }
+        else {
+            /* seed is LF; convert to CRLF */
+            ev2->on_key(ev2, WUOS_KEY_EOL, 1);
+            char *t1 = wuos_editor_text(ev2);
+            int has_crlf = (strstr(t1, "\r\n") != NULL);
+            if (!has_crlf){ fprintf(stderr,"[eol] CRLF convert failed\n"); bad++; }
+            free(t1);
+            /* back to LF */
+            ev2->on_key(ev2, WUOS_KEY_EOL, 1);
+            char *t2 = wuos_editor_text(ev2);
+            int still_crlf = (strstr(t2, "\r\n") != NULL);
+            if (still_crlf){ fprintf(stderr,"[eol] LF convert failed\n"); bad++; }
+            free(t2);
+            if (!has_crlf || still_crlf) { /* counted above */ }
+            else fprintf(stderr,"[eol] ok (LF<->CRLF)\n");
+            ev2->destroy(ev2);
+        }
+    }
+
     /* cell view: load a real CSV via wubucell reader */
     {
         char csvp[256]; sprintf(csvp, "/tmp/wuos_cell_%d.csv", (int)getpid());
