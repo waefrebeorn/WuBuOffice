@@ -3,6 +3,7 @@
 # unified wubuoffice binary; forward link references resolve lazily.
 add_subdirectory(wubuword)
 add_subdirectory(wubuwordwin)
+add_subdirectory(wubuos)
 add_subdirectory(wubucell)
 add_subdirectory(wubushow)
 add_subdirectory(wuburead)

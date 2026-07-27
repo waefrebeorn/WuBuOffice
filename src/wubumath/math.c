@@ -265,10 +265,10 @@ static void emit(Buf *o, Box *b){
     if (!b) return;
     switch (b->kind){
     case BOX_TEXT: {
-        buf_printf(o, "<text x=\"%.2f\" y=\"%.2f\" font-family=\"serif\" font-size=\"%.2f\" "
+        wububase_buf_printf(o, "<text x=\"%.2f\" y=\"%.2f\" font-family=\"serif\" font-size=\"%.2f\" "
                  "fill=\"#000\">", b->x, b->y + b->baseline, b->size);
         wububase_xml_escape(o, b->text);
-        buf_add(o, "</text>\n");
+        wububase_buf_add(o, "</text>\n");
         break;
     }
     case BOX_GROUP:
@@ -277,7 +277,7 @@ static void emit(Buf *o, Box *b){
     case BOX_FRAC: {
         /* fraction rule between numerator and denominator */
         double rule_y = b->y + (b->a?b->a->h:0) + b->size*0.12;
-        buf_printf(o, "<line x1=\"%.2f\" y1=\"%.2f\" x2=\"%.2f\" y2=\"%.2f\" stroke=\"#000\" stroke-width=\"1.2\"/>\n",
+        wububase_buf_printf(o, "<line x1=\"%.2f\" y1=\"%.2f\" x2=\"%.2f\" y2=\"%.2f\" stroke=\"#000\" stroke-width=\"1.2\"/>\n",
               b->x, rule_y, b->x + b->w, rule_y);
         emit(o, b->a); emit(o, b->b);
         break;
@@ -300,17 +300,17 @@ char *math_render_svg(const char *expr){
     double W = root->w + 4, H = root->h + 4;
     place(root, 2, 2);
 
-    Buf o; buf_init(&o);
-    buf_printf(&o, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-    buf_printf(&o, "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"%.2f\" height=\"%.2f\" "
+    Buf o; wububase_buf_init(&o);
+    wububase_buf_printf(&o, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+    wububase_buf_printf(&o, "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"%.2f\" height=\"%.2f\" "
               "viewBox=\"0 0 %.2f %.2f\">\n", W, H, W, H);
     emit(&o, root);
-    buf_add(&o, "</svg>\n");
+    wububase_buf_add(&o, "</svg>\n");
 
     char *out = NULL;
-    SvgDoc *doc = svg_parse(buf_str(&o), buf_len(&o));
+    SvgDoc *doc = svg_parse(wububase_buf_str(&o), wububase_buf_len(&o));
     if (doc){ out = svg_regurgitate(doc); svg_free(doc); }
-    buf_free(&o);
+    wububase_buf_free(&o);
     box_free(root);
     return out;
 }

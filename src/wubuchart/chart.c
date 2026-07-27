@@ -110,13 +110,13 @@ static double max_abs_y(Chart *c){
 }
 
 static void draw_background(Buf *b, Chart *c){
-    buf_printf(b, "<rect x=\"0\" y=\"0\" width=\"%d\" height=\"%d\" fill=\"#ffffff\"/>\n", c->w, c->h);
+    wububase_buf_printf(b, "<rect x=\"0\" y=\"0\" width=\"%d\" height=\"%d\" fill=\"#ffffff\"/>\n", c->w, c->h);
 }
 static void draw_title(Buf *b, Chart *c, int y){
-    buf_printf(b, "<text x=\"%d\" y=\"%d\" font-family=\"sans-serif\" font-size=\"16\" "
+    wububase_buf_printf(b, "<text x=\"%d\" y=\"%d\" font-family=\"sans-serif\" font-size=\"16\" "
                   "font-weight=\"bold\" text-anchor=\"middle\" fill=\"#222\">", c->w/2, y);
     wububase_xml_escape(b, c->title ? c->title : "Chart");
-    buf_add(b, "</text>\n");
+    wububase_buf_add(b, "</text>\n");
 }
 
 /* pie wedge path from angle a0->a1 (radians) at center cx,cy radius r */
@@ -124,7 +124,7 @@ static void pie_path(Buf *b, double cx, double cy, double r, double a0, double a
     double x0 = cx + r*cos(a0), y0 = cy + r*sin(a0);
     double x1 = cx + r*cos(a1), y1 = cy + r*sin(a1);
     int large = (a1 - a0) > M_PI ? 1 : 0;
-    buf_printf(b, "M %.2f %.2f L %.2f %.2f A %.2f %.2f 0 %d 1 %.2f %.2f Z",
+    wububase_buf_printf(b, "M %.2f %.2f L %.2f %.2f A %.2f %.2f 0 %d 1 %.2f %.2f Z",
                cx, cy, x0, y0, r, r, large, x1, y1);
 }
 
@@ -132,9 +132,9 @@ static void pie_path(Buf *b, double cx, double cy, double r, double a0, double a
 char *chart_render_svg(Chart *c){
     if (!c || c->nseries == 0) return NULL;
 
-    Buf b; buf_init(&b);
-    buf_printf(&b, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-    buf_printf(&b, "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"%d\" height=\"%d\" "
+    Buf b; wububase_buf_init(&b);
+    wububase_buf_printf(&b, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+    wububase_buf_printf(&b, "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"%d\" height=\"%d\" "
                   "viewBox=\"0 0 %d %d\">\n", c->w, c->h, c->w, c->h);
 
     draw_background(&b, c);
@@ -157,24 +157,24 @@ char *chart_render_svg(Chart *c){
             for (int j=0;j<s->n;j++){
                 double frac = total>0 ? s->y[j]/total : 0;
                 double a1 = a + frac*2*M_PI;
-                buf_printf(&b, "<path d=\"");
+                wububase_buf_printf(&b, "<path d=\"");
                 pie_path(&b, cx, cy, r, a, a1);
-                buf_printf(&b, "\" fill=\"%s\" stroke=\"#fff\" stroke-width=\"1\"/>\n",
+                wububase_buf_printf(&b, "\" fill=\"%s\" stroke=\"#fff\" stroke-width=\"1\"/>\n",
                            palette[si % pc]);
                 /* legend: category label */
                 const char *lab = s->labels[j] ? s->labels[j] : "";
-                buf_printf(&b, "<rect x=\"%d\" y=\"%d\" width=\"12\" height=\"12\" fill=\"%s\"/>"
+                wububase_buf_printf(&b, "<rect x=\"%d\" y=\"%d\" width=\"12\" height=\"12\" fill=\"%s\"/>"
                                "<text x=\"%d\" y=\"%d\" font-family=\"sans-serif\" font-size=\"12\" fill=\"#222\">",
                            right+4, top + si*18, palette[si%pc], right+20, top+si*18+10);
-                wububase_xml_escape(&b, lab); buf_add(&b, "</text>\n");
+                wububase_xml_escape(&b, lab); wububase_buf_add(&b, "</text>\n");
                 a = a1; si++;
             }
         }
     } else {
         /* axis box */
-        buf_printf(&b, "<line x1=\"%d\" y1=\"%d\" x2=\"%d\" y2=\"%d\" stroke=\"#888\"/>\n",
+        wububase_buf_printf(&b, "<line x1=\"%d\" y1=\"%d\" x2=\"%d\" y2=\"%d\" stroke=\"#888\"/>\n",
                    left, top, left, bottom);
-        buf_printf(&b, "<line x1=\"%d\" y1=\"%d\" x2=\"%d\" y2=\"%d\" stroke=\"#888\"/>\n",
+        wububase_buf_printf(&b, "<line x1=\"%d\" y1=\"%d\" x2=\"%d\" y2=\"%d\" stroke=\"#888\"/>\n",
                    left, bottom, right, bottom);
 
         double maxv = max_abs_y(c);
@@ -197,7 +197,7 @@ char *chart_render_svg(Chart *c){
                     double x = left + j*catw + i*gw + 1;
                     double y = (v >= 0) ? bottom - bh : bottom;
                     double hh = fabs(bh);
-                    buf_printf(&b, "<rect x=\"%.2f\" y=\"%.2f\" width=\"%.2f\" height=\"%.2f\" "
+                    wububase_buf_printf(&b, "<rect x=\"%.2f\" y=\"%.2f\" width=\"%.2f\" height=\"%.2f\" "
                                    "fill=\"%s\"/>\n", x, y, gw-2, hh, palette[i%pc]);
                 }
             }
@@ -205,37 +205,37 @@ char *chart_render_svg(Chart *c){
             for (int j=0;j<ncat;j++){
                 const char *lab = c->s[0].labels[j] ? c->s[0].labels[j] : "";
                 if (*lab){
-                    buf_printf(&b, "<text x=\"%.2f\" y=\"%d\" font-family=\"sans-serif\" "
+                    wububase_buf_printf(&b, "<text x=\"%.2f\" y=\"%d\" font-family=\"sans-serif\" "
                                        "font-size=\"10\" text-anchor=\"middle\" fill=\"#222\">",
                                left + (j+0.5)*catw, bottom+14);
-                    wububase_xml_escape(&b, lab); buf_add(&b, "</text>\n");
+                    wububase_xml_escape(&b, lab); wububase_buf_add(&b, "</text>\n");
                 }
             }
         } else if (c->type == CHART_LINE){
             for (int i=0;i<c->nseries;i++){
                 Series *s = &c->s[i];
-                Buf path; buf_init(&path);
+                Buf path; wububase_buf_init(&path);
                 for (int j=0;j<s->n;j++){
                     double x = left + (ncat>1 ? (double)j/(ncat-1)*(right-left) : left);
                     double y = bottom - s->y[j]*scale;
-                    buf_printf(&path, j==0 ? "M %.2f %.2f" : " L %.2f %.2f", x, y);
+                    wububase_buf_printf(&path, j==0 ? "M %.2f %.2f" : " L %.2f %.2f", x, y);
                 }
-                buf_printf(&b, "<path d=\"%s\" fill=\"none\" stroke=\"%s\" stroke-width=\"2\"/>\n",
+                wububase_buf_printf(&b, "<path d=\"%s\" fill=\"none\" stroke=\"%s\" stroke-width=\"2\"/>\n",
                            path.p ? path.p : "", palette[i%pc]);
-                buf_free(&path);
+                wububase_buf_free(&path);
                 for (int j=0;j<s->n;j++){
                     double x = left + (ncat>1 ? (double)j/(ncat-1)*(right-left) : left);
                     double y = bottom - s->y[j]*scale;
-                    buf_printf(&b, "<circle cx=\"%.2f\" cy=\"%.2f\" r=\"3\" fill=\"%s\"/>\n", x, y, palette[i%pc]);
+                    wububase_buf_printf(&b, "<circle cx=\"%.2f\" cy=\"%.2f\" r=\"3\" fill=\"%s\"/>\n", x, y, palette[i%pc]);
                 }
                 if (c->s[0].labels[0]){
                     for (int j=0;j<ncat;j++){
                         const char *lab = c->s[0].labels[j];
                         if (lab && *lab){
                             double x = left + (ncat>1 ? (double)j/(ncat-1)*(right-left) : left);
-                            buf_printf(&b, "<text x=\"%.2f\" y=\"%d\" font-family=\"sans-serif\" "
+                            wububase_buf_printf(&b, "<text x=\"%.2f\" y=\"%d\" font-family=\"sans-serif\" "
                                        "font-size=\"10\" text-anchor=\"middle\" fill=\"#222\">", x, bottom+14);
-                            wububase_xml_escape(&b, lab); buf_add(&b, "</text>\n");
+                            wububase_xml_escape(&b, lab); wububase_buf_add(&b, "</text>\n");
                         }
                     }
                 }
@@ -248,7 +248,7 @@ char *chart_render_svg(Chart *c){
                     /* scatter: x by index, y by value */
                     double x = left + (s->n>1 ? (double)j/(s->n-1)*(right-left) : left);
                     double y = bottom - v*scale;
-                    buf_printf(&b, "<circle cx=\"%.2f\" cy=\"%.2f\" r=\"4\" fill=\"%s\" "
+                    wububase_buf_printf(&b, "<circle cx=\"%.2f\" cy=\"%.2f\" r=\"4\" fill=\"%s\" "
                                    "fill-opacity=\"0.7\"/>\n", x, y, palette[i%pc]);
                 }
             }
@@ -261,22 +261,22 @@ char *chart_render_svg(Chart *c){
         wubuval v; memset(&v, 0, sizeof v);
         if (wubu_formula_eval(c->subtitle_formula, NULL, NULL, &v) == 0){
             char *s = wubu_num_to_str(v.num);
-            buf_printf(&b, "<text x=\"%d\" y=\"%d\" font-family=\"sans-serif\" font-size=\"11\" "
+            wububase_buf_printf(&b, "<text x=\"%d\" y=\"%d\" font-family=\"sans-serif\" font-size=\"11\" "
                            "text-anchor=\"middle\" fill=\"#666\">= %s &#8594; %s</text>\n",
                        c->w/2, c->h-12, c->subtitle_formula, s ? s : "");
             free(s);
         }
     }
 
-    buf_add(&b, "</svg>\n");
+    wububase_buf_add(&b, "</svg>\n");
 
     /* Finalize through wubusvg (validate well-formed + canonicalize output). */
     char *out = NULL;
-    SvgDoc *doc = svg_parse(buf_str(&b), buf_len(&b));
+    SvgDoc *doc = svg_parse(wububase_buf_str(&b), wububase_buf_len(&b));
     if (doc){
         out = svg_regurgitate(doc);
         svg_free(doc);
     }
-    buf_free(&b);
+    wububase_buf_free(&b);
     return out;
 }

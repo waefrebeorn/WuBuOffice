@@ -37,17 +37,17 @@ typedef struct {
     size_t cap;   /* allocated capacity */
 } Buf;
 
-void buf_init(Buf *b);
-void buf_free(Buf *b);
+void wububase_buf_init(Buf *b);
+void wububase_buf_free(Buf *b);
 /* Append raw string t. Returns 0 ok, -1 on alloc failure (buffer unchanged). */
-int  buf_add(Buf *b, const char *t);
+int  wububase_buf_add(Buf *b, const char *t);
 /* Append printf-formatted text (va_list / stdarg). */
-int  buf_vprintf(Buf *b, const char *fmt, va_list ap);
-int  buf_printf(Buf *b, const char *fmt, ...);
+int  wububase_buf_vprintf(Buf *b, const char *fmt, va_list ap);
+int  wububase_buf_printf(Buf *b, const char *fmt, ...);
 /* Pointer to the NUL-terminated content (always valid; lazily ensures NUL). */
-const char *buf_str(Buf *b);
+const char *wububase_buf_str(Buf *b);
 /* Current length in bytes. */
-size_t buf_len(const Buf *b);
+size_t wububase_buf_len(const Buf *b);
 
 /* ---------------- XML / HTML escaping ---------------- */
 /* Append t to b with & < > " escaped (XML/HTML text + attribute safe). */

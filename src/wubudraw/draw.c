@@ -104,50 +104,50 @@ void draw_add_text(DrawScene *s, double x, double y, const char *text,
 
 char *draw_render_svg(DrawScene *s){
     if (!s) return NULL;
-    Buf b; buf_init(&b);
-    buf_printf(&b, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-    buf_printf(&b, "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"%d\" height=\"%d\" "
+    Buf b; wububase_buf_init(&b);
+    wububase_buf_printf(&b, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+    wububase_buf_printf(&b, "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"%d\" height=\"%d\" "
                   "viewBox=\"0 0 %d %d\">\n", s->w, s->h, s->w, s->h);
-    buf_printf(&b, "<rect x=\"0\" y=\"0\" width=\"%d\" height=\"%d\" fill=\"#ffffff\"/>\n", s->w, s->h);
+    wububase_buf_printf(&b, "<rect x=\"0\" y=\"0\" width=\"%d\" height=\"%d\" fill=\"#ffffff\"/>\n", s->w, s->h);
 
     for (Shape *sh = s->head; sh; sh = sh->next){
         switch (sh->kind){
         case SH_RECT:
-            buf_printf(&b, "<rect x=\"%.2f\" y=\"%.2f\" width=\"%.2f\" height=\"%.2f\" "
+            wububase_buf_printf(&b, "<rect x=\"%.2f\" y=\"%.2f\" width=\"%.2f\" height=\"%.2f\" "
                            "fill=\"%s\" stroke=\"%s\"/>\n",
                        sh->a, sh->b, sh->c, sh->d, sh->fill, sh->stroke);
             break;
         case SH_ELLIPSE:
-            buf_printf(&b, "<ellipse cx=\"%.2f\" cy=\"%.2f\" rx=\"%.2f\" ry=\"%.2f\" "
+            wububase_buf_printf(&b, "<ellipse cx=\"%.2f\" cy=\"%.2f\" rx=\"%.2f\" ry=\"%.2f\" "
                            "fill=\"%s\" stroke=\"%s\"/>\n",
                        sh->a, sh->b, sh->c, sh->d, sh->fill, sh->stroke);
             break;
         case SH_LINE:
-            buf_printf(&b, "<line x1=\"%.2f\" y1=\"%.2f\" x2=\"%.2f\" y2=\"%.2f\" "
+            wububase_buf_printf(&b, "<line x1=\"%.2f\" y1=\"%.2f\" x2=\"%.2f\" y2=\"%.2f\" "
                            "stroke=\"%s\" stroke-width=\"%.2f\"/>\n",
                        sh->a, sh->b, sh->c, sh->d, sh->stroke, sh->sw);
             break;
         case SH_POLY: {
-            buf_printf(&b, "<polyline points=\"");
+            wububase_buf_printf(&b, "<polyline points=\"");
             for (int i=0;i<sh->n;i++)
-                buf_printf(&b, "%.2f,%.2f ", sh->pts[i*2], sh->pts[i*2+1]);
-            buf_printf(&b, "\" fill=\"none\" stroke=\"%s\" stroke-width=\"%.2f\"/>\n",
+                wububase_buf_printf(&b, "%.2f,%.2f ", sh->pts[i*2], sh->pts[i*2+1]);
+            wububase_buf_printf(&b, "\" fill=\"none\" stroke=\"%s\" stroke-width=\"%.2f\"/>\n",
                        sh->stroke, sh->sw);
             break;
         }
         case SH_TEXT:
-            buf_printf(&b, "<text x=\"%.2f\" y=\"%.2f\" font-family=\"sans-serif\" "
+            wububase_buf_printf(&b, "<text x=\"%.2f\" y=\"%.2f\" font-family=\"sans-serif\" "
                            "font-size=\"%.2f\" fill=\"%s\">", sh->a, sh->b, sh->size, sh->fill);
             wububase_xml_escape(&b, sh->text);
-            buf_add(&b, "</text>\n");
+            wububase_buf_add(&b, "</text>\n");
             break;
         }
     }
-    buf_add(&b, "</svg>\n");
+    wububase_buf_add(&b, "</svg>\n");
 
     char *out = NULL;
-    SvgDoc *doc = svg_parse(buf_str(&b), buf_len(&b));
+    SvgDoc *doc = svg_parse(wububase_buf_str(&b), wububase_buf_len(&b));
     if (doc){ out = svg_regurgitate(doc); svg_free(doc); }
-    buf_free(&b);
+    wububase_buf_free(&b);
     return out;
 }

@@ -60,14 +60,14 @@ int wububase_utf8_len(const char *s) {
 }
 
 /* ---------------- dynamic string buffer ---------------- */
-void buf_init(Buf *b) { b->p = NULL; b->len = 0; b->cap = 0; }
+void wububase_buf_init(Buf *b) { b->p = NULL; b->len = 0; b->cap = 0; }
 
-void buf_free(Buf *b) {
+void wububase_buf_free(Buf *b) {
     free(b->p);
     b->p = NULL; b->len = 0; b->cap = 0;
 }
 
-size_t buf_len(const Buf *b) { return b ? b->len : 0; }
+size_t wububase_buf_len(const Buf *b) { return b ? b->len : 0; }
 
 static int buf_reserve(Buf *b, size_t extra) {
     if (b->len + extra + 1 <= b->cap) return 0;
@@ -79,7 +79,7 @@ static int buf_reserve(Buf *b, size_t extra) {
     return 0;
 }
 
-int buf_add(Buf *b, const char *t) {
+int wububase_buf_add(Buf *b, const char *t) {
     if (!b || !t) return -1;
     size_t al = strlen(t);
     if (buf_reserve(b, al) != 0) return -1;
@@ -89,7 +89,7 @@ int buf_add(Buf *b, const char *t) {
     return 0;
 }
 
-int buf_vprintf(Buf *b, const char *fmt, va_list ap) {
+int wububase_buf_vprintf(Buf *b, const char *fmt, va_list ap) {
     if (!b || !fmt) return -1;
     va_list ap2; va_copy(ap2, ap);
     int n = vsnprintf(NULL, 0, fmt, ap2);
@@ -101,14 +101,14 @@ int buf_vprintf(Buf *b, const char *fmt, va_list ap) {
     return 0;
 }
 
-int buf_printf(Buf *b, const char *fmt, ...) {
+int wububase_buf_printf(Buf *b, const char *fmt, ...) {
     va_list ap; va_start(ap, fmt);
-    int r = buf_vprintf(b, fmt, ap);
+    int r = wububase_buf_vprintf(b, fmt, ap);
     va_end(ap);
     return r;
 }
 
-const char *buf_str(Buf *b) {
+const char *wububase_buf_str(Buf *b) {
     if (!b) return "";
     if (!b->p) {               /* ensure a valid empty string */
         if (buf_reserve(b, 0) != 0) return "";
@@ -123,11 +123,11 @@ int wububase_xml_escape(Buf *b, const char *t) {
     if (!b || !t) return -1;
     for (const char *p = t; *p; p++) {
         switch (*p) {
-            case '&': if (buf_add(b, "&amp;"))  return -1; break;
-            case '<': if (buf_add(b, "&lt;"))   return -1; break;
-            case '>': if (buf_add(b, "&gt;"))   return -1; break;
-            case '"': if (buf_add(b, "&quot;")) return -1; break;
-            default:  { char c[2] = { *p, 0 }; if (buf_add(b, c)) return -1; }
+            case '&': if (wububase_buf_add(b, "&amp;"))  return -1; break;
+            case '<': if (wububase_buf_add(b, "&lt;"))   return -1; break;
+            case '>': if (wububase_buf_add(b, "&gt;"))   return -1; break;
+            case '"': if (wububase_buf_add(b, "&quot;")) return -1; break;
+            default:  { char c[2] = { *p, 0 }; if (wububase_buf_add(b, c)) return -1; }
         }
     }
     return 0;

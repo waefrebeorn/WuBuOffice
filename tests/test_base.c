@@ -34,34 +34,34 @@ static void test_utf8(void){
 }
 
 static void test_buf(void){
-    Buf b; buf_init(&b);
-    CHECK(buf_len(&b) == 0, "empty len");
-    buf_add(&b, "hello");
-    buf_add(&b, " ");
-    buf_printf(&b, "%d", 42);
-    CHECK(strcmp(buf_str(&b), "hello 42") == 0, "buf append + printf");
-    CHECK(buf_len(&b) == 8, "buf len after appends");
+    Buf b; wububase_buf_init(&b);
+    CHECK(wububase_buf_len(&b) == 0, "empty len");
+    wububase_buf_add(&b, "hello");
+    wububase_buf_add(&b, " ");
+    wububase_buf_printf(&b, "%d", 42);
+    CHECK(strcmp(wububase_buf_str(&b), "hello 42") == 0, "buf append + printf");
+    CHECK(wububase_buf_len(&b) == 8, "buf len after appends");
     /* overflow the 256 initial cap to force realloc path */
-    for (int i = 0; i < 1000; i++) buf_printf(&b, "x");
-    CHECK(buf_len(&b) == 1008, "buf grows past initial capacity");
-    buf_free(&b);
+    for (int i = 0; i < 1000; i++) wububase_buf_printf(&b, "x");
+    CHECK(wububase_buf_len(&b) == 1008, "buf grows past initial capacity");
+    wububase_buf_free(&b);
 
-    Buf e; buf_init(&e);
-    buf_printf(&e, "<a href=\"x&y\">%s</a>", "a<b>c");
-    CHECK(strcmp(buf_str(&e), "<a href=\"x&y\">a<b>c</a>") == 0, "buf raw does NOT escape (escape is explicit)");
-    buf_free(&e);
+    Buf e; wububase_buf_init(&e);
+    wububase_buf_printf(&e, "<a href=\"x&y\">%s</a>", "a<b>c");
+    CHECK(strcmp(wububase_buf_str(&e), "<a href=\"x&y\">a<b>c</a>") == 0, "buf raw does NOT escape (escape is explicit)");
+    wububase_buf_free(&e);
 }
 
 static void test_xml_escape(void){
-    Buf b; buf_init(&b);
+    Buf b; wububase_buf_init(&b);
     wububase_xml_escape(&b, "a<b>c\"d&e");
-    CHECK(strcmp(buf_str(&b), "a&lt;b&gt;c&quot;d&amp;e") == 0, "xml escape all four entities");
-    buf_free(&b);
+    CHECK(strcmp(wububase_buf_str(&b), "a&lt;b&gt;c&quot;d&amp;e") == 0, "xml escape all four entities");
+    wububase_buf_free(&b);
 
-    Buf u; buf_init(&u);
+    Buf u; wububase_buf_init(&u);
     wububase_xml_escape(&u, "caf\xc3\xa9"); /* accented text must pass through untouched */
-    CHECK(strcmp(buf_str(&u), "caf\xc3\xa9") == 0, "xml escape preserves UTF-8 bytes");
-    buf_free(&u);
+    CHECK(strcmp(wububase_buf_str(&u), "caf\xc3\xa9") == 0, "xml escape preserves UTF-8 bytes");
+    wububase_buf_free(&u);
 }
 
 int main(void){

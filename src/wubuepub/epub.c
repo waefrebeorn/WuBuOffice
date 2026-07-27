@@ -33,9 +33,9 @@ static void emit_inline(Buf *s, const wubumodel_node *para){
             wubumodel_style *ls = wubumodel_node_style(c);
             const char *href = ls ? wubumodel_style_get_prop(ls, "href") : NULL;
             const char *lt   = ls ? wubumodel_style_get_prop(ls, "text") : NULL;
-            buf_printf(s, "<a href=\"%s\">", href?href:"#");
+            wububase_buf_printf(s, "<a href=\"%s\">", href?href:"#");
             if (lt) wububase_xml_escape(s, lt);
-            buf_add(s, "</a>");
+            wububase_buf_add(s, "</a>");
         }
     }
 }
@@ -45,41 +45,41 @@ static void emit_block(Buf *s, const wubumodel_node *n, int *chap_idx){
     if (k == WUBUMODEL_SECTION){
         /* a section starts a new chapter */
         (*chap_idx)++;
-        Buf chap; buf_init(&chap);
-        buf_printf(&chap, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+        Buf chap; wububase_buf_init(&chap);
+        wububase_buf_printf(&chap, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
                        "<!DOCTYPE html>\n"
                        "<html xmlns=\"http://www.w3.org/1999/xhtml\" "
                        "xmlns:epub=\"http://www.idpf.org/2007/ops\">\n"
                        "<head><title>Chapter %d</title></head>\n<body>\n", *chap_idx);
         for (wubumodel_node *c = wubumodel_node_first_child(n); c; c = wubumodel_node_next_sibling(c))
             emit_block(&chap, c, chap_idx);
-        buf_add(&chap, "</body>\n</html>\n");
+        wububase_buf_add(&chap, "</body>\n</html>\n");
         /* caller assembles chapters list; here we emit inline into s (single doc) */
-        buf_add(s, buf_str(&chap));
-        buf_free(&chap);
+        wububase_buf_add(s, wububase_buf_str(&chap));
+        wububase_buf_free(&chap);
     } else if (k == WUBUMODEL_PARAGRAPH){
         int lvl = heading_level(n);
         if (lvl){
-            buf_printf(s, "<h%d>", lvl);
+            wububase_buf_printf(s, "<h%d>", lvl);
             emit_inline(s, n);
-            buf_printf(s, "</h%d>\n", lvl);
+            wububase_buf_printf(s, "</h%d>\n", lvl);
         } else {
-            buf_add(s, "<p>");
+            wububase_buf_add(s, "<p>");
             emit_inline(s, n);
-            buf_add(s, "</p>\n");
+            wububase_buf_add(s, "</p>\n");
         }
     } else if (k == WUBUMODEL_TABLE){
-        buf_add(s, "<table>\n");
+        wububase_buf_add(s, "<table>\n");
         for (wubumodel_node *r = wubumodel_node_first_child(n); r; r = wubumodel_node_next_sibling(r)){
-            buf_add(s, "<tr>\n");
+            wububase_buf_add(s, "<tr>\n");
             for (wubumodel_node *cell = wubumodel_node_first_child(r); cell; cell = wubumodel_node_next_sibling(cell)){
-                buf_add(s, "<td>");
+                wububase_buf_add(s, "<td>");
                 emit_inline(s, cell);
-                buf_add(s, "</td>\n");
+                wububase_buf_add(s, "</td>\n");
             }
-            buf_add(s, "</tr>\n");
+            wububase_buf_add(s, "</tr>\n");
         }
-        buf_add(s, "</table>\n");
+        wububase_buf_add(s, "</table>\n");
     }
     /* SHAPE/CHART: skip in v1 (draw/math can be rasterized later) */
 }
@@ -110,7 +110,7 @@ int epub_write(const wubumodel_doc *doc, const char *path,
     if (wubuzip_add_deflated(z, "META-INF/container.xml", container, (uint32_t)strlen(container)) != 0) goto fail;
 
     /* 3) count chapters + build body + nav */
-    Buf body; buf_init(&body);
+    Buf body; wububase_buf_init(&body);
     int chap = 0;
     wubumodel_node *root = wubumodel_doc_root(doc);
     /* gather top-level sections; if none, wrap whole doc as one chapter */
@@ -118,31 +118,31 @@ int epub_write(const wubumodel_doc *doc, const char *path,
     for (wubumodel_node *c = root; c; c = wubumodel_node_next_sibling(c))
         if (wubumodel_node_kind(c) == WUBUMODEL_SECTION) nsec++;
     if (nsec == 0){
-        buf_add(&body, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+        wububase_buf_add(&body, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
                      "<!DOCTYPE html>\n"
                      "<html xmlns=\"http://www.w3.org/1999/xhtml\" "
                      "xmlns:epub=\"http://www.idpf.org/2007/ops\">\n"
                      "<head><title>");
-        wububase_xml_escape(&body, t); buf_add(&body, "</title></head>\n<body>\n");
+        wububase_xml_escape(&body, t); wububase_buf_add(&body, "</title></head>\n<body>\n");
         for (wubumodel_node *c = root; c; c = wubumodel_node_next_sibling(c))
             emit_block(&body, c, &chap);
-        buf_add(&body, "</body>\n</html>\n");
+        wububase_buf_add(&body, "</body>\n</html>\n");
     } else {
-        buf_add(&body, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+        wububase_buf_add(&body, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
                      "<!DOCTYPE html>\n"
                      "<html xmlns=\"http://www.w3.org/1999/xhtml\" "
                      "xmlns:epub=\"http://www.idpf.org/2007/ops\">\n"
                      "<head><title>");
-        wububase_xml_escape(&body, t); buf_add(&body, "</title></head>\n<body>\n");
+        wububase_xml_escape(&body, t); wububase_buf_add(&body, "</title></head>\n<body>\n");
         for (wubumodel_node *c = root; c; c = wubumodel_node_next_sibling(c))
             if (wubumodel_node_kind(c) == WUBUMODEL_SECTION)
                 emit_block(&body, c, &chap);
-        buf_add(&body, "</body>\n</html>\n");
+        wububase_buf_add(&body, "</body>\n</html>\n");
     }
 
     /* 4) OPF */
-    Buf opf; buf_init(&opf);
-    buf_printf(&opf,
+    Buf opf; wububase_buf_init(&opf);
+    wububase_buf_printf(&opf,
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
         "<package xmlns=\"http://www.idpf.org/2007/opf\" version=\"3.0\" unique-identifier=\"bookid\">\n"
         "  <metadata xmlns:dc=\"http://purl.org/dc/elements/1.1/\">\n"
@@ -159,24 +159,24 @@ int epub_write(const wubumodel_doc *doc, const char *path,
         "    <itemref idref=\"chap1\"/>\n"
         "  </spine>\n"
         "</package>\n", t, lg);
-    if (wubuzip_add_deflated(z, "OEBPS/content.opf", buf_str(&opf), (uint32_t)buf_len(&opf)) != 0){ buf_free(&opf); buf_free(&body); goto fail; }
-    buf_free(&opf);
+    if (wubuzip_add_deflated(z, "OEBPS/content.opf", wububase_buf_str(&opf), (uint32_t)wububase_buf_len(&opf)) != 0){ wububase_buf_free(&opf); wububase_buf_free(&body); goto fail; }
+    wububase_buf_free(&opf);
 
     /* 5) nav.xhtml */
-    Buf nav; buf_init(&nav);
-    buf_printf(&nav,
+    Buf nav; wububase_buf_init(&nav);
+    wububase_buf_printf(&nav,
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
         "<!DOCTYPE html>\n"
         "<html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:epub=\"http://www.idpf.org/2007/ops\">\n"
         "<head><title>Table of Contents</title></head>\n<body>\n<nav epub:type=\"toc\" id=\"toc\">\n<ol>\n"
         "<li><a href=\"chap_1.xhtml\">%s</a></li>\n"
         "</ol>\n</nav>\n</body>\n</html>\n", t);
-    if (wubuzip_add_deflated(z, "OEBPS/nav.xhtml", buf_str(&nav), (uint32_t)buf_len(&nav)) != 0){ buf_free(&nav); buf_free(&body); goto fail; }
-    buf_free(&nav);
+    if (wubuzip_add_deflated(z, "OEBPS/nav.xhtml", wububase_buf_str(&nav), (uint32_t)wububase_buf_len(&nav)) != 0){ wububase_buf_free(&nav); wububase_buf_free(&body); goto fail; }
+    wububase_buf_free(&nav);
 
     /* 6) chapter content */
-    if (wubuzip_add_deflated(z, "OEBPS/chap_1.xhtml", buf_str(&body), (uint32_t)buf_len(&body)) != 0){ buf_free(&body); goto fail; }
-    buf_free(&body);
+    if (wubuzip_add_deflated(z, "OEBPS/chap_1.xhtml", wububase_buf_str(&body), (uint32_t)wububase_buf_len(&body)) != 0){ wububase_buf_free(&body); goto fail; }
+    wububase_buf_free(&body);
 
     if (wubuzip_finalize(z) != 0) return -1;
     return 0;
