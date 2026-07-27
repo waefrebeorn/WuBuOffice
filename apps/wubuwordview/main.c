@@ -13,7 +13,7 @@
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
-#include <zlib.h>
+#include "wubupng.h"   /* shared PNG encoder (was a private copy here) */
 
 #include "wububase.h"   /* shared utf8 decode (was a private copy here) */
 #include <stdio.h>
@@ -39,48 +39,6 @@ static void rect(int x0,int y0,int x1,int y1, unsigned char r,unsigned char g,un
 }
 
 /* ---------- PNG writer (zlib deflate, no external lib beyond zlib) ---------- */
-static void png_u32(unsigned char *o, unsigned long v){
-    o[0]=(v>>24)&0xff; o[1]=(v>>16)&0xff; o[2]=(v>>8)&0xff; o[3]=v&0xff;
-}
-/* write one chunk: [4 len][4 type][data][4 crc]; type is 4 ascii bytes */
-static void write_chunk(FILE *f, const char *type, const unsigned char *data, unsigned long dlen){
-    unsigned char len[4]; png_u32(len, dlen); fwrite(len,1,4,f);
-    fwrite(type,1,4,f);
-    if (dlen && data) fwrite(data,1,dlen,f);
-    /* CRC over type + data (incremental; safe for any dlen, no fixed buffer) */
-    unsigned long c = crc32(crc32(0, (const Bytef*)type, 4), data?data:(const Bytef*)"", dlen);
-    unsigned char crc[4]; png_u32(crc,c);
-    fwrite(crc,1,4,f);
-}
-static int write_png(const char *path, const FB *fb){
-    FILE *f = fopen(path,"wb"); if(!f) return -1;
-    unsigned char sig[8]={137,80,78,71,13,10,26,10}; fwrite(sig,1,8,f);
-
-    /* IHDR data: width, height, bitdepth=8, colortype=6(RGBA), compression/
-     * filter/interlace = 0 */
-    unsigned char ihdr[13];
-    png_u32(ihdr+0, (unsigned long)fb->w);
-    png_u32(ihdr+4, (unsigned long)fb->h);
-    ihdr[8]=8; ihdr[9]=6; ihdr[10]=0; ihdr[11]=0; ihdr[12]=0;
-    write_chunk(f, "IHDR", ihdr, 13);
-
-    /* IDAT: raw scanlines with filter byte 0, then zlib-compress */
-    size_t raw = (size_t)fb->h*(1 + (size_t)fb->w*4);
-    unsigned char *rawp = malloc(raw);
-    for (int y=0;y<fb->h;y++){
-        rawp[(size_t)y*(1+(size_t)fb->w*4)] = 0;
-        memcpy(rawp + (size_t)y*(1+(size_t)fb->w*4) + 1, fb->p + (size_t)y*fb->w*4, (size_t)fb->w*4);
-    }
-    uLong cl = compressBound(raw);
-    unsigned char *cmp = malloc(cl);
-    if (compress(cmp,&cl,rawp,raw)!=Z_OK){ free(rawp); free(cmp); fclose(f); return -1; }
-    write_chunk(f, "IDAT", cmp, (unsigned long)cl);
-    free(rawp); free(cmp);
-
-    write_chunk(f, "IEND", NULL, 0);
-    fclose(f); return 0;
-}
-
 /* ---------- FreeType glyph raster ---------- */
 static FT_Library g_ft;
 static FT_Face g_face_reg, g_face_bold;
@@ -286,7 +244,7 @@ int main(int argc, char **argv){
     rect(cx0, cy0, cx0, cy0+chh, 120,120,125);
     rect(cx0, cy0+chh, cx0+cw, cy0+chh, 120,120,125);
 
-    write_png(out, &g_fb);
+    wubupng_write_file(out, WUBUPNG_RGBA, g_fb.p, (uint32_t)g_fb.w, (uint32_t)g_fb.h);
     printf("rendered %s (%dx%d)\n", out, W, H);
 
     spell_free(sp);

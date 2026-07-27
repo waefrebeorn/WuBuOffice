@@ -13,4 +13,4 @@ target_include_directories(wubuwordview PRIVATE
     ${CMAKE_SOURCE_DIR}/src/wubuchart
     ${FREETYPE_INCLUDE_DIRS})
 target_link_libraries(wubuwordview PRIVATE
-    wubumodel wubuspell wubuchart wububase ${FREETYPE_LIBRARIES} ZLIB::ZLIB m)
+    wubumodel wubuspell wubuchart wububase wubupng ${FREETYPE_LIBRARIES} m)

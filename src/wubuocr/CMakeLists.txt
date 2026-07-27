@@ -18,7 +18,7 @@ target_include_directories(wubuocr PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}/src/wubujson
     ${CMAKE_SOURCE_DIR}/src/wubufont)
-target_link_libraries(wubuocr PUBLIC wubujson wubufont wubuzip crnnocr m)
+target_link_libraries(wubuocr PUBLIC wubujson wubufont wubuzip wubupng crnnocr m)
 
 # --- Modern CRNN + CTC modular OCR pipeline (clean-room, dependency-free) ---
 # Self-contained modules, opaque structs, no god headers:
