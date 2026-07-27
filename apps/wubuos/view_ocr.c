@@ -74,8 +74,10 @@ static void destroy(WuView *v){ OcrV *e = v->priv; if(e->pg) ocr_page_free(e->pg
 
 WuView *wuos_ocr_create(const char *path){
     OcrV *e = calloc(1, sizeof *e);
-    /* prefer an external page, else synthesize */
-    size_t pl=0; uint8_t *pb=read_file("/tmp/ocr_in.png",&pl);
+    /* prefer an explicit PNG path, then /tmp/ocr_in.png, else synthesize */
+    const char *src = path ? path : "/tmp/ocr_in.png";
+    size_t pl=0; uint8_t *pb=read_file(src,&pl);
+    if (!pb && path){ pb = read_file("/tmp/ocr_in.png",&pl); }  /* fall back */
     if (pb){ int interlaced=0; e->im = ocr_image_from_png(pb, pl, &interlaced); free(pb); }
     if (!e->im) e->im = make_sample();
     if (e->im){

@@ -106,6 +106,20 @@ int main(void){
         }
     }
 
+    /* cell view: load a real CSV via wubucell reader */
+    {
+        char csvp[256]; sprintf(csvp, "/tmp/wuos_cell_%d.csv", (int)getpid());
+        const char *csv = "alpha,beta,gamma\n10,20,30\n4,5,6\n";
+        wuos_write_file(csvp, csv, strlen(csv));
+        WuView *cv = wuos_cell_create(csvp);
+        if (!cv){ fprintf(stderr,"[cell(csv)] create FAILED\n"); bad++; }
+        else {
+            bad += render_check(cv, "cell(csv)");
+            cv->destroy(cv);
+        }
+        remove(csvp);
+    }
+
     /* cleanup temp files */
     remove(mdp); remove(codep);
 

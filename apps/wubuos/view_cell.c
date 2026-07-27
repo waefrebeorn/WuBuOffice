@@ -4,9 +4,12 @@
 #include "wuos.h"
 #include "wuos_font.h"
 #include "cell.h"          /* apps/wubucell */
+#include "cell_csv.h"      /* wubucell_read_csv */
+#include "cell_read.h"     /* wubucell_read */
 
 #include <stdlib.h>
 #include <string.h>
+#include <strings.h>
 
 typedef struct { wubucell_book *b; int maxc, maxr; } CellV;
 
@@ -65,20 +68,36 @@ static int render(WuView *v, int w, int h, int scroll,
 
 static void destroy(WuView *v){ CellV *e = v->priv; wubucell_free(e->b); free(e); }
 
+static const char *get_path(WuView *v){
+    (void)v;
+    return NULL; /* cell view uses sample unless launched with a file */
+}
+
 WuView *wuos_cell_create(const char *path){
     CellV *e = calloc(1, sizeof *e);
-    e->b = wubucell_create();
-    int s = wubucell_sheet(e->b, "Sheet1");
-    /* a small real model: numbers + a SUM formula */
-    wubucell_cell_n(e->b, s, 1, 1, 10);
-    wubucell_cell_n(e->b, s, 2, 1, 24);
-    wubucell_cell_n(e->b, s, 3, 1, 15);
-    wubucell_cell_n(e->b, s, 4, 1, 30);
-    wubucell_cell_f(e->b, s, 5, 1, "SUM(A1:D1)", 79);
-    wubucell_cell_s(e->b, s, 1, 2, "Total revenue");
-    wubucell_cell_f(e->b, s, 2, 2, "A1*2", 158);
-    wubucell_cell_s(e->b, s, 1, 3, "Quarter");
-    wubucell_chart(e->b, s, "Revenue", "Sheet1!A1:D1", "Sheet1!A1:D1");
+    e->b = NULL;
+    if (path){
+        /* .csv -> read_csv; .xlsx/.ods -> read; else ignore */
+        const char *dot = strrchr(path, '.');
+        if (dot && !strcasecmp(dot, ".csv")) wubucell_read_csv(path, ',', &e->b);
+        else if (dot && (!strcasecmp(dot, ".xlsx")||!strcasecmp(dot, ".ods")))
+            wubucell_read(path, &e->b);
+    }
+    if (!e->b){
+        e->b = wubucell_create();
+        int s = wubucell_sheet(e->b, "Sheet1");
+        /* a small real model: numbers + a SUM formula */
+        wubucell_cell_n(e->b, s, 1, 1, 10);
+        wubucell_cell_n(e->b, s, 2, 1, 24);
+        wubucell_cell_n(e->b, s, 3, 1, 15);
+        wubucell_cell_n(e->b, s, 4, 1, 30);
+        wubucell_cell_f(e->b, s, 5, 1, "SUM(A1:D1)", 79);
+        wubucell_cell_s(e->b, s, 1, 2, "Total revenue");
+        wubucell_cell_f(e->b, s, 2, 2, "A1*2", 158);
+        wubucell_cell_s(e->b, s, 1, 3, "Quarter");
+        wubucell_chart(e->b, s, "Revenue", "Sheet1!A1:D1", "Sheet1!A1:D1");
+    }
+    int s = wubucell_sheet_count(e->b) > 0 ? 1 : 1;
     wubucell_sheet_dims(e->b, s, &e->maxc, &e->maxr);
     if (e->maxr < 3) e->maxr = 3;
     if (e->maxc < 5) e->maxc = 5;
@@ -87,5 +106,6 @@ WuView *wuos_cell_create(const char *path){
     v->priv = e;
     v->destroy = destroy;
     v->render  = render;
+    v->get_path = get_path;
     return v;
 }

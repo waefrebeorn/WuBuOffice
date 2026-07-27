@@ -82,6 +82,8 @@ int main(int argc, char **argv){
                               : (auto_tab && !strcmp(auto_tab,"doc"))? want_file : NULL;
     const char *file_for_editor = (want_tab && !strcmp(want_tab,"editor"))? want_file
                                 : (auto_tab && !strcmp(auto_tab,"editor"))? want_file : NULL;
+    const char *file_for_ocr = (want_tab && (!strcmp(want_tab,"ocr")))? want_file : NULL;
+    const char *file_for_cell = (want_tab && !strcmp(want_tab,"cell"))? want_file : NULL;
 
     if (SDL_Init(SDL_INIT_VIDEO)!=0){ fprintf(stderr,"SDL init: %s\n",SDL_GetError()); return 1; }
     if (wuos_font_init()!=0){ fprintf(stderr,"font init failed\n"); SDL_Quit(); return 1; }
@@ -92,9 +94,9 @@ int main(int argc, char **argv){
     if (!ren){ fprintf(stderr,"renderer: %s\n",SDL_GetError()); SDL_DestroyWindow(win); SDL_Quit(); return 1; }
 
     add_view(wuos_doc_create(file_for_doc));
-    add_view(wuos_cell_create(NULL));
+    add_view(wuos_cell_create(file_for_cell));
     add_view(wuos_slide_create(NULL));
-    add_view(wuos_ocr_create(NULL));
+    add_view(wuos_ocr_create(file_for_ocr));
     add_view(wuos_editor_create(file_for_editor));
     if (nviews==0){ fprintf(stderr,"no views\n"); return 1; }
     /* if a specific tab was requested and exists, activate it */
