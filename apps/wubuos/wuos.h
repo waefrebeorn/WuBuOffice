@@ -47,7 +47,9 @@ enum { WUOS_KEY_UP=2000, WUOS_KEY_DOWN, WUOS_KEY_LEFT, WUOS_KEY_RIGHT,
        WUOS_KEY_EOL, WUOS_KEY_THEME, WUOS_KEY_NEWDOC, WUOS_KEY_CLOSE,
        WUOS_KEY_DOCPREV, WUOS_KEY_DOCNEXT, WUOS_KEY_TOGGLE_BK, WUOS_KEY_NEXT_BK,
        WUOS_KEY_PREV_BK, WUOS_KEY_COLMODE, WUOS_KEY_REC, WUOS_KEY_PLAY, WUOS_KEY_AC,
- WUOS_KEY_SESSION, WUOS_KEY_FOLD, WUOS_KEY_FUNCLIST, WUOS_KEY_PLUGIN };
+ WUOS_KEY_SESSION, WUOS_KEY_FOLD, WUOS_KEY_FUNCLIST, WUOS_KEY_PLUGIN,
+ WUOS_KEY_INSERT_CHART, WUOS_KEY_INSERT_DRAW, WUOS_KEY_INSERT_MATH,
+ WUOS_KEY_EXPORT_EPUB, WUOS_KEY_A11Y_CHECK };
 
 /* ---- view factories ----
  * `path` is an optional file to load (NULL = use the bundled sample). */
@@ -67,6 +69,9 @@ size_t wuos_editor_doc_count(WuView *v);
 size_t wuos_editor_doc_active(WuView *v);
 /* Test accessor: number of active bookmarks (line-ops). */
 int wuos_editor_bookmarks(WuView *v);
+/* Test accessor: spell-check a word via the editor's attached dict (INT-8).
+ * 1 known, 0 misspelled, -1 no spell engine. */
+int wuos_editor_spell(WuView *v, const char *word);
 /* Test accessor: column/block selection state (mode + block bounds). */
 int wuos_editor_col(WuView *v, int *l0, int *c0, int *l1, int *c1);
 /* Test accessor: macro record state (recording flag + recorded op count). */
@@ -80,6 +85,12 @@ int wuos_editor_sym(WuView *v, int *n);
 int  wuos_doc_is_rendered(WuView *v);
 int  wuos_doc_has_text(WuView *v);
 int  wuos_doc_find(WuView *v, const char *q);   /* returns 1 if match found */
+/* Document view: count of inserted chart/draw/math overlay objects (INT-1,3). */
+int  wuos_doc_obj_count(WuView *v);
+/* Document view: last EPUB export message (view-owned, do not free), or NULL. */
+const char *wuos_doc_epub_msg(WuView *v);
+/* Document view: a11y issue count from last check, or -1 if not run (INT-5). */
+int  wuos_doc_a11y_issues(WuView *v);
 /* Cell view inspection: active cell + editing state + cell value as string. */
 int  wuos_cell_active(WuView *v, int *col, int *row);
 int  wuos_cell_editing(WuView *v);

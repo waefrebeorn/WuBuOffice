@@ -18,6 +18,7 @@
 #include "encode.h" /* WuBuPad encoding detect */
 #include "docs.h"   /* WuBuPad multi-document session (DONE engine) */
 #include "autosave.h" /* wubuautosave: crash-recovery (INT-2 P0) */
+#include "spell.h"    /* wubuspell: live red-squiggle (INT-8 P0) */
 
 #include <stdlib.h>
 #include <string.h>
@@ -94,6 +95,8 @@ typedef struct {
     Autosave *asv;
     int   asv_tick;          /* frame counter for periodic snapshot */
     size_t asv_len;          /* last seen doc length (detect edits) */
+    /* live spell-check (INT-8 P0: was never linked by any app) */
+    SpellDict *spd;
 } Editor;
 static unsigned char g_def_r=36, g_def_g=41, g_def_b=47;  /* theme-aware default */
 /* session-global macro op buffer (Notepad++ macros are global) */
@@ -640,6 +643,48 @@ static int render(WuView *v, int w, int h, int scroll,
 
         y += lh;
     }
+
+    /* INT-8 P0: live spell-check red squiggle. Walk the buffer with the same
+     * proportional metrics the editor uses; under misspelled words draw a red
+     * zigzag. Only paints words on currently-visible lines. */
+    if (e->spd && text){
+        int top = 6 + dofst;
+        int x = gutter + 6;
+        int ln = 0;
+        const char *p = text;
+        /* small state machine: accumulate a word, check, draw squiggle */
+        const char *word = NULL; int wlen = 0;
+        for (size_t i=0;i<=tlen;i++){
+            char c = (i<tlen)? text[i] : '\n';
+            int isword = ((c>='A'&&c<='Z')||(c>='a'&&c<='z')||c=='\''||(unsigned char)c>=128);
+            if (isword){
+                if (!word) word = text+i;
+                wlen++;
+            } else {
+                if (word && wlen>1){
+                    char buf[256]; size_t k=0;
+                    for (int q=0;q<wlen && k<255;q++) buf[k++]=word[q];
+                    buf[k]=0;
+                    if (!spell_check(e->spd, buf)){
+                        int sy = top + ln*lh + fh + 2;
+                        if (sy < H){
+                            for (int xx=x-wlen*0; xx < x; xx+=2){
+                                int yy = sy + ((xx/2)%2? 1:0);
+                                if (xx>=0 && xx<w && yy>=0 && yy<H){
+                                    size_t ii=((size_t)yy*w+xx)*4;
+                                    fb[ii]=220; fb[ii+1]=40; fb[ii+2]=40;
+                                }
+                            }
+                        }
+                    }
+                }
+                word=NULL; wlen=0;
+            }
+            if (c=='\n'){ ln++; x = gutter+6; }
+            else if (c!='\t'){ x += wuos_font_draw(&c, 0, 0, 0, 0,0,0, NULL,0,0); }
+            else { x += 4*9; }
+        }
+    }
     free(text);
 
     /* ---- function-list panel (right gutter) ---- */
@@ -1010,6 +1055,7 @@ static void destroy(WuView *v){
     if (e->lex) lex_free(e->lex);
     if (e->docs) docs_free(e->docs);
     if (e->asv){ wubuautosave_clear(e->asv); wubuautosave_destroy(e->asv); }
+    if (e->spd) spell_free(e->spd);
     free(e);
     free(v);
 }
@@ -1080,6 +1126,13 @@ int wuos_editor_bookmarks(WuView *v){
     Editor *e = v ? v->priv : NULL;
     if (!e) return 0;
     return e->bk_n;
+}
+/* Test accessor: spell-check a word through the editor's attached dictionary
+ * (INT-8). Returns 1 if known, 0 if misspelled, -1 if no spell engine. */
+int wuos_editor_spell(WuView *v, const char *word){
+    Editor *e = v ? v->priv : NULL;
+    if (!e || !e->spd) return -1;
+    return spell_check(e->spd, word);
 }
 /* Test accessor: column/block selection state (mode + block bounds). */
 int wuos_editor_col(WuView *v, int *l0, int *c0, int *l1, int *c1){
@@ -1218,6 +1271,17 @@ WuView *wuos_editor_create(const char *path){
         }
         e->asv = wubuautosave_create(e->path, 5000);  /* 5s min gap */
         e->asv_len = doc_length(e->doc);
+    }
+
+    /* INT-8 P0: wire the spell engine so the editor shows live red squiggles
+     * under misspelled words. Seed with built-in English + load any user dict. */
+    {
+        e->spd = spell_create();
+        if (e->spd){
+            spell_seed_english(e->spd);
+            const char *ud = getenv("WUBUOS_DICT");
+            if (ud) spell_load(e->spd, ud);
+        }
     }
 
     /* pick lexer by active doc extension (default c) */

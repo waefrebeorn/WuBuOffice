@@ -61,6 +61,26 @@ int main(void){
     WuView *dv = wuos_doc_create(mdp);
     if (dv){ bad += render_check(dv, "doc(file)");
              if (dv->get_path && strcmp(dv->get_path(dv), mdp)!=0){ fprintf(stderr,"doc get_path mismatch\n"); bad++; }
+             /* INT-1/3: chart/draw/math engines are now wired into the Document
+              * tab (rasterized via the new wubusvg rasterizer). Assert the
+              * seeded chart overlay exists and Insert adds draw/math. */
+             int oc0 = wuos_doc_obj_count(dv);
+             if (oc0 < 1){ fprintf(stderr,"[doc] no inserted chart overlay\n"); bad++; }
+             dv->on_key(dv, WUOS_KEY_INSERT_DRAW, 1);
+             dv->on_key(dv, WUOS_KEY_INSERT_MATH, 1);
+             int oc1 = wuos_doc_obj_count(dv);
+             if (oc1 < oc0 + 2){ fprintf(stderr,"[doc] insert draw/math failed (oc %d->%d)\n", oc0, oc1); bad++; }
+             else fprintf(stderr,"[doc] insert ok (%d overlays)\n", oc1);
+             /* INT-4: EPUB export writes a real file */
+             dv->on_key(dv, WUOS_KEY_EXPORT_EPUB, 1);
+             const char *em = wuos_doc_epub_msg(dv);
+             if (!em || !strstr(em, "EPUB written")){ fprintf(stderr,"[doc] epub export failed ('%s')\n", em?em:"(null)"); bad++; }
+             else fprintf(stderr,"[doc] epub ok\n");
+             /* INT-5: a11y check runs and reports a count */
+             dv->on_key(dv, WUOS_KEY_A11Y_CHECK, 1);
+             int ai = wuos_doc_a11y_issues(dv);
+             if (ai < 0){ fprintf(stderr,"[doc] a11y check not run\n"); bad++; }
+             else fprintf(stderr,"[doc] a11y ok (%d issues)\n", ai);
              dv->destroy(dv); }
     else { fprintf(stderr,"[doc(file)] create FAILED\n"); bad++; }
 
@@ -75,6 +95,17 @@ int main(void){
              free(saved);
              ev->destroy(ev); }
     else { fprintf(stderr,"[editor(file)] create FAILED\n"); bad++; }
+
+    /* INT-8 P0: spell engine wired into the editor (live red squiggle). */
+    {
+        WuView *sv = wuos_editor_create(NULL);
+        int good = sv ? wuos_editor_spell(sv, "cat") : -1;
+        int badw = sv ? wuos_editor_spell(sv, "zzqfoo") : -1;
+        if (good != 1){ fprintf(stderr,"[spell] known word 'cat' not flagged known (=%d)\n", good); bad++; }
+        else if (badw != 0){ fprintf(stderr,"[spell] misspelled 'zzqfoo' not flagged (=%d)\n", badw); bad++; }
+        else fprintf(stderr,"[spell] ok (cat=known, zzqfoo=misspelled)\n");
+        if (sv) sv->destroy(sv);
+    }
 
     /* INT-2 P0: crash-recovery autosave is actually wired into the editor.
      * Simulate a crash (write a snapshot, drop the live lock), then reopen

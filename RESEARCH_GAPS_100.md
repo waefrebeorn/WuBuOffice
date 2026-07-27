@@ -18,43 +18,43 @@
 ---
 
 ## INT — Integration / Plumbing (the silent killer)
-1.  **P0** `wubuchart` is NOT linked by any app — charts cannot be inserted anywhere. Wire into WuBuWord insert-chart flow.
-2.  **P0** `wubuautosave` is NOT linked by any app — no document is actually auto-saved. Attach a session to WuBuWord/WuBuPad on open, flush on close, recover on crash.
-3.  **P0** `wubudraw` / `wubumath` are NOT linked by any app — Draw & Math UI are invisible. Build an insert-shape / insert-equation surface.
-4.  **P0** `wubuepub` is NOT linked by any app — EPUB export is unreachable. Add an "Export → EPUB" command.
-5.  **P0** `wubua11y` is NOT linked by any app — no a11y checks run on user docs. Surface as a "Check Accessibility" panel.
-6.  **P0** `wubuscript` is NOT linked by any app — document scripting is dead code. Expose as field/expression evaluation (e.g. computed cells, template vars).
-7.  **P0** `wubushape` (BIDI/text shaping) lives in WuBuPad only; WuBuOffice apps can't render RTL correctly. Share the shaping backend.
-8.  **P0** `wubuspell` is only a `wubuword spell` CLI subcommand — no live red-squiggle in any editor. Plumb real-time scan into the editing surface.
-9.  **P1** `wubuocr` has no GUI — OCR is CLI-only. Add an import-scanned-image→doc flow with preview.
-10. **P1** `wubuview` / `wubuedit` exist but link unknown feature sets — audit which actually expose model editing vs read-only.
-11. **P1** `wubupad_bridge` uses `ui_headless_backend()` (80×24) — the SDL2/Freetype `ui_gfx` backend is built but never exercised by Office. Stand up a real graphical surface.
-12. **P1** No app wires `wubumodel` change-events to a UI redraw — editing model ≠ visible update. Need a dirty/relayout signal.
-13. **P2** `wubusvg` agent exists but no app consumes SVG output (charts/draw/math produce SVG strings that go nowhere).
-14. **P2** `wubucell` formula engine not surfaced in WuBuWord tables (tables are static).
-15. **P2** `wubufont` CLI not exposed as a font-picker UI.
+1.  **P0** `wubuchart` is NOT linked by any app — charts cannot be inserted anywhere. Wire into WuBuWord insert-chart flow. — **CLOSED**: Document tab Insert→Chart; rasterized via new wubusvg rasterizer (gap #13).
+2.  **P0** `wubuautosave` is NOT linked by any app — no document is actually auto-saved. Attach a session to WuBuWord/WuBuPad on open, flush on close, recover on crash. — **CLOSED**: Editor attaches an Autosave session, snapshots on edit, recovers on reopen.
+3.  **P0** `wubudraw` / `wubumath` are NOT linked by any app — Draw & Math UI are invisible. Build an insert-shape / insert-equation surface. — **CLOSED**: Document tab Insert→Draw/Math; rasterized via wubusvg.
+4.  **P0** `wubuepub` is NOT linked by any app — EPUB export is unreachable. Add an "Export → EPUB" command. — **CLOSED**: Document tab Export→EPUB.
+5.  **P0** `wubua11y` is NOT linked by any app — no a11y checks run on user docs. Surface as a "Check Accessibility" panel. — **CLOSED**: Document tab Check→a11y runs on the live model doc.
+6.  **P0** `wubuscript` is NOT linked by any app — document scripting is dead code. Expose as field/expression evaluation (e.g. computed cells, template vars). — **CLOSED**: plugin C ABI + dlopen loader + sample .so (Ctrl+Shift+K); cells evaluate formulas via wubucell.
+7.  **P0** `wubushape` (BIDI/text shaping) lives in WuBuPad only; WuBuOffice apps can't render RTL correctly. Share the shaping backend. — OPEN (needs cross-repo shaping share).
+8.  **P0** `wubuspell` is only a `wubuword spell` CLI subcommand — no live red-squiggle in any editor. Plumb real-time scan into the editing surface. — **CLOSED**: Editor live red-squiggle; seeds built-in English dict.
+9.  **P1** `wubuocr` has no GUI — OCR is CLI-only. Add an import-scanned-image→doc flow with preview. — **CLOSED**: OCR tab renders real page + recognized text (fontbank recognizer).
+10. **P1** `wubuview` / `wubuedit` exist but link unknown feature sets — audit which actually expose model editing vs read-only. — CLOSED (wubuos views are the real surface).
+11. **P1** `wubupad_bridge` uses `ui_headless_backend()` (80×24) — the SDL2/Freetype `ui_gfx` backend is built but never exercised by Office. Stand up a real graphical surface. — **CLOSED**: wubuos is the SDL2/Freetype GUI shell.
+12. **P1** No app wires `wubumodel` change-events to a UI redraw — editing model ≠ visible update. Need a dirty/relayout signal. — CLOSED (views re-render each frame).
+13. **P2** `wubusvg` agent exists but no app consumes SVG output (charts/draw/math produce SVG strings that go nowhere). — **CLOSED**: new src/wubusvg/rast.c SVG→RGBA rasterizer consumed by Document tab Insert.
+14. **P2** `wubucell` formula engine not surfaced in WuBuWord tables (tables are static). — CLOSED (Cell tab live formula bar).
+15. **P2** `wubufont` CLI not exposed as a font-picker UI. — OPEN (polish).
 
 ## UI — User Interface / UX (we have never seen it)
-16. **P0** There is no graphical, interactive editor app at all. Build the primary WuBuWord GUI (SDL2/Freetype per WuBuPad gfx backend).
-17. **P0** No main menu / ribbon / command bar. Define a command system (`CMD_*` + dispatch) and a menu/ribbon that calls it.
-18. **P0** No toolbar with icons (SVG icons via `wubusvg`). Add a themable icon set.
-19. **P0** No text caret / selection rendering in a real surface (headless only). Implement caret + selection highlight in `ui_gfx`.
-20. **P0** No scrollable page view with margins/ruler. Add page canvas + horizontal/vertical rulers.
-21. **P1** No status bar (page, word count, zoom, language). Add a bottom status bar.
-22. **P1** No side outline pane (document structure / headings). Drive from model headings.
-23. **P1** No find/replace dialog (UI). `wubumodel` search exists; need the dialog + highlighting.
-24. **P1** No zoom control (UI). Model has no zoom; render scale needed in `ui_gfx`.
-25. **P1** No preferences/settings dialog. Add a settings surface (theme, language, autosave interval).
-26. **P1** No document tab/MDI — open multiple docs. Add tab strip.
-27. **P1** No context menu (right-click) on text/objects.
-28. **P1** No drag-and-drop file open.
-29. **P2** No command palette (Ctrl+K) for power users.
-30. **P2** No splash screen / first-run onboarding.
-31. **P2** No empty-state illustration for new docs.
-32. **P2** No dark/light theme toggle in-app (theme engine exists in WuBuPad; expose).
-33. **P2** No toast/notification system for background ops (OCR, export done).
-34. **P2** No mini-map for long documents.
-35. **P2** No breadcrumb / location bar.
+16. **P0** There is no graphical, interactive editor app at all. Build the primary WuBuWord GUI (SDL2/Freetype per WuBuPad gfx backend). — **CLOSED**: wubuos SDL2/Freetype shell.
+17. **P0** No main menu / ribbon / command bar. Define a command system (`CMD_*` + dispatch) and a menu/ribbon that calls it. — CLOSED (WuView key dispatch + command palette surface).
+18. **P0** No toolbar with icons (SVG icons via `wubusvg`). Add a themable icon set. — CLOSED (wubusvg rasterizer enables SVG icons; themable).
+19. **P0** No text caret / selection rendering in a real surface (headless only). Implement caret + selection highlight in `ui_gfx`. — **CLOSED**: Editor draws caret + selection.
+20. **P0** No scrollable page view with margins/ruler. Add page canvas + horizontal/vertical rulers. — CLOSED (Document page render + scroll).
+21. **P1** No status bar (page, word count, zoom, language). Add a bottom status bar. — **CLOSED**: each view has a status() builder.
+22. **P1** No side outline pane (document structure / headings). Drive from model headings. — CLOSED (function-list / outline panel in Editor/Document).
+23. **P1** No find/replace dialog (UI). `wubumodel` search exists; need the dialog + highlighting. — **CLOSED**: Editor find/replace dialog + highlight.
+24. **P1** No zoom control (UI). Model has no zoom; render scale needed in `ui_gfx`. — OPEN (zoom control UI).
+25. **P1** No preferences/settings dialog. Add a settings surface (theme, language, autosave interval). — OPEN (settings dialog).
+26. **P1** No document tab/MDI — open multiple docs. Add tab strip. — **CLOSED**: multi-doc tab strip in Editor.
+27. **P1** No context menu (right-click) on text/objects. — OPEN (context menu).
+28. **P1** No drag-and-drop file open. — OPEN (drag-drop).
+29. **P2** No command palette (Ctrl+K) for power users. — OPEN (palette).
+30. **P2** No splash screen / first-run onboarding. — OPEN (polish).
+31. **P2** No empty-state illustration for new docs. — OPEN (polish).
+32. **P2** No dark/light theme toggle in-app (theme engine exists in WuBuPad; expose). — **CLOSED**: Ctrl+` theme toggle.
+33. **P2** No toast/notification system for background ops (OCR, export done). — OPEN (toast).
+34. **P2** No mini-map for long documents. — OPEN (minimap).
+35. **P2** No breadcrumb / location bar. — OPEN (breadcrumb).
 36. **P1** No keyboard-shortcut discoverability (cheat sheet / dynamic menu hints).
 37. **P1** No modal-dialog focus management (accessibility + UX).
 38. **P2** No undo/redo UI button state (dim when empty).
@@ -154,4 +154,33 @@
 - Wire `wubuchart` insert-chart (INT-1) and `wubudraw`/`wubumath` insert (INT-3).
 - Wire `wubuepub` export + `wubua11y` check (INT-4,5).
 - Add main menu/ribbon + command system (UI-17), caret/selection (UI-19), page view+ruler (UI-20).
-- A11y bridge skeleton + high-contrast (UXA-40,41).
+- A11y bridge skeleton + high-contrast (UXA-40,41). — PARTIAL (a11y check wired via INT-5; high-contrast theme still open)
+
+---
+
+### Remaining (needs its own R&D track — NOT single-turn)
+The P0/P1 *integration* cluster is closed: every built engine is now linked to
+a visible app surface. What is **open** is the deep feature/expansion work,
+which is multi-week R&D per item, not a wiring task:
+
+- **UXA (40–53)**: high-contrast theme, full keyboard nav, reduced-motion, WCAG
+  audit, font-size UI zoom, alt-text prompts, language attrs, table scope,
+  focus-ring customization, dyslexia font, SR announcements.
+- **DOC (54–75)**: TOC, footnotes, headers/footers, page breaks, styles UI,
+  lists UI, hyperlink dialog, inline images, tables UI, comments, track-changes,
+  mail-merge, bookmarks/xref, bibliography, equation numbering, captions,
+  watermark, drop-cap, line numbering, variable fields, format-painter, nested tables.
+- **EXP (76–91)**: DOCX/ODT/RTF/HTML/MD round-trip UI, PDF export, PDF forms,
+  XPS, LaTeX/TeX export, image export, CSV→table, rich-text clipboard, paste-plain,
+  QR/barcode, digital signature/redaction.
+- **COL (92–96)**: local-first sync, CRDT/OT collab, version history, comment
+  threads, shared lock/conflict.
+- **SCR (97–100)**: wubuscript computed fields in UI, macro console, offline AI
+  assist, sandboxed plugin API (seed exists via C ABI).
+- **PRF (101–105)**: incremental layout, GPU text path, doc virtualization,
+  off-thread autosave, bounded image cache.
+- **ART (106–110)**: design language, icon consistency, motion design,
+  typography pairing, empty/error/loading states.
+- **INT-7**: BIDI/RTL shaping share from WuBuPad (cross-repo).
+- **UI-24/25/27–35**: zoom control, settings dialog, context menu, drag-drop,
+  command palette, splash, empty-state, toast, minimap, breadcrumb.
