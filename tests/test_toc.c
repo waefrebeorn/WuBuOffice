@@ -194,6 +194,29 @@ int main(void){
         CK(bullet_runs >= 1, "bullet prefix emitted");
         CK(item_runs >= 1, "list item text laid out");
         wubulayout_destroy(L3);
+
+        /* DOC-62: table of cells lays out cell boxes + cell text. */
+        wubumodel_node *tbl = wubumodel_node_create(d, WUBUMODEL_TABLE);
+        for (int r=0; r<2; r++){
+            wubumodel_node *cell = wubumodel_node_create(d, WUBUMODEL_CELL);
+            wubumodel_node *cp = wubumodel_node_create(d, WUBUMODEL_PARAGRAPH);
+            wubumodel_node *cr = wubumodel_node_create(d, WUBUMODEL_RUN);
+            char cbuf[16]; snprintf(cbuf,sizeof cbuf,"Cell%d", r+1);
+            wubumodel_run_set_text(cr, cbuf);
+            wubumodel_node_append(d, cp, cr);
+            wubumodel_node_append(d, cell, cp);
+            wubumodel_node_append(d, tbl, cell);
+        }
+        wubumodel_node_append(d, sec, tbl);
+        wubulayout_doc *L4 = wubulayout_create(d, sec, meas, sty, NULL, 400, 400, 20,20,20,20);
+        int cell_boxes = 0;
+        for (int pg=0; pg<wubulayout_page_count(L4); pg++)
+            for (int i=0;i<wubulayout_box_count(L4,pg); i++){
+                const wubulayout_box *bx = wubulayout_box_at(L4, pg, i);
+                if (bx && bx->user) cell_boxes++;
+            }
+        CK(cell_boxes == 2, "two cell boxes laid out");
+        wubulayout_destroy(L4);
         wubumodel_doc_destroy(d);
     }
     if (fails==0) printf("TOC + SETTINGS + FOOTNOTE TESTS PASSED\n");

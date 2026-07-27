@@ -271,15 +271,28 @@ static int lay_node(wubulayout_doc *L, void *node, int *pen_y){
         return lay_paragraph(L, node, pen_y);
     }
     if (k == WUBUMODEL_TABLE){
-        /* simple table: rows = child paragraphs/cells; lay each cell as a
-         * paragraph block stacked vertically (full grid layout later). */
-        int start_y = *pen_y;
+        /* DOC-62: a table is a grid of CELL rows. Each CELL is recorded as an
+         * object box (so the view can draw borders), and its paragraph
+         * content is laid out inside. Rows stack vertically. */
         for (wubumodel_node *row = wubumodel_node_first_child((wubumodel_node*)node);
              row; row = wubumodel_node_next_sibling(row)){
-            int cy = start_y;
+            LPage *pg = cur_page(L);
+            LOb *o = push_obj(pg);
+            int cell_y = *pen_y;
+            int cell_h = 60;
+            if (o){ o->page = L->npages-1; o->x = L->ml; o->y = cell_y;
+                    o->w = L->pw - L->ml - L->mr; o->h = cell_h; o->user = row; }
+            int cy = cell_y + 4;
             lay_node(L, row, &cy);
-            if (cy > *pen_y) *pen_y = cy;
+            *pen_y = cell_y + cell_h + 4;
         }
+        return 0;
+    }
+    if (k == WUBUMODEL_CELL){
+        /* a CELL holds a paragraph (or rows); lay its children in place */
+        for (wubumodel_node *c = wubumodel_node_first_child((wubumodel_node*)node);
+             c; c = wubumodel_node_next_sibling(c))
+            lay_node(L, c, pen_y);
         return 0;
     }
     if (k == WUBUMODEL_SHAPE || k == WUBUMODEL_CHART){
@@ -503,6 +516,18 @@ const wubulayout_line *wubulayout_line_at(const wubulayout_doc *L, int page, int
     if (!found) return NULL;
     ln.x=x0; ln.y=y0; ln.w=x1-x0; ln.h=(y1-y0)+4; ln.page=page; ln.line=li;
     return &ln;
+}
+
+int wubulayout_box_count(const wubulayout_doc *L, int page){
+    if (page<0||page>=L->npages) return 0; return L->pages[page]->nobj;
+}
+const wubulayout_box *wubulayout_box_at(const wubulayout_doc *L, int page, int i){
+    if (page<0||page>=L->npages) return NULL;
+    LPage *p=L->pages[page]; if (i<0||i>=p->nobj) return NULL;
+    static wubulayout_box b;
+    b.x=p->obj[i].x; b.y=p->obj[i].y; b.w=p->obj[i].w; b.h=p->obj[i].h;
+    b.user=p->obj[i].user;
+    return &b;
 }
 int wubulayout_total_runs(const wubulayout_doc *L){ return L->total_runs; }
 

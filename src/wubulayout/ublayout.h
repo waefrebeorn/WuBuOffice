@@ -107,6 +107,16 @@ const wubulayout_run *wubulayout_run_at(const wubulayout_doc *L, int page, int i
 int   wubulayout_line_count(const wubulayout_doc *L, int page);
 const wubulayout_line *wubulayout_line_at(const wubulayout_doc *L, int page, int i);
 
+/* Object boxes on a page (tables/cells/images/shapes). Returns geometry +
+ * the source model node (for border/overlay drawing) without leaking the
+ * internal layout struct. Array valid until next rebuild. */
+typedef struct {
+    int x, y, w, h;       /* box rect in page-content px */
+    void *user;           /* source model node (e.g. a CELL row) */
+} wubulayout_box;
+int   wubulayout_box_count(const wubulayout_doc *L, int page);
+const wubulayout_box *wubulayout_box_at(const wubulayout_doc *L, int page, int i);
+
 /* Total laid-out run count across all pages. */
 int   wubulayout_total_runs(const wubulayout_doc *L);
 

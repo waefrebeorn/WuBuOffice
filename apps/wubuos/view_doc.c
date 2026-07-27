@@ -170,6 +170,27 @@ static void doc_insert_list(DocV *e){
     wubumodel_node_append(e->doc, sec, p);
     e->toc_dirty = 1;
 }
+/* Insert a 2x2 table into the model (DOC-62): a TABLE of two CELL rows, each
+ * CELL holding a paragraph with a sample run. Laid out per-cell by wubulayout;
+ * the Document view draws cell borders from the layout boxes. */
+static void doc_insert_table(DocV *e){
+    if (!e->doc) return;
+    wubumodel_node *sec = wubumodel_node_first_child(wubumodel_doc_root(e->doc));
+    if (!sec) return;
+    wubumodel_node *tbl = wubumodel_node_create(e->doc, WUBUMODEL_TABLE);
+    for (int r=0; r<2; r++){
+        wubumodel_node *cell = wubumodel_node_create(e->doc, WUBUMODEL_CELL);
+        wubumodel_node *para = wubumodel_node_create(e->doc, WUBUMODEL_PARAGRAPH);
+        wubumodel_node *rr = wubumodel_node_create(e->doc, WUBUMODEL_RUN);
+        char buf[32]; snprintf(buf,sizeof buf,"Cell %d", r+1);
+        wubumodel_run_set_text(rr, buf);
+        wubumodel_node_append(e->doc, para, rr);
+        wubumodel_node_append(e->doc, cell, para);
+        wubumodel_node_append(e->doc, tbl, cell);
+    }
+    wubumodel_node_append(e->doc, sec, tbl);
+    e->toc_dirty = 1;
+}
 
 static int render(WuView *v, int w, int h, int scroll,
                   unsigned char **rgba, int *rw, int *rh){
@@ -202,6 +223,22 @@ static int render(WuView *v, int w, int h, int scroll,
             /* page header */
             char hdr[64]; snprintf(hdr,sizeof hdr,"Page %d / %d", pg+1, pages);
             wuos_font_draw(hdr, 56, 24, 0, MU[0],MU[1],MU[2], fb, w, h);
+            /* DOC-62: draw table/cell borders from the layout boxes (under text) */
+            int nboxes = wubulayout_box_count(L, pg);
+            for (int bi=0; bi<nboxes; bi++){
+                const wubulayout_box *bx = wubulayout_box_at(L, pg, bi);
+                if (!bx) continue;
+                /* box border: 1px rect in a muted ink */
+                unsigned char bc[3] = { hc?90:170, hc?120:175, hc?150:185 };
+                for (int xx=bx->x; xx<bx->x+bx->w && xx<w; xx++)
+                    for (int yy=bx->y; yy<bx->y+bx->h && yy<h; yy++){
+                        if (xx==bx->x || xx==bx->x+bx->w-1 ||
+                            yy==bx->y || yy==bx->y+bx->h-1){
+                            size_t di=((size_t)yy*w+xx)*4;
+                            fb[di]=bc[0]; fb[di+1]=bc[1]; fb[di+2]=bc[2];
+                        }
+                    }
+            }
             int nr = wubulayout_run_count(L, pg);
             for (int i=0;i<nr;i++){
                 const wubulayout_run *r = wubulayout_run_at(L, pg, i);
@@ -381,6 +418,7 @@ static void on_key(WuView *v, int key, int down){
     if (key==WUOS_KEY_A11Y_CHECK){ doc_a11y_check(e); return; }
     if (key==WUOS_KEY_INSERT_LINK){ doc_insert_link(e); return; }
     if (key==WUOS_KEY_INSERT_LIST){ doc_insert_list(e); return; }
+    if (key==WUOS_KEY_INSERT_TABLE){ doc_insert_table(e); return; }
     /* DOC-54: jump to a TOC entry with Ctrl+[1..6] */
     if (key>=WUOS_KEY_TOC1 && key<=WUOS_KEY_TOC6){
         int idx = key - WUOS_KEY_TOC1;
