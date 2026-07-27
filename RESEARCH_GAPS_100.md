@@ -83,7 +83,7 @@
 57. **P1** No page/section breaks; single flow only.
 58. **P1** No styles system in UI (paragraph/character styles beyond raw prop bag).
 59. **P1** No lists (bulleted/numbered) with nesting.
-60. **P1** No hyperlinks UI (insert/edit link dialog).
+60. **P1** No hyperlinks UI (insert/edit link dialog). — **CLOSED**: model gained `wubumodel_node_set_link`/`wubumodel_node_link`/`wubumodel_node_parent`; `wubulayout` lays a LINK node's RUN text as inline flow (so it renders + is hit-testable); the Document view renders links blue+underline, records link boxes, and (DOC-60) makes them clickable via a new `WuView.on_click` callback + Ctrl+L inserts a sample link. Headless-tested in test_toc (target stored, run-parent walk, layout).
 61. **P1** No images inline (model has SHAPE but no image node; need raster embed).
 62. **P1** No tables UI (insert/resize/merge cells) though model supports TABLE/CELL.
 63. **P1** No comments / review markup.

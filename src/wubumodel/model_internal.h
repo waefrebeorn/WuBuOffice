@@ -33,6 +33,7 @@ struct wubumodel_node {
     wubumodel_kind kind;
     char *text;                 /* valid for RUN */
     char *note;                 /* FOOTNOTE/ENDNOTE body (DOC-55) */
+    char *link;                 /* LINK href/target (DOC-60) */
     wubumodel_style *style;     /* shared, may be NULL */
     struct wubumodel_node *next;/* bucket chain in doc->nodes */
     struct wubumodel_node *parent;     /* back-link (weak) */

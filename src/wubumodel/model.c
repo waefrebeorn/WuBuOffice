@@ -30,6 +30,8 @@ void wubumodel_doc_destroy(wubumodel_doc *doc) {
             wubumodel_node *nx = n->next;
             if (n->style) wubumodel_style_destroy(n->style);
             free(n->text);
+            free(n->note);
+            free(n->link);
             free(n);
             n = nx;
         }
@@ -74,6 +76,7 @@ void wubumodel_node_destroy(wubumodel_doc *doc, wubumodel_node *n) {
     if (n->style) wubumodel_style_destroy(n->style);
     free(n->text);
     free(n->note);
+    free(n->link);
     free(n);
 }
 wubumodel_node *wubumodel_node_find(wubumodel_doc *doc, wubumodel_id id) {
@@ -122,6 +125,24 @@ int wubumodel_doc_notes(const wubumodel_doc *doc, const char ***out) {
                 if (n < 2048) arr[n++] = p->note;
     *out = arr;
     return n;
+}
+
+/* ---- hyperlink target (DOC-60) ----
+ * A LINK node carries an inline text (its RUN children) and a target URL set
+ * via wubumodel_node_set_link(). The layout reserves an object box and the
+ * views render it blue + underlined and make it clickable. */
+int wubumodel_node_set_link(wubumodel_node *n, const char *target) {
+    if (!n) return -1;
+    char *cp = target ? strdup(target) : NULL;
+    if (target && !cp) return -1;
+    free(n->link); n->link = cp;
+    return 0;
+}
+const char *wubumodel_node_link(const wubumodel_node *n) {
+    return n ? n->link : NULL;
+}
+wubumodel_node *wubumodel_node_parent(const wubumodel_node *n) {
+    return n ? n->parent : NULL;
 }
 
 wubumodel_style *wubumodel_style_create(void) {

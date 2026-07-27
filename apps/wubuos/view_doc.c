@@ -23,6 +23,10 @@
 #include <string.h>
 #include <stdio.h>
 
+/* forward declarations (defined below) */
+static int wuos_doc_footnote_count(WuView *v);
+int epub_write(wubumodel_doc *doc, const char *out, const char *title, const char *lang);
+
 /* metric callback for the layout: uses the app font (wubulayout only sees this
  * function pointer, so the engine layer never includes an app header). */
 static int doc_layout_measure(const char *t, size_t len, int fs, int bold, int italic,
@@ -64,6 +68,9 @@ typedef struct { Wurender *r; wubumodel_doc *doc; char *path;
                  int toc_dirty;       /* TOC needs rebuild */
                  Toc *toc;            /* DOC-54 side pane */
                  int jump_page;        /* pending TOC jump (set by on_key) */
+                 /* DOC-60: recorded link boxes (for click hit-testing) */
+                 struct { int x, y, w, h; const char *target; } linkbox[32];
+                 int nlink;
 } DocV;
 
 /* Build a sample bar chart and rasterize it into a free overlay slot. */
@@ -132,12 +139,27 @@ static void doc_a11y_check(DocV *e){
     if (e->doc) a11y_check_doc(e->doc, 1, 0, &e->a11y);
     e->a11y_done = 1;
 }
+/* Insert a hyperlink into the model (DOC-60): a LINK node whose RUN children
+ * are the visible text and whose target is set via the model accessor. */
+static void doc_insert_link(DocV *e){
+    if (!e->doc) return;
+    wubumodel_node *sec = wubumodel_node_first_child(wubumodel_doc_root(e->doc));
+    if (!sec) return;
+    wubumodel_node *lk = wubumodel_node_create(e->doc, WUBUMODEL_LINK);
+    wubumodel_node *r = wubumodel_node_create(e->doc, WUBUMODEL_RUN);
+    wubumodel_run_set_text(r, "WuBuOffice");
+    wubumodel_node_append(e->doc, lk, r);
+    wubumodel_node_set_link(lk, "https://github.com/waefrebeorn/WuBuOffice");
+    wubumodel_node_append(e->doc, sec, lk);
+    e->toc_dirty = 1;
+}
 
 static int render(WuView *v, int w, int h, int scroll,
                   unsigned char **rgba, int *rw, int *rh){
     DocV *e = v->priv;
     (void)scroll;
     unsigned char *fb = NULL; int W=w, H=h;
+    e->nlink = 0;
     if (e->doc){
         /* Central pipeline: lay the model out into pages, then paint. This is
          * the single source of truth for text placement — the Document tab no
@@ -169,7 +191,36 @@ static int render(WuView *v, int w, int h, int scroll,
                 if (!r || !r->text || !r->text_len) continue;
                 char seg[2048]; size_t l=r->text_len; if(l>=sizeof seg)l=sizeof seg-1;
                 memcpy(seg, r->text, l); seg[l]=0;
-                wuos_font_draw(seg, r->x, r->y, r->bold, FG[0],FG[1],FG[2], fb, w, h);
+                /* DOC-60: links are blue + underlined; record box for clicks */
+                int is_link = 0; unsigned char lk[3];
+                lk[0]=hc?0:24; lk[1]=hc?80:64; lk[2]=hc?220:200;
+                const char *tgt = NULL;
+                if (r->user){
+                    wubumodel_node *rn = (wubumodel_node*)r->user;
+                    /* the run's owner (or the run itself) may carry the link */
+                    const char *a = wubumodel_node_link(rn);
+                    if (!a && wubumodel_node_kind(rn) != WUBUMODEL_LINK){
+                        wubumodel_node *par = wubumodel_node_parent(rn);
+                        if (par && wubumodel_node_kind(par) == WUBUMODEL_LINK)
+                            a = wubumodel_node_link(par);
+                    }
+                    if (a){ is_link = 1; tgt = a; }
+                    if (is_link && e->nlink < 32){
+                        e->linkbox[e->nlink].x = r->x;
+                        e->linkbox[e->nlink].y = r->y - 14;
+                        e->linkbox[e->nlink].w = r->w;
+                        e->linkbox[e->nlink].h = 18;
+                        e->linkbox[e->nlink].target = tgt;
+                        e->nlink++;
+                    }
+                }
+                wuos_font_draw(seg, r->x, r->y, r->bold, lk[0],lk[1],lk[2], fb, w, h);
+                if (is_link){ /* underline */
+                    int yy = r->y + 2;
+                    if (yy < h) for (int xx=r->x; xx<r->x+r->w && xx<w; xx++){
+                        size_t di=((size_t)yy*w+xx)*4; fb[di]=lk[0];fb[di+1]=lk[1];fb[di+2]=lk[2];
+                    }
+                }
             }
             /* line numbers in the left margin (DOC-72) */
             int nl = wubulayout_line_count(L, pg);
@@ -311,6 +362,7 @@ static void on_key(WuView *v, int key, int down){
     if (key==WUOS_KEY_INSERT_MATH){ doc_insert_math(e); return; }
     if (key==WUOS_KEY_EXPORT_EPUB){ doc_export_epub(e); return; }
     if (key==WUOS_KEY_A11Y_CHECK){ doc_a11y_check(e); return; }
+    if (key==WUOS_KEY_INSERT_LINK){ doc_insert_link(e); return; }
     /* DOC-54: jump to a TOC entry with Ctrl+[1..6] */
     if (key>=WUOS_KEY_TOC1 && key<=WUOS_KEY_TOC6){
         int idx = key - WUOS_KEY_TOC1;
@@ -340,6 +392,24 @@ static void on_key(WuView *v, int key, int down){
             size_t L=strlen(e->find_q); e->find_q[L]=(char)key; e->find_q[L+1]=0; return;
         }
         return;
+    }
+}
+
+static void on_click(WuView *v, int x, int y){
+    DocV *e = v->priv;
+    /* DOC-60: hit-test the recorded link boxes; the first hit "opens" the
+     * target (we surface it in the status / a toast via the epub_msg slot). */
+    for (int i=0;i<e->nlink;i++){
+        int bx=e->linkbox[i].x, by=e->linkbox[i].y;
+        int bw=e->linkbox[i].w, bh=e->linkbox[i].h;
+        if (x>=bx && x<=bx+bw && y>=by && y<=by+bh){
+            free(e->epub_msg);
+            const char *t = e->linkbox[i].target;
+            size_t L = t?strlen(t):0;
+            char *m = malloc(L+24); if (m){ snprintf(m, L+24, "link -> %s", t?t:""); }
+            e->epub_msg = m;
+            return;
+        }
     }
 }
 
@@ -406,6 +476,7 @@ WuView *wuos_doc_create(const char *path){
     v->render   = render;
     v->status   = status;
     v->on_key   = on_key;
+    v->on_click = on_click;
     v->get_path = get_path;
     return v;
 }

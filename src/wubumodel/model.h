@@ -77,6 +77,13 @@ const char *wubumodel_node_note(const wubumodel_node *n);
 /* Collect all footnote/endnote bodies in document order (caller frees the
  * returned array of pointers; each string is owned by its node). Returns count. */
 int  wubumodel_doc_notes(const wubumodel_doc *doc, const char ***out);
+
+/* ---- hyperlink target (DOC-60) ----
+ * A LINK node's RUN children are the visible text; its target is set via
+ * wubumodel_node_set_link and read via wubumodel_node_link. */
+int  wubumodel_node_set_link(wubumodel_node *n, const char *target); /* 0 ok */
+const char *wubumodel_node_link(const wubumodel_node *n);
+wubumodel_node *wubumodel_node_parent(const wubumodel_node *n); /* RUN->owning block */
 typedef void (*wubumodel_change_cb)(wubumodel_doc *doc, wubumodel_id node,
                                     void *user);
 int wubumodel_on_change(wubumodel_doc *doc, wubumodel_change_cb cb, void *user);

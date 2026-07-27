@@ -29,6 +29,9 @@ struct WuView {
     void      (*on_key)(WuView *, int key, int down);
     /* Mouse wheel: dy in "notches" (+down). */
     void      (*on_wheel)(WuView *, int dy);
+    /* Mouse left-click: x,y in view-local px (below the tab/status chrome).
+     * Optional; used for clickable links/objects. May be NULL. */
+    void      (*on_click)(WuView *, int x, int y);
     /* Optional status string builder (caller frees). May be NULL. */
     char     *(*status)(WuView *);
     /* Optional: save the current buffer to its loaded path (Ctrl+S). May be NULL. */
@@ -54,7 +57,8 @@ enum { WUOS_KEY_UP=2000, WUOS_KEY_DOWN, WUOS_KEY_LEFT, WUOS_KEY_RIGHT,
  WUOS_KEY_SETTINGS,
  WUOS_KEY_TOC1, WUOS_KEY_TOC2, WUOS_KEY_TOC3,
  WUOS_KEY_TOC4, WUOS_KEY_TOC5, WUOS_KEY_TOC6,
- WUOS_KEY_CHEAT };
+ WUOS_KEY_CHEAT,
+ WUOS_KEY_INSERT_LINK };
 
 /* ---- view factories ----
  * `path` is an optional file to load (NULL = use the bundled sample). */

@@ -31,7 +31,7 @@ static wubumodel_node *add_para(wubumodel_doc *doc, wubumodel_node *parent,
 
 static int meas(const char *t, size_t len, int fs, int b, int i, int *h, void *u){
     (void)b;(void)i;(void)u;(void)fs;
-    int w=0; for(size_t k=0;k<len;k++) w += (t[k]==' '?4:7); *h=12+4; return w;
+    int w=0; for(size_t k=0;k<len;k++) w += (t[k]==' '?4:7); if (h) *h=12+4; return w;
 }
 static int sty(void *u, void *run, int *fs,int *b,int *it,wubulayout_dir *d){
     (void)u;(void)run;(void)b;(void)it;(void)d; *fs=12; *b=0; *it=0; *d=WUBULAYOUT_LTR; return 1;
@@ -123,6 +123,14 @@ int main(void){
         wubumodel_node_set_note(en, "Endnote body.");
         wubumodel_node_append(d, sec, en);
 
+        /* DOC-60: hyperlink */
+        wubumodel_node *lk = wubumodel_node_create(d, WUBUMODEL_LINK);
+        wubumodel_node *lr = wubumodel_node_create(d, WUBUMODEL_RUN);
+        wubumodel_run_set_text(lr, "Visit site");
+        wubumodel_node_append(d, lk, lr);
+        wubumodel_node_set_link(lk, "https://example.com");
+        wubumodel_node_append(d, sec, lk);
+
         /* note marker text survives */
         CK(strcmp(wubumodel_run_text(r), "1")==0, "footnote marker text");
         CK(strcmp(wubumodel_node_note(mark), "First footnote body text.")==0, "footnote body stored");
@@ -146,7 +154,23 @@ int main(void){
                 if (ru && ru->user == (void*)mark) mark_runs++;
             }
         CK(mark_runs == 1, "footnote marker laid out once");
+
+        /* DOC-60: link target stored + run's parent is the link + laid out */
+        CK(strcmp(wubumodel_node_link(lk), "https://example.com")==0, "link target stored");
+        CK(wubumodel_node_parent(lr) == lk, "link run parent is the link node");
         wubulayout_destroy(L);
+        wubulayout_doc *L2 = wubulayout_create(d, sec, meas, sty, NULL, 400, 400, 20,20,20,20);
+        int link_runs = 0;
+        for (int pg=0; pg<wubulayout_page_count(L2); pg++)
+            for (int i=0;i<wubulayout_run_count(L2,pg); i++){
+                const wubulayout_run *ru = wubulayout_run_at(L2, pg, i);
+                if (!ru || !ru->user) continue;
+                wubumodel_node *rn = (wubumodel_node*)ru->user;
+                wubumodel_node *par = wubumodel_node_parent(rn);
+                if (par == lk || rn == lk) link_runs++;
+            }
+        CK(link_runs == 1, "link laid out once");
+        wubulayout_destroy(L2);
         wubumodel_doc_destroy(d);
     }
     if (fails==0) printf("TOC + SETTINGS + FOOTNOTE TESTS PASSED\n");

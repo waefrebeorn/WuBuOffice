@@ -256,7 +256,7 @@ static int lay_node(wubulayout_doc *L, void *node, int *pen_y){
         }
         return 0;
     }
-    if (k == WUBUMODEL_SHAPE || k == WUBUMODEL_CHART || k == WUBUMODEL_LINK){
+    if (k == WUBUMODEL_SHAPE || k == WUBUMODEL_CHART){
         /* object box: reserve space, view overlays it */
         LPage *pg = cur_page(L);
         LOb *o = push_obj(pg);
@@ -266,6 +266,33 @@ static int lay_node(wubulayout_doc *L, void *node, int *pen_y){
             o->user = node;
         }
         *pen_y += 170;
+        return 0;
+    }
+    if (k == WUBUMODEL_LINK){
+        /* DOC-60: a hyperlink is inline text (its RUN children) laid out as a
+         * normal flow, so the view can color/underline it and hit-test clicks.
+         * The layout walks the RUN children like a paragraph. */
+        LPage *pg = cur_page(L);
+        int start_y = *pen_y;
+        for (wubumodel_node *rc = wubumodel_node_first_child((wubumodel_node*)node);
+             rc; rc = wubumodel_node_next_sibling(rc)){
+            if (wubumodel_node_kind(rc) != WUBUMODEL_RUN) continue;
+            const char *t = wubumodel_run_text(rc);
+            if (!t || !*t) continue;
+            int fs=12, bold=0, it=0; wubulayout_dir d=WUBULAYOUT_LTR;
+            if (L->style) L->style(L->cb_user, rc, &fs,&bold,&it,&d);
+            int ww = L->measure ? L->measure(t, strlen(t), fs, bold, it, NULL, L->cb_user) : (int)strlen(t)*7;
+            wubulayout_run *R = push_run(pg);
+            if (!R) return -1;
+            R->text = t; R->text_len = strlen(t);
+            R->font_size=fs; R->bold=bold; R->italic=it;
+            R->dir=d; R->rtl=(d==WUBULAYOUT_RTL);
+            R->x = L->ml; R->y = start_y; R->w = ww; R->h = fs+4;
+            R->page = L->npages-1; R->line = pg->line_seq++;
+            R->user = rc;   /* RUN node -> view walks to parent LINK for target */
+            start_y += fs + 8;
+        }
+        *pen_y = start_y + 4;
         return 0;
     }
     /* DOC-55: footnote / endnote -> superscript reference marker run.
