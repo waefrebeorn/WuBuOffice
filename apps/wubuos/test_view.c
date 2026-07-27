@@ -202,6 +202,40 @@ int main(void){
         }
     }
 
+    /* bookmarks: Ctrl+F2 toggle, F2 next/prev */
+    {
+        WuView *bv = wuos_editor_create(NULL);
+        if (!bv){ fprintf(stderr,"[bk] create FAILED\n"); bad++; }
+        else {
+            bv->on_key(bv, WUOS_KEY_TOGGLE_BK, 1);      /* mark line 0 */
+            /* move to line 3 then mark */
+            bv->on_key(bv, WUOS_KEY_GOTO, 1);
+            for (const char *p="3"; *p; p++) bv->on_key(bv, (unsigned char)*p, 1);
+            bv->on_key(bv, WUOS_KEY_RETURN, 1);
+            bv->on_key(bv, WUOS_KEY_TOGGLE_BK, 1);      /* mark line 2 */
+            int n = wuos_editor_bookmarks(bv);
+            if (n != 2){ fprintf(stderr,"[bk] count!=2 (%d)\n", n); bad++; }
+            else {
+                /* go to line 1, next bookmark should jump toward line 2 */
+                bv->on_key(bv, WUOS_KEY_GOTO, 1);
+                for (const char *p="1"; *p; p++) bv->on_key(bv, (unsigned char)*p, 1);
+                bv->on_key(bv, WUOS_KEY_RETURN, 1);
+                bv->on_key(bv, WUOS_KEY_NEXT_BK, 1);
+                size_t cur = wuos_editor_cursor(bv);
+                /* line 2 offset = position of 3rd newline+1 */
+                if (cur < 3){ fprintf(stderr,"[bk] next failed cur=%zu\n", cur); bad++; }
+                else {
+                    /* toggle off line 2 by being on it again */
+                    bv->on_key(bv, WUOS_KEY_TOGGLE_BK, 1);
+                    int n2 = wuos_editor_bookmarks(bv);
+                    if (n2 != 1){ fprintf(stderr,"[bk] unmark failed (%d)\n", n2); bad++; }
+                    else fprintf(stderr,"[bk] ok (2 -> 1, jump works)\n");
+                }
+            }
+            bv->destroy(bv);
+        }
+    }
+
     /* cell view: load a real CSV via wubucell reader */
     {
         char csvp[256]; sprintf(csvp, "/tmp/wuos_cell_%d.csv", (int)getpid());

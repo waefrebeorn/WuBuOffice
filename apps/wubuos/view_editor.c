@@ -59,6 +59,10 @@ typedef struct {
 
     /* multi-document session (DONE engine: src/docs) */
     Docs *docs;
+
+    /* bookmarks (Notepad++ line ops) */
+    int   bk[256];   /* sorted line numbers (0-based) */
+    int   bk_n;
 } Editor;
 
 /* Notepad++-style token palette (RGB) */
@@ -265,6 +269,41 @@ static void editor_sync_active(Editor *e){
     e->enc_label = "UTF-8";
 }
 
+/* current caret line (0-based) */
+static int editor_line_of(Editor *e){
+    char *t = doc_text(e->doc);
+    size_t cur = doc_cursor(e->doc), ln = 0;
+    for (size_t q=0; q<cur; q++) if (t[q]=='\n') ln++;
+    free(t);
+    return (int)ln;
+}
+
+static void bk_toggle(Editor *e, int line){
+    if (line<0) return;
+    for (int i=0;i<e->bk_n;i++){
+        if (e->bk[i]==line){ memmove(&e->bk[i],&e->bk[i+1],(e->bk_n-i-1)*sizeof(int)); e->bk_n--; return; }
+    }
+    if (e->bk_n < 255){
+        int i = e->bk_n;
+        while (i>0 && e->bk[i-1] > line){ e->bk[i]=e->bk[i-1]; i--; }
+        e->bk[i]=line; e->bk_n++;
+    }
+}
+
+static void bk_jump(Editor *e, int dir){   /* dir +1 next, -1 prev */
+    if (!e->bk_n) return;
+    int cl = editor_line_of(e), best=-1;
+    if (dir>0){
+        best = e->bk[e->bk_n-1];
+        for (int i=0;i<e->bk_n;i++) if (e->bk[i] > cl){ best=e->bk[i]; break; }
+    } else {
+        best = e->bk[0];
+        for (int i=e->bk_n-1;i>=0;i--) if (e->bk[i] < cl){ best=e->bk[i]; break; }
+    }
+    size_t off = doc_offset_of_line(e->doc, best+1);
+    doc_set_cursor(e->doc, off);
+}
+
 static int render(WuView *v, int w, int h, int scroll,
                   unsigned char **rgba, int *rw, int *rh){
     Editor *e = v->priv;
@@ -331,7 +370,13 @@ static int render(WuView *v, int w, int h, int scroll,
     while (y < H - lh){
         char num[16]; snprintf(num,sizeof num,"%zu",line+1);
         wuos_font_draw(num, 6, y+fh, 0, num_r,num_g,num_b, fb, w, H);
-
+        /* bookmark marker (cyan disc) in the gutter */
+        for (int bi=0; bi<e->bk_n; bi++) if (e->bk[bi]==(int)line){
+            int cx=30, cy=y+fh, cr=4;
+            for (int dy=-cr; dy<=cr; dy++) for (int dx=-cr; dx<=cr; dx++)
+                if (dx*dx+dy*dy <= cr*cr){ int px=cx+dx, py=cy+dy; if(px>=0&&px<gutter&&py>=0&&py<H){ size_t ii=((size_t)py*w+px)*4; fb[ii]=80;fb[ii+1]=200;fb[ii+2]=220; } }
+            break;
+        }
         size_t le = pos;
         while (pos < tlen && text[pos] != '\n'){ pos++; }
         le = pos;
@@ -568,8 +613,8 @@ static void on_key(WuView *v, int key, int down){
             }
             return;
         }
-        case WUOS_KEY_DOCNEXT:
-        case WUOS_KEY_DOCPREV: {
+        case WUOS_KEY_DOCPREV:
+        case WUOS_KEY_DOCNEXT: {
             size_t n = docs_count(e->docs);
             if (n > 1){
                 size_t a = docs_active(e->docs);
@@ -579,6 +624,9 @@ static void on_key(WuView *v, int key, int down){
             }
             return;
         }
+        case WUOS_KEY_TOGGLE_BK: bk_toggle(e, editor_line_of(e)); return;
+        case WUOS_KEY_NEXT_BK:   bk_jump(e, +1); return;
+        case WUOS_KEY_PREV_BK:   bk_jump(e, -1); return;
         case WUOS_KEY_BACKSPACE:
             if (cur>0) doc_delete(e->doc, cur-1, 1);
             break;
@@ -704,6 +752,12 @@ size_t wuos_editor_doc_active(WuView *v){
     Editor *e = v ? v->priv : NULL;
     if (!e || !e->docs) return 0;
     return docs_active(e->docs);
+}
+/* Test accessor: number of active bookmarks (line-ops). */
+int wuos_editor_bookmarks(WuView *v){
+    Editor *e = v ? v->priv : NULL;
+    if (!e) return 0;
+    return e->bk_n;
 }
 
 WuView *wuos_editor_create(const char *path){

@@ -45,7 +45,8 @@ enum { WUOS_KEY_UP=2000, WUOS_KEY_DOWN, WUOS_KEY_LEFT, WUOS_KEY_RIGHT,
        WUOS_KEY_SAVE, WUOS_KEY_OPEN, WUOS_KEY_FIND, WUOS_KEY_REPLACE,
        WUOS_KEY_FINDNEXT, WUOS_KEY_FINDPREV, WUOS_KEY_REPLACEALL, WUOS_KEY_GOTO,
        WUOS_KEY_EOL, WUOS_KEY_THEME, WUOS_KEY_NEWDOC, WUOS_KEY_CLOSE,
-       WUOS_KEY_DOCPREV, WUOS_KEY_DOCNEXT };
+       WUOS_KEY_DOCPREV, WUOS_KEY_DOCNEXT, WUOS_KEY_TOGGLE_BK, WUOS_KEY_NEXT_BK,
+       WUOS_KEY_PREV_BK };
 
 /* ---- view factories ----
  * `path` is an optional file to load (NULL = use the bundled sample). */
@@ -63,6 +64,8 @@ int wuos_editor_dark(WuView *v);
 /* Test accessor: multi-doc session size + active index (for doc-tab tests). */
 size_t wuos_editor_doc_count(WuView *v);
 size_t wuos_editor_doc_active(WuView *v);
+/* Test accessor: number of active bookmarks (line-ops). */
+int wuos_editor_bookmarks(WuView *v);
 WuView *wuos_cell_create(const char *path);         /* wubucell grid */
 WuView *wuos_ocr_create(const char *path);          /* wubuocr page */
 WuView *wuos_slide_create(const char *path);        /* simple slide */
