@@ -101,7 +101,7 @@
 ## EXP — Import / Export / Format fidelity
 76. **P1** DOCX round-trip fidelity unverified in a UI; only model-io test. — **CLOSED**: the Document view now opens `.docx`/`.docm` into a real, round-trippable model via `wubumodel_load_docx` (structural: SECTION/PARAGRAPH/RUN, headings preserved), and `Ctrl+S` saves the model back via `wubumodel_write_docx` (overwriting the .docx or writing `<path>.docx`). The headless test writes a heading+paragraph doc to DOCX, reloads it, and asserts the paragraphs and both text strings survive — exercising the exact model-io path the UI uses.
 77. **P1** No PDF export (tagged/accessible) — pairs with `wubua11y`. — **CLOSED**: `wubuexp` emits a from-scratch PDF (base-14 Helvetica, one page per layout page).
-78. **P1** No ODF (ODT) import/export parity.
+78. **P1** No ODF (ODT) import/export parity. — **CLOSED**: added `wubumodel_write_odt` / `wubumodel_load_odt` (from-scratch, no deps) producing a valid OpenDocument Text package — `mimetype` (stored, first), `META-INF/manifest.xml`, `content.xml` mapping SECTION/PARAGRAPH/RUN → office:text / text:p / text:span. The Document view opens `.odt`/`.fodt` into the model and `Ctrl+S` round-trips to `.odt`. The headless test writes a heading+paragraph doc to ODT, reloads it, and asserts paragraphs + both text strings survive (verified: zip is well-formed, mimetype stored-first, content.xml carries the text).
 79. **P1** No RTF import/export. — **CLOSED**: `wubuexp` RTF export (no import yet).
 80. **P1** No Markdown import/export (test exists; ship it). — **CLOSED**: `wubuexp` Markdown export.
 81. **P1** No HTML import/export with semantic structure. — **CLOSED**: `wubuexp` HTML export (per-line <p>, escaped).

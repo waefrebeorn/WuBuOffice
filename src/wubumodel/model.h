@@ -147,6 +147,16 @@ int wubumodel_write_docx(const wubumodel_doc *doc, const char *path);
  * from-scratch ZIP read + our own DEFLATE (ws07#1338). */
 int wubumodel_load_docx(const char *path, wubumodel_doc **out);
 
+/* ---- OpenDocument Text (.odt) I/O (DOC-78) ---- */
+/* Serialize the model to an .odt package (ODF text). Returns 0 ok, -1 on error.
+ * Maps SECTION/PARAGRAPH/RUN -> office:text / text:p / text:span. */
+int wubumodel_write_odt(const wubumodel_doc *doc, const char *path);
+
+/* Load an .odt package into the model (reconstructs text into a
+ * SECTION->PARAGRAPH->RUN tree). Returns 0 ok (ownership of *out passes to
+ * the caller) or -1 on error (*out is NULL). No external deps. */
+int wubumodel_load_odt(const char *path, wubumodel_doc **out);
+
 #ifdef __cplusplus
 }
 #endif

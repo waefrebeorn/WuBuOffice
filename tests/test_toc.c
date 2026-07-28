@@ -386,6 +386,42 @@ int main(void){
             wubumodel_doc_destroy(back);
             unlink(tmp);
         }
+        /* DOC-78: ODT round-trip fidelity (same structural path as DOCX). */
+        {
+            wubumodel_doc *dd = wubumodel_doc_create();
+            wubumodel_node *sec = wubumodel_node_create(dd, WUBUMODEL_SECTION);
+            wubumodel_node *h = wubumodel_node_create(dd, WUBUMODEL_PARAGRAPH);
+            wubumodel_node *hr = wubumodel_node_create(dd, WUBUMODEL_RUN);
+            wubumodel_run_set_text(hr,"Open Doc Format"); wubumodel_node_append(dd,h,hr);
+            wubumodel_node *p = wubumodel_node_create(dd, WUBUMODEL_PARAGRAPH);
+            wubumodel_node *pr = wubumodel_node_create(dd, WUBUMODEL_RUN);
+            wubumodel_run_set_text(pr,"LibreOffice friendly text."); wubumodel_node_append(dd,p,pr);
+            wubumodel_node_append(dd,sec,h); wubumodel_node_append(dd,sec,p);
+            const char *tmp = "/tmp/wubuos_rt78.odt";
+            CK(wubumodel_write_odt(dd, tmp)==0, "odt write");
+            wubumodel_doc_destroy(dd);
+            wubumodel_doc *back = NULL;
+            CK(wubumodel_load_odt(tmp, &back)==0 && back, "odt read back");
+            int paras=0; char buf[1024]; buf[0]=0;
+            wubumodel_node *rsec = wubumodel_doc_root(back);
+            for (wubumodel_node *n = rsec?wubumodel_node_first_child(rsec):NULL; n;
+                 n = wubumodel_node_next_sibling(n)){
+                if (wubumodel_node_kind(n)!=WUBUMODEL_PARAGRAPH) continue;
+                paras++;
+                for (wubumodel_node *r = wubumodel_node_first_child(n); r;
+                     r = wubumodel_node_next_sibling(r)){
+                    if (wubumodel_node_kind(r)==WUBUMODEL_RUN){
+                        const char *t = wubumodel_run_text(r);
+                        if (t){ strncat(buf, t, sizeof buf-1-strlen(buf)); }
+                    }
+                }
+            }
+            CK(paras>=2, "odt reloaded paragraphs preserved");
+            CK(strstr(buf,"Open Doc Format")!=NULL, "odt heading text survived");
+            CK(strstr(buf,"LibreOffice friendly")!=NULL, "odt body text survived");
+            wubumodel_doc_destroy(back);
+            unlink(tmp);
+        }
         wubumodel_doc_destroy(d);
     }
     if (fails==0) printf("TOC + SETTINGS + FOOTNOTE TESTS PASSED\n");

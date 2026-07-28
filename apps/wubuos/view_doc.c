@@ -146,16 +146,21 @@ static void doc_save(DocV *e){
     char out[512];
     if (e->path && (strstr(e->path,".docx")||strstr(e->path,".docm")||strstr(e->path,".dotx")))
         snprintf(out,sizeof out,"%s", e->path);
+    else if (e->path && (strstr(e->path,".odt")||strstr(e->path,".fodt")))
+        snprintf(out,sizeof out,"%s", e->path);
     else if (e->path)
         snprintf(out,sizeof out,"%s.docx", e->path);
     else
         snprintf(out,sizeof out,"/tmp/wubuos_document.docx");
-    int rc = wubumodel_write_docx(e->doc, out);
+    int rc;
+    if (strstr(out,".odt")||strstr(out,".fodt")) rc = wubumodel_write_odt(e->doc, out);
+    else rc = wubumodel_write_docx(e->doc, out);
     if (rc==0){
-        char b[512]; snprintf(b,sizeof b,"DOCX saved: %s", out);
+        char b[512]; const char *lab = (strstr(out,".odt")||strstr(out,".fodt"))?"ODT":"DOCX";
+        snprintf(b,sizeof b,"%s saved: %s", lab, out);
         e->epub_msg = strdup(b);
     } else {
-        e->epub_msg = strdup("DOCX save failed");
+        e->epub_msg = strdup("DOCX/ODT save failed");
     }
 }
 /* Run an a11y check on the current model doc (INT-5). */
@@ -778,9 +783,13 @@ WuView *wuos_doc_create(const char *path){
             /* DOC-76: open Word files into a real, round-trippable model so
              * save-as-DOCX preserves structure (headings/paragraphs/runs). */
             int is_docx = (strstr(path,".docx")||strstr(path,".docm")||strstr(path,".dotx"));
+            int is_odt  = (strstr(path,".odt")||strstr(path,".fodt"));
             if (is_docx){
                 wubumodel_doc *md = NULL;
                 if (wubumodel_load_docx(path, &md) == 0 && md) e->doc = md;
+            } else if (is_odt){
+                wubumodel_doc *md = NULL;
+                if (wubumodel_load_odt(path, &md) == 0 && md) e->doc = md;
             }
         }
         if (!e->doc){
