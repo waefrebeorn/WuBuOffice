@@ -651,6 +651,28 @@ int wuos_doc_high_contrast(WuView *v){
     WubuSettings *s = wubusettings_shared();
     return s ? wubusettings_high_contrast(s) : 0;
 }
+/* Arg-bearing inserts driven by the shell's modal dialogs. */
+int wuos_doc_insert_link_url(WuView *v, const char *url){
+    DocV *e = v ? (DocV*)v->priv : NULL;
+    if (!e || !e->doc) return 0;
+    int ok = doccmd_insert_link_url(e->doc, url);
+    if (ok) e->toc_dirty = 1;
+    return ok;
+}
+int wuos_doc_insert_image_alt(WuView *v, const char *alt){
+    DocV *e = v ? (DocV*)v->priv : NULL;
+    if (!e || !e->doc) return 0;
+    int ok = doccmd_insert_image_alt(e->doc, alt);
+    if (ok) e->toc_dirty = 1;
+    return ok;
+}
+int wuos_doc_insert_qr(WuView *v, const char *text){
+    DocV *e = v ? (DocV*)v->priv : NULL;
+    if (!e || !e->doc) return 0;
+    int ok = doccmd_insert_qr(e->doc, text);
+    if (ok) e->toc_dirty = 1;
+    return ok;
+}
 /* Footnote/endnote count for the current model (DOC-55), or -1 if no model. */
 int wuos_doc_footnote_count(WuView *v){
     DocV *e = v->priv;

@@ -33,6 +33,9 @@ int doccmd_insert_link(wubumodel_doc *doc);
 int doccmd_insert_list(wubumodel_doc *doc);
 int doccmd_insert_table(wubumodel_doc *doc);
 int doccmd_insert_image(wubumodel_doc *doc);
+int doccmd_insert_image_alt(wubumodel_doc *doc, const char *alt);   /* UXA-47 */
+int doccmd_insert_qr(wubumodel_doc *doc, const char *text);        /* EXP-89 */
+int doccmd_insert_link_url(wubumodel_doc *doc, const char *url);    /* DOC-66 */
 int doccmd_insert_pagebreak(wubumodel_doc *doc);
 int doccmd_insert_sectionbreak(wubumodel_doc *doc);
 int doccmd_insert_header(wubumodel_doc *doc);

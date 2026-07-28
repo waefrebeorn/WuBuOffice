@@ -11,6 +11,7 @@
 #include "epub.h"      /* wubuepub */
 #include "script.h"    /* wubuscript: script_eval */
 #include "wubusvg/rast.h"  /* svg_rasterize_cb */
+#include "qr.h"        /* wubuocr: qr_encode */
 
 #include <stdlib.h>
 #include <string.h>
@@ -109,6 +110,26 @@ int doccmd_insert_table(wubumodel_doc *doc){
 }
 
 int doccmd_insert_image(wubumodel_doc *doc){
+    return doccmd_insert_image_alt(doc, NULL) ? 1 : 0;
+}
+
+/* ---- arg-bearing variants (driven by the shell's modal dialogs) ---- */
+int doccmd_insert_link_url(wubumodel_doc *doc, const char *url){
+    wubumodel_node *sec = first_section(doc);
+    if (!sec) return 0;
+    const char *u = (url && *url) ? url : "https://github.com/waefrebeorn/WuBuOffice";
+    wubumodel_node *lk = wubumodel_node_create(doc, WUBUMODEL_LINK);
+    wubumodel_node *r = wubumodel_node_create(doc, WUBUMODEL_RUN);
+    /* label = the URL itself (readable run) */
+    const char *label = (url && *url) ? url : "WuBuOffice";
+    wubumodel_run_set_text(r, label);
+    wubumodel_node_append(doc, lk, r);
+    wubumodel_node_set_link(lk, u);
+    wubumodel_node_append(doc, sec, lk);
+    return 1;
+}
+
+int doccmd_insert_image_alt(wubumodel_doc *doc, const char *alt){
     wubumodel_node *sec = first_section(doc);
     if (!sec) return 0;
     wubumodel_node *im = wubumodel_node_create(doc, WUBUMODEL_IMAGE);
@@ -123,7 +144,35 @@ int doccmd_insert_image(wubumodel_doc *doc){
         }
     wubumodel_node_set_image(im, px, W, H);
     free(px);
+    /* alt text -> accessibility note (model has no dedicated alt field) */
+    if (alt && *alt) wubumodel_node_set_note(im, alt);
     wubumodel_node_append(doc, sec, im);
+    return 1;
+}
+
+int doccmd_insert_qr(wubumodel_doc *doc, const char *text){
+    wubumodel_node *sec = first_section(doc);
+    if (!sec || !text || !*text) return 0;
+    unsigned char *matrix = NULL; int sz = 0;
+    if (qr_encode(text, &matrix, &sz) < 0 || !matrix || sz <= 0){ free(matrix); return 0; }
+    /* render the module matrix to a scaled RGBA bitmap (module = 4px) */
+    const int S = 4;
+    int W = sz*S, H = sz*S;
+    uint8_t *px = malloc((size_t)W*H*4);
+    if (!px){ free(matrix); return 0; }
+    for (int y=0; y<H; y++)
+        for (int x=0; x<W; x++){
+            int mx = x/S, my = y/S;
+            int on = (mx < sz && my < sz) ? matrix[my*sz + mx] : 0;
+            uint8_t *p = px + ((size_t)y*W+x)*4;
+            p[0]=p[1]=p[2] = on? 0 : 255; p[3] = 255;
+        }
+    wubumodel_node *im = wubumodel_node_create(doc, WUBUMODEL_IMAGE);
+    wubumodel_node_set_image(im, px, W, H);
+    free(px);
+    wubumodel_node_set_note(im, text);   /* QR payload as alt text */
+    wubumodel_node_append(doc, sec, im);
+    free(matrix);
     return 1;
 }
 

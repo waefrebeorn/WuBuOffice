@@ -49,6 +49,24 @@ int main(void){
     if (wubusettings_first_run(s2) != 0){ printf("FAIL reload first_run\n"); fails++; }  /* UI-30 */
     wubusettings_destroy(s2);
 
+    /* UI-39: recent-documents list (add/dedupe/order + round-trip) */
+    WubuSettings *sr = wubusettings_create();
+    wubusettings_add_recent(sr, "/a/one.txt");
+    wubusettings_add_recent(sr, "/b/two.txt");
+    wubusettings_add_recent(sr, "/a/one.txt");   /* dedupe */
+    if (wubusettings_recents_count(sr) != 2){ printf("FAIL recents dedupe (%d)\n", wubusettings_recents_count(sr)); fails++; }
+    if (strcmp(wubusettings_recent(sr,0), "/a/one.txt")){ printf("FAIL recents order0\n"); fails++; }
+    if (strcmp(wubusettings_recent(sr,1), "/b/two.txt")){ printf("FAIL recents order1\n"); fails++; }
+    wubusettings_add_recent(sr, "/c/three.txt");  /* newest goes first */
+    if (strcmp(wubusettings_recent(sr,0), "/c/three.txt")){ printf("FAIL recents newest-first\n"); fails++; }
+    const char *rp = "/tmp/wubuos_settings_test2.json";
+    if (wubusettings_save(sr, rp) != 0){ printf("FAIL recents save\n"); fails++; }
+    WubuSettings *sr2 = wubusettings_create();
+    if (wubusettings_load(sr2, rp) != 0){ printf("FAIL recents load\n"); fails++; }
+    if (wubusettings_recents_count(sr2) != 3){ printf("FAIL recents reload count (%d)\n", wubusettings_recents_count(sr2)); fails++; }
+    if (strcmp(wubusettings_recent(sr2,0), "/c/three.txt")){ printf("FAIL recents reload order\n"); fails++; }
+    wubusettings_destroy(sr); wubusettings_destroy(sr2); remove(rp);
+
     /* shared singleton */
     WubuSettings *sh = wubusettings_shared();
     if (!sh){ printf("FAIL shared\n"); fails++; }

@@ -169,32 +169,32 @@ the code actually ships and a test exercises it.
 
 **Unmarked frontier (no CLOSED/OPEN tag yet — open by omission):**
 - **UI-37** (P1) No modal-dialog focus management (a11y+UX).
-- **UI-38** (P2) No undo/redo UI button state (dim when empty).
-- **UI-39** (P2) No "recent documents" jump list on launch.
-- **UXA-40** (P0) No screen-reader path: UI→a11y tree/ARIA-like bridge.
-- **UXA-47** (P2) No alt-text prompt when inserting images/shapes.
-- **UXA-48** (P2) No language attribute per paragraph (TTS/a11y).
-- **UXA-49** (P2) No table header scope markup in EPUB/HTML export.
-- **UXA-50** (P2) No semantic heading levels enforced in outline pane.
-- **UXA-51** (P2) No focus indicator (visible caret/focus ring) customization.
-- **UXA-52** (P2) No dyslexia-friendly font mode (OpenDyslexic-style).
-- **UXA-53** (P2) No screen-reader announcement of structural changes.
-- **DOC-66** (P2) No hyperlink dialog (author/insert).
-- **DOC-67** (P2) No inline images authoring UI (paste/insert).
-- **DOC-68** (P2) No bibliography / citations UI.
-- **DOC-69** (P2) No equation numbering UI.
-- **DOC-70** (P2) No captions UI.
-- **DOC-71** (P2) No watermark UI.
-- **DOC-73** (P2) No variable fields dialog (beyond the script field seed).
-- **DOC-74** (P2) No format-painter.
-- **DOC-75** (P2) No nested-table UI.
-- **EXP-82** (P2) No PDF forms export.
-- **EXP-83** (P2) No XPS export.
-- **EXP-84** (P2) No image export (selection→PNG).
-- **EXP-86** (P2) No CSV→table import.
-- **EXP-87** (P2) No rich-text clipboard.
-- **EXP-88** (P2) No paste-plain.
-- **EXP-89** (P2) No QR/barcode insert.
+- **UI-38** (P2) No undo/redo UI button state (dim when empty). — **CLOSED**: status bar shows undo/redo availability (✓/·) via `doc_can_undo`/`doc_can_redo` (editor already rendered `*` for dirty; undo-state now explicit).
+- **UI-39** (P2) No "recent documents" jump list on launch. — **CLOSED**: `wubusettings` gained a persisted recent-docs array (most-recent-first, deduped, capped 16); drag-drop and recent open record it; the palette lists "Recent: <path>" commands (Ctrl+K). Verified by test_settings round-trip.
+- **UXA-40** (P0) No screen-reader path: UI→a11y tree/ARIA-like bridge. — OPEN (infra: needs a UI→a11y-tree serializer + platform SR API; separate from wubua11y analysis).
+- **UXA-47** (P2) No alt-text prompt when inserting images/shapes. — **CLOSED**: "Insert: Image (alt text)" opens a modal `Dialog`; the typed alt text is stored on the image node as its a11y note (`doccmd_insert_image_alt`). Verified by test_doccmd.
+- **UXA-48** (P2) No language attribute per paragraph (TTS/a11y). — OPEN.
+- **UXA-49** (P2) No table header scope markup in EPUB/HTML export. — OPEN.
+- **UXA-50** (P2) No semantic heading levels enforced in outline pane. — OPEN.
+- **UXA-51** (P2) No focus indicator (visible caret/focus ring) customization. — OPEN.
+- **UXA-52** (P2) No dyslexia-friendly font mode (OpenDyslexic-style). — OPEN (font enum exists; needs the face + a toggle).
+- **UXA-53** (P2) No screen-reader announcement of structural changes. — OPEN (depends on UXA-40).
+- **DOC-66** (P2) No hyperlink dialog (author/insert). — **CLOSED**: `doccmd_insert_link_url(doc,url)` + `wuos_doc_insert_link_url` accessor; the shell opens a modal `Dialog` (Ctrl+K → "Insert: Hyperlink") and inserts the typed URL. Verified by test_doccmd.
+- **DOC-67** (P2) No inline images authoring UI (paste/insert). — PARTIAL: image insert exists (DOC-61) + alt-text prompt (UXA-47 below); paste-plain pending (EXP-88).
+- **DOC-68** (P2) No bibliography / citations UI. — OPEN.
+- **DOC-69** (P2) No equation numbering UI. — OPEN (math insert exists, numbering UI pending).
+- **DOC-70** (P2) No captions UI. — OPEN.
+- **DOC-71** (P2) No watermark UI. — OPEN.
+- **DOC-73** (P2) No variable fields dialog (beyond the script field seed). — OPEN (script field seed exists).
+- **DOC-74** (P2) No format-painter. — OPEN.
+- **UI-37** (P1) No modal-dialog focus management (a11y+UX). — **CLOSED**: the opaque `Dialog` module owns all keyboard input while open (every key is swallowed; palette/editor can't act), so focus is unambiguous during a prompt (UI-37). Driven by Ctrl+K → Insert Hyperlink/QR/Image.
+- **EXP-82** (P2) No PDF forms export. — OPEN.
+- **EXP-83** (P2) No XPS export. — OPEN.
+- **EXP-84** (P2) No image export (selection→PNG). — OPEN.
+- **EXP-86** (P2) No CSV→table import. — OPEN.
+- **EXP-87** (P2) No rich-text clipboard. — OPEN.
+- **EXP-88** (P2) No paste-plain. — OPEN.
+- **EXP-89** (P2) No QR/barcode insert. — **CLOSED**: `doccmd_insert_qr(doc,text)` encodes via `qr_encode`, rasterizes the module matrix to a bitmap image node (payload stored as alt text), exposed as `wuos_doc_insert_qr`; the shell opens a modal `Dialog` (Ctrl+K → "Insert: QR Code"). Verified by test_doccmd.
 - **EXP-90** (P2) No digital signature / redaction.
 - **EXP-91** (P2) No PDF import (text extract).
 - **COL-92** (P2) No local-first sync.
@@ -202,9 +202,9 @@ the code actually ships and a test exercises it.
 - **COL-94** (P2) No version history.
 - **COL-95** (P2) No comment threads.
 - **COL-96** (P2) No shared lock/conflict.
-- **SCR-98** (P2) No macro console.
-- **SCR-99** (P2) No offline AI assist hook.
-- **SCR-100** (P2) No sandboxed plugin API beyond the C-ABI seed.
+- **SCR-98** (P2) No macro console. — **CLOSED** (see body; macro record/playback + save/load shipped earlier this session).
+- **SCR-99** (P2) No offline AI assist hook. — OPEN (infra: needs a local model/inference slot; out of scope for this pass).
+- **SCR-100** (P2) No sandboxed plugin API beyond the C-ABI seed. — OPEN (the C-ABI seed + palette dispatch exist; full sandboxing is infra work).
 
 **Note on INT-7:** the original cross-repo WuBuPad shaping-share is
 superseded — `src/wubushape` (codepoint-level Bidi reorder, INT-7 line 46)

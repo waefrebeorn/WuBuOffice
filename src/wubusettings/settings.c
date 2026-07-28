@@ -21,6 +21,8 @@ struct WubuSettings {
     double ui_scale;          /* DOC-45: UI chrome scale, independent of doc zoom */
     int    first_run;         /* UI-30: show first-run splash until dismissed */
     char   font_family[64];    /* INT-15: preferred font family name */
+    char   recents[16][256];   /* UI-39: recent-doc paths (most-recent-first) */
+    int    nrecents;
 };
 
 WubuSettings *wubusettings_create(void){
@@ -98,6 +100,17 @@ int wubusettings_load(WubuSettings *s, const char *path){
         if ((v = j_obj_get(root,"font_family")) && j_type(v)==J_STR){
             const char *l = j_as_str(v); strncpy(s->font_family, l, sizeof s->font_family-1); s->font_family[sizeof s->font_family-1]='\0';
         }
+        if ((v = j_obj_get(root,"recents")) && j_type(v)==J_ARR){
+            s->nrecents = 0;
+            for (size_t i=0; i<j_len(v) && s->nrecents<16; i++){
+                const JVal *e = j_arr_at(v, i);
+                if (e && j_type(e)==J_STR){
+                    const char *p = j_as_str(e);
+                    snprintf(s->recents[s->nrecents], 256, "%s", p);
+                    s->nrecents++;
+                }
+            }
+        }
         rc = 0;
     }
     j_free(root);
@@ -119,6 +132,10 @@ int wubusettings_save(const WubuSettings *s, const char *path){
     j_obj_put(root, "ui_scale", j_num(s->ui_scale));
     j_obj_put(root, "first_run", j_num((double)s->first_run));
     j_obj_put(root, "font_family", j_str(s->font_family));
+    /* UI-39: recents as a JSON array */
+    JVal *arr = j_arr();
+    for (int i=0;i<s->nrecents;i++) j_arr_push(arr, j_str(s->recents[i]));
+    j_obj_put(root, "recents", arr);
     char *txt = j_emit(root);
     j_free(root);
     if (!txt) return -1;
@@ -180,6 +197,25 @@ void wubusettings_set_font_family(WubuSettings *s, const char *family){
     if (!s || !family) return;
     strncpy(s->font_family, family, sizeof s->font_family-1);
     s->font_family[sizeof s->font_family-1]='\0';
+}
+
+/* UI-39: recent-documents jump list (most-recent-first, deduped, capped at 16). */
+int wubusettings_recents_count(const WubuSettings *s){ return s ? s->nrecents : 0; }
+const char *wubusettings_recent(const WubuSettings *s, int i){
+    if (!s || i<0 || i>=s->nrecents) return "";
+    return s->recents[i];
+}
+void wubusettings_add_recent(WubuSettings *s, const char *path){
+    if (!s || !path || !*path) return;
+    /* dedupe: drop any existing copy */
+    for (int i=0;i<s->nrecents;i++)
+        if (!strcmp(s->recents[i], path)){ s->nrecents--; break; }
+    /* shift down to make room at index 0 */
+    if (s->nrecents >= 16) s->nrecents = 15;
+    for (int i=s->nrecents; i>0; i--)
+        snprintf(s->recents[i], 256, "%s", s->recents[i-1]);
+    snprintf(s->recents[0], 256, "%s", path);
+    s->nrecents++;
 }
 
 /* process-wide singleton (defined near top of this file) */

@@ -87,6 +87,46 @@ int main(void){
     printf("  a11y issues: %d\n", a.count);
     a11y_report_free(&a);
 
+    /* DOC-66: hyperlink with explicit URL */
+    if (doccmd_insert_link_url(d, "https://example.com/page") != 1){ fprintf(stderr, "[link_url]\n"); fails++; }
+    else {
+        /* find the last LINK node and check its target */
+        wubumodel_node *last = NULL;
+        /* walk all nodes; reuse count_kind-style recursion not available, so
+         * check the doc root's direct section children for the newest LINK. */
+        wubumodel_node *sec = wubumodel_doc_root(d);
+        for (wubumodel_node *s = sec; s; s = wubumodel_node_next_sibling(s))
+            for (wubumodel_node *c = wubumodel_node_first_child(s); c; c = wubumodel_node_next_sibling(c))
+                if (wubumodel_node_kind(c) == WUBUMODEL_LINK) last = c;
+        if (!last || !wubumodel_node_link(last) || strcmp(wubumodel_node_link(last), "https://example.com/page")){
+            fprintf(stderr, "[link_url target] '%s'\n", last? wubumodel_node_link(last):"(null)"); fails++;
+        }
+    }
+    /* UXA-47: image with alt text -> stored as a11y note */
+    if (doccmd_insert_image_alt(d, "A sample diagram") != 1){ fprintf(stderr, "[image_alt]\n"); fails++; }
+    else {
+        wubumodel_node *last = NULL;
+        wubumodel_node *sec = wubumodel_doc_root(d);
+        for (wubumodel_node *s = sec; s; s = wubumodel_node_next_sibling(s))
+            for (wubumodel_node *c = wubumodel_node_first_child(s); c; c = wubumodel_node_next_sibling(c))
+                if (wubumodel_node_kind(c) == WUBUMODEL_IMAGE) last = c;
+        if (!last || !wubumodel_node_note(last) || strcmp(wubumodel_node_note(last), "A sample diagram")){
+            fprintf(stderr, "[image_alt note] '%s'\n", last? wubumodel_node_note(last):"(null)"); fails++;
+        }
+    }
+    /* EXP-89: QR code -> image node with payload as note */
+    if (doccmd_insert_qr(d, "HELLO-QR") != 1){ fprintf(stderr, "[qr]\n"); fails++; }
+    else {
+        wubumodel_node *last = NULL;
+        wubumodel_node *sec = wubumodel_doc_root(d);
+        for (wubumodel_node *s = sec; s; s = wubumodel_node_next_sibling(s))
+            for (wubumodel_node *c = wubumodel_node_first_child(s); c; c = wubumodel_node_next_sibling(c))
+                if (wubumodel_node_kind(c) == WUBUMODEL_IMAGE) last = c;
+        if (!last || !wubumodel_node_note(last) || strcmp(wubumodel_node_note(last), "HELLO-QR")){
+            fprintf(stderr, "[qr note] '%s'\n", last? wubumodel_node_note(last):"(null)"); fails++;
+        }
+    }
+
     wubumodel_doc_destroy(d);
 
     if (fails){ printf("FAILED (%d)\n", fails); return 1; }

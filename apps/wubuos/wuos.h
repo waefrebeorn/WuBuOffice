@@ -128,6 +128,12 @@ const char *wuos_doc_a11y_item(WuView *v, int i);
 int  wuos_doc_toc_count(WuView *v);
 /* Document view: high-contrast setting (UXA-41). */
 int  wuos_doc_high_contrast(WuView *v);
+
+/* Document view: arg-bearing inserts driven by the shell's modal dialogs.
+ * Return 1 if the insert succeeded (and TOC needs rebuild), 0 otherwise. */
+int wuos_doc_insert_link_url(WuView *v, const char *url);   /* DOC-66 */
+int wuos_doc_insert_image_alt(WuView *v, const char *alt);  /* UXA-47 */
+int wuos_doc_insert_qr(WuView *v, const char *text);        /* EXP-89 */
 /* Cell view inspection: active cell + editing state + cell value as string. */
 int  wuos_cell_active(WuView *v, int *col, int *row);
 int  wuos_cell_editing(WuView *v);

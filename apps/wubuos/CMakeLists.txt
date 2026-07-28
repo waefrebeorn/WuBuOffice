@@ -27,7 +27,8 @@ add_executable(wubuos
     codefold.c
     doccmd.c
     macro.c
-    gotoline.c)
+    gotoline.c
+    dialog.c)
 target_include_directories(wubuos PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}/src/wubumodel
@@ -204,9 +205,10 @@ target_include_directories(test_doccmd PRIVATE
     ${CMAKE_SOURCE_DIR}/src/wubuepub
     ${CMAKE_SOURCE_DIR}/src/wubua11y
     ${CMAKE_SOURCE_DIR}/src/wubusvg
-    ${CMAKE_SOURCE_DIR}/src/wubuscript)
+    ${CMAKE_SOURCE_DIR}/src/wubuscript
+    ${CMAKE_SOURCE_DIR}/src/wubuocr)
 target_link_libraries(test_doccmd PRIVATE
-    wubumodel wubuchart wubudraw wubumath wubuepub wubua11y wubusvg wubuscript)
+    wubumodel wubuchart wubudraw wubumath wubuepub wubua11y wubusvg wubuscript wubuocr)
 target_compile_options(test_doccmd PRIVATE -Wall -Wextra -Wpedantic)
 add_test(NAME doccmd COMMAND test_doccmd)
 set_tests_properties(doccmd PROPERTIES LABELS "doccmd;apps")
@@ -224,6 +226,12 @@ target_include_directories(test_gotoline PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_compile_options(test_gotoline PRIVATE -Wall -Wextra -Wpedantic)
 add_test(NAME gotoline COMMAND test_gotoline)
 set_tests_properties(gotoline PROPERTIES LABELS "gotoline;apps")
+
+# Headless test for the opaque modal Dialog module (INT-15 sibling; UI-37/UXA-47/etc plumbing).
+add_executable(test_dialog test_dialog.c dialog.c)
+target_compile_options(test_dialog PRIVATE -Wall -Wextra -Wpedantic)
+add_test(NAME dialog COMMAND test_dialog)
+set_tests_properties(dialog PROPERTIES LABELS "dialog;apps")
 
 # Headless test for the INT-15 font enumeration / family picker.
 add_executable(test_font test_font.c wuos_font.c)

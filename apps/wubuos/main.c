@@ -11,6 +11,7 @@
 #include "toast.h"      /* UI-33: toast queue */
 #include "palette.h"    /* UI-29: command palette */
 #include "macro.h"      /* SCR-98: macro record/playback + persistence */
+#include "dialog.h"     /* modal text-input dialog (DOC-66/EXP-89/UXA-47/UI-39) */
 
 #include <SDL2/SDL.h>
 
@@ -36,12 +37,29 @@ static Toasts  *g_toasts = NULL;    /* UI-33: toast queue */
 static Palette *g_palette = NULL;   /* UI-29: command palette (Ctrl+K) */
 static int      g_cheat = 0;       /* UI-36: shortcut cheat-sheet overlay */
 static int      g_first_run = 0;    /* UI-30: first-run onboarding splash */
+static Dialog  *g_dlg = NULL;       /* modal text-input dialog */
+static int      g_dlg_action = 0;   /* 0 none,1 link,2 qr,3 image-alt */
 /* Plugin manager: loaded once at startup from ~/.wubuos/plugins. */
 static WuOSPluginMgr *g_plugins = NULL;
 static char   *g_plugin_msg = NULL;   /* last exec() result toast */
 static int     g_plugin_idx = 0;      /* next plugin to run via Ctrl+Shift+K */
 
 static void add_view(WuView *v){ if (v && nviews<8) views[nviews++]=v; }
+
+/* Open `path` in a suitable tab (editor for text-ish, document otherwise),
+ * make it active, and record it in the recent-documents list (UI-39). */
+static void open_doc_path(const char *path){
+    if (!path || !*path) return;
+    size_t L = strlen(path);
+    int is_text = (L>3 && (!strcmp(path+L-3,".md")||!strcmp(path+L-3,".c")||
+                  !strcmp(path+L-2,".h")||!strcmp(path+L-3,".py")||
+                  !strcmp(path+L-4,".txt")));
+    WuView *nv = is_text ? wuos_editor_create(path) : wuos_doc_create(path);
+    if (!nv) return;
+    if (nviews < 8){ add_view(nv); active = nviews-1; }
+    WubuSettings *sh = wubusettings_shared();
+    if (sh){ wubusettings_add_recent(sh, path); wubusettings_save(sh, NULL); }
+}
 
 static int tab_at(int mx){
     int x=0;
@@ -138,6 +156,7 @@ int main(int argc, char **argv){
     /* UI-33 toast queue + UI-29 command palette */
     g_toasts = toast_create();
     g_palette = palette_create();
+    g_dlg = dialog_create();   /* modal text-input dialog */
     /* UI-30: show first-run splash if this is a fresh install */
     { WubuSettings *sh = wubusettings_shared();
       if (sh && wubusettings_first_run(sh)) g_first_run = 1; }
@@ -168,6 +187,18 @@ int main(int argc, char **argv){
         char lbl[96]; snprintf(lbl, sizeof lbl, "Font: %s", wuos_font_family_name(fi));
         palette_add(g_palette, lbl, 100 + fi);
     }
+    /* DOC-66 / EXP-89 / UXA-47: modal-dialog prompts (open a Dialog). */
+    palette_add(g_palette, "Insert: Hyperlink", 40);
+    palette_add(g_palette, "Insert: QR Code",   41);
+    palette_add(g_palette, "Insert: Image (alt text)", 42);
+    /* UI-39: recent-documents jump list (built from persisted settings). */
+    { WubuSettings *sh = wubusettings_shared();
+      int nr = sh ? wubusettings_recents_count(sh) : 0;
+      for (int i=0; i<nr; i++){
+          char lbl[320]; snprintf(lbl, sizeof lbl, "Recent: %s", wubusettings_recent(sh, i));
+          palette_add(g_palette, lbl, 200 + i);
+      } }
+
     /* if a specific tab was requested and exists, activate it */
     if (want_tab || auto_tab){
         const char *t = want_tab? want_tab : auto_tab;
@@ -217,16 +248,7 @@ int main(int argc, char **argv){
             }
             else if (e.type==SDL_DROPFILE){   /* UI-28: drag-drop open */
                 char *dropped = e.drop.file;
-                if (dropped && *dropped){
-                    /* open in the most appropriate tab: editor for text-ish,
-                     * document for everything else (docx/pdf/md/...). */
-                    int is_text = 0; size_t L=strlen(dropped);
-                    if (L>3 && (!strcmp(dropped+L-3,".md")||!strcmp(dropped+L-3,".c")||
-                                !strcmp(dropped+L-2,".h")||!strcmp(dropped+L-3,".py")||
-                                !strcmp(dropped+L-4,".txt"))) is_text=1;
-                    WuView *nv = is_text ? wuos_editor_create(dropped) : wuos_doc_create(dropped);
-                    if (nv && nviews<8){ add_view(nv); active=nviews-1; scroll=0; }
-                }
+                if (dropped && *dropped) open_doc_path(dropped);  /* records recents */
                 SDL_free(dropped);
             }
             else if (e.type==SDL_KEYDOWN){
@@ -239,6 +261,28 @@ int main(int argc, char **argv){
                     WubuSettings *sh = wubusettings_shared();
                     if (sh){ wubusettings_set_first_run(sh, 0); wubusettings_save(sh, NULL); }
                     continue;
+                }
+                /* ---- modal dialog owns input while open (DOC-66/EXP-89/UXA-47) ---- */
+                if (dialog_active(g_dlg)){
+                    int nk = 0; const char *ch = NULL;
+                    if (k == SDLK_RETURN || k == SDLK_KP_ENTER) nk = 13;
+                    else if (k == SDLK_ESCAPE) nk = 27;
+                    else if (k == SDLK_BACKSPACE) nk = 8;
+                    else if (k >= 32 && k < 127){ nk = (int)k; ch = (const char*)&k; }
+                    if (nk){
+                        int res = dialog_key(g_dlg, nk, ch);
+                        if (res == 1){           /* confirmed */
+                            const char *txt = dialog_text(g_dlg);
+                            WuView *dv = views[active];
+                            if (g_dlg_action == 1){ if (wuos_doc_insert_link_url(dv, txt)) toast_push(g_toasts, "Hyperlink inserted", 90); }
+                            else if (g_dlg_action == 2){ if (wuos_doc_insert_qr(dv, txt)) toast_push(g_toasts, "QR inserted", 90); }
+                            else if (g_dlg_action == 3){ if (wuos_doc_insert_image_alt(dv, txt)) toast_push(g_toasts, "Image inserted", 90); }
+                            g_dlg_action = 0;
+                        } else if (res == 2){    /* cancelled */
+                            g_dlg_action = 0;
+                        }
+                    }
+                    continue;   /* modal: swallow every key while open */
                 }
                 /* ---- UI-29: command palette captures input while open ---- */
                 if (palette_is_open(g_palette)){
@@ -298,7 +342,19 @@ int main(int argc, char **argv){
                                    snprintf(buf,sizeof buf,"%s/wubuos_macro.mac", mp? mp : "/tmp");
                                    if (macro_load(buf)==0) toast_push(g_toasts, "Macro loaded", 90);
                                    else toast_push(g_toasts, "Macro load failed", 120); } break;
+                        /* DOC-66 / EXP-89 / UXA-47: open the modal dialog. */
+                        case 40: g_dlg_action = 1; dialog_open(g_dlg, "Insert Hyperlink", "URL:", "https://"); toast_push(g_toasts, "Hyperlink: type URL, Enter", 120); break;
+                        case 41: g_dlg_action = 2; dialog_open(g_dlg, "Insert QR Code", "Text:", ""); toast_push(g_toasts, "QR: type text, Enter", 120); break;
+                        case 42: g_dlg_action = 3; dialog_open(g_dlg, "Insert Image", "Alt text:", ""); toast_push(g_toasts, "Image: type alt text, Enter", 120); break;
+                        /* UI-39: open a recent document. */
                         default:
+                            if (cmd >= 200){
+                                int ri = cmd - 200;
+                                WubuSettings *sh = wubusettings_shared();
+                                if (sh && ri >= 0 && ri < wubusettings_recents_count(sh))
+                                    open_doc_path(wubusettings_recent(sh, ri));
+                            }
+                            else {
                             /* INT-15: font-family commands (id == 100 + index) */
                             if (cmd >= 100){
                                 int fi = cmd - 100;
@@ -310,6 +366,7 @@ int main(int argc, char **argv){
                                         toast_push(g_toasts, wuos_font_family_name(fi), 90);
                                     } else toast_push(g_toasts, "Font switch failed", 120);
                                 }
+                            }
                             }
                             break;
                         }
@@ -481,6 +538,21 @@ int main(int argc, char **argv){
                 if (i==g_ctx_item){ SDL_SetRenderDrawColor(ren,59,130,246,255); SDL_RenderFillRect(ren,&(SDL_Rect){mx+2,my+4+i*26,mw-4,24}); }
                 sdl_text(ren, mx+10, my+8+i*26, 220,223,230, items[i]);
             }
+        }
+
+        /* modal text-input dialog overlay (DOC-66/EXP-89/UXA-47) */
+        if (dialog_active(g_dlg)){
+            int bw = 520, bx = (WIN_W-bw)/2, by = TAB_H + 80, bh = 120;
+            SDL_SetRenderDrawColor(ren, 18,20,26,252); SDL_RenderFillRect(ren,&(SDL_Rect){bx,by,bw,bh});
+            SDL_SetRenderDrawColor(ren, 90,95,105,255); SDL_RenderDrawRect(ren,&(SDL_Rect){bx,by,bw,bh});
+            sdl_text(ren, bx+20, by+12, 240,243,250, dialog_title(g_dlg));
+            sdl_text(ren, bx+20, by+40, 200,203,210, dialog_prompt(g_dlg));
+            sdl_text(ren, bx+20, by+68, 230,233,240, dialog_text(g_dlg));
+            /* caret */
+            int cw = wuos_font_text_width(dialog_text(g_dlg), 20);
+            SDL_SetRenderDrawColor(ren, 230,233,240,255);
+            SDL_RenderFillRect(ren,&(SDL_Rect){bx+20+cw, by+66, 2, 20});
+            sdl_text(ren, bx+20, by+bh-18, 150,153,160, "Enter to confirm · Esc to cancel");
         }
 
         /* UI-33: toast overlay (bottom-center) + tick */

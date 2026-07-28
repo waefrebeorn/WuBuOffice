@@ -59,6 +59,12 @@ void wubusettings_set_first_run(WubuSettings *s, int on);
 const char *wubusettings_font_family(const WubuSettings *s);
 void        wubusettings_set_font_family(WubuSettings *s, const char *family);
 
+/* UI-39: recent-documents jump list (persisted). Returns count, the i-th path,
+ * and adds a path (deduped, most-recent-first, capped at 16). */
+int  wubusettings_recents_count(const WubuSettings *s);
+const char *wubusettings_recent(const WubuSettings *s, int i);
+void wubusettings_add_recent(WubuSettings *s, const char *path);
+
 /* Process-wide singleton (lazy). Returns NULL only on OOM. */
 WubuSettings *wubusettings_shared(void);
 
