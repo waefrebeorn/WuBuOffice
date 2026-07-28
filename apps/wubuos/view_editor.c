@@ -16,6 +16,7 @@
 #include "bkmk.h"     /* opaque line-bookmark set (extracted from this file) */
 #include "codefold.h"  /* opaque code-folding + function-list (extracted) */
 #include "macro.h"     /* opaque macro record/playback (extracted) */
+#include "gotoline.h"  /* opaque go-to-line prompt (extracted) */
 
 #include "doc.h"    /* cross-repo: ~/WuBuPad/src */
 #include "lex.h"
@@ -53,9 +54,8 @@ typedef struct {
     int   find_focus; /* in replace mode: 0=find field, 1=replace field */
     int   find_msg_t; /* frames remaining to show msg */
 
-    /* ---- go to line (Ctrl+G) ---- */
-    int   goto_mode;
-    char  goto_buf[32];
+    /* ---- go to line (Ctrl+G): delegated to opaque GotoLine engine ---- */
+    GotoLine *gto;
 
     /* ---- EOL + encoding (Notepad++ parity) ---- */
     int   eol_crlf;        /* 0 = LF, 1 = CRLF */
@@ -595,12 +595,12 @@ static int render(WuView *v, int w, int h, int scroll,
     }
 
     /* ---- go-to-line bar ---- */
-    if (e->goto_mode){
+    if (e->gto && gotoline_active(e->gto)){
         int bh = lh + 4, by = H - bh;
         for (int yy=by; yy<H; yy++) for (int xx=0; xx<w; xx++){
             size_t i=((size_t)yy*w+xx)*4; fb[i]=245; fb[i+1]=245; fb[i+2]=248;
         }
-        char gl[64]; snprintf(gl,sizeof gl,"Go to line: %s", e->goto_buf);
+        char gl[64]; snprintf(gl,sizeof gl,"Go to line: %s", gotoline_buf(e->gto));
         wuos_font_draw(gl, gutter+6, by+4+fh, 0, 30,32,40, fb, w, H);
         wuos_font_draw("Enter jump | Esc cancel", w - (int)wuos_font_draw("Enter jump | Esc cancel",w,0,0,0,0,0,NULL,0,0) - 8,
                        by+4+fh, 0, 110,114,122, fb, w, H);
@@ -629,34 +629,23 @@ static void on_key(WuView *v, int key, int down){
     }
 
     /* ---- go-to-line mode intercepts keys ---- */
-    if (e->goto_mode){
-        switch (key){
-            case WUOS_KEY_ESC: e->goto_mode = 0; return;
-            case WUOS_KEY_RETURN: {
-                int ln = atoi(e->goto_buf);
-                if (ln >= 1){
-                    size_t off = doc_offset_of_line(e->doc, ln);
-                    doc_set_cursor(e->doc, off);
-                    doc_set_selection(e->doc, off, off);
-                }
-                e->goto_mode = 0;
-                return;
+    if (e->gto && gotoline_active(e->gto)){
+        /* normalize WuosKeys to the plain codes gotoline understands */
+        int k = key;
+        if (key == WUOS_KEY_RETURN)   k = 13;
+        else if (key == WUOS_KEY_ESC) k = 27;
+        else if (key == WUOS_KEY_BACKSPACE) k = 8;
+        int r = gotoline_key(e->gto, k);
+        if (r == 1){                       /* committed */
+            int ln = gotoline_commit(e->gto);
+            if (ln >= 1){
+                size_t off = doc_offset_of_line(e->doc, ln);
+                doc_set_cursor(e->doc, off);
+                doc_set_selection(e->doc, off, off);
             }
-            case WUOS_KEY_BACKSPACE: {
-                size_t l = strlen(e->goto_buf);
-                if (l) e->goto_buf[l-1]=0;
-                return;
-            }
-            default:
-                if (key>='0' && key<='9'){
-                    size_t l = strlen(e->goto_buf);
-                    if (l < sizeof(e->goto_buf)-1){ e->goto_buf[l]=(char)key; e->goto_buf[l+1]=0; }
-                    return;
-                }
-                if (key==WUOS_KEY_GOTO) return; /* ignore re-trigger */
-                e->goto_mode = 0;  /* any other key dismisses */
-                break;
         }
+        if (r != 0) return;                /* 1 or 2: prompt consumed the key */
+        return;
     }
 
     /* ---- find / replace mode intercepts keys ---- */
@@ -729,7 +718,7 @@ static void on_key(WuView *v, int key, int down){
     switch (key){
         case WUOS_KEY_FIND:    find_open(v, 1); return;
         case WUOS_KEY_REPLACE: find_open(v, 2); return;
-        case WUOS_KEY_GOTO:    e->goto_mode = 1; e->goto_buf[0]=0; return;
+        case WUOS_KEY_GOTO:    if (e->gto) gotoline_open(e->gto); return;
         case WUOS_KEY_EOL:     convert_eol(e, e->eol_crlf? 0 : 1); return;
         case WUOS_KEY_THEME:  e->dark ^= 1; return;
         case WUOS_KEY_NEWDOC: {
@@ -873,6 +862,7 @@ static void destroy(WuView *v){
     if (e->bk) bkmk_destroy(e->bk);
     if (e->cf) codefold_destroy(e->cf);
     if (e->macro) macro_destroy(e->macro);
+    if (e->gto) gotoline_destroy(e->gto);
     if (e->asv){ wubuautosave_clear(e->asv); wubuautosave_destroy(e->asv); }
     if (e->spd) spell_free(e->spd);
     free(e);
@@ -1067,6 +1057,8 @@ WuView *wuos_editor_create(const char *path){
     if (!e->cf){ bkmk_destroy(e->bk); autocomp_destroy(e->ac); findbar_destroy(e->fb); docs_free(e->docs); free(e); return NULL; }
     e->macro = macro_create();
     if (!e->macro){ codefold_destroy(e->cf); bkmk_destroy(e->bk); autocomp_destroy(e->ac); findbar_destroy(e->fb); docs_free(e->docs); free(e); return NULL; }
+    e->gto = gotoline_create();
+    if (!e->gto){ macro_destroy(e->macro); codefold_destroy(e->cf); bkmk_destroy(e->bk); autocomp_destroy(e->ac); findbar_destroy(e->fb); docs_free(e->docs); free(e); return NULL; }
 
     if (path){
         /* load via docs (detects encoding, seeds Doc); sets active doc */

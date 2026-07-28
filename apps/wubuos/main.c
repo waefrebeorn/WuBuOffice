@@ -10,6 +10,7 @@
 #include "shape.h"      /* INT-7: RTL shaping (available to views) */
 #include "toast.h"      /* UI-33: toast queue */
 #include "palette.h"    /* UI-29: command palette */
+#include "macro.h"      /* SCR-98: macro record/playback + persistence */
 
 #include <SDL2/SDL.h>
 
@@ -146,6 +147,10 @@ int main(int argc, char **argv){
  palette_add(g_palette, "Style: Quote",     24);
  palette_add(g_palette, "Style: Code",      25);
  palette_add(g_palette, "Insert: Script Field", 26);
+ palette_add(g_palette, "Macro: Record/Stop", 30);
+ palette_add(g_palette, "Macro: Play",        31);
+ palette_add(g_palette, "Macro: Save",        32);
+ palette_add(g_palette, "Macro: Load",        33);
     /* if a specific tab was requested and exists, activate it */
     if (want_tab || auto_tab){
         const char *t = want_tab? want_tab : auto_tab;
@@ -254,6 +259,21 @@ int main(int argc, char **argv){
                                  toast_push(g_toasts, "Style: Code", 90); break;
                         case 26: if (views[active]->on_key) views[active]->on_key(views[active], WUOS_KEY_INSERT_SCRIPT, 1);
                                  toast_push(g_toasts, "Insert: Script Field", 90); break;
+                        case 30: if (views[active]->on_key) views[active]->on_key(views[active], WUOS_KEY_REC, 1);
+                                 toast_push(g_toasts, "Macro: record toggled", 90); break;
+                        case 31: if (views[active]->on_key) views[active]->on_key(views[active], WUOS_KEY_PLAY, 1);
+                                 toast_push(g_toasts, "Macro: play", 90); break;
+                        case 32: { const char *mp = getenv("WUBUOS_MACRO_DIR");
+                                   char buf[512];
+                                   snprintf(buf,sizeof buf,"%s/wubuos_macro.mac", mp? mp : "/tmp");
+                                   macro_set_name(macro_create(), "default");
+                                   if (macro_save(buf)==0) toast_push(g_toasts, "Macro saved", 90);
+                                   else toast_push(g_toasts, "Macro save failed", 120); } break;
+                        case 33: { const char *mp = getenv("WUBUOS_MACRO_DIR");
+                                   char buf[512];
+                                   snprintf(buf,sizeof buf,"%s/wubuos_macro.mac", mp? mp : "/tmp");
+                                   if (macro_load(buf)==0) toast_push(g_toasts, "Macro loaded", 90);
+                                   else toast_push(g_toasts, "Macro load failed", 120); } break;
                         default: break;
                         }
                     }

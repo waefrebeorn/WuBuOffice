@@ -37,6 +37,23 @@ int  macro_count(const Macro *m);
 typedef void (*macro_op_cb)(int opcode, unsigned char ch, void *ctx);
 void macro_play(const Macro *m, macro_op_cb cb, void *ctx);
 
+/* ---- persistence (SCR-98: macros survive the session) ----
+ * A macro library file holds one macro per line:
+ *     <name>\t<hex-byte>...
+ * The shared engine can save its current buffer (naming it) and load a named
+ * macro back. macro_save_all/macro_load_named manage the whole file; the
+ * simple macro_save/macro_load helpers persist just the single shared buffer
+ * under a fixed slot. */
+void macro_set_name(Macro *m, const char *name);
+const char *macro_name(const Macro *m);
+
+/* Save the current shared buffer to `path` (overwrites the file with this one
+ * named macro). Returns 0 on success. */
+int macro_save(const char *path);
+/* Load the first macro from `path` into the shared buffer. Returns 0 on
+ * success, -1 if the file is missing/empty. */
+int macro_load(const char *path);
+
 #ifdef __cplusplus
 }
 #endif

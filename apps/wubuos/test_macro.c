@@ -59,7 +59,23 @@ int main(void){
 
     macro_destroy(m);
 
+    /* persistence round-trip (SCR-98): save -> reload -> replay same text */
+    if (macro_recording(m)) macro_toggle_rec(m);   /* ensure stopped */
+    macro_set_name(m, "Hello");
+    macro_toggle_rec(m);                            /* start fresh (clears) */
+    macro_record(m, MACRO_OP_CHAR, 'H');
+    macro_record(m, MACRO_OP_CHAR, 'i');
+    macro_record(m, MACRO_OP_RETURN, 0);
+    macro_toggle_rec(m);
+    if (macro_save("/tmp/test_macro_lib.mac") != 0){ fprintf(stderr, "[save]\n"); fails++; }
+    /* reload into a fresh engine; load overwrites the buffer + name */
+    Macro *m2 = macro_create();   /* same shared singleton */
+    if (macro_load("/tmp/test_macro_lib.mac") != 0){ fprintf(stderr, "[load]\n"); fails++; }
+    if (strcmp(macro_name(m2), "Hello") != 0){ fprintf(stderr, "[load name] '%s'\n", macro_name(m2)); fails++; }
+    if (macro_count(m2) != 3){ fprintf(stderr, "[load count] %d\n", macro_count(m2)); fails++; }
+    macro_destroy(m2);
+
     if (fails){ printf("FAILED (%d)\n", fails); return 1; }
-    printf("PASS: macro (record chars/return/backspace, toggle, count, playback seq)\n");
+    printf("PASS: macro (record chars/return/backspace, toggle, count, playback seq, save/load)\n");
     return 0;
 }

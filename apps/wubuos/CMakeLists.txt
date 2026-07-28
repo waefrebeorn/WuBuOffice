@@ -26,7 +26,8 @@ add_executable(wubuos
     bkmk.c
     codefold.c
     doccmd.c
-    macro.c)
+    macro.c
+    gotoline.c)
 target_include_directories(wubuos PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}/src/wubumodel
@@ -75,7 +76,7 @@ target_compile_options(wubuos PRIVATE -Wall -Wextra -Wpedantic)
 # Headless smoke test: create + render every view (real engines, no GUI).
 # Verifies each WuView adapter renders without crashing and returns a buffer.
 add_executable(test_view test_view.c wuos_font.c wuos_file.c plugin.c toast.c palette.c view_doc.c view_cell.c
-    view_slide.c view_ocr.c view_editor.c view_compare.c view_settings.c findbar.c autocomp.c bkmk.c codefold.c doccmd.c macro.c)
+    view_slide.c view_ocr.c view_editor.c view_compare.c view_settings.c findbar.c autocomp.c bkmk.c codefold.c doccmd.c macro.c gotoline.c)
 target_include_directories(test_view PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}/src/wubumodel
@@ -216,3 +217,10 @@ target_include_directories(test_macro PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_compile_options(test_macro PRIVATE -Wall -Wextra -Wpedantic)
 add_test(NAME macro COMMAND test_macro)
 set_tests_properties(macro PROPERTIES LABELS "macro;apps")
+
+# Unit test for the extracted opaque GotoLine engine (no GUI/SDL).
+add_executable(test_gotoline test_gotoline.c gotoline.c)
+target_include_directories(test_gotoline PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_options(test_gotoline PRIVATE -Wall -Wextra -Wpedantic)
+add_test(NAME gotoline COMMAND test_gotoline)
+set_tests_properties(gotoline PROPERTIES LABELS "gotoline;apps")
