@@ -14,6 +14,7 @@
 #include "findbar.h" /* opaque find/replace engine (extracted from this file) */
 #include "autocomp.h" /* opaque auto-completion engine (extracted from this file) */
 #include "bkmk.h"     /* opaque line-bookmark set (extracted from this file) */
+#include "codefold.h"  /* opaque code-folding + function-list (extracted) */
 
 #include "doc.h"    /* cross-repo: ~/WuBuPad/src */
 #include "lex.h"
@@ -73,10 +74,8 @@ typedef struct {
     /* auto-completion popup: delegated to the opaque AutoComp engine */
     AutoComp *ac;           /* owns candidate list + selection (see autocomp.h) */
 
-    /* code folding (brace regions from lex_folds) */
-    char  folded[4096];      /* per-line hide flag */
-    /* function-list panel */
-    int   sym_mode;          /* 0 off, 1 on */
+    /* code folding + function-list panel: delegated to opaque CodeFold engine */
+    CodeFold *cf;
 
     /* crash-recovery autosave (INT-2 P0: was never attached to any app) */
     Autosave *asv;
@@ -258,25 +257,11 @@ static void editor_caret_vert(Editor *e, int dl){
 }
 
 /* ---- auto-completion (collect identifiers from doc + builtins) ---- */
-/* ---- code folding: fold the brace block containing the cursor line ---- */
+/* ---- code-folding + function-list now delegate to opaque CodeFold (codefold.c) ---- */
 static void fold_toggle_block(Editor *e){
-    int cl = editor_line_of(e);     /* cursor line (0-based) */
-    char *t = doc_text(e->doc);
-    size_t n = doc_length(e->doc);
-    free(t);
-    LexFold fs[256];
-    size_t nf = lex_folds(t = doc_text(e->doc), n, fs, 256);
-    free(t);
-    int region = -1;
-    for (size_t i=0;i<nf;i++) if ((int)fs[i].start <= cl && (int)fs[i].end > cl){ region = (int)i; break; }
-    if (region < 0) return;
-    size_t a = fs[region].start, b = fs[region].end;
-    int is_folded = (a+1 < 4096) ? e->folded[a+1] : 0;
-    for (size_t ln = a+1; ln < b && ln < 4096; ln++) e->folded[ln] = is_folded ? 0 : 1;
+    if (e->cf) codefold_toggle_block(e->cf, e->doc, editor_line_of(e));
 }
-
-/* toggle the function-list panel */
-static void sym_toggle(Editor *e){ e->sym_mode ^= 1; }
+static void sym_toggle(Editor *e){ if (e->cf) codefold_sym_toggle(e->cf); }
 
 static void bk_jump(Editor *e, int dir){   /* dir +1 next, -1 prev */
     if (!e->bk) return;
@@ -352,7 +337,7 @@ static int render(WuView *v, int w, int h, int scroll,
     LexSpan spans[256];
     while (y < H - lh){
         /* skip hidden (folded) body lines entirely */
-        if (line < 4096 && e->folded[line]){
+        if (e->cf && codefold_hidden(e->cf, (int)line)){
             while (pos < tlen && text[pos] != '\n') pos++;
             line++;
             if (pos < tlen){ pos++; line_start = pos; }
@@ -362,7 +347,7 @@ static int render(WuView *v, int w, int h, int scroll,
         char num[16]; snprintf(num,sizeof num,"%zu",line+1);
         wuos_font_draw(num, 6, y+fh, 0, num_r,num_g,num_b, fb, w, H);
         /* fold marker: ▾ on a header line whose body is hidden */
-        if (line+1 < 4096 && e->folded[line+1]){
+        if (e->cf && codefold_hidden(e->cf, (int)(line+1))){
             wuos_font_draw("v", 30, y+fh, 0, 120,200,140, fb, w, H);  /* 'v' glyph as ▾ */
         }
         /* bookmark marker (cyan disc) in the gutter */
@@ -493,7 +478,7 @@ static int render(WuView *v, int w, int h, int scroll,
     free(text);
 
     /* ---- function-list panel (right gutter) ---- */
-    if (e->sym_mode){
+    if (e->cf && codefold_symmode(e->cf)){
         char *st = doc_text(e->doc);
         size_t sl = doc_length(e->doc);
         LexSym syms[256];
@@ -877,6 +862,7 @@ static void destroy(WuView *v){
     if (e->fb) findbar_destroy(e->fb);
     if (e->ac) autocomp_destroy(e->ac);
     if (e->bk) bkmk_destroy(e->bk);
+    if (e->cf) codefold_destroy(e->cf);
     if (e->asv){ wubuautosave_clear(e->asv); wubuautosave_destroy(e->asv); }
     if (e->spd) spell_free(e->spd);
     free(e);
@@ -986,18 +972,17 @@ int wuos_editor_ac(WuView *v, int *n, int *sel){
 /* Test accessor: folded-line count + function-list panel state. */
 int wuos_editor_fold(WuView *v, int *count){
     Editor *e = v ? v->priv : NULL;
-    if (!e) return 0;
-    int c = 0;
-    for (int i=0;i<4096;i++) if (e->folded[i]) c++;
+    if (!e || !e->cf) return 0;
+    int c = codefold_folded_count(e->cf);
     if (count) *count = c;
     return c;   /* nonzero if anything folded */
 }
 int wuos_editor_sym(WuView *v, int *n){
     Editor *e = v ? v->priv : NULL;
-    if (!e) return 0;
+    if (!e || !e->cf) return 0;
     if (n){ char *t=doc_text(e->doc); size_t len=doc_length(e->doc); LexSym s[256];
             size_t k=lex_symbols(t,len,s,256); free(t); *n=(int)k; }
-    return e->sym_mode;
+    return codefold_symmode(e->cf);
 }
 
 /* ---- wubuautosave bridge (INT-2 P0) ----
@@ -1068,6 +1053,8 @@ WuView *wuos_editor_create(const char *path){
     if (!e->ac){ findbar_destroy(e->fb); docs_free(e->docs); free(e); return NULL; }
     e->bk = bkmk_create();
     if (!e->bk){ autocomp_destroy(e->ac); findbar_destroy(e->fb); docs_free(e->docs); free(e); return NULL; }
+    e->cf = codefold_create();
+    if (!e->cf){ bkmk_destroy(e->bk); autocomp_destroy(e->ac); findbar_destroy(e->fb); docs_free(e->docs); free(e); return NULL; }
 
     if (path){
         /* load via docs (detects encoding, seeds Doc); sets active doc */

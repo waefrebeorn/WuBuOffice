@@ -23,7 +23,8 @@ add_executable(wubuos
     view_settings.c
     findbar.c
     autocomp.c
-    bkmk.c)
+    bkmk.c
+    codefold.c)
 target_include_directories(wubuos PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}/src/wubumodel
@@ -72,7 +73,7 @@ target_compile_options(wubuos PRIVATE -Wall -Wextra -Wpedantic)
 # Headless smoke test: create + render every view (real engines, no GUI).
 # Verifies each WuView adapter renders without crashing and returns a buffer.
 add_executable(test_view test_view.c wuos_font.c wuos_file.c plugin.c toast.c palette.c view_doc.c view_cell.c
-    view_slide.c view_ocr.c view_editor.c view_compare.c view_settings.c findbar.c autocomp.c bkmk.c)
+    view_slide.c view_ocr.c view_editor.c view_compare.c view_settings.c findbar.c autocomp.c bkmk.c codefold.c)
 target_include_directories(test_view PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}/src/wubumodel
@@ -142,6 +143,19 @@ add_test(NAME plugin_abi COMMAND test_plugin_abi
     "${CMAKE_CURRENT_BINARY_DIR}/plugins/sample_plugin.so"
     "${CMAKE_CURRENT_BINARY_DIR}/plugins/badabi_plugin.so")
 set_tests_properties(plugin_abi PROPERTIES LABELS "plugin;apps")
+
+# Unit test for the extracted opaque CodeFold engine (needs WuBuPad lex).
+add_executable(test_codefold test_codefold.c codefold.c)
+target_include_directories(test_codefold PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${WUBUPAD_SRC})
+target_sources(test_codefold PRIVATE
+    ${WUBUPAD_SRC}/buffer.c ${WUBUPAD_SRC}/doc.c ${WUBUPAD_SRC}/search.c
+    ${WUBUPAD_SRC}/encode.c ${WUBUPAD_SRC}/diff.c ${WUBUPAD_SRC}/json.c ${WUBUPAD_SRC}/lex.c)
+target_compile_definitions(test_codefold PRIVATE lex_free=wubupad_lex_free doc_create=wubupad_doc_create doc_text=wubupad_doc_text)
+target_compile_options(test_codefold PRIVATE -Wall -Wextra -Wpedantic)
+add_test(NAME codefold COMMAND test_codefold)
+set_tests_properties(codefold PROPERTIES LABELS "codefold;apps")
 
 # Unit test for the extracted opaque BkMk engine (pure logic, no GUI).
 add_executable(test_bkmk test_bkmk.c bkmk.c)
