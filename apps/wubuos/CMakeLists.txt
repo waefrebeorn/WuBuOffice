@@ -22,7 +22,8 @@ add_executable(wubuos
     view_compare.c
     view_settings.c
     findbar.c
-    autocomp.c)
+    autocomp.c
+    bkmk.c)
 target_include_directories(wubuos PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}/src/wubumodel
@@ -71,7 +72,7 @@ target_compile_options(wubuos PRIVATE -Wall -Wextra -Wpedantic)
 # Headless smoke test: create + render every view (real engines, no GUI).
 # Verifies each WuView adapter renders without crashing and returns a buffer.
 add_executable(test_view test_view.c wuos_font.c wuos_file.c plugin.c toast.c palette.c view_doc.c view_cell.c
-    view_slide.c view_ocr.c view_editor.c view_compare.c view_settings.c findbar.c autocomp.c)
+    view_slide.c view_ocr.c view_editor.c view_compare.c view_settings.c findbar.c autocomp.c bkmk.c)
 target_include_directories(test_view PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}/src/wubumodel
@@ -141,6 +142,13 @@ add_test(NAME plugin_abi COMMAND test_plugin_abi
     "${CMAKE_CURRENT_BINARY_DIR}/plugins/sample_plugin.so"
     "${CMAKE_CURRENT_BINARY_DIR}/plugins/badabi_plugin.so")
 set_tests_properties(plugin_abi PROPERTIES LABELS "plugin;apps")
+
+# Unit test for the extracted opaque BkMk engine (pure logic, no GUI).
+add_executable(test_bkmk test_bkmk.c bkmk.c)
+target_include_directories(test_bkmk PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_options(test_bkmk PRIVATE -Wall -Wextra -Wpedantic)
+add_test(NAME bkmk COMMAND test_bkmk)
+set_tests_properties(bkmk PROPERTIES LABELS "bkmk;apps")
 
 # Unit test for the extracted opaque AutoComp engine (no GUI/SDL).
 add_executable(test_autocomp test_autocomp.c autocomp.c)

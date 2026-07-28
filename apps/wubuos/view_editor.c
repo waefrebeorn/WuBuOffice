@@ -13,6 +13,7 @@
 #include "wuos_file.h"
 #include "findbar.h" /* opaque find/replace engine (extracted from this file) */
 #include "autocomp.h" /* opaque auto-completion engine (extracted from this file) */
+#include "bkmk.h"     /* opaque line-bookmark set (extracted from this file) */
 
 #include "doc.h"    /* cross-repo: ~/WuBuPad/src */
 #include "lex.h"
@@ -58,9 +59,8 @@ typedef struct {
     /* multi-document session (DONE engine: src/docs) */
     Docs *docs;
 
-    /* bookmarks (Notepad++ line ops) */
-    int   bk[256];   /* sorted line numbers (0-based) */
-    int   bk_n;
+    /* bookmarks (Notepad++ line ops): delegated to opaque BkMk engine */
+    BkMk *bk;
 
     /* column / block selection mode */
     int   col_mode;          /* 0 = stream, 1 = column */
@@ -278,28 +278,11 @@ static void fold_toggle_block(Editor *e){
 /* toggle the function-list panel */
 static void sym_toggle(Editor *e){ e->sym_mode ^= 1; }
 
-static void bk_toggle(Editor *e, int line){
-    if (line<0) return;
-    for (int i=0;i<e->bk_n;i++){
-        if (e->bk[i]==line){ memmove(&e->bk[i],&e->bk[i+1],(e->bk_n-i-1)*sizeof(int)); e->bk_n--; return; }
-    }
-    if (e->bk_n < 255){
-        int i = e->bk_n;
-        while (i>0 && e->bk[i-1] > line){ e->bk[i]=e->bk[i-1]; i--; }
-        e->bk[i]=line; e->bk_n++;
-    }
-}
-
 static void bk_jump(Editor *e, int dir){   /* dir +1 next, -1 prev */
-    if (!e->bk_n) return;
-    int cl = editor_line_of(e), best=-1;
-    if (dir>0){
-        best = e->bk[e->bk_n-1];
-        for (int i=0;i<e->bk_n;i++) if (e->bk[i] > cl){ best=e->bk[i]; break; }
-    } else {
-        best = e->bk[0];
-        for (int i=e->bk_n-1;i>=0;i--) if (e->bk[i] < cl){ best=e->bk[i]; break; }
-    }
+    if (!e->bk) return;
+    int cl = editor_line_of(e);
+    int best = bkmk_jump(e->bk, cl, dir);
+    if (best < 0) return;
     size_t off = doc_offset_of_line(e->doc, best+1);
     doc_set_cursor(e->doc, off);
 }
@@ -383,7 +366,7 @@ static int render(WuView *v, int w, int h, int scroll,
             wuos_font_draw("v", 30, y+fh, 0, 120,200,140, fb, w, H);  /* 'v' glyph as ▾ */
         }
         /* bookmark marker (cyan disc) in the gutter */
-        for (int bi=0; bi<e->bk_n; bi++) if (e->bk[bi]==(int)line){
+        if (e->bk && bkmk_has(e->bk, (int)line)){
             int cx=30, cy=y+fh, cr=4;
             for (int dy=-cr; dy<=cr; dy++) for (int dx=-cr; dx<=cr; dx++)
                 if (dx*dx+dy*dy <= cr*cr){ int px=cx+dx, py=cy+dy; if(px>=0&&px<gutter&&py>=0&&py<H){ size_t ii=((size_t)py*w+px)*4; fb[ii]=80;fb[ii+1]=200;fb[ii+2]=220; } }
@@ -777,7 +760,7 @@ static void on_key(WuView *v, int key, int down){
             }
             return;
         }
-        case WUOS_KEY_TOGGLE_BK: bk_toggle(e, editor_line_of(e)); return;
+        case WUOS_KEY_TOGGLE_BK: bkmk_toggle(e->bk, editor_line_of(e)); return;
         case WUOS_KEY_NEXT_BK:   bk_jump(e, +1); return;
         case WUOS_KEY_PREV_BK:   bk_jump(e, -1); return;
         case WUOS_KEY_COLMODE:
@@ -893,6 +876,7 @@ static void destroy(WuView *v){
     if (e->docs) docs_free(e->docs);
     if (e->fb) findbar_destroy(e->fb);
     if (e->ac) autocomp_destroy(e->ac);
+    if (e->bk) bkmk_destroy(e->bk);
     if (e->asv){ wubuautosave_clear(e->asv); wubuautosave_destroy(e->asv); }
     if (e->spd) spell_free(e->spd);
     free(e);
@@ -964,8 +948,8 @@ size_t wuos_editor_doc_active(WuView *v){
 /* Test accessor: number of active bookmarks (line-ops). */
 int wuos_editor_bookmarks(WuView *v){
     Editor *e = v ? v->priv : NULL;
-    if (!e) return 0;
-    return e->bk_n;
+    if (!e || !e->bk) return 0;
+    return bkmk_count(e->bk);
 }
 /* Test accessor: spell-check a word through the editor's attached dictionary
  * (INT-8). Returns 1 if known, 0 if misspelled, -1 if no spell engine. */
@@ -1082,6 +1066,8 @@ WuView *wuos_editor_create(const char *path){
     if (!e->fb){ docs_free(e->docs); free(e); return NULL; }
     e->ac = autocomp_create();
     if (!e->ac){ findbar_destroy(e->fb); docs_free(e->docs); free(e); return NULL; }
+    e->bk = bkmk_create();
+    if (!e->bk){ autocomp_destroy(e->ac); findbar_destroy(e->fb); docs_free(e->docs); free(e); return NULL; }
 
     if (path){
         /* load via docs (detects encoding, seeds Doc); sets active doc */
