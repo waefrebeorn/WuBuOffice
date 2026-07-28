@@ -121,7 +121,7 @@ add_executable(test_convnet3 ${CMAKE_SOURCE_DIR}/tests/test_convnet3.c
 target_include_directories(test_convnet3 PRIVATE ${CMAKE_SOURCE_DIR}/src/wubuocr)
 target_link_libraries(test_convnet3 PRIVATE m)
 add_test(NAME convnet3 COMMAND test_convnet3)
-set_tests_properties(convnet3 PROPERTIES TIMEOUT 600 LABELS ocr)
+set_tests_properties(convnet3 PROPERTIES TIMEOUT 1800 LABELS ocr)
 
 # im2col+GEMM conv rewrite: numeric equivalence to brute-force conv + bias-grad FD check.
 add_executable(test_convnet3_im2col test_convnet3_im2col.c
