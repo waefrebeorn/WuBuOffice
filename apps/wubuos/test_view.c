@@ -4,6 +4,7 @@
 #include "wuos_font.h"
 #include "settings.h"
 #include "toc.h"
+#include "palette.h"     /* DOC-42: command-palette keyboard-nav test */
 #include "wuos_file.h"
 #include "autosave.h"   /* wubuautosave: editor crash-recovery test */
 #include "model.h"      /* wubumodel_doc: build snapshot in autosave test */
@@ -101,8 +102,61 @@ int main(void){
                  if (ai>0 && !have_text){ fprintf(stderr,"[doc] a11y issues missing text\n"); bad++; }
                  else fprintf(stderr,"[doc] a11y inline report ok\n");
              }
+             /* DOC-42: command palette is fully keyboard-navigable (no mouse).
+              * Exercises open -> type-to-filter -> arrow move -> confirm. */
+             {
+                 Palette *pp = palette_create();
+                 palette_add(pp, "Open File", 1);
+                 palette_add(pp, "Save Document", 2);
+                 palette_add(pp, "Style: Heading 1", 3);
+                 palette_add(pp, "Insert: Script Field", 4);
+                 palette_open(pp);
+                 if (!palette_is_open(pp)){ fprintf(stderr,"[kbd] palette did not open\n"); bad++; }
+                 /* type "styl" to filter down to the Heading command */
+                 const char *q = "styl";
+                 for (int i=0;q[i];i++) palette_input(pp, q[i]);
+                 int rc = palette_result_count(pp);
+                 int found_h1 = 0;
+                 for (int i=0;i<rc;i++)
+                     if (strcmp(palette_result_label(pp,i),"Style: Heading 1")==0) found_h1=1;
+                 if (!found_h1){ fprintf(stderr,"[kbd] type-to-filter failed (count=%d)\n", rc); bad++; }
+                 else {
+                     /* move selection to the Heading entry and confirm via keyboard */
+                     int sel = -1;
+                     for (int i=0;i<rc;i++) if (strcmp(palette_result_label(pp,i),"Style: Heading 1")==0) sel=i;
+                     while (palette_selected(pp) != sel) palette_next(pp); /* arrow-down nav */
+                     int cid = palette_confirm(pp);
+                     if (cid != 3){ fprintf(stderr,"[kbd] keyboard confirm wrong id (%d)\n", cid); bad++; }
+                     else fprintf(stderr,"[kbd] palette keyboard-nav ok (id=%d)\n", cid);
+                     if (palette_is_open(pp)){ fprintf(stderr,"[kbd] palette still open after confirm\n"); bad++; }
+                     palette_destroy(pp);
+                 }
+             }
+             /* DOC-97: wubuscript exposed as a computed field. Use a doc view
+              * with a model (NULL path -> sample doc) so the insert lands. */
+             {
+                 WuView *sv2 = wuos_doc_create(NULL);
+                 if (!sv2){ fprintf(stderr,"[doc] script view create FAILED\n"); bad++; }
+                 else {
+                     sv2->on_key(sv2, WUOS_KEY_INSERT_SCRIPT, 1);
+                     int found=0;
+                     wubumodel_doc *mdl = wuos_doc_model(sv2);
+                     wubumodel_node *root = mdl ? wubumodel_doc_root(mdl) : NULL;
+                     for (wubumodel_node *sec=root; sec; sec=wubumodel_node_next_sibling(sec)){
+                         for (wubumodel_node *n=wubumodel_node_first_child(sec); n; n=wubumodel_node_next_sibling(n)){
+                             if (wubumodel_node_kind(n)==WUBUMODEL_FIELD && strcmp(wubumodel_node_field(n),"script")==0) found=1;
+                             /* fields may also sit inside a paragraph */
+                             for (wubumodel_node *g=wubumodel_node_first_child(n); g; g=wubumodel_node_next_sibling(g))
+                                 if (wubumodel_node_kind(g)==WUBUMODEL_FIELD && strcmp(wubumodel_node_field(g),"script")==0) found=1;
+                         }
+                     }
+                     if (!found){ fprintf(stderr,"[doc] script field not inserted\n"); bad++; }
+                     else fprintf(stderr,"[doc] wubuscript field ok\n");
+                     sv2->destroy(sv2);
+                 }
+             }
              dv->destroy(dv); }
-    else { fprintf(stderr,"[doc(file)] create FAILED\n"); bad++; }
+             else { fprintf(stderr,"[doc(file)] create FAILED\n"); bad++; }
 
     WuView *ev = wuos_editor_create(codep);
     if (ev){ bad += render_check(ev, "editor(file)");

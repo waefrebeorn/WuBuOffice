@@ -42,6 +42,7 @@ target_include_directories(wubuos PRIVATE
     ${CMAKE_SOURCE_DIR}/src/wubulayout
     ${CMAKE_SOURCE_DIR}/src/wubuexp
     ${CMAKE_SOURCE_DIR}/src/wubutoc
+    ${CMAKE_SOURCE_DIR}/src/wubuscript
     ${WUBUPAD_SRC})
 # WuBuPad headless core sources (SDL-free) compiled in directly.
 # lex.c is included for the editor's syntax highlighter. Its lex_free() name
@@ -61,7 +62,7 @@ target_compile_definitions(wubuos PRIVATE lex_free=wubupad_lex_free doc_create=w
 target_link_libraries(wubuos PRIVATE
     wubumodel wuburender wubuocr wubufont wubucell_app wubudoc wubuautosave
     wubuspell wubuchart wubudraw wubumath wubuepub wubua11y wubusvg
-    wubusettings wubushape wubulayout wubuexp wubutoc
+    wubusettings wubushape wubulayout wubuexp wubutoc wubuscript
     ${SDL2_LIBRARIES} ${FREETYPE_LIBRARIES} m dl)
 target_compile_options(wubuos PRIVATE -Wall -Wextra -Wpedantic)
 
@@ -90,6 +91,7 @@ target_include_directories(test_view PRIVATE
     ${CMAKE_SOURCE_DIR}/src/wubulayout
     ${CMAKE_SOURCE_DIR}/src/wubuexp
     ${CMAKE_SOURCE_DIR}/src/wubutoc
+    ${CMAKE_SOURCE_DIR}/src/wubuscript
     ${WUBUPAD_SRC})
 target_sources(test_view PRIVATE
     ${WUBUPAD_SRC}/buffer.c ${WUBUPAD_SRC}/doc.c ${WUBUPAD_SRC}/search.c
@@ -99,7 +101,7 @@ target_compile_definitions(test_view PRIVATE lex_free=wubupad_lex_free doc_creat
 target_link_libraries(test_view PRIVATE
     wubumodel wuburender wubuocr wubufont wubucell_app wubudoc wubuautosave
     wubuspell wubuchart wubudraw wubumath wubuepub wubua11y wubusvg
-    wubusettings wubushape wubulayout wubuexp wubutoc
+    wubusettings wubushape wubulayout wubuexp wubutoc wubuscript
     ${SDL2_LIBRARIES} ${FREETYPE_LIBRARIES} m dl)
 target_compile_options(test_view PRIVATE -Wall -Wextra -Wpedantic)
 add_test(NAME view COMMAND test_view)

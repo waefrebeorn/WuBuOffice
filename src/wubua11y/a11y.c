@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
+#include <math.h>
 
 void a11y_report_free(a11y_report *r){
     if (!r) return;
@@ -144,4 +145,49 @@ int a11y_check_epub_parts(const char *opf_text, const char *nav_text,
         }
     }
     return 0;
+}
+
+/* ---- DOC-44: WCAG contrast audit of the built-in theme palettes ---- */
+/* Relative luminance for an sRGB component (0..255). */
+static double a11y_lin(double c){
+    c /= 255.0;
+    return c <= 0.03928 ? c/12.92 : pow((c+0.055)/1.055, 2.4);
+}
+static double a11y_lum(int r, int g, int b){
+    return 0.2126*a11y_lin(r) + 0.7152*a11y_lin(g) + 0.0722*a11y_lin(b);
+}
+/* WCAG contrast ratio between two sRGB colors (1.0 .. 21.0). */
+double wubua11y_contrast_ratio(int r1,int g1,int b1, int r2,int g2,int b2){
+    double l1 = a11y_lum(r1,g1,b1), l2 = a11y_lum(r2,g2,b2);
+    if (l1 < l2){ double t=l1; l1=l2; l2=t; }
+    double d = l1 + 0.05, dd = l2 + 0.05;
+    return dd > 0 ? d/dd : 21.0;
+}
+/* The application's two canonical chrome palettes (fg, bg). Used by the
+ * contrast audit so regressions in theme contrast are caught in CI. */
+typedef struct { const char *name; int fr,fg,fb, br,bg,bb; } a11y_pal_t;
+static const a11y_pal_t A11Y_PALETTES[] = {
+    { "light", 17,17,17, 245,245,245 },     /* near-black on white */
+    { "dark",  228,228,228, 24,24,28 },     /* light on near-black */
+    { "high-contrast", 255,255,255, 0,0,0 } /* max contrast */
+};
+/* Returns 1 if EVERY built-in palette meets WCAG AA (>=4.5:1) for body text,
+ * 0 if any fails. Also emits a report entry per failing palette when out!=NULL. */
+int wubua11y_palette_aa(a11y_report *out){
+    /* Angel-coder fix: initialize the report (like a11y_check_doc/epub_parts).
+     * Without this, a caller passing an uninitialized a11y_report hits garbage
+     * items/count/cap -> a11y_report_free() frees a bad pointer (intermittent
+     * segfault). Self-initializing makes the contract safe regardless of caller. */
+    if (out){ out->items=NULL; out->count=0; out->cap=0; }
+    int ok = 1;
+    for (size_t i=0;i<sizeof(A11Y_PALETTES)/sizeof(A11Y_PALETTES[0]);i++){
+        const a11y_pal_t *p = &A11Y_PALETTES[i];
+        double ratio = wubua11y_contrast_ratio(p->fr,p->fg,p->fb, p->br,p->bg,p->bb);
+        if (ratio < 4.5){
+            ok = 0;
+            if (out) add(out, "palette '%s' contrast %.2f:1 fails WCAG AA (needs >=4.5:1)",
+                        p->name, ratio);
+        }
+    }
+    return ok;
 }

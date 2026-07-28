@@ -44,10 +44,16 @@ int a11y_check_doc(const wubumodel_doc *doc, int expect_title,
  * to skip that check. `chapter_xhtml` is a single concatenated chapter body
  * (or one chapter); pass NULL to skip image/heading checks. */
 int a11y_check_epub_parts(const char *opf_text, const char *nav_text,
-                           const char *chapter_xhtml, a11y_report *out);
+                            const char *chapter_xhtml, a11y_report *out);
+
+/* DOC-44: WCAG contrast utilities for the theme engine. */
+/* Relative contrast ratio (1.0..21.0) between two sRGB colors. */
+double wubua11y_contrast_ratio(int r1,int g1,int b1, int r2,int g2,int b2);
+/* Returns 1 if every built-in chrome palette meets WCAG AA (>=4.5:1), else 0.
+ * Emits a report entry per failing palette when out != NULL. */
+int wubua11y_palette_aa(a11y_report *out);
 
 #ifdef __cplusplus
 }
 #endif
-
 #endif /* WUBUOFFICE_A11Y_H */

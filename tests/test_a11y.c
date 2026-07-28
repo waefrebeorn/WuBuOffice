@@ -22,6 +22,7 @@ static wubumodel_doc *titled_doc(void){
     wubumodel_style *ts  = wubumodel_style_create();
     wubumodel_style_set_prop(ts, "name", "Title");
     wubumodel_node_set_style(tp, ts);
+    wubumodel_style_destroy(ts);  /* node now owns the only ref */
     wubumodel_node *tr   = wubumodel_node_create(d, WUBUMODEL_RUN);
     wubumodel_run_set_text(tr, "My Book");
     wubumodel_node_append(d, tp, tr);
@@ -78,6 +79,20 @@ int main(void){
     CHECK(has(&r4, "epub:type=\"toc\""), "bad nav -> toc issue");
     CHECK(has(&r4, "image without alt text"), "bad xhtml -> img alt issue");
     a11y_report_free(&r4);
+
+    /* --- DOC-44: WCAG contrast audit of the built-in palettes --- */
+    a11y_report r5;
+    int aa = wubua11y_palette_aa(&r5);
+    CHECK(aa == 1, "all built-in palettes meet WCAG AA (>=4.5:1)");
+    a11y_report_free(&r5);
+    /* spot-check the contrast math: white-on-black == 21:1, black-on-white == 21:1 */
+    double wbon = wubua11y_contrast_ratio(255,255,255, 0,0,0);
+    double bonw = wubua11y_contrast_ratio(0,0,0, 255,255,255);
+    CHECK(wbon > 20.9 && wbon < 21.1, "white-on-black contrast ~21:1");
+    CHECK(bonw > 20.9 && bonw < 21.1, "black-on-white contrast ~21:1");
+    /* a known-failing pair (mid-grey on white ~2.3:1) must report < 4.5 */
+    double grey = wubua11y_contrast_ratio(128,128,128, 255,255,255);
+    CHECK(grey < 4.5, "mid-grey-on-white fails AA (<4.5:1)");
 
     if (fails){ printf("FAILED (%d)\n", fails); return 1; }
     printf("PASS: wubua11y (doc empty/titled + EPUB parts good/bad)\n");

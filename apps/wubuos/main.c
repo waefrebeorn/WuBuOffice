@@ -145,6 +145,7 @@ int main(int argc, char **argv){
  palette_add(g_palette, "Style: Body",      23);
  palette_add(g_palette, "Style: Quote",     24);
  palette_add(g_palette, "Style: Code",      25);
+ palette_add(g_palette, "Insert: Script Field", 26);
     /* if a specific tab was requested and exists, activate it */
     if (want_tab || auto_tab){
         const char *t = want_tab? want_tab : auto_tab;
@@ -251,6 +252,8 @@ int main(int argc, char **argv){
                                  toast_push(g_toasts, "Style: Quote", 90); break;
                         case 25: if (views[active]->on_key) views[active]->on_key(views[active], WUOS_KEY_STYLE_CODE, 1);
                                  toast_push(g_toasts, "Style: Code", 90); break;
+                        case 26: if (views[active]->on_key) views[active]->on_key(views[active], WUOS_KEY_INSERT_SCRIPT, 1);
+                                 toast_push(g_toasts, "Insert: Script Field", 90); break;
                         default: break;
                         }
                     }
@@ -298,6 +301,7 @@ int main(int argc, char **argv){
                 else if (k==SDLK_c && (mod & KMOD_CTRL) && (mod & KMOD_SHIFT)) code=WUOS_KEY_INSERT_COMMENT; /* DOC-63 */
                 else if (k==SDLK_t && (mod & KMOD_CTRL) && (mod & KMOD_SHIFT) && (mod & KMOD_ALT)) code=WUOS_KEY_INSERT_TRACKCHANGE; /* DOC-64 */
                 else if (k==SDLK_d && (mod & KMOD_CTRL) && (mod & KMOD_SHIFT)) code=WUOS_KEY_INSERT_FIELD; /* DOC-65 */
+                else if (k==SDLK_g && (mod & KMOD_CTRL) && (mod & KMOD_SHIFT)) code=WUOS_KEY_INSERT_SCRIPT; /* DOC-97 */
                 else if (k==SDLK_1 && (mod & KMOD_CTRL) && (mod & KMOD_ALT)) code=WUOS_KEY_STYLE_H1; /* DOC-58 */
                 else if (k==SDLK_2 && (mod & KMOD_CTRL) && (mod & KMOD_ALT)) code=WUOS_KEY_STYLE_H2; /* DOC-58 */
                 else if (k==SDLK_3 && (mod & KMOD_CTRL) && (mod & KMOD_ALT)) code=WUOS_KEY_STYLE_H3; /* DOC-58 */
@@ -426,9 +430,18 @@ int main(int argc, char **argv){
         toast_tick(g_toasts);
         const char *tt = toast_text(g_toasts);
         if (tt){
+            /* DOC-43: prefers-reduced-motion -> no fade-in (instant full opacity) */
+            static const char *g_last_tt = NULL;
+            static float g_toast_a = 0.0f;
+            if (tt != g_last_tt){ g_last_tt = tt; g_toast_a = 0.0f; }
+            WubuSettings *sh = wubusettings_shared();
+            int reduce = sh ? wubusettings_reduced_motion(sh) : 0;
+            if (!reduce && g_toast_a < 1.0f) g_toast_a += 0.12f;
+            if (g_toast_a > 1.0f) g_toast_a = 1.0f;
+            float ta = reduce ? 1.0f : g_toast_a;
             int tw = (int)strlen(tt)*8 + 24;
             int tx = (WIN_W - tw)/2, ty = WIN_H - STATUS_H - 42;
-            SDL_SetRenderDrawColor(ren, 30,33,40,235);
+            SDL_SetRenderDrawColor(ren, 30,33,40,(Uint8)(235*ta));
             SDL_RenderFillRect(ren,&(SDL_Rect){tx,ty,tw,30});
             SDL_SetRenderDrawColor(ren, 59,130,246,255);
             SDL_RenderDrawRect(ren,&(SDL_Rect){tx,ty,tw,30});

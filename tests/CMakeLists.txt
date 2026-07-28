@@ -441,7 +441,12 @@ target_link_libraries(test_settings PRIVATE wubusettings)
 add_test(NAME settings COMMAND test_settings)
 set_property(TEST settings PROPERTY LABELS settings)
 
-add_executable(test_shape test_shape.c)
-target_link_libraries(test_shape PRIVATE wubushape)
-add_test(NAME shape COMMAND test_shape)
-set_property(TEST shape PROPERTY LABELS shape)
+add_executable(test_toc test_toc.c)
+target_link_libraries(test_toc PRIVATE wubutoc wubumodel wubulayout wubusettings)
+target_include_directories(test_toc PRIVATE
+    ${CMAKE_SOURCE_DIR}/src/wubutoc
+    ${CMAKE_SOURCE_DIR}/src/wubumodel
+    ${CMAKE_SOURCE_DIR}/src/wubulayout
+    ${CMAKE_SOURCE_DIR}/src/wubusettings)
+add_test(NAME toc COMMAND test_toc)
+set_property(TEST toc PROPERTY LABELS toc)

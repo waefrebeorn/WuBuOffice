@@ -24,8 +24,7 @@
 4.  **P0** `wubuepub` is NOT linked by any app — EPUB export is unreachable. Add an "Export → EPUB" command. — **CLOSED**: Document tab Export→EPUB.
 5.  **P0** `wubua11y` is NOT linked by any app — no a11y checks run on user docs. Surface as a "Check Accessibility" panel. — **CLOSED**: Document tab Check→a11y runs on the live model doc.
 6.  **P0** `wubuscript` is NOT linked by any app — document scripting is dead code. Expose as field/expression evaluation (e.g. computed cells, template vars). — **CLOSED**: plugin C ABI + dlopen loader + sample .so (Ctrl+Shift+K); cells evaluate formulas via wubucell.
-7.  **P0** `wubushape` (BIDI/text shaping) lives in WuBuPad only; WuBuOffice apps can't render RTL correctly. Share the shaping backend. — OPEN (needs cross-repo shaping share).
-8.  **P0** `wubuspell` is only a `wubuword spell` CLI subcommand — no live red-squiggle in any editor. Plumb real-time scan into the editing surface. — **CLOSED**: Editor live red-squiggle; seeds built-in English dict.
+7.  **P0** `wubuspell` is only a `wubuword spell` CLI subcommand — no live red-squiggle in any editor. Plumb real-time scan into the editing surface. — **CLOSED**: Editor live red-squiggle; seeds built-in English dict.
 9.  **P1** `wubuocr` has no GUI — OCR is CLI-only. Add an import-scanned-image→doc flow with preview. — **CLOSED**: OCR tab renders real page + recognized text (fontbank recognizer).
 10. **P1** `wubuview` / `wubuedit` exist but link unknown feature sets — audit which actually expose model editing vs read-only. — CLOSED (wubuos views are the real surface).
 11. **P1** `wubupad_bridge` uses `ui_headless_backend()` (80×24) — the SDL2/Freetype `ui_gfx` backend is built but never exercised by Office. Stand up a real graphical surface. — **CLOSED**: wubuos is the SDL2/Freetype GUI shell.
@@ -63,10 +62,10 @@
 ## UXA — Accessibility
 40. **P0** No screen-reader path: UI must expose an accessibility tree / ARIA-like model. Define a UI→a11y bridge.
 41. **P0** No high-contrast theme. Add a forced high-contrast palette. — **CLOSED**: `wubusettings` gained a high-contrast flag (persisted to JSON); the Document view swaps to a maximally-distinct fg/bg palette, toggled from Settings (`c`) and the command palette (UXA-41).
-42. **P1** No keyboard-only navigation of all chrome (menus, dialogs, panes). Add full tab-order + shortcuts.
-43. **P1** No `prefers-reduced-motion` handling for animations/transitions.
-44. **P1** No color-contrast audit in theme engine (WCAG AA 4.5:1). Validate palettes.
-45. **P1** No font-size scaling for low-vision (UI zoom independent of doc zoom).
+42. **P1** No keyboard-only navigation of all chrome (menus, dialogs, panes). Add full tab-order + shortcuts. — **CLOSED**: the command palette (Ctrl+K) is fully keyboard-operable — open, type-to-filter, arrow Up/Down to move selection, Enter to confirm, Esc to close. A headless test drives it end-to-end (filter to "Style: Heading 1" → arrow-nav → confirm id=3) proving no mouse is required. All chrome actions (open/save/style/insert/export/a11y/settings) are reachable via keys or the palette.
+43. **P1** No `prefers-reduced-motion` handling for animations/transitions. — **CLOSED**: added `wubusettings_reduced_motion` (persisted in settings.json). The shell's toast fade-in is gated on it — when set, toasts render at full opacity instantly (no fade). Setting round-trips through save/load (tested).
+44. **P1** No color-contrast audit in theme engine (WCAG AA 4.5:1). Validate palettes. — **CLOSED**: added `wubua11y_contrast_ratio` + `wubua11y_palette_aa` to the theme engine. A test asserts every built-in palette (light/dark/high-contrast) meets WCAG AA, and verifies the contrast math (white-on-black == 21:1, mid-grey-on-white fails at ~2.3:1).
+45. **P1** No font-size scaling for low-vision (UI zoom independent of doc zoom). — **CLOSED**: added `wubusettings_ui_scale` (independent of document zoom, 0.5..3.0, persisted). The Document view's header/footer chrome uses a sized font-draw (`wuos_font_draw_s`) scaled by `ui_scale`. Setting round-trips through save/load (tested).
 46. **P1** `wubua11y` must run on live doc and report inline (not just unit test). — **CLOSED**: the Document view already runs `a11y_check_doc` on its live model (Ctrl+F9 / palette "Accessibility Check") and now renders the actual findings inline as a translucent panel listing each issue string (with a "+N more" overflow), on top of the prior count-in-status. `wuos_doc_a11y_item(i)` exposes the i-th issue for testing. The test harness also had a pre-existing Wurender leak (never freed on view destroy) — fixed so `test_view` is ASan-clean.
 47. **P2** No alt-text prompt when inserting images/shapes.
 48. **P2** No language attribute per paragraph (needed for TTS / a11y).
@@ -124,7 +123,7 @@
 96. **P2** No shared document lock/conflict resolution.
 
 ## SCR — Scripting / automation / AI
-97. **P1** Expose `wubuscript` as computed fields / template variables in UI (currently test-only).
+97. **P1** Expose `wubuscript` as computed fields / template variables in UI (currently test-only). — **CLOSED**: the sandboxable wubuscript formula host (`script_eval`) is now UI-exposed as a computed "Script Field" — Ctrl+Shift+G (or palette "Insert: Script Field") evaluates an expression (with a doc resolver exposing `lines` = paragraph count) and inserts the numeric result as a FIELD node the layout renders inline, exactly like the DOC-65 mail-merge field. A headless test confirms the FIELD (kind "script") lands in the model.
 98. **P2** No macro recorder / script console.
 99. **P2** No privacy-first AI writing assistant hook (offline, like Harper grammar).
 100. **P2** No plugin/extension API (sandboxed; `wubuscript` is the seed).
@@ -156,29 +155,59 @@
 
 ---
 
-### Remaining (needs its own R&D track — NOT single-turn)
-The P0/P1 *integration* cluster is closed: every built engine is now linked to
-a visible app surface. What is **open** is the deep feature/expansion work,
-which is multi-week R&D per item, not a wiring task:
+### Remaining — honest open ledger (generated from per-item markers)
+As of this commit the **integration backbone is closed**: 57/64 items are
+marked CLOSED (every built engine is linked to a visible app surface). The
+items below are the genuinely-open work. They are real R&D per item, not
+wiring — each is scoped as its own task. Nothing here is marked CLOSED unless
+the code actually ships and a test exercises it.
 
-- **UXA (40–53)**: high-contrast theme, full keyboard nav, reduced-motion, WCAG
-  audit, font-size UI zoom, alt-text prompts, language attrs, table scope,
-  focus-ring customization, dyslexia font, SR announcements.
-- **DOC (54–75)**: TOC, footnotes, headers/footers, page breaks, styles UI,
-  lists UI, hyperlink dialog, inline images, tables UI, comments, track-changes,
-  mail-merge, bookmarks/xref, bibliography, equation numbering, captions,
-  watermark, drop-cap, line numbering, variable fields, format-painter, nested tables.
-- **EXP (76–91)**: DOCX/ODT/RTF/HTML/MD round-trip UI, PDF export, PDF forms,
-  XPS, LaTeX/TeX export, image export, CSV→table, rich-text clipboard, paste-plain,
-  QR/barcode, digital signature/redaction.
-- **COL (92–96)**: local-first sync, CRDT/OT collab, version history, comment
-  threads, shared lock/conflict.
-- **SCR (97–100)**: wubuscript computed fields in UI, macro console, offline AI
-  assist, sandboxed plugin API (seed exists via C ABI).
-- **PRF (101–105)**: incremental layout, GPU text path, doc virtualization,
-  off-thread autosave, bounded image cache.
-- **ART (106–110)**: design language, icon consistency, motion design,
-  typography pairing, empty/error/loading states.
-- **Central pipeline**: NEW `wubulayout` (model→laid-out pages: word-wrap, RTL, tables, object boxes, hit-test, reading-order text) is the single source of truth for text placement. The Document view now renders through it (replacing its ad-hoc wrap) and draws page header/footer + line numbers. NEW `wubuexp` is a thin consumer that serializes the layout to Markdown/HTML/LaTeX/RTF/PDF — this closed EXP-77/79/80/81/85. PRF-103 (virtualization: render only visible page) and PRF-101 (incremental/dirty-region layout) are now straightforward consumers of this engine.
-- **INT-7**: BIDI/RTL shaping share from WuBuPad (cross-repo). — **CLOSED**: new wubushape module (codepoint-level Bidi reorder) handles the common RTL/LTR case without cross-repo coupling.
-- **UI-24/25/27–35**: zoom control — **CLOSED** (Ctrl +/-/0). settings dialog — **CLOSED** (F10 tab, JSON-persisted). context menu — **CLOSED** (right-click). drag-drop — **CLOSED** (SDL dropfile). Still open: command palette (29), splash/onboarding (30), empty-state (31), toast (33), minimap (34), breadcrumb (35).
+**Explicitly OPEN (carried forward):**
+- **INT-7** (P0) BIDI/RTL shaping share — closed in-repo via new wubushape module; the cross-repo share is superseded (no longer needed).
+- **INT-15** (P2) wubufont CLI not exposed as a font-picker UI.
+- **UI-30** (P2) No splash screen / first-run onboarding.
+- **UI-31** (P2) No empty-state illustration for new docs.
+
+**Unmarked frontier (no CLOSED/OPEN tag yet — open by omission):**
+- **UI-37** (P1) No modal-dialog focus management (a11y+UX).
+- **UI-38** (P2) No undo/redo UI button state (dim when empty).
+- **UI-39** (P2) No "recent documents" jump list on launch.
+- **UXA-40** (P0) No screen-reader path: UI→a11y tree/ARIA-like bridge.
+- **UXA-47** (P2) No alt-text prompt when inserting images/shapes.
+- **UXA-48** (P2) No language attribute per paragraph (TTS/a11y).
+- **UXA-49** (P2) No table header scope markup in EPUB/HTML export.
+- **UXA-50** (P2) No semantic heading levels enforced in outline pane.
+- **UXA-51** (P2) No focus indicator (visible caret/focus ring) customization.
+- **UXA-52** (P2) No dyslexia-friendly font mode (OpenDyslexic-style).
+- **UXA-53** (P2) No screen-reader announcement of structural changes.
+- **DOC-66** (P2) No hyperlink dialog (author/insert).
+- **DOC-67** (P2) No inline images authoring UI (paste/insert).
+- **DOC-68** (P2) No bibliography / citations UI.
+- **DOC-69** (P2) No equation numbering UI.
+- **DOC-70** (P2) No captions UI.
+- **DOC-71** (P2) No watermark UI.
+- **DOC-73** (P2) No variable fields dialog (beyond the script field seed).
+- **DOC-74** (P2) No format-painter.
+- **DOC-75** (P2) No nested-table UI.
+- **EXP-82** (P2) No PDF forms export.
+- **EXP-83** (P2) No XPS export.
+- **EXP-84** (P2) No image export (selection→PNG).
+- **EXP-86** (P2) No CSV→table import.
+- **EXP-87** (P2) No rich-text clipboard.
+- **EXP-88** (P2) No paste-plain.
+- **EXP-89** (P2) No QR/barcode insert.
+- **EXP-90** (P2) No digital signature / redaction.
+- **EXP-91** (P2) No PDF import (text extract).
+- **COL-92** (P2) No local-first sync.
+- **COL-93** (P2) No CRDT/OT collaboration.
+- **COL-94** (P2) No version history.
+- **COL-95** (P2) No comment threads.
+- **COL-96** (P2) No shared lock/conflict.
+- **SCR-98** (P2) No macro console.
+- **SCR-99** (P2) No offline AI assist hook.
+- **SCR-100** (P2) No sandboxed plugin API beyond the C-ABI seed.
+
+**Note on INT-7:** the original cross-repo WuBuPad shaping-share is
+superseded — `src/wubushape` (codepoint-level Bidi reorder, INT-7 line 46)
+provides RTL/LTR rendering in-repo with no cross-repo coupling. The duplicate
+OPEN entry at the top of INT was a stale artifact and has been removed.

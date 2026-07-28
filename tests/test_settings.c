@@ -25,6 +25,9 @@ int main(void){
     wubusettings_set_autosave_ms(s, 2000);
     wubusettings_set_language(s, "ar");
     wubusettings_set_font_size(s, 20);
+    wubusettings_set_high_contrast(s, 1);
+    wubusettings_set_reduced_motion(s, 1);   /* DOC-43 */
+    wubusettings_set_ui_scale(s, 1.5);       /* DOC-45 */
 
     /* round-trip through a temp file */
     const char *path = "/tmp/wubuos_settings_test.json";
@@ -38,6 +41,9 @@ int main(void){
     if (wubusettings_autosave_ms(s2) != 2000){ printf("FAIL reload autosave\n"); fails++; }
     if (strcmp(wubusettings_language(s2), "ar")){ printf("FAIL reload lang\n"); fails++; }
     if (wubusettings_font_size(s2) != 20){ printf("FAIL reload fontsize\n"); fails++; }
+    if (!wubusettings_high_contrast(s2)){ printf("FAIL reload high-contrast\n"); fails++; }
+    if (!wubusettings_reduced_motion(s2)){ printf("FAIL reload reduced-motion\n"); fails++; }
+    if (wubusettings_ui_scale(s2) != 1.5){ printf("FAIL reload ui-scale\n"); fails++; }
     wubusettings_destroy(s2);
 
     /* shared singleton */

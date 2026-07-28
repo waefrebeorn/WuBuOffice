@@ -101,3 +101,19 @@ int wuos_font_draw(const char *s, int x, int y, int bold,
     }
     return ox - x;
 }
+
+int wuos_font_draw_s(const char *s, int x, int y, int bold, int size,
+                     unsigned char r, unsigned char g, unsigned char b,
+                     unsigned char *fb, int fbw, int fbh){
+    if (size < 6) size = 6; if (size > 96) size = 96;
+    FT_Face face = (bold && g_bold)? g_bold : g_reg;
+    if (!face || !fb) return 0;
+    int prev = g_size;
+    FT_Set_Pixel_Sizes(face, 0, (FT_UInt)size);
+    g_size = size;
+    int adv = wuos_font_draw(s, x, y, bold, r, g, b, fb, fbw, fbh);
+    /* restore */
+    FT_Set_Pixel_Sizes(face, 0, (FT_UInt)prev);
+    g_size = prev;
+    return adv;
+}

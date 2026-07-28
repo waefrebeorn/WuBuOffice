@@ -18,6 +18,7 @@
 #include "ublayout.h"      /* central text pipeline: model -> laid-out pages */
 #include "toc.h"          /* DOC-54: table-of-contents generator */
 #include "settings.h"      /* UXA-41: high-contrast colors */
+#include "script.h"        /* DOC-97: wubuscript computed fields */
 
 #include <stdlib.h>
 #include <string.h>
@@ -324,6 +325,37 @@ static void doc_insert_field(DocV *e){
     wubumodel_node_append(e->doc, sec, f);
     e->toc_dirty = 1;
 }
+/* DOC-97: expose the wubuscript formula host in the UI as a computed field.
+ * Evaluates `expr` (sandboxable arithmetic/vars/aggregates) and inserts the
+ * numeric result as a FIELD node the layout renders inline. A minimal doc
+ * resolver exposes `lines` (paragraph count) so expressions are meaningful. */
+static int doc_script_resolve(const char *name, double *out, void *ctx){
+    DocV *e = ctx;
+    if (!strcmp(name, "lines")){
+        int n = 0;
+        for (wubumodel_node *sec = wubumodel_node_first_child(wubumodel_doc_root(e->doc));
+             sec; sec = wubumodel_node_next_sibling(sec))
+            for (wubumodel_node *p = wubumodel_node_first_child(sec); p;
+                 p = wubumodel_node_next_sibling(p))
+                if (wubumodel_node_kind(p)==WUBUMODEL_PARAGRAPH) n++;
+        *out = (double)n; return 0;
+    }
+    (void)name; return -1;
+}
+static void doc_insert_script_field(DocV *e, const char *expr){
+    if (!e->doc) return;
+    wubumodel_node *sec = wubumodel_node_first_child(wubumodel_doc_root(e->doc));
+    if (!sec) return;
+    double v = 0;
+    char val[64];
+    if (script_eval(expr, doc_script_resolve, e, &v) != 0) v = 0;
+    snprintf(val, sizeof val, "%.4g", v);
+    wubumodel_node *f = wubumodel_node_create(e->doc, WUBUMODEL_FIELD);
+    wubumodel_node_set_field(f, "script");
+    wubumodel_node_set_text(f, val);
+    wubumodel_node_append(e->doc, sec, f);
+    e->toc_dirty = 1;
+}
 /* DOC-58: return the Nth top-level paragraph in the document body. */
 static wubumodel_node *doc_nth_paragraph(DocV *e, int idx){
     if (!e->doc) return NULL;
@@ -360,6 +392,18 @@ static void doc_move_para(DocV *e, int dx){
     e->cur_para += dx;
     if (e->cur_para < 0) e->cur_para = 0;
     if (e->cur_para >= n) e->cur_para = n - 1;
+}
+
+/* DOC-45: UI chrome font size scaled by the user's UI-scale setting
+ * (independent of document zoom). Bounded to a sane range. */
+static int doc_chrome_fs(DocV *e, int base){
+    double us = 1.0;
+    WubuSettings *sh = wubusettings_shared();
+    if (sh) us = wubusettings_ui_scale(sh);
+    int fs = (int)(base * us + 0.5);
+    if (fs < 8) fs = 8; if (fs > 64) fs = 64;
+    (void)e;
+    return fs;
 }
 
 static int render(WuView *v, int w, int h, int scroll,
@@ -403,7 +447,7 @@ static int render(WuView *v, int w, int h, int scroll,
             }
             snprintf(hdr,sizeof hdr,"%s   (Page %d / %d)",
                      hm?hm:"WuBuOffice", pg+1, pages);
-            wuos_font_draw(hdr, 56, 24, 0, MU[0],MU[1],MU[2], fb, w, h);
+            wuos_font_draw_s(hdr, 56, 24, 0, doc_chrome_fs(e,12), MU[0],MU[1],MU[2], fb, w, h);
             /* DOC-62/61: draw table borders + blit embedded images from boxes */
             int nboxes = wubulayout_box_count(L, pg);
             for (int bi=0; bi<nboxes; bi++){
@@ -518,7 +562,7 @@ static int render(WuView *v, int w, int h, int scroll,
                 }
             }
             snprintf(ftr,sizeof ftr,"%s   — %d lines", ft?ft:"WuBuOffice", nl);
-            wuos_font_draw(ftr, 56, h-30, 0, MU[0],MU[1],MU[2], fb, w, h);
+            wuos_font_draw_s(ftr, 56, h-30, 0, doc_chrome_fs(e,12), MU[0],MU[1],MU[2], fb, w, h);
             /* UI-34: minimap on the right edge — one tick per line, colored by
              * heading level if the TOC knows about it. */
             int mmx = w - 10;
@@ -683,6 +727,7 @@ static void on_key(WuView *v, int key, int down){
     if (key==WUOS_KEY_INSERT_COMMENT){ doc_insert_comment(e); return; }
     if (key==WUOS_KEY_INSERT_TRACKCHANGE){ doc_insert_trackchange(e); return; }
     if (key==WUOS_KEY_INSERT_FIELD){ doc_insert_field(e); return; }
+    if (key==WUOS_KEY_INSERT_SCRIPT){ doc_insert_script_field(e, "lines * 2"); return; }
     if (key==WUOS_KEY_STYLE_H1){ doc_apply_named_style(e, "Heading1"); return; }
     if (key==WUOS_KEY_STYLE_H2){ doc_apply_named_style(e, "Heading2"); return; }
     if (key==WUOS_KEY_STYLE_H3){ doc_apply_named_style(e, "Heading3"); return; }
@@ -836,6 +881,7 @@ int wuos_doc_find(WuView *v, const char *q){
     if (!e->text || !q || !q[0]) return 0;
     return strstr(e->text, q) ? 1 : 0;
 }
+wubumodel_doc *wuos_doc_model(WuView *v){ return v ? ((DocV*)v->priv)->doc : NULL; }
 /* Count of inserted overlay objects (chart/draw/math) currently displayed. */
 int wuos_doc_obj_count(WuView *v){ return ((DocV*)v->priv)->nobj; }
 /* EPUB export status string (caller must NOT free; view owns it), or NULL. */

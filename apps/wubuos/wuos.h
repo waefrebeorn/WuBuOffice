@@ -11,6 +11,7 @@
 #define WUOS_H
 #include <stddef.h>
 #include <stdint.h>
+#include "model.h"   /* wubumodel_doc for wuos_doc_model() */
 
 #ifdef __cplusplus
 extern "C" {
@@ -69,6 +70,7 @@ enum { WUOS_KEY_UP=2000, WUOS_KEY_DOWN, WUOS_KEY_LEFT, WUOS_KEY_RIGHT,
  WUOS_KEY_INSERT_COMMENT,
  WUOS_KEY_INSERT_TRACKCHANGE,
  WUOS_KEY_INSERT_FIELD,
+ WUOS_KEY_INSERT_SCRIPT,
  WUOS_KEY_STYLE_H1,
  WUOS_KEY_STYLE_H2,
  WUOS_KEY_STYLE_H3,
@@ -112,6 +114,8 @@ int wuos_editor_sym(WuView *v, int *n);
 int  wuos_doc_is_rendered(WuView *v);
 int  wuos_doc_has_text(WuView *v);
 int  wuos_doc_find(WuView *v, const char *q);   /* returns 1 if match found */
+/* The underlying wubumodel_doc (read-only access for tests/introspection). */
+wubumodel_doc *wuos_doc_model(WuView *v);
 /* Document view: count of inserted chart/draw/math overlay objects (INT-1,3). */
 int  wuos_doc_obj_count(WuView *v);
 /* Document view: last EPUB export message (view-owned, do not free), or NULL. */
