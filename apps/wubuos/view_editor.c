@@ -383,6 +383,18 @@ static int render(WuView *v, int w, int h, int scroll,
         while (pos < tlen && text[pos] != '\n'){ pos++; }
         le = pos;
 
+        /* ---- active-line highlight (modern editor affordance) ---- */
+        if ((int)line == e->caret_line){
+            unsigned char al_r = e->dark ? (bg_r+10) : (bg_r-12);
+            unsigned char al_g = e->dark ? (bg_g+12) : (bg_g-12);
+            unsigned char al_b = e->dark ? (bg_b+16) : (bg_b-12);
+            for (int yy=y-2; yy<y+lh-2 && yy<H; yy++)
+                for (int xx=gutter; xx<w; xx++){
+                    if (xx>=0 && yy>=0){ size_t i=((size_t)yy*w+xx)*4;
+                        fb[i]=al_r; fb[i+1]=al_g; fb[i+2]=al_b; }
+                }
+        }
+
         /* ---- find match highlight (behind tokens) ---- */
         if (e->fb && findbar_active(e->fb)){
             size_t m0 = 0, m1 = 0; findbar_match(e->fb, &m0, &m1);
@@ -919,6 +931,17 @@ static void save(WuView *v){
 
 static const char *get_path(WuView *v){ return ((Editor*)v->priv)->path; }
 
+/* Save-As: point the editor at a new path, then persist (also re-bases the
+ * crash-recovery autosave snapshot onto the new file). */
+static void set_path(WuView *v, const char *p){
+    Editor *e = v->priv;
+    if (!e || !p || !*p) return;
+    free(e->path);
+    e->path = strdup(p);
+    if (e->asv){ wubuautosave_destroy(e->asv); e->asv = wubuautosave_create(e->path, 5000); }
+    save(v);
+}
+
 /* Test/inspection accessor: report find state without exposing the struct. */
 int wuos_editor_find_stats(WuView *v, int *active, int *total){
     Editor *e = v ? v->priv : NULL;
@@ -1159,5 +1182,6 @@ WuView *wuos_editor_create(const char *path){
     v->status   = status;
     v->save     = save;
     v->get_path = get_path;
+    v->set_path = set_path;
     return v;
 }

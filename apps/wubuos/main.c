@@ -135,10 +135,21 @@ int main(int argc, char **argv){
               if (!strcmp(wuos_font_family_name(i), pf)){ wuos_font_set_family(i); break; }
       } }
 
-    SDL_Window *win = SDL_CreateWindow("WuBuOffice", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIN_W, WIN_H, 0);
+    SDL_Window *win = SDL_CreateWindow("WuBuOffice", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+                                       WIN_W, WIN_H, SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_RESIZABLE);
     if (!win){ fprintf(stderr,"window: %s\n",SDL_GetError()); SDL_Quit(); return 1; }
     SDL_Renderer *ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
     if (!ren){ fprintf(stderr,"renderer: %s\n",SDL_GetError()); SDL_DestroyWindow(win); SDL_Quit(); return 1; }
+
+    /* HiDPI: map the logical 960x720 canvas onto the device pixel grid so text
+     * stays crisp on Retina/4K. Read the display DPI, derive a scale factor
+     * relative to the 96-DPI nominal, and let SDL upscale the renderer. */
+    float hdpi = 96.0f, vdpi = 96.0f;
+    if (SDL_GetDisplayDPI(0, NULL, &hdpi, &vdpi) == 0 && hdpi > 0){
+        float s = hdpi / 96.0f;
+        if (s < 1.0f) s = 1.0f;          /* never downscale below 1.0 */
+        SDL_RenderSetScale(ren, s, s);
+    }
 
     /* load plugins from ~/.wubuos/plugins (if present) */
     g_plugins = wuos_plugins_load(NULL);
@@ -278,6 +289,15 @@ int main(int argc, char **argv){
                             if (g_dlg_action == 1){ if (wuos_doc_insert_link_url(dv, txt)) toast_push(g_toasts, "Hyperlink inserted", 90); }
                             else if (g_dlg_action == 2){ if (wuos_doc_insert_qr(dv, txt)) toast_push(g_toasts, "QR inserted", 90); }
                             else if (g_dlg_action == 3){ if (wuos_doc_insert_image_alt(dv, txt)) toast_push(g_toasts, "Image inserted", 90); }
+                            else if (g_dlg_action == 10){   /* Open file (Ctrl+O) */
+                                if (txt && *txt){ open_doc_path(txt); toast_push(g_toasts, "Opened", 90); }
+                                else toast_push(g_toasts, "Open: empty path", 120);
+                            }
+                            else if (g_dlg_action == 11){   /* Save As (Ctrl+Shift+S) */
+                                if (dv && dv->set_path && txt && *txt){ dv->set_path(dv, txt); toast_push(g_toasts, "Saved as", 90); }
+                                else if (dv && dv->save){ dv->save(dv); toast_push(g_toasts, "Saved", 90); }
+                                else toast_push(g_toasts, "Save As: unsupported view", 120);
+                            }
                             g_dlg_action = 0;
                         } else if (res == 2){    /* cancelled */
                             g_dlg_action = 0;
@@ -398,6 +418,20 @@ int main(int argc, char **argv){
                 else if (k==SDLK_p && (mod & KMOD_CTRL) && (mod & KMOD_SHIFT)) code=WUOS_KEY_PLAY;
                 else if (k==SDLK_SPACE && (mod & KMOD_CTRL)) code=WUOS_KEY_AC;
                 else if (k==SDLK_s && (mod & KMOD_CTRL) && (mod & KMOD_SHIFT)) code=WUOS_KEY_SESSION;
+                else if (k==SDLK_o && (mod & KMOD_CTRL)){   /* Ctrl+O: Open file dialog */
+                    g_dlg_action = 10;
+                    const char *cur = (views[active] && views[active]->get_path) ? views[active]->get_path(views[active]) : NULL;
+                    dialog_open(g_dlg, "Open File", "Path:", cur ? cur : "");
+                    toast_push(g_toasts, "Open: type path, Enter", 120);
+                    continue;
+                }
+                else if (k==SDLK_a && (mod & KMOD_CTRL) && (mod & KMOD_SHIFT)){   /* Ctrl+Shift+A: Save As dialog */
+                    g_dlg_action = 11;
+                    const char *cur = (views[active] && views[active]->get_path) ? views[active]->get_path(views[active]) : NULL;
+                    dialog_open(g_dlg, "Save As", "Path:", cur ? cur : "");
+                    toast_push(g_toasts, "Save As: type path, Enter", 120);
+                    continue;
+                }
                 else if (k==SDLK_f && (mod & KMOD_CTRL) && (mod & KMOD_SHIFT)) code=WUOS_KEY_FOLD;
                 else if (k==SDLK_l && (mod & KMOD_CTRL) && (mod & KMOD_SHIFT)) code=WUOS_KEY_FUNCLIST;
                 else if (k==SDLK_k && (mod & KMOD_CTRL) && (mod & KMOD_SHIFT)) code=WUOS_KEY_PLUGIN;

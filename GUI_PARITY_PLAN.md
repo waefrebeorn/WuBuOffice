@@ -65,6 +65,18 @@ Real engine surface (surveyed, not guessed):
 - [x] Unified launcher `wubuoffice` → boots `wubuos` (cosmetic name alias, real binary in apps/wubuoffice, installed beside wubuos via RUNTIME_OUTPUT_DIRECTORY; resolves the sibling and execv's it).
 - [x] Settings dialog (font size, tab width, word-wrap, EOL view) — `wubusettings` gained `word_wrap` + `tab_width` (persisted to JSON); the Settings view shows + toggles them (`w` wrap, `i` tab-width, persisted on every change).
 - [x] Live word-wrap toggle — the Editor render now soft-wraps token spans at the right margin (UI-26); Tab advance respects the settings tab-width. Verified: both the editor and launcher boot clean under xvfb (RC=124) with no segfault.
+- [x] **GUI polish wave — ALL CLOSED + verified headless:**
+      - Neutral chrome theme (`wuos_theme.h` tokens): active tab rises to a
+        lighter surface + 2px accent underline; no bright blue. Shared by the
+        live shell and the `viewshot` headless screenshot tool.
+      - Editor active-line highlight (UI-41): subtle full-row tint behind the
+        caret line; asserted by `test_view` pixel scan.
+      - HiDPI: window created `SDL_WINDOW_ALLOW_HIGHDPI` + `SDL_RenderSetScale`
+        from display DPI so text stays crisp on Retina/4K.
+      - File dialogs (UI-42): Ctrl+O opens a path dialog (Open) and
+        Ctrl+Shift+A opens a Save-As path dialog; both reuse the opaque `Dialog`
+        state machine. Editor gained a `set_path` vtable hook (Save As persists
+        + re-bases crash-recovery autosave). Verified by `test_view`.
 
 > Engine-linkage status (accurate as of this steamroll):
 > - OCR, autosave (INT-2), spell (INT-8), chart/draw/math, EPUB export,

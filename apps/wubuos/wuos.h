@@ -39,6 +39,8 @@ struct WuView {
     void      (*save)(WuView *);
     /* Optional: return the loaded file path (for the title/status), or NULL. */
     const char *(*get_path)(WuView *);
+    /* Optional: re-point the view at a new path and persist (Save As). May be NULL. */
+    void      (*set_path)(WuView *, const char *p);
     void      *priv;
 };
 

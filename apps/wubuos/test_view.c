@@ -170,7 +170,72 @@ int main(void){
              ev->destroy(ev); }
     else { fprintf(stderr,"[editor(file)] create FAILED\n"); bad++; }
 
-    /* INT-8 P0: spell engine wired into the editor (live red squiggle). */
+    /* UI-41: active-line highlight renders as a subtle full-row tint behind
+     * the caret line (modern editor affordance). Headless pixel check. */
+    {
+        WuView *al = wuos_editor_create(NULL);
+        if (!al){ fprintf(stderr,"[active-line] create FAILED\n"); bad++; }
+        else {
+            int w=0,h=0; unsigned char *rgba=NULL;
+            int rc = al->render(al, 960, 664, 0, &rgba, &w, &h);
+            if (rc!=0 || !rgba){ fprintf(stderr,"[active-line] render FAILED\n"); bad++; }
+            else {
+                /* find a contiguous band of rows (in the text area x>60) whose
+                 * average brightness sits between pure-bg and pure-white (i.e.
+                 * the tinted active line), excluding status/tab chrome. */
+                int band=0;
+                for (int y=30; y<h-26 && !band; y++){
+                    long sr=0,sg=0,sb=0,n=0;
+                    for (int x=60; x<400; x+=5){ int i=(y*w+x)*4; sr+=rgba[i];sg+=rgba[i+1];sb+=rgba[i+2]; n++; }
+                    int mr=sr/n, mg=sg/n, mb=sb/n;
+                    if (mr>=236 && mr<=252 && mg>=236 && mg<=252 && mb>=236 && mb<=252
+                        && (mr-mg)<18 && (mg-mb)<18){
+                        /* measure run length */
+                        int run=0;
+                        for (int yy=y; yy<h-26; yy++){
+                            long r2=0,g2=0,b2=0,n2=0;
+                            for (int x=60; x<400; x+=5){ int j=(yy*w+x)*4; r2+=rgba[j];g2+=rgba[j+1];b2+=rgba[j+2]; n2++; }
+                            int m2r=r2/n2,m2g=g2/n2,m2b=b2/n2;
+                            if (m2r>=236&&m2r<=252&&m2g>=236&&m2g<=252&&m2b>=236&&m2b<=252&&(m2r-m2g)<18&&(m2g-m2b)<18) run++;
+                            else break;
+                        }
+                        if (run>=10) band=1;   /* a real line band is ~24px */
+                    }
+                }
+                if (!band){ fprintf(stderr,"[active-line] no highlight band found\n"); bad++; }
+                else fprintf(stderr,"[active-line] ok (highlight band rendered)\n");
+            }
+            free(rgba);
+            al->destroy(al);
+        }
+    }
+
+    /* UI-42: Save-As re-points the editor and persists (Ctrl+Shift+S path). */
+    {
+        WuView *sa = wuos_editor_create(NULL);
+        if (!sa){ fprintf(stderr,"[save-as] create FAILED\n"); bad++; }
+        else {
+            const char *p = "/tmp/wubuos_saveas_test.txt";
+            wuos_write_file(p, "", 0);   /* ensure exists/scope */
+            if (!sa->set_path){ fprintf(stderr,"[save-as] set_path NULL\n"); bad++; }
+            else {
+                sa->set_path(sa, p);
+                const char *got = sa->get_path ? sa->get_path(sa) : NULL;
+                if (!got || strcmp(got, p)!=0){ fprintf(stderr,"[save-as] path not applied\n"); bad++; }
+                else {
+                    /* type content + save-as should write the file */
+                    sa->on_key(sa, 'H', 1); sa->on_key(sa, 'i', 1);
+                    if (sa->save) sa->save(sa);
+                    size_t sz=0; char *out = wuos_read_file(p, &sz);
+                    if (!out || sz < 2){ fprintf(stderr,"[save-as] file not written (sz=%zu)\n", sz); bad++; }
+                    else fprintf(stderr,"[save-as] ok (path=%s, %zu bytes)\n", got, sz);
+                    free(out);
+                }
+            }
+            sa->destroy(sa);
+        }
+    }
+
     {
         WuView *sv = wuos_editor_create(NULL);
         int good = sv ? wuos_editor_spell(sv, "cat") : -1;
