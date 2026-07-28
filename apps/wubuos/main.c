@@ -5,6 +5,7 @@
  * wuburender / WuBuPad core / wubucell / wubuocr engines -- no mockups. */
 #include "wuos.h"
 #include "wuos_font.h"
+#include "wuos_theme.h"
 #include "plugin.h"
 #include "settings.h"   /* UI-24/25: zoom + settings persistence */
 #include "shape.h"      /* INT-7: RTL shaping (available to views) */
@@ -499,24 +500,51 @@ int main(int argc, char **argv){
 
         /* tab bar */
         int x=0;
-        SDL_SetRenderDrawColor(ren, 245,246,248,255); SDL_RenderFillRect(ren,&(SDL_Rect){0,0,WIN_W,TAB_H});
+        int dark = wubusettings_dark(wubusettings_shared());
+        /* Tab bar: neutral chrome ground; each tab a quiet segment; the ACTIVE
+         * tab rises to a lighter surface + a 2px accent underline. No bright
+         * blue fill (spec §5). Inactive tabs dim. (Tokens: wuos_theme.h.) */
+        WuosRGB tbb = dark ? (WuosRGB)WUOS_DARK_TAB_BAR : (WuosRGB)WUOS_LIGHT_TAB_BAR;
+        	WuosRGB ttk = dark ? (WuosRGB)WUOS_DARK_TAB     : (WuosRGB)WUOS_LIGHT_TAB;
+        WuosRGB tto = dark ? (WuosRGB)WUOS_DARK_TAB_ON  : (WuosRGB)WUOS_LIGHT_TAB_ON;
+        WuosRGB ttx = dark ? (WuosRGB)WUOS_DARK_TABTEXT : (WuosRGB)WUOS_LIGHT_TABTEXT;
+        WuosRGB ttxo= dark ? (WuosRGB)WUOS_DARK_TABTEXT_ON:(WuosRGB)WUOS_LIGHT_TABTEXT_ON;
+        WuosRGB bd  = dark ? (WuosRGB)WUOS_DARK_BORDER  : (WuosRGB)WUOS_LIGHT_BORDER;
+        WuosRGB ac  = dark ? (WuosRGB)WUOS_DARK_ACCENT  : (WuosRGB)WUOS_LIGHT_ACCENT;
+        SDL_SetRenderDrawColor(ren, tbb.r, tbb.g, tbb.b, 255);
+        SDL_RenderFillRect(ren,&(SDL_Rect){0,0,WIN_W,TAB_H});
         for (int i=0;i<nviews;i++){
-            int tw=(int)strlen(views[i]->name)*14+24;
+            int tw = (int)strlen(views[i]->name)*14 + 24;
             int on = (i==active);
             int hov = (i==tab_hover);
-            SDL_SetRenderDrawColor(ren, on?59:(hov?225:200), on?130:(hov?228:205),
-                                      on?246:(hov?232:210), 255);
+            WuosRGB seg = on ? tto : ttk;
+            SDL_SetRenderDrawColor(ren, seg.r, seg.g, seg.b, 255);
             SDL_RenderFillRect(ren,&(SDL_Rect){x,0,tw,TAB_H});
+            /* 1px right divider */
+            SDL_SetRenderDrawColor(ren, bd.r, bd.g, bd.b, 255);
+            SDL_RenderFillRect(ren,&(SDL_Rect){x+tw-1,0,1,TAB_H});
+            /* active tab: 2px accent underline */
+            if (on){
+                SDL_SetRenderDrawColor(ren, ac.r, ac.g, ac.b, 255);
+                SDL_RenderFillRect(ren,&(SDL_Rect){x,TAB_H-2,tw,2});
+            }
             sdl_text(ren, x+12, (TAB_H-wuos_font_height())/2 + 2,
-                     on?255:70, on?255:80, on?255:90, views[i]->name);
+                     on?ttxo.r:ttx.r, on?ttxo.g:ttx.g, on?ttxo.b:ttx.b,
+                     views[i]->name);
             x+=tw;
         }
         /* status bar */
         char *st = views[active]->status? views[active]->status(views[active]) : NULL;
-        SDL_SetRenderDrawColor(ren, 30,33,40,255); SDL_RenderFillRect(ren,&(SDL_Rect){0,WIN_H-STATUS_H,WIN_W,STATUS_H});
+        WuosRGB sb = dark ? (WuosRGB)WUOS_DARK_STATUS : (WuosRGB)WUOS_LIGHT_STATUS;
+        WuosRGB stx= dark ? (WuosRGB)WUOS_DARK_STATUSTX: (WuosRGB)WUOS_LIGHT_STATUSTX;
+        SDL_SetRenderDrawColor(ren, sb.r, sb.g, sb.b, 255);
+        SDL_RenderFillRect(ren,&(SDL_Rect){0,WIN_H-STATUS_H,WIN_W,STATUS_H});
+        /* 1px top divider on the status bar */
+        SDL_SetRenderDrawColor(ren, bd.r, bd.g, bd.b, 255);
+        SDL_RenderFillRect(ren,&(SDL_Rect){0,WIN_H-STATUS_H,WIN_W,1});
         if (st){
-            sdl_text(ren, 8, WIN_H-STATUS_H + (STATUS_H-wuos_font_height())/2 + 1,
-                     200,203,210, st);
+            sdl_text(ren, 12, WIN_H-STATUS_H + (STATUS_H-wuos_font_height())/2 + 1,
+                     stx.r, stx.g, stx.b, st);
             free(st);
         }
 
@@ -532,10 +560,10 @@ int main(int argc, char **argv){
             int mw = 160, mh = 3*26 + 8;
             int mx = g_ctx_x, my = g_ctx_y;
             if (mx+mw > WIN_W) mx = WIN_W-mw; if (my+mh > WIN_H-STATUS_H) my = WIN_H-STATUS_H-mh;
-            SDL_SetRenderDrawColor(ren, 40,44,52,255); SDL_RenderFillRect(ren,&(SDL_Rect){mx,my,mw,mh});
-            SDL_SetRenderDrawColor(ren, 90,95,105,255); SDL_RenderDrawRect(ren,&(SDL_Rect){mx,my,mw,mh});
+            SDL_SetRenderDrawColor(ren, 26,29,36,255); SDL_RenderFillRect(ren,&(SDL_Rect){mx,my,mw,mh});
+            SDL_SetRenderDrawColor(ren, 70,76,90,255); SDL_RenderDrawRect(ren,&(SDL_Rect){mx,my,mw,mh});
             for (int i=0;i<3;i++){
-                if (i==g_ctx_item){ SDL_SetRenderDrawColor(ren,59,130,246,255); SDL_RenderFillRect(ren,&(SDL_Rect){mx+2,my+4+i*26,mw-4,24}); }
+                if (i==g_ctx_item){ SDL_SetRenderDrawColor(ren,94,135,255,255); SDL_RenderFillRect(ren,&(SDL_Rect){mx+2,my+4+i*26,mw-4,24}); }
                 sdl_text(ren, mx+10, my+8+i*26, 220,223,230, items[i]);
             }
         }
@@ -543,8 +571,8 @@ int main(int argc, char **argv){
         /* modal text-input dialog overlay (DOC-66/EXP-89/UXA-47) */
         if (dialog_active(g_dlg)){
             int bw = 520, bx = (WIN_W-bw)/2, by = TAB_H + 80, bh = 120;
-            SDL_SetRenderDrawColor(ren, 18,20,26,252); SDL_RenderFillRect(ren,&(SDL_Rect){bx,by,bw,bh});
-            SDL_SetRenderDrawColor(ren, 90,95,105,255); SDL_RenderDrawRect(ren,&(SDL_Rect){bx,by,bw,bh});
+            SDL_SetRenderDrawColor(ren, 26,29,36,252); SDL_RenderFillRect(ren,&(SDL_Rect){bx,by,bw,bh});
+            SDL_SetRenderDrawColor(ren, 70,76,90,255); SDL_RenderDrawRect(ren,&(SDL_Rect){bx,by,bw,bh});
             sdl_text(ren, bx+20, by+12, 240,243,250, dialog_title(g_dlg));
             sdl_text(ren, bx+20, by+40, 200,203,210, dialog_prompt(g_dlg));
             sdl_text(ren, bx+20, by+68, 230,233,240, dialog_text(g_dlg));
@@ -570,9 +598,9 @@ int main(int argc, char **argv){
             float ta = reduce ? 1.0f : g_toast_a;
             int tw = (int)strlen(tt)*8 + 24;
             int tx = (WIN_W - tw)/2, ty = WIN_H - STATUS_H - 42;
-            SDL_SetRenderDrawColor(ren, 30,33,40,(Uint8)(235*ta));
+            SDL_SetRenderDrawColor(ren, 28,31,38,(Uint8)(235*ta));
             SDL_RenderFillRect(ren,&(SDL_Rect){tx,ty,tw,30});
-            SDL_SetRenderDrawColor(ren, 59,130,246,255);
+            SDL_SetRenderDrawColor(ren, 94,135,255,255);
             SDL_RenderDrawRect(ren,&(SDL_Rect){tx,ty,tw,30});
             sdl_text(ren, tx+12, ty+8, 220,223,230, tt);
         }
@@ -582,16 +610,16 @@ int main(int argc, char **argv){
             int pw = 420, px = (WIN_W-pw)/2, py = TAB_H + 24;
             int rows = palette_result_count(g_palette); if (rows>8) rows=8;
             int ph = 40 + rows*26 + 8;
-            SDL_SetRenderDrawColor(ren, 40,44,52,245);
+            SDL_SetRenderDrawColor(ren, 26,29,36,245);
             SDL_RenderFillRect(ren,&(SDL_Rect){px,py,pw,ph});
-            SDL_SetRenderDrawColor(ren, 90,95,105,255);
+            SDL_SetRenderDrawColor(ren, 70,76,90,255);
             SDL_RenderDrawRect(ren,&(SDL_Rect){px,py,pw,ph});
             char qline[96];
             snprintf(qline,sizeof qline,"> %s", palette_query(g_palette));
             sdl_text(ren, px+12, py+10, 240,243,250, qline);
             for (int i=0;i<rows;i++){
                 if (i==palette_selected(g_palette)){
-                    SDL_SetRenderDrawColor(ren,59,130,246,255);
+                    SDL_SetRenderDrawColor(ren,94,135,255,255);
                     SDL_RenderFillRect(ren,&(SDL_Rect){px+4,py+40+i*26,pw-8,24});
                 }
                 sdl_text(ren, px+14, py+44+i*26, 220,223,230,
@@ -605,7 +633,7 @@ int main(int argc, char **argv){
             int ch = 320;
             SDL_SetRenderDrawColor(ren, 20,22,28,250);
             SDL_RenderFillRect(ren,&(SDL_Rect){cx,cy,cw,ch});
-            SDL_SetRenderDrawColor(ren, 90,95,105,255);
+            SDL_SetRenderDrawColor(ren, 70,76,90,255);
             SDL_RenderDrawRect(ren,&(SDL_Rect){cx,cy,cw,ch});
             sdl_text(ren, cx+14, cy+10, 240,243,250, "Keyboard shortcuts");
             const char *keys[] = {
@@ -646,7 +674,7 @@ int main(int argc, char **argv){
             int ph = 360;
             SDL_SetRenderDrawColor(ren, 18,20,26,252);
             SDL_RenderFillRect(ren,&(SDL_Rect){px,py,pw,ph});
-            SDL_SetRenderDrawColor(ren, 90,95,105,255);
+            SDL_SetRenderDrawColor(ren, 70,76,90,255);
             SDL_RenderDrawRect(ren,&(SDL_Rect){px,py,pw,ph});
             sdl_text(ren, px+20, py+16, 240,243,250, "Welcome to WuBuOffice");
             const char *tips[] = {

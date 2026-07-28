@@ -5,36 +5,43 @@
 
 find_library(WUBUPAD_UI_LIB     NAMES wubupad_ui    PATHS ${CMAKE_SOURCE_DIR}/../WuBuPad/build NO_DEFAULT_PATH)
 find_library(WUBUPAD_CORE_LIB   NAMES wubupad_core  PATHS ${CMAKE_SOURCE_DIR}/../WuBuPad/build NO_DEFAULT_PATH)
+find_library(WUBUPAD_ATOM_LIB   NAMES wubupad_atom  PATHS ${CMAKE_SOURCE_DIR}/../WuBuPad/build NO_DEFAULT_PATH)
 find_path(WUBUPAD_INC          NAMES doc.h         PATHS ${CMAKE_SOURCE_DIR}/../WuBuPad/src NO_DEFAULT_PATH)
 
-if(NOT WUBUPAD_UI_LIB OR NOT WUBUPAD_CORE_LIB OR NOT WUBUPAD_INC)
+if(NOT WUBUPAD_UI_LIB OR NOT WUBUPAD_CORE_LIB OR NOT WUBUPAD_ATOM_LIB OR NOT WUBUPAD_INC)
   message(STATUS "wubupad_bridge: WuBuPad not built at ../WuBuPad/build -- bridge DISABLED (run WuBuPad build first).")
   return()
 endif()
 
 message(STATUS "wubupad_bridge: reusing WuBuPad core at ${WUBUPAD_CORE_LIB}")
 
+# Reuse WuBuPad's from-scratch editor core. We import the built static
+# archives as IMPORTED targets so CMake resolves their transitive link
+# dependencies (ui -> atom -> core) and orders the archives correctly --
+# linking raw .a paths drops symbols (classic archive-ordering trap).
+add_library(wubupad_core_imp STATIC IMPORTED)
+set_target_properties(wubupad_core_imp PROPERTIES
+    IMPORTED_LOCATION ${WUBUPAD_CORE_LIB}
+    INTERFACE_INCLUDE_DIRECTORIES ${WUBUPAD_INC})
+add_library(wubupad_atom_imp STATIC IMPORTED)
+set_target_properties(wubupad_atom_imp PROPERTIES
+    IMPORTED_LOCATION ${WUBUPAD_ATOM_LIB}
+    INTERFACE_INCLUDE_DIRECTORIES ${WUBUPAD_INC})
+add_library(wubupad_ui_imp STATIC IMPORTED)
+set_target_properties(wubupad_ui_imp PROPERTIES
+    IMPORTED_LOCATION ${WUBUPAD_UI_LIB}
+    INTERFACE_INCLUDE_DIRECTORIES ${WUBUPAD_INC})
+
 add_library(wubupad_bridge STATIC wubupad_bridge.c)
 target_include_directories(wubupad_bridge PUBLIC
     ${WUBUPAD_INC}
     ${CMAKE_CURRENT_SOURCE_DIR})
-# wubupad_ui bundles the SDL2/Freetype gfx backend; resolve those symbols so
-# the headless-only bridge links. They are installed (via rootexec) on the
-# dev box; if absent, the bridge still links for any app that doesn't touch gfx.
-find_package(SDL2)
-find_package(Freetype)
-set(_wubupad_extra "")
-if(SDL2_FOUND)
-  list(APPEND _wubupad_extra SDL2::SDL2)
-endif()
-if(Freetype_FOUND)
-  list(APPEND _wubupad_extra Freetype::Freetype)
-endif()
-# wubupad_ui is the headless-only UI lib (no SDL2/Freetype); it depends on
-# wubupad_core for the Doc/session model. Link UI before core so the archive
-# order resolves (UI references core symbols). wubupad_gfx (SDL2) is separate
-# and not needed here.
-target_link_libraries(wubupad_bridge PUBLIC ${WUBUPAD_UI_LIB} ${WUBUPAD_CORE_LIB})
+# wubupad_ui (headless UI) depends on wubupad_atom (command palette / Atom
+# spine) which depends on wubupad_core (Doc/session model + json). Linking the
+# imported targets (not raw paths) lets CMake emit the correct archive order so
+# every transitive symbol (ui_atom -> pkgmgr -> j_parse, etc.) resolves.
+target_link_libraries(wubupad_bridge PUBLIC
+    wubupad_ui_imp wubupad_atom_imp wubupad_core_imp)
 
 add_executable(wubupad_edit wubupad_edit.c)
 target_link_libraries(wubupad_edit PRIVATE wubupad_bridge)

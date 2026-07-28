@@ -241,3 +241,46 @@ target_link_libraries(test_font PRIVATE ${FREETYPE_LIBRARIES} wububase)
 target_compile_options(test_font PRIVATE -Wall -Wextra -Wpedantic)
 add_test(NAME font COMMAND test_font)
 set_tests_properties(font PROPERTIES LABELS "font;apps")
+
+# Headless screenshot tool: composes the full wubuos window (tab bar + active
+# view + status bar) into an in-memory RGBA buffer and writes a pixel-faithful
+# PNG. Used to produce documentation images without a display. Mirrors the
+# live shell's exact composite code (main.c) but draws into a buffer.
+add_executable(viewshot viewshot.c wuos_font.c wuos_file.c plugin.c toast.c palette.c
+    view_doc.c view_cell.c view_slide.c view_ocr.c view_editor.c view_compare.c
+    view_settings.c findbar.c autocomp.c bkmk.c codefold.c doccmd.c macro.c gotoline.c)
+target_include_directories(viewshot PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_SOURCE_DIR}/src/wubumodel
+    ${CMAKE_SOURCE_DIR}/src/wuburender
+    ${CMAKE_SOURCE_DIR}/src/wubuocr
+    ${CMAKE_SOURCE_DIR}/src/wubufont
+    ${CMAKE_SOURCE_DIR}/apps/wubucell
+    ${CMAKE_SOURCE_DIR}/src/wubudoc
+    ${CMAKE_SOURCE_DIR}/src/wubuautosave
+    ${CMAKE_SOURCE_DIR}/src/wubuspell
+    ${CMAKE_SOURCE_DIR}/src/wubuchart
+    ${CMAKE_SOURCE_DIR}/src/wubudraw
+    ${CMAKE_SOURCE_DIR}/src/wubumath
+    ${CMAKE_SOURCE_DIR}/src/wubuepub
+    ${CMAKE_SOURCE_DIR}/src/wubua11y
+    ${CMAKE_SOURCE_DIR}/src/wubusvg
+    ${CMAKE_SOURCE_DIR}/src/wubusettings
+    ${CMAKE_SOURCE_DIR}/src/wubushape
+    ${CMAKE_SOURCE_DIR}/src/wubulayout
+    ${CMAKE_SOURCE_DIR}/src/wubuexp
+    ${CMAKE_SOURCE_DIR}/src/wubutoc
+    ${CMAKE_SOURCE_DIR}/src/wubuscript
+    ${CMAKE_SOURCE_DIR}/src/wubupng
+    ${WUBUPAD_SRC})
+target_sources(viewshot PRIVATE
+    ${WUBUPAD_SRC}/buffer.c ${WUBUPAD_SRC}/doc.c ${WUBUPAD_SRC}/search.c
+    ${WUBUPAD_SRC}/encode.c ${WUBUPAD_SRC}/diff.c ${WUBUPAD_SRC}/docs.c ${WUBUPAD_SRC}/json.c
+    ${WUBUPAD_SRC}/lex.c)
+target_compile_definitions(viewshot PRIVATE lex_free=wubupad_lex_free doc_create=wubupad_doc_create doc_text=wubupad_doc_text)
+target_link_libraries(viewshot PRIVATE
+    wubumodel wuburender wubuocr wubufont wubucell_app wubudoc wubuautosave
+    wubuspell wubuchart wubudraw wubumath wubuepub wubua11y wubusvg
+    wubusettings wubushape wubulayout wubuexp wubutoc wubuscript wubupng
+    ${SDL2_LIBRARIES} ${FREETYPE_LIBRARIES} m dl)
+target_compile_options(viewshot PRIVATE -Wall -Wextra -Wpedantic)
