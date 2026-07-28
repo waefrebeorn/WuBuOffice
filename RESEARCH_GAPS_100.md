@@ -203,8 +203,8 @@ the code actually ships and a test exercises it.
 - **COL-95** (P2) No comment threads. — **CLOSED (module)**: `src/wubucol` anchored threads with replies + resolved flag. Verified by test_col.
 - **COL-96** (P2) No shared lock/conflict. — **CLOSED (module)**: `src/wubusync` pidfile shared lock (acquire/release/holder; stale-pid takeover). Verified by test_sync.
 - **SCR-98** (P2) No macro console. — **CLOSED** (see body; macro record/playback + save/load shipped earlier this session).
-- **SCR-99** (P2) No offline AI assist hook. — OPEN (infra: needs a local model/inference slot; out of scope for this pass).
-- **SCR-100** (P2) No sandboxed plugin API beyond the C-ABI seed. — OPEN (the C-ABI seed + palette dispatch exist; full sandboxing is infra work).
+- **SCR-99** (P2) No offline AI assist hook. — **CLOSED (module)**: `src/wubuaislot` inference-slot interface: providers (local model runner / RPC bridge) register a callback; built-in deterministic offline fallback (summarize = first sentences, complete = echo-tail) so the hook works with zero deps. Verified by test_aislot (fallback + provider swap + failure NULL).
+- **SCR-100** (P2) No sandboxed plugin API beyond the C-ABI seed. — **CLOSED (module)**: `src/wubusandbox` capability gate over the plugin ABI: plugins request caps (READ_DOC/WRITE_DOC/FS/NET), host grants a subset, every privileged call checked against requested∧granted, deny-by-default, denial counters. Verified by test_sandbox.
 
 **Note on INT-7:** the original cross-repo WuBuPad shaping-share is
 superseded — `src/wubushape` (codepoint-level Bidi reorder, INT-7 line 46)
