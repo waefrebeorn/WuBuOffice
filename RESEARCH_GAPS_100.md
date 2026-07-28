@@ -211,3 +211,41 @@ the code actually ships and a test exercises it.
 superseded — `src/wubushape` (codepoint-level Bidi reorder, INT-7 line 46)
 provides RTL/LTR rendering in-repo with no cross-repo coupling. The duplicate
 OPEN entry at the top of INT was a stale artifact and has been removed.
+
+---
+
+## Architecture Status (2026-07-27) — NO MONOLITHS, opaque structs
+
+The app shell (`apps/wubuos`) was originally two monolithic views
+(`view_editor.c` ~1312 lines, `view_doc.c` ~917 lines) each owning 4–5
+distinct stateful subsystems inline. These have been decomposed into
+self-contained **opaque-struct modules** that own their own state and are
+independently unit-tested (headless, no SDL):
+
+| Module | Header | Owns | Test |
+|---|---|---|---|
+| Find/replace | `findbar.h/.c` | query/replace/icase/regex/match span/Regex* | `test_findbar` |
+| Auto-completion | `autocomp.h/.c` | candidate list + selection + builtin table | `test_autocomp` |
+| Bookmarks | `bkmk.h/.c` | sorted line set + jump next/prev | `test_bkmk` |
+| Code folding + function list | `codefold.h/.c` | per-line hidden flags + sym-panel toggle | `test_codefold` |
+| Document commands | `doccmd.h/.c` | 15 insert commands + epub/save/a11y/script | `test_doccmd` |
+
+`view_editor.c` is now ~1129 lines of cohesive core editing (scroller,
+cursor, selection, macros, autosave, spell, session) — the extracted seams
+were the only arbitrary-state clusters. `view_doc.c` is ~662 lines (render
+chrome + model binding only). Shared helpers (`palette`, `toasts`, `settings`,
+`toc`, `script`) are already independent modules.
+
+**Angel-coder fixes made during decomposition (real broken code, not churn):**
+- `wubufont` failed to link (`undefined reference to sqrt`) — added `libm`.
+- `wubua11y_palette_aa` read/wrote an uninitialized report -> intermittent
+  segfault in `test_a11y` — self-initialized the report (ASan-clean).
+- `doccmd` `first_section` returned `first_child(doc_root)` (the first
+  paragraph), so document inserts were mis-parented under a paragraph instead
+  of the section — now returns `doc_root` (the section) directly.
+- `doccmd` script resolver had the same `first_child` bug + only counted
+  direct section-children paragraphs; now counts paragraphs recursively, so
+  DOC-97 computed fields (`lines * 2`) resolve correctly.
+
+**Verification:** full `ctest` suite is green (incl. OCR gauntlet/trainer),
+all 6 module unit tests pass, build is clean under `-Wall -Wextra -Wpedantic`.
