@@ -16,6 +16,8 @@ struct WubuSettings {
     int    autosave_ms;
     char   language[8];
     int    font_size;
+    int    word_wrap;         /* UI-26: soft word-wrap (1 on) */
+    int    tab_width;         /* editor tab stop in spaces (1..16) */
     int    high_contrast;
     int    reduced_motion;   /* DOC-43: disable animations/transitions */
     double ui_scale;          /* DOC-45: UI chrome scale, independent of doc zoom */
@@ -33,6 +35,8 @@ WubuSettings *wubusettings_create(void){
     s->autosave_ms = 5000;
     s->language[0] = 'e'; s->language[1] = 'n'; s->language[2] = '\0';
     s->font_size   = 16;
+    s->word_wrap  = 1;   /* UI-26: wrap on by default */
+    s->tab_width  = 4;   /* classic editor default */
     s->high_contrast = 0;
     s->reduced_motion = 0;
     s->ui_scale = 1.0;
@@ -93,6 +97,8 @@ int wubusettings_load(WubuSettings *s, const char *path){
             const char *l = j_as_str(v); strncpy(s->language, l, sizeof s->language-1); s->language[sizeof s->language-1]='\0';
         }
         if ((v = j_obj_get(root,"font_size")) && j_type(v)==J_NUM) s->font_size = (int)j_as_num(v);
+        if ((v = j_obj_get(root,"word_wrap")) && j_type(v)==J_NUM) s->word_wrap = j_as_num(v)!=0;
+        if ((v = j_obj_get(root,"tab_width")) && j_type(v)==J_NUM){ int tw=(int)j_as_num(v); if(tw<1)tw=1; if(tw>16)tw=16; s->tab_width=tw; }
         if ((v = j_obj_get(root,"high_contrast")) && j_type(v)==J_NUM) s->high_contrast = j_as_num(v)!=0;
         if ((v = j_obj_get(root,"reduced_motion")) && j_type(v)==J_NUM) s->reduced_motion = j_as_num(v)!=0;
         if ((v = j_obj_get(root,"ui_scale")) && j_type(v)==J_NUM){ double us=j_as_num(v); if(us<0.5)us=0.5; if(us>3.0)us=3.0; s->ui_scale=us; }
@@ -127,6 +133,8 @@ int wubusettings_save(const WubuSettings *s, const char *path){
     j_obj_put(root, "autosave_ms", j_num((double)s->autosave_ms));
     j_obj_put(root, "language", j_str(s->language));
     j_obj_put(root, "font_size", j_num((double)s->font_size));
+    j_obj_put(root, "word_wrap", j_num((double)s->word_wrap));
+    j_obj_put(root, "tab_width", j_num((double)s->tab_width));
     j_obj_put(root, "high_contrast", j_num((double)s->high_contrast));
     j_obj_put(root, "reduced_motion", j_num((double)s->reduced_motion));
     j_obj_put(root, "ui_scale", j_num(s->ui_scale));
@@ -170,6 +178,11 @@ void wubusettings_set_language(WubuSettings *s, const char *lang){
 }
 int  wubusettings_font_size(const WubuSettings *s){ return s ? s->font_size : 16; }
 void wubusettings_set_font_size(WubuSettings *s, int px){ if (s){ if(px<8)px=8; if(px>48)px=48; s->font_size=px; } }
+
+int  wubusettings_word_wrap(const WubuSettings *s){ return s ? s->word_wrap : 1; }
+void wubusettings_set_word_wrap(WubuSettings *s, int on){ if (s) s->word_wrap = on?1:0; }
+int  wubusettings_tab_width(const WubuSettings *s){ return s ? s->tab_width : 4; }
+void wubusettings_set_tab_width(WubuSettings *s, int w){ if (s){ if(w<1)w=1; if(w>16)w=16; s->tab_width=w; } }
 
 int  wubusettings_high_contrast(const WubuSettings *s){ return s ? s->high_contrast : 0; }
 void wubusettings_set_high_contrast(WubuSettings *s, int on){ if (s) s->high_contrast = on?1:0; }

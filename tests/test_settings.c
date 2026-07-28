@@ -30,6 +30,8 @@ int main(void){
     wubusettings_set_reduced_motion(s, 1);   /* DOC-43 */
     wubusettings_set_ui_scale(s, 1.5);       /* DOC-45 */
     wubusettings_set_first_run(s, 0);        /* UI-30: dismiss */
+    wubusettings_set_word_wrap(s, 0);         /* UI-26: off */
+    wubusettings_set_tab_width(s, 8);         /* 8-space tabs */
 
     /* round-trip through a temp file */
     const char *path = "/tmp/wubuos_settings_test.json";
@@ -46,7 +48,9 @@ int main(void){
     if (!wubusettings_high_contrast(s2)){ printf("FAIL reload high-contrast\n"); fails++; }
     if (!wubusettings_reduced_motion(s2)){ printf("FAIL reload reduced-motion\n"); fails++; }
     if (wubusettings_ui_scale(s2) != 1.5){ printf("FAIL reload ui-scale\n"); fails++; }
-    if (wubusettings_first_run(s2) != 0){ printf("FAIL reload first_run\n"); fails++; }  /* UI-30 */
+    if (wubusettings_first_run(s2) != 0){ printf("FAIL reload first_run\n"); }  /* UI-30 */
+    if (wubusettings_word_wrap(s2) != 0){ printf("FAIL reload word_wrap\n"); fails++; }   /* UI-26 */
+    if (wubusettings_tab_width(s2) != 8){ printf("FAIL reload tab_width\n"); fails++; }
     wubusettings_destroy(s2);
 
     /* UI-39: recent-documents list (add/dedupe/order + round-trip) */

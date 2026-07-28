@@ -62,21 +62,18 @@ Real engine surface (surveyed, not guessed):
       frames (5s min gap), flushes+clears on save, and on reopen offers+applies
       crash recovery (splices the recovered text into the buffer). Headless
       `test_view` verifies recovery round-trips into the editor.
-- [ ] Unified launcher `wubuoffice` → boots `wubuos` (cosmetic name alias).
-- [ ] Settings dialog (font size, tab width, word-wrap, EOL view) — currently
-      engine-supported, no dialog UI yet.
-- [ ] Live word-wrap toggle.
+- [x] Unified launcher `wubuoffice` → boots `wubuos` (cosmetic name alias, real binary in apps/wubuoffice, installed beside wubuos via RUNTIME_OUTPUT_DIRECTORY; resolves the sibling and execv's it).
+- [x] Settings dialog (font size, tab width, word-wrap, EOL view) — `wubusettings` gained `word_wrap` + `tab_width` (persisted to JSON); the Settings view shows + toggles them (`w` wrap, `i` tab-width, persisted on every change).
+- [x] Live word-wrap toggle — the Editor render now soft-wraps token spans at the right margin (UI-26); Tab advance respects the settings tab-width. Verified: both the editor and launcher boot clean under xvfb (RC=124) with no segfault.
 
-> Cross-repo P0 cluster still open (next frontier, see `RESEARCH_GAPS_100.md`):
-> `wubuspell` live red-squiggle, `wubuchart` insert-chart, `wubudraw`/`wubumath`
-> insert shape/equation, `wubuepub` export, `wubua11y` check, `wubuscript`
-> computed fields. OCR/autosave are now GUI-wired.
-
-> See `GAPS_NOTEPAD.md` (WuBuPad) for the authoritative Notepad++ closure list
-> and `RESEARCH_GAPS_100.md` for the remaining 100-gap product backlog (the
-> "engines built but not linked by any app" P0 cluster is the next frontier:
-> `wubuautosave`, `wubuspell`, `wubuchart`, `wubudraw`/`wubumath`, `wubuepub`,
-> `wubua11y`, `wubuscript`).
+> Engine-linkage status (accurate as of this steamroll):
+> - OCR, autosave (INT-2), spell (INT-8), chart/draw/math, EPUB export,
+>   a11y check, and script fields are ALL wired into the unified shell
+>   (Document view + Editor view) and exercised by `test_view`.
+> - The remaining frontier is FIDELITY inside each engine (not linkage):
+>   chart types/merged cells/RTL in the office formats, more lexers, deeper
+>   a11y/red-squiggle dictionaries, EPUB/ODF round-trip completeness.
+>   These are incremental-fidelity work, tracked in `RESEARCH_GAPS_100.md`.
 
 ## Office-format fidelity (the "100 gaps" long tail)
 Per engine, every open + save path:

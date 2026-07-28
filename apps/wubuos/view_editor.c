@@ -24,6 +24,7 @@
 #include "docs.h"   /* WuBuPad multi-document session (DONE engine) */
 #include "autosave.h" /* wubuautosave: crash-recovery (INT-2 P0) */
 #include "spell.h"    /* wubuspell: live red-squiggle (INT-8 P0) */
+#include "settings.h" /* wubusettings: live word-wrap + tab-width (UI-26) */
 
 #include <stdlib.h>
 #include <string.h>
@@ -404,33 +405,52 @@ static int render(WuView *v, int w, int h, int scroll,
             }
         }
 
-        /* syntax highlight: lex the line, paint each span */
+        /* syntax highlight + live word-wrap (UI-26): paint token spans,
+         * wrapping at the right margin on word boundaries. */
         size_t nsp = 0;
         if (e->lex && le > line_start)
             nsp = lex_run(e->lex, text+line_start, le-line_start, spans, 256);
         size_t sp = 0;
         size_t col = line_start;
+        int x = gutter+6;
+        int margin = w - 4;          /* right edge for wrap */
+        int wrap = wubusettings_word_wrap(wubusettings_shared());
         while (col < le){
             LexTok k = TK_TEXT;
             size_t seg_end = le;
             if (sp < nsp){ k = spans[sp].kind; seg_end = line_start + spans[sp].end; sp++; }
             unsigned char cr,cg,cb; tok_color(k, &cr,&cg,&cb);
-            /* draw this token span */
-            char seg[512]; size_t sl=0;
-            for (size_t q=col; q<seg_end && sl<511; q++){ seg[sl++]=text[q]; }
-            seg[sl]=0;
-            wuos_font_draw(seg, gutter+6, y+fh, 0, cr,cg,cb, fb, w, H);
-            col = seg_end;
+            /* emit this span, breaking when it would cross the margin */
+            while (col < seg_end){
+                /* find end of current word (whitespace-delimited) */
+                size_t wend = col;
+                while (wend < seg_end && text[wend]!=' ' && text[wend]!='\t') wend++;
+                if (wend < seg_end) wend++;   /* include the break char */
+                char seg[512]; size_t sl=0;
+                for (size_t q=col; q<wend && sl<511; q++) seg[sl++]=text[q];
+                seg[sl]=0;
+                int adv = wuos_font_draw(seg, 0,0, 0, 0,0,0, NULL,0,0);
+                if (wrap && x+adv > margin && x > gutter+6){
+                    y += lh; x = gutter+6;   /* soft-wrap to next row */
+                    if (y >= H - lh) { col = le; break; }
+                }
+                wuos_font_draw(seg, x, y+fh, 0, cr,cg,cb, fb, w, H);
+                x += adv;
+                col = wend;
+            }
         }
-
-        /* caret */
-        if ((int)line == e->caret_line && (e->frames/30)%2==0){
-            int cx = gutter + 6;
-            char pre[256]; size_t pl=0;
+        x = gutter+6;                    /* reset for caret measure */
+        int caret_x = gutter+6;
+        {   char pre[256]; size_t pl=0;
             size_t cp = line_start;
             while (cp < le && pl<255){ pre[pl++]=text[cp]; if (cp==caret) break; cp++; }
             pre[pl]=0;
-            cx += wuos_font_draw(pre, gutter+6, y+fh, 0, 0,0,0, NULL, 0, 0); /* measure */
+            caret_x += wuos_font_draw(pre, 0,0, 0, 0,0,0, NULL,0,0);
+        }
+
+        /* caret: use the wrap-aware measured position (caret_x) */
+        if ((int)line == e->caret_line && (e->frames/30)%2==0){
+            int cx = caret_x;
             for (int yy=y; yy<y+lh-2; yy++) for (int xx=cx; xx<cx+2; xx++){
                 if (xx>=0&&yy>=0&&xx<w&&yy<H){ size_t i=((size_t)yy*w+xx)*4; fb[i]=20;fb[i+1]=20;fb[i+2]=20; }
             }
@@ -445,7 +465,8 @@ static int render(WuView *v, int w, int h, int scroll,
             int lo = e->sel_l0, hi = e->sel_l1, c0 = e->sel_c0, c1 = e->sel_c1;
             if (c1 < c0){ int t=c0; c0=c1; c1=t; }
             if ((int)line-1 >= lo && (int)line-1 <= hi){
-                int x0 = gutter + c0*9, x1 = gutter + c1*9;
+                int tw = wubusettings_tab_width(wubusettings_shared())*9;
+                int x0 = gutter + c0*tw, x1 = gutter + c1*tw;
                 for (int yy=y; yy<y+lh; yy++) for (int xx=x0; xx<x1 && xx<w; xx++){
                     if (xx>=0&&yy>=0){ size_t i=((size_t)yy*w+xx)*4;
                         fb[i]=(fb[i]+60)>>1; fb[i+1]=(fb[i+1]+120)>>1; fb[i+2]=(fb[i+2]+180)>>1; }
@@ -493,7 +514,7 @@ static int render(WuView *v, int w, int h, int scroll,
             }
             if (c=='\n'){ ln++; x = gutter+6; }
             else if (c!='\t'){ x += wuos_font_draw(&c, 0, 0, 0, 0,0,0, NULL,0,0); }
-            else { x += 4*9; }
+            else { x += wubusettings_tab_width(wubusettings_shared())*9; }
         }
     }
     free(text);

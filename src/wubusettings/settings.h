@@ -37,6 +37,13 @@ void   wubusettings_set_language(WubuSettings *s, const char *lang);
 int    wubusettings_font_size(const WubuSettings *s);       /* px */
 void   wubusettings_set_font_size(WubuSettings *s, int px);
 
+/* UI-26: soft word-wrap toggle (1 on) + editor tab-width in spaces.
+ * Consumed by the Editor + Document views so the preference is live. */
+int    wubusettings_word_wrap(const WubuSettings *s);     /* 1 = wrap */
+void   wubusettings_set_word_wrap(WubuSettings *s, int on);
+int    wubusettings_tab_width(const WubuSettings *s);     /* spaces, 1..16 */
+void   wubusettings_set_tab_width(WubuSettings *s, int w);
+
 /* UXA-41: high-contrast mode (maximally distinct fg/bg, WCAG-style). 1 on. */
 int    wubusettings_high_contrast(const WubuSettings *s);
 void   wubusettings_set_high_contrast(WubuSettings *s, int on);
