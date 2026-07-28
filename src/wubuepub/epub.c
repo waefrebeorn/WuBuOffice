@@ -30,11 +30,15 @@ static void emit_inline(Buf *s, const wubumodel_node *para){
             const char *t = wubumodel_run_text(c);
             if (t) wububase_xml_escape(s, t);
         } else if (k == WUBUMODEL_LINK){
-            wubumodel_style *ls = wubumodel_node_style(c);
-            const char *href = ls ? wubumodel_style_get_prop(ls, "href") : NULL;
-            const char *lt   = ls ? wubumodel_style_get_prop(ls, "text") : NULL;
+            const char *href = wubumodel_node_link(c);   /* canonical target */
             wububase_buf_printf(s, "<a href=\"%s\">", href?href:"#");
-            if (lt) wububase_xml_escape(s, lt);
+            /* visible text = the link node's own RUN children */
+            for (wubumodel_node *t = wubumodel_node_first_child(c); t;
+                 t = wubumodel_node_next_sibling(t))
+                if (wubumodel_node_kind(t) == WUBUMODEL_RUN) {
+                    const char *rt = wubumodel_run_text(t);
+                    if (rt) wububase_xml_escape(s, rt);
+                }
             wububase_buf_add(s, "</a>");
         }
     }
@@ -43,20 +47,12 @@ static void emit_inline(Buf *s, const wubumodel_node *para){
 static void emit_block(Buf *s, const wubumodel_node *n, int *chap_idx){
     wubumodel_kind k = wubumodel_node_kind(n);
     if (k == WUBUMODEL_SECTION){
-        /* a section starts a new chapter */
-        (*chap_idx)++;
-        Buf chap; wububase_buf_init(&chap);
-        wububase_buf_printf(&chap, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-                       "<!DOCTYPE html>\n"
-                       "<html xmlns=\"http://www.w3.org/1999/xhtml\" "
-                       "xmlns:epub=\"http://www.idpf.org/2007/ops\">\n"
-                       "<head><title>Chapter %d</title></head>\n<body>\n", *chap_idx);
-        for (wubumodel_node *c = wubumodel_node_first_child(n); c; c = wubumodel_node_next_sibling(c))
-            emit_block(&chap, c, chap_idx);
-        wububase_buf_add(&chap, "</body>\n</html>\n");
-        /* caller assembles chapters list; here we emit inline into s (single doc) */
-        wububase_buf_add(s, wububase_buf_str(&chap));
-        wububase_buf_free(&chap);
+        /* The outer <html>/<body> shell is emitted by epub_write().
+         * A section is just a logical grouping: emit its block children
+         * (<hN>/<p>/<table>) directly into the shared body. */
+        for (wubumodel_node *c = wubumodel_node_first_child(n); c;
+             c = wubumodel_node_next_sibling(c))
+            emit_block(s, c, chap_idx);
     } else if (k == WUBUMODEL_PARAGRAPH){
         int lvl = heading_level(n);
         if (lvl){

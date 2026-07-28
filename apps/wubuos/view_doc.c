@@ -573,6 +573,7 @@ WuView *wuos_doc_create(const char *path){
             int is_docx = (strstr(path,".docx")||strstr(path,".docm")||strstr(path,".dotx"));
             int is_odt  = (strstr(path,".odt")||strstr(path,".fodt"));
             int is_rtf  = (strstr(path,".rtf"));
+            int is_epub = (strstr(path,".epub")||strstr(path,".epub3"));
             if (is_docx){
                 wubumodel_doc *md = NULL;
                 if (wubumodel_load_docx(path, &md) == 0 && md) e->doc = md;
@@ -582,6 +583,9 @@ WuView *wuos_doc_create(const char *path){
             } else if (is_rtf){
                 wubumodel_doc *md = NULL;
                 if (wubumodel_load_rtf(path, &md) == 0 && md) e->doc = md;
+            } else if (is_epub){
+                wubumodel_doc *md = NULL;
+                if (wubumodel_load_epub(path, &md) == 0 && md) e->doc = md;
             }
         }
         if (!e->doc){

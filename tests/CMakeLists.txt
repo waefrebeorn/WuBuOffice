@@ -45,6 +45,10 @@ add_executable(test_epub test_epub.c)
 target_link_libraries(test_epub PRIVATE wubuepub)
 add_test(NAME epub COMMAND test_epub)
 
+add_executable(test_epub_model_roundtrip test_epub_model_roundtrip.c)
+target_link_libraries(test_epub_model_roundtrip PRIVATE wubuepub wubumodel)
+add_test(NAME epub_model_roundtrip COMMAND test_epub_model_roundtrip)
+
 add_executable(test_a11y test_a11y.c)
 target_link_libraries(test_a11y PRIVATE wubua11y)
 add_test(NAME a11y COMMAND test_a11y)
