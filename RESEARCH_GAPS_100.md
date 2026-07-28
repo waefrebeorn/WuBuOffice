@@ -229,10 +229,11 @@ independently unit-tested (headless, no SDL):
 | Bookmarks | `bkmk.h/.c` | sorted line set + jump next/prev | `test_bkmk` |
 | Code folding + function list | `codefold.h/.c` | per-line hidden flags + sym-panel toggle | `test_codefold` |
 | Document commands | `doccmd.h/.c` | 15 insert commands + epub/save/a11y/script | `test_doccmd` |
+| Macro record/play | `macro.h/.c` | global op buffer + record/playback | `test_macro` |
 
-`view_editor.c` is now ~1129 lines of cohesive core editing (scroller,
-cursor, selection, macros, autosave, spell, session) — the extracted seams
-were the only arbitrary-state clusters. `view_doc.c` is ~662 lines (render
+`view_editor.c` is now ~1130 lines of cohesive core editing (scroller,
+cursor, selection, autosave, spell, session, find-panel UI) — the extracted
+seams were the only arbitrary-state clusters. `view_doc.c` is ~662 lines (render
 chrome + model binding only). Shared helpers (`palette`, `toasts`, `settings`,
 `toc`, `script`) are already independent modules.
 

@@ -43,8 +43,12 @@ typedef struct {
     int   blink;      /* caret phase */
     int   frames;     /* for blink timing */
 
-    /* ---- find / replace (Phase B): delegated to the opaque FindBar engine ---- */
-    FindBar *fb;       /* owns all find/replace state (see findbar.h) */
+    /* ---- find / replace ----
+     * Search engine state (query/replace/matches/regex) lives in the opaque
+     * FindBar (findbar.h); the editor keeps only its own panel UI state:
+     * which panel is open (find_mode), which field is focused (find_focus),
+     * and the transient message timer (find_msg_t). */
+    FindBar *fb;       /* opaque search engine (see findbar.h) */
     int   find_mode;  /* 0 none, 1 find, 2 replace */
     int   find_focus; /* in replace mode: 0=find field, 1=replace field */
     int   find_msg_t; /* frames remaining to show msg */
