@@ -1,0 +1,2 @@
+/usr/bin/ar qc libwubutoc.a CMakeFiles/wubutoc.dir/toc.c.o
+/usr/bin/ranlib libwubutoc.a

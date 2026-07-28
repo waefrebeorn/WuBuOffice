@@ -1,0 +1,1 @@
+/usr/bin/cc -fsanitize=address,undefined -g -g -fsanitize=address,undefined -fno-sanitize-recover=all CMakeFiles/test_gru_gpu.dir/test_gru_gpu.c.o CMakeFiles/test_gru_gpu.dir/__/src/gpu/gru_gpu.c.o CMakeFiles/test_gru_gpu.dir/__/src/wubuocr/gru_layout.c.o -o test_gru_gpu  ../src/gpu/libgpublas.a -lm 

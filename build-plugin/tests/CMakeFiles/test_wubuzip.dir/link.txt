@@ -1,0 +1,1 @@
+/usr/bin/cc -O3 -DNDEBUG CMakeFiles/test_wubuzip.dir/test_wubuzip.c.o -o test_wubuzip  ../src/wubuzip/libwubuzip.a 

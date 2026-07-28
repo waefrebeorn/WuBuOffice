@@ -1,0 +1,2 @@
+/usr/bin/ar qc libwubuchart.a CMakeFiles/wubuchart.dir/chart.c.o
+/usr/bin/ranlib libwubuchart.a

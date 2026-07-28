@@ -1,0 +1,1 @@
+/usr/bin/cc -fsanitize=address,undefined -g -g -fsanitize=address,undefined -fno-sanitize-recover=all CMakeFiles/gradcheck_inorm.dir/__/tests/gradcheck_inorm.c.o CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/convnet3.c.o CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/mlp.c.o -o gradcheck_inorm  -lm 

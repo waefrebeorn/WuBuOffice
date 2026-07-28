@@ -1,0 +1,1 @@
+/usr/bin/cc -fsanitize=address,undefined -g -g -fsanitize=address,undefined -fno-sanitize-recover=all CMakeFiles/test_wubuview_ctrl.dir/test_wubuview_ctrl.c.o CMakeFiles/test_wubuview_ctrl.dir/__/apps/wubuview/controller.c.o -o test_wubuview_ctrl  ../src/wubutui/libwubutui.a 

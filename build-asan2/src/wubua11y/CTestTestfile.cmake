@@ -1,0 +1,6 @@
+# CMake generated Testfile for 
+# Source directory: /home/wubu/WuBuOffice/src/wubua11y
+# Build directory: /home/wubu/WuBuOffice/build-asan2/src/wubua11y
+# 
+# This file includes the relevant testing commands required for 
+# testing this directory and lists subdirectories to be tested as well.

@@ -1,0 +1,2 @@
+# Empty dependencies file for crnn_img_train.
+# This may be replaced when dependencies are built.

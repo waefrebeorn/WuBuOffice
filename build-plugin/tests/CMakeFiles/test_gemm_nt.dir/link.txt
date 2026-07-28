@@ -1,0 +1,1 @@
+/usr/bin/cc -O3 -DNDEBUG CMakeFiles/test_gemm_nt.dir/test_gemm_nt.c.o -o test_gemm_nt  ../src/gpu/libgpublas.a -lm 

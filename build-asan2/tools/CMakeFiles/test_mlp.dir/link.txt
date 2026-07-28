@@ -1,0 +1,1 @@
+/usr/bin/cc -fsanitize=address,undefined -g -g -fsanitize=address,undefined -fno-sanitize-recover=all CMakeFiles/test_mlp.dir/__/tests/test_mlp.c.o CMakeFiles/test_mlp.dir/__/src/wubuocr/mlp.c.o -o test_mlp  -lm 

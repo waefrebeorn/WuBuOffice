@@ -1,0 +1,1 @@
+/usr/bin/cc -fsanitize=address,undefined -g -g -fsanitize=address,undefined -fno-sanitize-recover=all CMakeFiles/test_wubupad_bridge.dir/test_wubupad_bridge.c.o -o test_wubupad_bridge  libwubupad_bridge.a /home/wubu/WuBuPad/build/libwubupad_ui.a /home/wubu/WuBuPad/build/libwubupad_core.a 

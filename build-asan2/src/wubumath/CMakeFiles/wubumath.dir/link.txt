@@ -1,0 +1,2 @@
+/usr/bin/ar qc libwubumath.a CMakeFiles/wubumath.dir/math.c.o
+/usr/bin/ranlib libwubumath.a

@@ -1,0 +1,1 @@
+/usr/bin/cc -fsanitize=address,undefined -g -g -fsanitize=address,undefined -fno-sanitize-recover=all CMakeFiles/wubufont_cli.dir/main.c.o -o wubufont_cli  ../../src/wubufont/libwubufont.a ../../src/wubuzip/libwubuzip.a 

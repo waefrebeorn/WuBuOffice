@@ -1,0 +1,1 @@
+/usr/bin/cc -O3 -DNDEBUG CMakeFiles/test_load_async.dir/test_load_async.c.o -o test_load_async  ../src/wubumodel/libwubumodel.a ../src/wubuoxml/libwubuoxml.a ../src/wubuzip/libwubuzip.a -lpthread 

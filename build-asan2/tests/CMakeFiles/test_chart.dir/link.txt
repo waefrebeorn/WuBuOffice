@@ -1,0 +1,1 @@
+/usr/bin/cc -fsanitize=address,undefined -g -g -fsanitize=address,undefined -fno-sanitize-recover=all CMakeFiles/test_chart.dir/test_chart.c.o -o test_chart  ../src/wubuchart/libwubuchart.a ../src/wubusvg/libwubusvg.a ../src/wubuxml/libwubuxml.a ../src/wubujson/libwubujson.a ../src/wubuformula/libwubuformula.a ../src/wububase/libwububase.a -lm 

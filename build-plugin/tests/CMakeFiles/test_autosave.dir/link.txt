@@ -1,0 +1,1 @@
+/usr/bin/cc -O3 -DNDEBUG CMakeFiles/test_autosave.dir/test_autosave.c.o -o test_autosave  ../src/wubuautosave/libwubuautosave.a ../src/wubumodel/libwubumodel.a ../src/wubuoxml/libwubuoxml.a ../src/wubuzip/libwubuzip.a -lpthread 

@@ -1,0 +1,1 @@
+/usr/bin/cc -O3 -DNDEBUG CMakeFiles/test_zoning.dir/__/tests/test_zoning.c.o CMakeFiles/test_zoning.dir/__/src/wubuocr/zoning.c.o -o test_zoning 

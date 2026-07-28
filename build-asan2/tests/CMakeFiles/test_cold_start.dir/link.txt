@@ -1,0 +1,1 @@
+/usr/bin/cc -fsanitize=address,undefined -g -g -fsanitize=address,undefined -fno-sanitize-recover=all CMakeFiles/test_cold_start.dir/test_cold_start.c.o -o test_cold_start  ../src/wubumodel/libwubumodel.a ../src/wubuoxml/libwubuoxml.a ../src/wubuzip/libwubuzip.a -lpthread 

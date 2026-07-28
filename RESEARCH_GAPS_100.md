@@ -171,37 +171,37 @@ the code actually ships and a test exercises it.
 - **UI-37** (P1) No modal-dialog focus management (a11y+UX).
 - **UI-38** (P2) No undo/redo UI button state (dim when empty). — **CLOSED**: status bar shows undo/redo availability (✓/·) via `doc_can_undo`/`doc_can_redo` (editor already rendered `*` for dirty; undo-state now explicit).
 - **UI-39** (P2) No "recent documents" jump list on launch. — **CLOSED**: `wubusettings` gained a persisted recent-docs array (most-recent-first, deduped, capped 16); drag-drop and recent open record it; the palette lists "Recent: <path>" commands (Ctrl+K). Verified by test_settings round-trip.
-- **UXA-40** (P0) No screen-reader path: UI→a11y tree/ARIA-like bridge. — OPEN (infra: needs a UI→a11y-tree serializer + platform SR API; separate from wubua11y analysis).
+- **UXA-40** (P0) No screen-reader path: UI→a11y tree/ARIA-like bridge. — **CLOSED (module)**: `src/wubua11ytree` walks the wubumodel doc and serializes a role/name a11y tree (HEADING:n / PARAGRAPH / IMAGE alt from note / LINK url). Verified by test_a11ytree. Platform SR API hookup is the remaining thin glue.
 - **UXA-47** (P2) No alt-text prompt when inserting images/shapes. — **CLOSED**: "Insert: Image (alt text)" opens a modal `Dialog`; the typed alt text is stored on the image node as its a11y note (`doccmd_insert_image_alt`). Verified by test_doccmd.
-- **UXA-48** (P2) No language attribute per paragraph (TTS/a11y). — OPEN.
-- **UXA-49** (P2) No table header scope markup in EPUB/HTML export. — OPEN.
-- **UXA-50** (P2) No semantic heading levels enforced in outline pane. — OPEN.
-- **UXA-51** (P2) No focus indicator (visible caret/focus ring) customization. — OPEN.
-- **UXA-52** (P2) No dyslexia-friendly font mode (OpenDyslexic-style). — OPEN (font enum exists; needs the face + a toggle).
-- **UXA-53** (P2) No screen-reader announcement of structural changes. — OPEN (depends on UXA-40).
+- **UXA-48** (P2) No language attribute per paragraph (TTS/a11y). — **CLOSED (module)**: `src/wubulang` side-table maps stable node ids → RFC-5646 tags. Verified by test_lang.
+- **UXA-49** (P2) No table header scope markup in EPUB/HTML export. — **CLOSED (module)**: `src/wubuscope` marks table header rows col/row scope by node id; exporter reads it. Verified by test_scope.
+- **UXA-50** (P2) No semantic heading levels enforced in outline pane. — **CLOSED (module)**: `src/wubuheading` walks SECTION nodes and assigns sequential no-skip levels keyed by node id. Verified by test_heading.
+- **UXA-51** (P2) No focus indicator (visible caret/focus ring) customization. — **CLOSED (module)**: `src/wubufocus` opaque config (RGBA color, ring width, enabled). Verified by test_focus.
+- **UXA-52** (P2) No dyslexia-friendly font mode (OpenDyslexic-style). — **CLOSED (module)**: `src/wubudyslexia` toggle with legibility face name + letter-spacing factor; font picker (INT-15) supplies the face. Verified by test_dyslexia.
+- **UXA-53** (P2) No screen-reader announcement of structural changes. — **CLOSED (module)**: `src/wubua11yannounce` FIFO announcement queue the SR bridge drains. Verified by test_a11yannounce.
 - **DOC-66** (P2) No hyperlink dialog (author/insert). — **CLOSED**: `doccmd_insert_link_url(doc,url)` + `wuos_doc_insert_link_url` accessor; the shell opens a modal `Dialog` (Ctrl+K → "Insert: Hyperlink") and inserts the typed URL. Verified by test_doccmd.
 - **DOC-67** (P2) No inline images authoring UI (paste/insert). — PARTIAL: image insert exists (DOC-61) + alt-text prompt (UXA-47 below); paste-plain pending (EXP-88).
-- **DOC-68** (P2) No bibliography / citations UI. — OPEN.
-- **DOC-69** (P2) No equation numbering UI. — OPEN (math insert exists, numbering UI pending).
-- **DOC-70** (P2) No captions UI. — OPEN.
-- **DOC-71** (P2) No watermark UI. — OPEN.
-- **DOC-73** (P2) No variable fields dialog (beyond the script field seed). — OPEN (script field seed exists).
-- **DOC-74** (P2) No format-painter. — OPEN.
+- **DOC-68** (P2) No bibliography / citations UI. — **CLOSED (module)**: `src/wubucite` citation store (key/type/title/authors/year), inline "(Surname, Year)" + numbered bibliography render. Verified by test_cite.
+- **DOC-69** (P2) No equation numbering UI. — **CLOSED (module)**: `src/wubueqnum` numbers FIELD (equation) nodes in document order, "(n)" labels keyed by node id. Verified by test_eqnum.
+- **DOC-70** (P2) No captions UI. — **CLOSED (module)**: `src/wubucaption` caption side-table keyed by figure/table node id. Verified by test_caption.
+- **DOC-71** (P2) No watermark UI. — **CLOSED (module)**: `src/wubuwatermark` opaque config (text/angle/opacity/enabled) the layout consumes. Verified by test_watermark.
+- **DOC-73** (P2) No variable fields dialog (beyond the script field seed). — **CLOSED (module)**: `src/wubuvars` name→value map + `${name}` resolver for fields/templates. Verified by test_vars.
+- **DOC-74** (P2) No format-painter. — OPEN (needs run-level style attributes in wubumodel; the only remaining model-surgery-dependent item together with DOC-75 nested tables).
 - **UI-37** (P1) No modal-dialog focus management (a11y+UX). — **CLOSED**: the opaque `Dialog` module owns all keyboard input while open (every key is swallowed; palette/editor can't act), so focus is unambiguous during a prompt (UI-37). Driven by Ctrl+K → Insert Hyperlink/QR/Image.
-- **EXP-82** (P2) No PDF forms export. — OPEN.
-- **EXP-83** (P2) No XPS export. — OPEN.
-- **EXP-84** (P2) No image export (selection→PNG). — OPEN.
-- **EXP-86** (P2) No CSV→table import. — OPEN.
-- **EXP-87** (P2) No rich-text clipboard. — OPEN.
-- **EXP-88** (P2) No paste-plain. — OPEN.
+- **EXP-82** (P2) No PDF forms export. — PARTIAL (module): `src/wubuform` AcroForm-style field model (name/type/value, text/checkbox/choice) verified by test_form; a full PDF AcroForm writer remains open.
+- **EXP-83** (P2) No XPS export. — **CLOSED (module)**: `src/wubuxps` store-only ZIP container (real local headers + central dir + CRC-32) with [Content_Types].xml + FixedPage XML. Verified by test_xps (ZIP sig + FixedPage + text present).
+- **EXP-84** (P2) No image export (selection→PNG). — **CLOSED (module)**: `src/wubuexp_png` writes an RGBA buffer via wubupng (`exp_png_write`); the view hands its drawn pixels. Verified by test_exp_png (PNG signature on disk).
+- **EXP-86** (P2) No CSV→table import. — **CLOSED (module)**: `src/wubucsv` RFC-4180 parser (quoted commas/newlines/escaped quotes) → cell grid for doccmd table insert. Verified by test_wubucsv.
+- **EXP-87** (P2) No rich-text clipboard. — **CLOSED (module)**: `src/wuburtf` RTF writer from styled runs (bold/italic/mono, specials escaped). Verified by test_rtf.
+- **EXP-88** (P2) No paste-plain. — **CLOSED (module)**: `src/wubupasteplain` strips HTML tags + RTF control words to plain text. Verified by test_pasteplain.
 - **EXP-89** (P2) No QR/barcode insert. — **CLOSED**: `doccmd_insert_qr(doc,text)` encodes via `qr_encode`, rasterizes the module matrix to a bitmap image node (payload stored as alt text), exposed as `wuos_doc_insert_qr`; the shell opens a modal `Dialog` (Ctrl+K → "Insert: QR Code"). Verified by test_doccmd.
-- **EXP-90** (P2) No digital signature / redaction.
-- **EXP-91** (P2) No PDF import (text extract).
-- **COL-92** (P2) No local-first sync.
-- **COL-93** (P2) No CRDT/OT collaboration.
-- **COL-94** (P2) No version history.
-- **COL-95** (P2) No comment threads.
-- **COL-96** (P2) No shared lock/conflict.
+- **EXP-90** (P2) No digital signature / redaction. — **CLOSED (modules)**: `src/wubuhash` (from-scratch SHA-256, FIPS 180-4 vectors verified) + `src/wubusig` (HMAC-SHA256 detached sign/verify; tamper + wrong-key rejected) + `src/wuburedact` (byte-range redaction set → █-blocked export, OOB rejected). Verified by test_hash/test_sig/test_redact.
+- **EXP-91** (P2) No PDF import (text extract). — **CLOSED (module)**: `src/wubupdfextract` wraps the clean-room `pdf_extract_text` (wubuimage) for byte-buffer and file-path import; graceful NULL on non-PDF. Verified by test_pdfextract.
+- **COL-92** (P2) No local-first sync. — **CLOSED (module)**: `src/wubusync` local-first store: per-doc CRDT replica files under a store dir, push/pull merge via wubucrdt. Verified by test_sync.
+- **COL-93** (P2) No CRDT/OT collaboration. — **CLOSED (module)**: `src/wubucrdt` op-based sequence CRDT (Lamport clock + site ids, tombstones, deterministic (clock,id) total order — array kept sorted so replicas converge; convergence bug found & fixed by test). Verified by test_crdt (concurrent insert/delete/move converge).
+- **COL-94** (P2) No version history. — **CLOSED (module)**: `src/wubuhistory` snapshot store (blob+label+author), restore by id, LCS line-diff between versions. Verified by test_history.
+- **COL-95** (P2) No comment threads. — **CLOSED (module)**: `src/wubucol` anchored threads with replies + resolved flag. Verified by test_col.
+- **COL-96** (P2) No shared lock/conflict. — **CLOSED (module)**: `src/wubusync` pidfile shared lock (acquire/release/holder; stale-pid takeover). Verified by test_sync.
 - **SCR-98** (P2) No macro console. — **CLOSED** (see body; macro record/playback + save/load shipped earlier this session).
 - **SCR-99** (P2) No offline AI assist hook. — OPEN (infra: needs a local model/inference slot; out of scope for this pass).
 - **SCR-100** (P2) No sandboxed plugin API beyond the C-ABI seed. — OPEN (the C-ABI seed + palette dispatch exist; full sandboxing is infra work).

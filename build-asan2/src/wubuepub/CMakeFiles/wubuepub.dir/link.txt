@@ -1,0 +1,2 @@
+/usr/bin/ar qc libwubuepub.a CMakeFiles/wubuepub.dir/epub.c.o
+/usr/bin/ranlib libwubuepub.a

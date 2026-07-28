@@ -1,0 +1,1 @@
+/usr/bin/cc -O3 -DNDEBUG CMakeFiles/gradcheck_conv3.dir/gradcheck_conv3.c.o CMakeFiles/gradcheck_conv3.dir/__/src/wubuocr/convnet3.c.o CMakeFiles/gradcheck_conv3.dir/__/src/wubuocr/mlp.c.o -o gradcheck_conv3  -lm 

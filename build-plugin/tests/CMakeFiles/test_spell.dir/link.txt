@@ -1,0 +1,1 @@
+/usr/bin/cc -O3 -DNDEBUG CMakeFiles/test_spell.dir/test_spell.c.o -o test_spell  ../src/wubuspell/libwubuspell.a 

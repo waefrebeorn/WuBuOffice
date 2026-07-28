@@ -1,0 +1,2 @@
+/usr/bin/ar qc libwubupng.a CMakeFiles/wubupng.dir/wubupng.c.o
+/usr/bin/ranlib libwubupng.a

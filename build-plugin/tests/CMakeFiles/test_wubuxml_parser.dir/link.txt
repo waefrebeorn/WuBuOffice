@@ -1,0 +1,1 @@
+/usr/bin/cc -O3 -DNDEBUG CMakeFiles/test_wubuxml_parser.dir/test_wubuxml_parser.c.o -o test_wubuxml_parser  ../src/wubuoxml/libwubuoxml.a ../src/wubuzip/libwubuzip.a 

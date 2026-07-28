@@ -1,0 +1,1 @@
+/usr/bin/cc -fsanitize=address,undefined -g -g -fsanitize=address,undefined -fno-sanitize-recover=all CMakeFiles/test_wubuzip.dir/test_wubuzip.c.o -o test_wubuzip  ../src/wubuzip/libwubuzip.a 

@@ -1,0 +1,1 @@
+/usr/bin/cc -O3 -DNDEBUG CMakeFiles/test_convnet.dir/__/tests/test_convnet.c.o CMakeFiles/test_convnet.dir/__/src/wubuocr/convnet.c.o CMakeFiles/test_convnet.dir/__/src/wubuocr/mlp.c.o -o test_convnet  -lm 

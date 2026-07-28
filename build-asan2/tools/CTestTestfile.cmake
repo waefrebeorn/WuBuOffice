@@ -1,0 +1,36 @@
+# CMake generated Testfile for 
+# Source directory: /home/wubu/WuBuOffice/tools
+# Build directory: /home/wubu/WuBuOffice/build-asan2/tools
+# 
+# This file includes the relevant testing commands required for 
+# testing this directory and lists subdirectories to be tested as well.
+add_test(ctc_test "/home/wubu/WuBuOffice/build-asan2/tools/ctc_test")
+set_tests_properties(ctc_test PROPERTIES  _BACKTRACE_TRIPLES "/home/wubu/WuBuOffice/tools/CMakeLists.txt;8;add_test;/home/wubu/WuBuOffice/tools/CMakeLists.txt;0;")
+add_test(gru_test "/home/wubu/WuBuOffice/build-asan2/tools/gru_test")
+set_tests_properties(gru_test PROPERTIES  _BACKTRACE_TRIPLES "/home/wubu/WuBuOffice/tools/CMakeLists.txt;17;add_test;/home/wubu/WuBuOffice/tools/CMakeLists.txt;0;")
+add_test(ocl_gru "/home/wubu/WuBuOffice/build-asan2/tools/ocl_gru_test")
+set_tests_properties(ocl_gru PROPERTIES  _BACKTRACE_TRIPLES "/home/wubu/WuBuOffice/tools/CMakeLists.txt;23;add_test;/home/wubu/WuBuOffice/tools/CMakeLists.txt;0;")
+add_test(test_math "/home/wubu/WuBuOffice/build-asan2/tools/test_math")
+set_tests_properties(test_math PROPERTIES  _BACKTRACE_TRIPLES "/home/wubu/WuBuOffice/tools/CMakeLists.txt;29;add_test;/home/wubu/WuBuOffice/tools/CMakeLists.txt;0;")
+add_test(test_qr "/home/wubu/WuBuOffice/build-asan2/tools/test_qr")
+set_tests_properties(test_qr PROPERTIES  _BACKTRACE_TRIPLES "/home/wubu/WuBuOffice/tools/CMakeLists.txt;35;add_test;/home/wubu/WuBuOffice/tools/CMakeLists.txt;0;")
+add_test(rnn_test "/home/wubu/WuBuOffice/build-asan2/tools/rnn_test")
+set_tests_properties(rnn_test PROPERTIES  _BACKTRACE_TRIPLES "/home/wubu/WuBuOffice/tools/CMakeLists.txt;40;add_test;/home/wubu/WuBuOffice/tools/CMakeLists.txt;0;")
+add_test(gradcheck_conv3 "/home/wubu/WuBuOffice/build-asan2/tools/gradcheck_conv3")
+set_tests_properties(gradcheck_conv3 PROPERTIES  _BACKTRACE_TRIPLES "/home/wubu/WuBuOffice/tools/CMakeLists.txt;46;add_test;/home/wubu/WuBuOffice/tools/CMakeLists.txt;0;")
+add_test(zoning "/home/wubu/WuBuOffice/build-asan2/tools/test_zoning")
+set_tests_properties(zoning PROPERTIES  _BACKTRACE_TRIPLES "/home/wubu/WuBuOffice/tools/CMakeLists.txt;100;add_test;/home/wubu/WuBuOffice/tools/CMakeLists.txt;0;")
+add_test(mlp "/home/wubu/WuBuOffice/build-asan2/tools/test_mlp")
+set_tests_properties(mlp PROPERTIES  _BACKTRACE_TRIPLES "/home/wubu/WuBuOffice/tools/CMakeLists.txt;105;add_test;/home/wubu/WuBuOffice/tools/CMakeLists.txt;0;")
+add_test(convnet "/home/wubu/WuBuOffice/build-asan2/tools/test_convnet")
+set_tests_properties(convnet PROPERTIES  LABELS "ocr" _BACKTRACE_TRIPLES "/home/wubu/WuBuOffice/tools/CMakeLists.txt;112;add_test;/home/wubu/WuBuOffice/tools/CMakeLists.txt;0;")
+add_test(convnet3 "/home/wubu/WuBuOffice/build-asan2/tools/test_convnet3")
+set_tests_properties(convnet3 PROPERTIES  LABELS "ocr" _BACKTRACE_TRIPLES "/home/wubu/WuBuOffice/tools/CMakeLists.txt;119;add_test;/home/wubu/WuBuOffice/tools/CMakeLists.txt;0;")
+add_test(convnet3_im2col "/home/wubu/WuBuOffice/build-asan2/tools/test_convnet3_im2col")
+set_tests_properties(convnet3_im2col PROPERTIES  LABELS "ocr" _BACKTRACE_TRIPLES "/home/wubu/WuBuOffice/tools/CMakeLists.txt;130;add_test;/home/wubu/WuBuOffice/tools/CMakeLists.txt;0;")
+add_test(inorm_gradcheck "/home/wubu/WuBuOffice/build-asan2/tools/gradcheck_inorm")
+set_tests_properties(inorm_gradcheck PROPERTIES  _BACKTRACE_TRIPLES "/home/wubu/WuBuOffice/tools/CMakeLists.txt;138;add_test;/home/wubu/WuBuOffice/tools/CMakeLists.txt;0;")
+add_test(stylebank "/home/wubu/WuBuOffice/build-asan2/tools/test_stylebank")
+set_tests_properties(stylebank PROPERTIES  _BACKTRACE_TRIPLES "/home/wubu/WuBuOffice/tools/CMakeLists.txt;145;add_test;/home/wubu/WuBuOffice/tools/CMakeLists.txt;0;")
+add_test(emnist_train_conv3_smoke "/home/wubu/WuBuOffice/build-asan2/tools/emnist_train_conv3" "data/emnist" "128" "64" "2" "2000")
+set_tests_properties(emnist_train_conv3_smoke PROPERTIES  WORKING_DIRECTORY "/home/wubu/WuBuOffice" _BACKTRACE_TRIPLES "/home/wubu/WuBuOffice/tools/CMakeLists.txt;171;add_test;/home/wubu/WuBuOffice/tools/CMakeLists.txt;0;")

@@ -1,0 +1,1 @@
+/usr/bin/cc -O3 -DNDEBUG CMakeFiles/test_wubufont.dir/test_wubufont.c.o -o test_wubufont  ../src/wubufont/libwubufont.a ../src/wubuzip/libwubuzip.a 

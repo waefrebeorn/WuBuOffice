@@ -1,0 +1,1 @@
+/usr/bin/cc -O3 -DNDEBUG CMakeFiles/test_wubunote.dir/test_wubuedit.c.o -o test_wubunote  ../src/wubunote/libwubunote_core.a 

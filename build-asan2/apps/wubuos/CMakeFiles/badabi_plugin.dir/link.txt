@@ -1,0 +1,1 @@
+/usr/bin/cc -fPIC -fsanitize=address,undefined -g -g -fsanitize=address,undefined -fno-sanitize-recover=all -shared  -o plugins/badabi_plugin.so CMakeFiles/badabi_plugin.dir/plugins/badabi/badabi_plugin.c.o 

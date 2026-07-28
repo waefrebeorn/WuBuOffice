@@ -1,0 +1,1 @@
+/usr/bin/cc -fsanitize=address,undefined -g -g -fsanitize=address,undefined -fno-sanitize-recover=all CMakeFiles/test_wubuview.dir/test_wubuview.c.o CMakeFiles/test_wubuview.dir/__/apps/wubuview/docflat.c.o -o test_wubuview  ../src/wubujson/libwubujson.a 

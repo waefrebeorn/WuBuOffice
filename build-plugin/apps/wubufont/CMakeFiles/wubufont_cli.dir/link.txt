@@ -1,0 +1,1 @@
+/usr/bin/cc -O3 -DNDEBUG CMakeFiles/wubufont_cli.dir/main.c.o -o wubufont_cli  ../../src/wubufont/libwubufont.a ../../src/wubuzip/libwubuzip.a 

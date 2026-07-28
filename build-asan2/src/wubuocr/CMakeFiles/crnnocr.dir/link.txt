@@ -1,0 +1,2 @@
+/usr/bin/ar qc libcrnnocr.a CMakeFiles/crnnocr.dir/crnn.c.o CMakeFiles/crnnocr.dir/ctc.c.o CMakeFiles/crnnocr.dir/rnn.c.o CMakeFiles/crnnocr.dir/gru.c.o CMakeFiles/crnnocr.dir/ocl_gru.c.o CMakeFiles/crnnocr.dir/lexicon.c.o CMakeFiles/crnnocr.dir/lens.c.o CMakeFiles/crnnocr.dir/png.c.o CMakeFiles/crnnocr.dir/png_encode.c.o
+/usr/bin/ranlib libcrnnocr.a

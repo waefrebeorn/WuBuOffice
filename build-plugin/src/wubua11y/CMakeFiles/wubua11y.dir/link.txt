@@ -1,0 +1,2 @@
+/usr/bin/ar qc libwubua11y.a CMakeFiles/wubua11y.dir/a11y.c.o
+/usr/bin/ranlib libwubua11y.a

@@ -1,0 +1,2 @@
+/usr/bin/ar qc libwubuexp.a CMakeFiles/wubuexp.dir/exp.c.o
+/usr/bin/ranlib libwubuexp.a
