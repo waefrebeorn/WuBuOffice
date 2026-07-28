@@ -157,6 +157,11 @@ int wubumodel_write_odt(const wubumodel_doc *doc, const char *path);
  * the caller) or -1 on error (*out is NULL). No external deps. */
 int wubumodel_load_odt(const char *path, wubumodel_doc **out);
 
+/* Load an .rtf (Rich Text Format) file into the model (DOC-79 import half).
+ * Builds a SECTION->PARAGRAPH->RUN tree from the control-word stream. Returns
+ * 0 ok (ownership of *out passes to caller) or -1 on error (*out is NULL). */
+int wubumodel_load_rtf(const char *path, wubumodel_doc **out);
+
 #ifdef __cplusplus
 }
 #endif

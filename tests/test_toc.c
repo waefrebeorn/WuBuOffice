@@ -422,6 +422,40 @@ int main(void){
             wubumodel_doc_destroy(back);
             unlink(tmp);
         }
+        /* DOC-79 (import half): RTF import builds a real model. */
+        {
+            const char *rtf =
+                "{\\rtf1\\ansi\\deff0{\\fonttbl{\\f0\\fnil Helvetica;}}\n"
+                "\\viewkind4\\uc1\\pard\\f0\\fs20\n"
+                "First RTF paragraph\\par\n"
+                "Second one with a tab\\tab here\\par\n"
+                "}\\n";
+            const char *tmp = "/tmp/wubuos_rt79.rtf";
+            FILE *rf = fopen(tmp, "w");
+            if (rf){ fputs(rtf, rf); fclose(rf); }
+            wubumodel_doc *back = NULL;
+            CK(wubumodel_load_rtf(tmp, &back)==0 && back, "rtf read");
+            int paras=0; char buf[1024]; buf[0]=0;
+            wubumodel_node *rsec = wubumodel_doc_root(back);
+            for (wubumodel_node *n = rsec?wubumodel_node_first_child(rsec):NULL; n;
+                 n = wubumodel_node_next_sibling(n)){
+                if (wubumodel_node_kind(n)!=WUBUMODEL_PARAGRAPH) continue;
+                paras++;
+                for (wubumodel_node *r = wubumodel_node_first_child(n); r;
+                     r = wubumodel_node_next_sibling(r)){
+                    if (wubumodel_node_kind(r)==WUBUMODEL_RUN){
+                        const char *t = wubumodel_run_text(r);
+                        if (t){ strncat(buf, t, sizeof buf-1-strlen(buf)); }
+                    }
+                }
+            }
+            CK(paras>=2, "rtf reloaded paragraphs preserved");
+            CK(strstr(buf,"First RTF paragraph")!=NULL, "rtf first para text survived");
+            CK(strstr(buf,"Second one with a tab")!=NULL, "rtf second para text survived");
+            CK(strstr(buf,"here")!=NULL, "rtf tab/run text survived");
+            wubumodel_doc_destroy(back);
+            unlink(tmp);
+        }
         wubumodel_doc_destroy(d);
     }
     if (fails==0) printf("TOC + SETTINGS + FOOTNOTE TESTS PASSED\n");
