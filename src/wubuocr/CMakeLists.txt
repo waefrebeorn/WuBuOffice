@@ -9,7 +9,7 @@ add_library(wubuocr STATIC
     page_compose.c latin1.c
     unicode.c fontdir.c
     zoning.c mlp.c
-    convnet.c convnet3.c
+    convnet.c conv_gemm.c convnet3.c
     stylebank.c dft.c goldplace.c
     crnn_transcribe.c docfmt.c pdfsearch.c
     qr.c

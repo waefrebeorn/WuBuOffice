@@ -38,3 +38,4 @@ build-cmake-crnn/
 /build_static/
 /build_ninja/
 asan_math.log
+build-perf/

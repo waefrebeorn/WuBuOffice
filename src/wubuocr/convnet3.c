@@ -11,6 +11,7 @@
  *   proven ReLU-only path.
  */
 #include "convnet3.h"
+#include "conv_gemm.h"
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
@@ -380,109 +381,7 @@ static void in_apply(float *cbuf, float *xh, float *is, const float *ga,
     }
 }
 
-/* ---- im2col + GEMM conv engine (2026 refactor of the strided gather path) ----
- * A conv "out[h,w,k] = b[k] + sum_{c,dy,dx} w[k,c,dy,dx]*in[h+dy,w+dx,c]"
- * becomes, with the spatial patches unfolded into rows of a column matrix,
- *   OUT = COL @ W^T      (one cache-friendly GEMM the compiler auto-vectorizes)
- * This removes the gather-memory access pattern that dominated wall-time.
- * C11 / no deps / scalar. */
-
-/* build im2col: src is [H][W][K_in] (row-major H*W*K_in), writes col[Oh*Ow][S*S*K_in].
- * Pads with 0 outside the valid region (matches the original valid-conv, P=0). */
-static void im2col(const float *src, int H, int W, int K_in, int S, int Oh, int Ow,
-                   float *col){
-    int pp = S*S*K_in;
-    for(int oh=0; oh<Oh; oh++){
-        for(int ow=0; ow<Ow; ow++){
-            float *row = col + ((size_t)oh*Ow+ow)*pp;
-            int sp=0;
-            for(int c=0; c<K_in; c++){
-                for(int dy=0; dy<S; dy++){
-                    int iy = oh+dy;
-                    for(int dx=0; dx<S; dx++){
-                        int ix = ow+dx;
-                        if(iy>=0 && iy<H && ix>=0 && ix<W)
-                            row[sp] = src[((size_t)iy*W+ix)*K_in + c];
-                        else
-                            row[sp] = 0.0f;
-                        sp++;
-                    }
-                }
-            }
-        }
-    }
-}
-
-/* Three GEMM contracts, all row-major, contiguous inner loop (auto-vectorized):
- *   gemm_fwd  C[M][N] += A[M][K] * B[N][K]   (B is [N][K], stride K)
- *             -> forward conv:  C[out][k_out] = patch[m] * W[k_out][patch]
- *   gemm_dW   C[N][K] += A[M][N] * B[M][K]   (both M-leading)
- *             -> weight grad:  dW[k_out][p] = sum_m dC[m][k_out] * patch[m][p]
- *   gemm_dX   C[M][K] += A[M][N] * B[N][K]   (standard C=A*B)
- *             -> input grad:  dX[m][p] = sum_k dC[m][k] * W[k][p]            */
-static void gemm_fwd(float *C, const float *A, const float *B, int M, int N, int K, float beta){
-    for(int i=0;i<M;i++){
-        float *Cr = C + (size_t)i*N;
-        const float *Ar = A + (size_t)i*K;
-        for(int j=0;j<N;j++){
-            const float *Br = B + (size_t)j*K;   /* B[N][K]: row j, stride K */
-            float s = (beta==0.0f) ? 0.0f : Cr[j]*beta;
-            for(int kk=0;kk<K;kk++) s += Ar[kk]*Br[kk];
-            Cr[j] = s;
-        }
-    }
-}
-static void gemm_dW(float *C, const float *A, const float *B, int M, int N, int K, float beta){
-    for(int k=0;k<N;k++){
-        float *Cr = C + (size_t)k*K;
-        if(beta==0.0f) for(int p=0;p<K;p++) Cr[p]=0.0f;
-        else            for(int p=0;p<K;p++) Cr[p]*=beta;
-        for(int m=0;m<M;m++){
-            float a = A[(size_t)m*N + k];
-            if(a==0.0f) continue;
-            const float *Br = B + (size_t)m*K;
-            for(int p=0;p<K;p++) Cr[p] += a*Br[p];
-        }
-    }
-}
-static void gemm_dX(float *C, const float *A, const float *B, int M, int N, int K, float beta){
-    for(int i=0;i<M;i++){
-        float *Cr = C + (size_t)i*K;
-        if(beta==0.0f) for(int p=0;p<K;p++) Cr[p]=0.0f;
-        else            for(int p=0;p<K;p++) Cr[p]*=beta;
-        const float *Ar = A + (size_t)i*N;
-        for(int kk=0;kk<N;kk++){
-            float a = Ar[kk];
-            if(a==0.0f) continue;
-            const float *Br = B + (size_t)kk*K;   /* B[N][K]: stride K */
-            for(int p=0;p<K;p++) Cr[p] += a*Br[p];
-        }
-    }
-}
-
-/* col2im: scatter-add dCOL[Oh*Ow][S*S*K_in] gradients back into dsrc[H][W][K_in]. */
-static void col2im(const float *dcol, int H, int W, int K_in, int S, int Oh, int Ow,
-                   float *dsrc){
-    int pp = S*S*K_in;
-    for(int oh=0; oh<Oh; oh++){
-        for(int ow=0; ow<Ow; ow++){
-            const float *row = dcol + ((size_t)oh*Ow+ow)*pp;
-            int sp=0;
-            for(int c=0; c<K_in; c++){
-                for(int dy=0; dy<S; dy++){
-                    int iy = oh+dy;
-                    float *dsrcc = dsrc + (size_t)c;
-                    for(int dx=0; dx<S; dx++){
-                        int ix = ow+dx;
-                        if(iy>=0 && iy<H && ix>=0 && ix<W)
-                            dsrcc[((size_t)iy*W+ix)*K_in] += row[sp];
-                        sp++;
-                    }
-                }
-            }
-        }
-    }
-}
+/* conv GEMM + im2col/col2im compute core lives in conv_gemm.c (see conv_gemm.h). */
 
 /* ---------------- CBAM attention (forward + backward) ----------------
  * Channel att: per-channel avg & max over spatial -> MLP(2*K2 -> r -> K2) ->
@@ -540,14 +439,15 @@ static void cbam_bwd(ConvNet3 *cn, float *dp2){
     }
 }
 
+
 /* ---------------- forward ---------------- */
 void convnet3_forward(const ConvNet3 *cn, const float *img, float *out){
     float leak = cn->leak;
     float *COL1 = cn->col1, *COL2 = cn->col2, *COL3 = cn->col3;
 
     /* stage1: img[H][W][1] -> c1   (P1 = S1*S1) */
-    im2col(img, cn->inH, cn->inW, 1, cn->S1, cn->c1H, cn->c1W, COL1);
-    gemm_fwd(cn->c1, COL1, cn->w1, cn->c1H*cn->c1W, cn->K1, cn->S1*cn->S1, 0.0f);
+    conv_im2col(img, cn->inH, cn->inW, 1, cn->S1, cn->c1H, cn->c1W, COL1);
+    conv_gemm_fwd(cn->c1, COL1, cn->w1, cn->c1H*cn->c1W, cn->K1, cn->S1*cn->S1, 0.0f);
     for(int p=0;p<cn->c1H*cn->c1W;p++) for(int k=0;k<cn->K1;k++) cn->c1[(size_t)p*cn->K1+k]+=cn->b1[k];
     if(cn->use_in) in_apply(cn->c1,cn->xh1,cn->is1,cn->ga1,cn->be1,cn->K1,cn->c1H,cn->c1W,leak);
     else for(int i=0;i<cn->c1H*cn->c1W*cn->K1;i++){ float a=cn->c1[i]; cn->c1[i]=a>0?a:leak*a; }
@@ -563,8 +463,8 @@ void convnet3_forward(const ConvNet3 *cn, const float *img, float *out){
         cn->am1[((size_t)py*cn->p1W+px)*cn->K1+k]=best;
     }
     /* stage2: p1[H][W][K1] -> c2   (P2 = S2*S2*K1) */
-    im2col(cn->p1, cn->p1H, cn->p1W, cn->K1, cn->S2, cn->c2H, cn->c2W, COL2);
-    gemm_fwd(cn->c2, COL2, cn->w2, cn->c2H*cn->c2W, cn->K2, cn->S2*cn->S2*cn->K1, 0.0f);
+    conv_im2col(cn->p1, cn->p1H, cn->p1W, cn->K1, cn->S2, cn->c2H, cn->c2W, COL2);
+    conv_gemm_fwd(cn->c2, COL2, cn->w2, cn->c2H*cn->c2W, cn->K2, cn->S2*cn->S2*cn->K1, 0.0f);
     for(int p=0;p<cn->c2H*cn->c2W;p++) for(int k=0;k<cn->K2;k++) cn->c2[(size_t)p*cn->K2+k]+=cn->b2[k];
     if(cn->use_in) in_apply(cn->c2,cn->xh2,cn->is2,cn->ga2,cn->be2,cn->K2,cn->c2H,cn->c2W,leak);
     else for(int i=0;i<cn->c2H*cn->c2W*cn->K2;i++){ float a=cn->c2[i]; cn->c2[i]=a>0?a:leak*a; }
@@ -584,8 +484,8 @@ void convnet3_forward(const ConvNet3 *cn, const float *img, float *out){
      * pooled stage2 output p2.  Output whichever exists. */
     if(cn->K3>0){
         if(cn->use_cbam) cbam_fwd((ConvNet3*)cn);
-        im2col(cn->p2, cn->p2H, cn->p2W, cn->K2, cn->S3, cn->c3H, cn->c3W, COL3);
-        gemm_fwd(cn->c3, COL3, cn->w3, cn->c3H*cn->c3W, cn->K3, cn->S3*cn->S3*cn->K2, 0.0f);
+        conv_im2col(cn->p2, cn->p2H, cn->p2W, cn->K2, cn->S3, cn->c3H, cn->c3W, COL3);
+        conv_gemm_fwd(cn->c3, COL3, cn->w3, cn->c3H*cn->c3W, cn->K3, cn->S3*cn->S3*cn->K2, 0.0f);
         for(int p=0;p<cn->c3H*cn->c3W;p++) for(int k=0;k<cn->K3;k++) cn->c3[(size_t)p*cn->K3+k]+=cn->b3[k];
         if(cn->use_in) in_apply(cn->c3,cn->xh3,cn->is3,cn->ga3,cn->be3,cn->K3,cn->c3H,cn->c3W,leak);
         else for(int i=0;i<cn->c3H*cn->c3W*cn->K3;i++){ float a=cn->c3[i]; cn->c3[i]=a>0?a:leak*a; }
@@ -754,7 +654,7 @@ void convnet3_backward(ConvNet3 *cn, const float *img, const float *feat, const 
     /* accumulate weight grad into gw1 (beta=1) so a per-thread gradbuf sums
      * the samples it processes within a batch; the trunk add_grad then
      * reduces the thread buffers and consumes (zeros) them. */
-    gemm_dW(cn->gw1, cn->dc1, cn->col1, M1, K1, S1*S1, 1.0f);
+    conv_gemm_dW(cn->gw1, cn->dc1, cn->col1, M1, K1, S1*S1, 1.0f);
     /* TEMP DEBUG: dump intermediate gradient buffers for oracle diff */
     if(getenv("DUMP_DC")){
         FILE*f=fopen("/tmp/dc_c.txt","w");

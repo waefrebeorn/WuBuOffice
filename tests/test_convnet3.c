@@ -4,11 +4,22 @@
  * gradient check (finite-diff on the whole net is unreliable at maxpool
  * argmax boundaries, so we require the net to actually learn a problem
  * that is only solvable if every stage's gradient is correct).
+ *
+ * The 1600-sample x 60-epoch loop is multi-threaded across all cores via
+ * OpenMP: each thread keeps a private grad-buffer replica (aliasing the
+ * shared weights, which are read-only during the forward/backward pass),
+ * accumulates its sample slice, then reduces into the shared model with
+ * convnet3_add_grad / mlp_add_grad. Full-batch gradient is a sum over all
+ * samples so the per-thread order is irrelevant -- the update is identical
+ * to a single-threaded run (and so is the 100% result).
  */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 #include "convnet3.h"
 #include "mlp.h"
 
@@ -42,10 +53,40 @@ int main(void){
     float *df=malloc((size_t)Dc*sizeof(float));
     float lr=0.05f;
     int epochs=60;
+
+    int nth = 1;
+#ifdef _OPENMP
+    nth = omp_get_max_threads();
+#endif
+    fprintf(stderr, "[conv3 smoke] %d core(s), %d samples x %d epochs (full-batch SGD)\n", nth, N, epochs);
+
     for(int ep=0;ep<epochs;ep++){
         int order[N]; for(int i=0;i<N;i++) order[i]=i;
         for(int i=N-1;i>0;i--){ int j=xr()%(i+1); int t=order[i];order[i]=order[j];order[j]=t; }
         convnet3_zero_grad(cn); mlp_zero_grad(m);
+
+        /* Per-thread gradient replicas; accumulate sample slices in parallel,
+         * then reduce. convnet3_add_grad/mlp_add_grad zero their source so a
+         * replica is reusable, but here we destroy it after the reduce. */
+#ifdef _OPENMP
+        #pragma omp parallel
+        {
+            ConvNet3 *cnT = convnet3_gradbuf(cn);
+            MLP      *mT  = mlp_gradbuf(m);
+            #pragma omp for schedule(static)
+            for(int i=0;i<N;i++){
+                int n=order[i];
+                convnet3_forward(cnT, X+(size_t)n*784, feat);
+                float sc[D]; mlp_forward(mT, feat, sc);
+                mlp_backward(mT, feat, Y[n]);
+                mlp_input_grad(mT, feat, df);
+                convnet3_backward(cnT, X+(size_t)n*784, feat, df);
+            }
+            #pragma omp critical
+            { convnet3_add_grad(cn, cnT); mlp_add_grad(m, mT); }
+            convnet3_destroy(cnT); mlp_destroy(mT);
+        }
+#else
         for(int i=0;i<N;i++){
             int n=order[i];
             convnet3_forward(cn, X+(size_t)n*784, feat);
@@ -54,6 +95,8 @@ int main(void){
             mlp_input_grad(m, feat, df);
             convnet3_backward(cn, X+(size_t)n*784, feat, df);
         }
+#endif
+
         convnet3_scale_grad(cn, 1.0f/N); mlp_scale_grad(m, 1.0f/N);
         /* plain SGD */
         for(int g=0;g<convnet3_layer_count(cn);g++){ ConvLayer3 L=convnet3_layer(cn,g); for(int i=0;i<L.n;i++) L.param[i]-=lr*L.grad[i]; }

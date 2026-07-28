@@ -35,6 +35,26 @@ if(WITH_SANITIZER)
   add_link_options(-fsanitize=address,undefined -fno-sanitize-recover=all)
 endif()
 
+# OpenMP: parallware across all cores for the conv GEMM + threaded trainer/tests.
+# Harmless no-op when no OpenMP loops are present; required for the convnet perf pass.
+find_package(OpenMP QUIET)
+if(OpenMP_C_FOUND)
+  add_compile_options(${OpenMP_C_FLAGS})
+  add_link_options(${OpenMP_C_FLAGS})
+  message(STATUS "OpenMP: enabled (${OpenMP_C_FLAGS})")
+else()
+  message(STATUS "OpenMP: not found -- convnet will run single-threaded")
+endif()
+
+# WITH_PERF: turn on the fast native build (-O3 -march=native -DNDEBUG) so the
+# convnet training/tests use full hardware (SIMD + the multi-core OpenMP above).
+# Off by default so the Debug build stays the unoptimized baseline for sanitizers.
+option(WITH_PERF "Build with -O3 -march=native -DNDEBUG (fast native path)" OFF)
+if(WITH_PERF)
+  add_compile_options(-O3 -march=native -mtune=native -DNDEBUG)
+  message(STATUS "WITH_PERF: ON (-O3 -march=native)")
+endif()
+
 # Static single-binary build (#100): link every executable with -static so the
 # produced image2doc / ocrserve / crnn_* tools are self-contained. Off by default.
 option(STATIC "Build fully static executables (-static)" OFF)
