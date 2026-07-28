@@ -110,6 +110,10 @@ add_executable(test_convnet ${CMAKE_SOURCE_DIR}/tests/test_convnet.c
 target_include_directories(test_convnet PRIVATE ${CMAKE_SOURCE_DIR}/src/wubuocr)
 target_link_libraries(test_convnet PRIVATE m)
 add_test(NAME convnet COMMAND test_convnet)
+# CPU-heavy full-training smoke test: 60 epochs of conv+MLP. Bump the
+# per-test timeout well above the default 10s so a normal `ctest` run
+# doesn't flag it as a failure on slow CI boxes.
+set_tests_properties(convnet PROPERTIES TIMEOUT 600 LABELS ocr)
 
 # conv3 (3-stage MED) gradient pipeline test (same decisive proof).
 add_executable(test_convnet3 ${CMAKE_SOURCE_DIR}/tests/test_convnet3.c
@@ -117,8 +121,7 @@ add_executable(test_convnet3 ${CMAKE_SOURCE_DIR}/tests/test_convnet3.c
 target_include_directories(test_convnet3 PRIVATE ${CMAKE_SOURCE_DIR}/src/wubuocr)
 target_link_libraries(test_convnet3 PRIVATE m)
 add_test(NAME convnet3 COMMAND test_convnet3)
-set_property(TEST convnet  PROPERTY LABELS ocr)
-set_property(TEST convnet3 PROPERTY LABELS ocr)
+set_tests_properties(convnet3 PROPERTIES TIMEOUT 600 LABELS ocr)
 
 # im2col+GEMM conv rewrite: numeric equivalence to brute-force conv + bias-grad FD check.
 add_executable(test_convnet3_im2col test_convnet3_im2col.c
@@ -168,8 +171,15 @@ add_executable(emnist_train_conv3 emnist_train_conv3.c
                ${CMAKE_SOURCE_DIR}/src/wubuocr/convnet3.c ${CMAKE_SOURCE_DIR}/src/wubuocr/mlp.c)
 target_include_directories(emnist_train_conv3 PRIVATE ${CMAKE_SOURCE_DIR}/src/wubuocr)
 target_link_libraries(emnist_train_conv3 PRIVATE m pthread)
-add_test(NAME emnist_train_conv3_smoke COMMAND emnist_train_conv3 data/emnist 128 64 2 2000)
-set_tests_properties(emnist_train_conv3_smoke PROPERTIES WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+# The smoke test needs the downloaded EMNIST IDX corpus under data/emnist/.
+# Register it only when that corpus is present, so a `ctest` run on a machine
+# without the dataset doesn't report a spurious failure (the binary returns 1
+# with no dataset). Add the dataset, then reconfigure to enable the test.
+if (EXISTS "${CMAKE_SOURCE_DIR}/data/emnist")
+  add_test(NAME emnist_train_conv3_smoke COMMAND emnist_train_conv3 data/emnist 128 64 2 2000)
+  set_tests_properties(emnist_train_conv3_smoke PROPERTIES
+                        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR} TIMEOUT 1200 LABELS ocr)
+endif()
 
 # wubuocr EMNIST Letters training/inference tools (lightweight C11 OCR).
 # emnist_train needs the downloaded IDX corpus under data/emnist/ and WuBuMath.
