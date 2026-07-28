@@ -15,6 +15,7 @@
 #include "autocomp.h" /* opaque auto-completion engine (extracted from this file) */
 #include "bkmk.h"     /* opaque line-bookmark set (extracted from this file) */
 #include "codefold.h"  /* opaque code-folding + function-list (extracted) */
+#include "macro.h"     /* opaque macro record/playback (extracted) */
 
 #include "doc.h"    /* cross-repo: ~/WuBuPad/src */
 #include "lex.h"
@@ -68,8 +69,8 @@ typedef struct {
     int   sel_l0, sel_c0;    /* anchor line/col */
     int   sel_l1, sel_c1;    /* active line/col */
 
-    /* macro record/play (op buffer is process-global, like Notepad++) */
-    int   rec;               /* recording flag */
+    /* macro record/play (Notepad++-style): delegated to opaque Macro engine */
+    Macro *macro;
 
     /* auto-completion popup: delegated to the opaque AutoComp engine */
     AutoComp *ac;           /* owns candidate list + selection (see autocomp.h) */
@@ -85,10 +86,17 @@ typedef struct {
     SpellDict *spd;
 } Editor;
 static unsigned char g_def_r=36, g_def_g=41, g_def_b=47;  /* theme-aware default */
-/* session-global macro op buffer (Notepad++ macros are global) */
-static unsigned char g_rec_ops[8192];
-static int g_rec_len = 0;
-static int g_rec_n   = 0;
+
+/* macro_play callback: re-dispatch a recorded op through on_key so playback
+ * exercises the exact same editing path as a live key press. */
+static void on_key(WuView *v, int key, int down);  /* forward: defined below */
+static void editor_macro_replay_op(int opcode, unsigned char ch, void *ctx){
+    WuView *v = ctx;
+    if (!v) return;
+    if (opcode == MACRO_OP_CHAR) on_key(v, (int)ch, 1);
+    else if (opcode == MACRO_OP_RETURN) on_key(v, WUOS_KEY_RETURN, 1);
+    else if (opcode == MACRO_OP_BACKSPACE) on_key(v, WUOS_KEY_BACKSPACE, 1);
+}
 static void tok_color(LexTok k, unsigned char *r, unsigned char *g, unsigned char *b){
     switch (k){
         case TK_KEYWORD:  *r=86;  *g=156; *b=214; break;   /* blue */
@@ -709,10 +717,11 @@ static void on_key(WuView *v, int key, int down){
     /* ---- normal editing ---- */
     size_t cur = doc_cursor(e->doc);
     /* macro capture: while recording, log edit ops (skip meta keys) */
-    if (e->rec && key >= 32 && key < 127 && g_rec_len < 8191){
-        g_rec_ops[g_rec_len++] = 1; g_rec_ops[g_rec_len++] = (unsigned char)key; g_rec_n++;
-    } else if (e->rec && key==WUOS_KEY_RETURN && g_rec_len<8191){ g_rec_ops[g_rec_len++]=2; g_rec_n++; }
-    else if (e->rec && key==WUOS_KEY_BACKSPACE && g_rec_len<8191){ g_rec_ops[g_rec_len++]=3; g_rec_n++; }
+    if (e->macro && macro_recording(e->macro)){
+        if (key >= 32 && key < 127) macro_record(e->macro, MACRO_OP_CHAR, (unsigned char)key);
+        else if (key==WUOS_KEY_RETURN) macro_record(e->macro, MACRO_OP_RETURN, 0);
+        else if (key==WUOS_KEY_BACKSPACE) macro_record(e->macro, MACRO_OP_BACKSPACE, 0);
+    }
     switch (key){
         case WUOS_KEY_FIND:    find_open(v, 1); return;
         case WUOS_KEY_REPLACE: find_open(v, 2); return;
@@ -756,19 +765,15 @@ static void on_key(WuView *v, int key, int down){
             }
             return;
         case WUOS_KEY_REC:
-            e->rec ^= 1;
-            if (e->rec){ g_rec_len = 0; g_rec_n = 0; }
+            if (e->macro) macro_toggle_rec(e->macro);
             return;
         case WUOS_KEY_PLAY: {
-            if (!g_rec_n) return;
-            int was = e->rec; e->rec = 0;   /* don't re-record the playback */
-            for (int i=0; i<g_rec_len; ){
-                unsigned char op = (unsigned char)g_rec_ops[i++];
-                if (op==1){ unsigned char ch = g_rec_ops[i++]; on_key(v, ch, 1); }
-                else if (op==2){ on_key(v, WUOS_KEY_RETURN, 1); }
-                else if (op==3){ on_key(v, WUOS_KEY_BACKSPACE, 1); }
-            }
-            e->rec = was;
+            if (!e->macro || !macro_count(e->macro)) return;
+            int was = macro_recording(e->macro);
+            /* don't re-record the playback */
+            if (was) macro_toggle_rec(e->macro);
+            macro_play(e->macro, editor_macro_replay_op, v);
+            if (was) macro_toggle_rec(e->macro);   /* restore */
             return;
         }
         case WUOS_KEY_AC: if (e->ac) autocomp_open(e->ac, e->doc); return;
@@ -863,6 +868,7 @@ static void destroy(WuView *v){
     if (e->ac) autocomp_destroy(e->ac);
     if (e->bk) bkmk_destroy(e->bk);
     if (e->cf) codefold_destroy(e->cf);
+    if (e->macro) macro_destroy(e->macro);
     if (e->asv){ wubuautosave_clear(e->asv); wubuautosave_destroy(e->asv); }
     if (e->spd) spell_free(e->spd);
     free(e);
@@ -958,8 +964,8 @@ int wuos_editor_col(WuView *v, int *l0, int *c0, int *l1, int *c1){
 int wuos_editor_macro(WuView *v, int *ops){
     Editor *e = v ? v->priv : NULL;
     if (!e) return 0;
-    if (ops) *ops = g_rec_n;
-    return e->rec;
+    if (ops) *ops = e->macro ? macro_count(e->macro) : 0;
+    return e->macro ? macro_recording(e->macro) : 0;
 }
 /* Test accessor: auto-completion popup state (open + candidate count + sel). */
 int wuos_editor_ac(WuView *v, int *n, int *sel){
@@ -1055,6 +1061,8 @@ WuView *wuos_editor_create(const char *path){
     if (!e->bk){ autocomp_destroy(e->ac); findbar_destroy(e->fb); docs_free(e->docs); free(e); return NULL; }
     e->cf = codefold_create();
     if (!e->cf){ bkmk_destroy(e->bk); autocomp_destroy(e->ac); findbar_destroy(e->fb); docs_free(e->docs); free(e); return NULL; }
+    e->macro = macro_create();
+    if (!e->macro){ codefold_destroy(e->cf); bkmk_destroy(e->bk); autocomp_destroy(e->ac); findbar_destroy(e->fb); docs_free(e->docs); free(e); return NULL; }
 
     if (path){
         /* load via docs (detects encoding, seeds Doc); sets active doc */

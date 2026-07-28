@@ -25,7 +25,8 @@ add_executable(wubuos
     autocomp.c
     bkmk.c
     codefold.c
-    doccmd.c)
+    doccmd.c
+    macro.c)
 target_include_directories(wubuos PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}/src/wubumodel
@@ -74,7 +75,7 @@ target_compile_options(wubuos PRIVATE -Wall -Wextra -Wpedantic)
 # Headless smoke test: create + render every view (real engines, no GUI).
 # Verifies each WuView adapter renders without crashing and returns a buffer.
 add_executable(test_view test_view.c wuos_font.c wuos_file.c plugin.c toast.c palette.c view_doc.c view_cell.c
-    view_slide.c view_ocr.c view_editor.c view_compare.c view_settings.c findbar.c autocomp.c bkmk.c codefold.c doccmd.c)
+    view_slide.c view_ocr.c view_editor.c view_compare.c view_settings.c findbar.c autocomp.c bkmk.c codefold.c doccmd.c macro.c)
 target_include_directories(test_view PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}/src/wubumodel
@@ -208,3 +209,10 @@ target_link_libraries(test_doccmd PRIVATE
 target_compile_options(test_doccmd PRIVATE -Wall -Wextra -Wpedantic)
 add_test(NAME doccmd COMMAND test_doccmd)
 set_tests_properties(doccmd PROPERTIES LABELS "doccmd;apps")
+
+# Unit test for the extracted opaque Macro engine (no GUI/SDL).
+add_executable(test_macro test_macro.c macro.c)
+target_include_directories(test_macro PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_options(test_macro PRIVATE -Wall -Wextra -Wpedantic)
+add_test(NAME macro COMMAND test_macro)
+set_tests_properties(macro PROPERTIES LABELS "macro;apps")
