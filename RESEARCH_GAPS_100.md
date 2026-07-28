@@ -49,7 +49,7 @@
 28. **P1** No drag-and-drop file open. — **CLOSED**: SDL dropfile opens the dropped file in Editor (text) or Document (other) tab.
 29. **P2** No command palette (Ctrl+K) for power users. — **CLOSED**: `palette.c` module (ranked fuzzy filter: prefix > word-start > subsequence), Ctrl+K overlay in the shell; Enter dispatches New Doc/Theme/Zoom/Settings/EPUB/a11y. Headless-tested (test_shell_ui).
 30. **P2** No splash screen / first-run onboarding. — OPEN (polish).
-31. **P2** No empty-state illustration for new docs. — OPEN (polish).
+31. **P2** No empty-state illustration for new docs. — **CLOSED**: the editor render now draws a centered hint ("New document - start typing, or press Ctrl+K for commands") when the active doc is empty and no find/go-to panel is open (UI-31).
 32. **P2** No dark/light theme toggle in-app (theme engine exists in WuBuPad; expose). — **CLOSED**: Ctrl+` theme toggle.
 33. **P2** No toast/notification system for background ops (OCR, export done). — **CLOSED**: `toast.c` FIFO queue w/ per-message TTL, drawn bottom-center by the shell; palette commands and background ops push into it. Headless-tested (test_shell_ui).
 34. **P2** No mini-map for long documents. — **CLOSED**: Document view draws a per-line mini-map tick on the right edge from the layout line boxes (UI-34).
@@ -124,7 +124,7 @@
 
 ## SCR — Scripting / automation / AI
 97. **P1** Expose `wubuscript` as computed fields / template variables in UI (currently test-only). — **CLOSED**: the sandboxable wubuscript formula host (`script_eval`) is now UI-exposed as a computed "Script Field" — Ctrl+Shift+G (or palette "Insert: Script Field") evaluates an expression (with a doc resolver exposing `lines` = paragraph count) and inserts the numeric result as a FIELD node the layout renders inline, exactly like the DOC-65 mail-merge field. A headless test confirms the FIELD (kind "script") lands in the model.
-98. **P2** No macro recorder / script console.
+98. **P2** No macro recorder / script console. — **CLOSED**: Notepad++-style macro record/playback extracted into an opaque `Macro` engine (record edit-ops, replay via the editor's key path); macros persist to a named-macro file via `macro_save`/`macro_load` (SCR-98 persistence), launchable from the command palette (Macro: Record/Play/Save/Load). `wubuscript` is the seed for the scripting console (SCR-100).
 99. **P2** No privacy-first AI writing assistant hook (offline, like Harper grammar).
 100. **P2** No plugin/extension API (sandboxed; `wubuscript` is the seed).
 

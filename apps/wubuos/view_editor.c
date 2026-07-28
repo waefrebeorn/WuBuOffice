@@ -315,6 +315,15 @@ static int render(WuView *v, int w, int h, int scroll,
     for (int y=0;y<H;y++) for (int x=0;x<gutter;x++){ size_t i=((size_t)y*w+x)*4; fb[i]=gut_r;fb[i+1]=gut_g;fb[i+2]=gut_b; }
     for (int y=0;y<H;y++){ size_t i=((size_t)y*(w)+gutter)*4; fb[i]=sepr;fb[i+1]=sepg;fb[i+2]=sepb; }
 
+    /* ---- empty-state hint (UI-31): new/blank doc shows a friendly prompt ---- */
+    if (e->doc && doc_length(e->doc) == 0 && !e->find_mode && !gotoline_active(e->gto)){
+        const char *hint = "New document - start typing, or press Ctrl+K for commands";
+        int hw = (int)wuos_font_draw(hint, 0,0, 0, 0,0,0, NULL,0,0);
+        int hx = (w - hw)/2 > gutter+10 ? (w - hw)/2 : gutter+10;
+        int hy = H/2 - fh/2;
+        wuos_font_draw(hint, hx, hy, 0, num_r, num_g, num_b, fb, w, H);
+    }
+
     /* ---- document tab strip (multi-doc) ---- */
     int dofst = 0;
     if (e->docs && docs_count(e->docs) > 1){
