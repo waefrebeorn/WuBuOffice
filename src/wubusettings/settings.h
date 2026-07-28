@@ -41,6 +41,19 @@ void   wubusettings_set_font_size(WubuSettings *s, int px);
 int    wubusettings_high_contrast(const WubuSettings *s);
 void   wubusettings_set_high_contrast(WubuSettings *s, int on);
 
+/* DOC-43: prefers-reduced-motion (disable animations/transitions). 1 on. */
+int    wubusettings_reduced_motion(const WubuSettings *s);
+void   wubusettings_set_reduced_motion(WubuSettings *s, int on);
+
+/* DOC-45: UI chrome scale, independent of document zoom (1.0 = 100%). */
+double wubusettings_ui_scale(const WubuSettings *s);
+void   wubusettings_set_ui_scale(WubuSettings *s, double us);
+
+/* UI-30: first-run splash flag. 1 on a fresh install; the shell clears it
+ * (and persists) once the onboarding overlay is dismissed. */
+int  wubusettings_first_run(const WubuSettings *s);
+void wubusettings_set_first_run(WubuSettings *s, int on);
+
 /* Process-wide singleton (lazy). Returns NULL only on OOM. */
 WubuSettings *wubusettings_shared(void);
 

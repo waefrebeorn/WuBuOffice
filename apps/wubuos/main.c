@@ -35,7 +35,7 @@ static int     g_ctx_x = 0, g_ctx_y = 0;
 static Toasts  *g_toasts = NULL;    /* UI-33: toast queue */
 static Palette *g_palette = NULL;   /* UI-29: command palette (Ctrl+K) */
 static int      g_cheat = 0;       /* UI-36: shortcut cheat-sheet overlay */
-
+static int      g_first_run = 0;    /* UI-30: first-run onboarding splash */
 /* Plugin manager: loaded once at startup from ~/.wubuos/plugins. */
 static WuOSPluginMgr *g_plugins = NULL;
 static char   *g_plugin_msg = NULL;   /* last exec() result toast */
@@ -129,6 +129,9 @@ int main(int argc, char **argv){
     /* UI-33 toast queue + UI-29 command palette */
     g_toasts = toast_create();
     g_palette = palette_create();
+    /* UI-30: show first-run splash if this is a fresh install */
+    { WubuSettings *sh = wubusettings_shared();
+      if (sh && wubusettings_first_run(sh)) g_first_run = 1; }
     /* palette command ids: 1 open-file, 2 new-doc, 3 theme, 4 zoom-in,
      * 5 zoom-out, 6 zoom-reset, 7 settings, 8 export-epub, 9 a11y-check */
     palette_add(g_palette, "New Document",   2);
@@ -216,6 +219,13 @@ int main(int argc, char **argv){
                 SDL_Keycode k = e.key.keysym.sym;
                 SDL_Keymod mod = SDL_GetModState();
                 int code=0;
+                /* UI-30: dismiss the first-run splash on any key */
+                if (g_first_run){
+                    g_first_run = 0;
+                    WubuSettings *sh = wubusettings_shared();
+                    if (sh){ wubusettings_set_first_run(sh, 0); wubusettings_save(sh, NULL); }
+                    continue;
+                }
                 /* ---- UI-29: command palette captures input while open ---- */
                 if (palette_is_open(g_palette)){
                     if (k==SDLK_ESCAPE) palette_close(g_palette);
@@ -529,6 +539,32 @@ int main(int argc, char **argv){
             };
             for (int i=0;i<26;i++)
                 sdl_text(ren, cx+14, cy+40+i*22, 200,203,210, keys[i]);
+        }
+
+        /* UI-30: first-run onboarding splash (dismiss with any key) */
+        if (g_first_run){
+            int pw = 520, px = (WIN_W-pw)/2, py = TAB_H + 30;
+            int ph = 360;
+            SDL_SetRenderDrawColor(ren, 18,20,26,252);
+            SDL_RenderFillRect(ren,&(SDL_Rect){px,py,pw,ph});
+            SDL_SetRenderDrawColor(ren, 90,95,105,255);
+            SDL_RenderDrawRect(ren,&(SDL_Rect){px,py,pw,ph});
+            sdl_text(ren, px+20, py+16, 240,243,250, "Welcome to WuBuOffice");
+            const char *tips[] = {
+                "A clean-room office suite (word processor, editor,",
+                "spreadsheet, OCR, slides) - no third-party frameworks.",
+                "",
+                "Ctrl+K     command palette (every action lives here)",
+                "Ctrl+F     find      Ctrl+G   go to line",
+                "Ctrl+`     toggle dark / light theme",
+                "Ctrl+Shift+R record a macro, Ctrl+Shift+P play it back",
+                "F1          full keyboard cheat-sheet",
+                "Drag & drop a file to open it",
+                "",
+                "Press any key to start"
+            };
+            for (int i=0;i<11;i++)
+                sdl_text(ren, px+20, py+52+i*26, 200,203,210, tips[i]);
         }
         SDL_Delay(16);
     }

@@ -48,7 +48,7 @@
 27. **P1** No context menu (right-click) on text/objects. — **CLOSED**: right-click opens a context menu (Open File / New Document / Toggle Theme).
 28. **P1** No drag-and-drop file open. — **CLOSED**: SDL dropfile opens the dropped file in Editor (text) or Document (other) tab.
 29. **P2** No command palette (Ctrl+K) for power users. — **CLOSED**: `palette.c` module (ranked fuzzy filter: prefix > word-start > subsequence), Ctrl+K overlay in the shell; Enter dispatches New Doc/Theme/Zoom/Settings/EPUB/a11y. Headless-tested (test_shell_ui).
-30. **P2** No splash screen / first-run onboarding. — OPEN (polish).
+30. **P2** No splash screen / first-run onboarding. — **CLOSED**: `wubusettings` gained a `first_run` flag (persisted to `~/.wubuos/settings.json`); the shell draws a centered onboarding splash listing key shortcuts on first launch and dismisses on any key, persisting `first_run=0` (UI-30).
 31. **P2** No empty-state illustration for new docs. — **CLOSED**: the editor render now draws a centered hint ("New document - start typing, or press Ctrl+K for commands") when the active doc is empty and no find/go-to panel is open (UI-31).
 32. **P2** No dark/light theme toggle in-app (theme engine exists in WuBuPad; expose). — **CLOSED**: Ctrl+` theme toggle.
 33. **P2** No toast/notification system for background ops (OCR, export done). — **CLOSED**: `toast.c` FIFO queue w/ per-message TTL, drawn bottom-center by the shell; palette commands and background ops push into it. Headless-tested (test_shell_ui).
@@ -164,9 +164,9 @@ the code actually ships and a test exercises it.
 
 **Explicitly OPEN (carried forward):**
 - **INT-7** (P0) BIDI/RTL shaping share — closed in-repo via new wubushape module; the cross-repo share is superseded (no longer needed).
-- **INT-15** (P2) wubufont CLI not exposed as a font-picker UI.
-- **UI-30** (P2) No splash screen / first-run onboarding.
-- **UI-31** (P2) No empty-state illustration for new docs.
+- **INT-15** (P2) wubufont CLI not exposed as a font-picker UI. *(remaining genuine open item)*
+
+*Resolved this session:* **UI-30** (first-run splash) and **UI-31** (empty-state) are now CLOSED (see body). The only genuinely-open P2 frontier items left are INT-15 (font-picker) and the unmarked UI-37+ list below.
 
 **Unmarked frontier (no CLOSED/OPEN tag yet — open by omission):**
 - **UI-37** (P1) No modal-dialog focus management (a11y+UX).

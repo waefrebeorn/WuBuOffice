@@ -17,6 +17,9 @@ struct WubuSettings {
     char   language[8];
     int    font_size;
     int    high_contrast;
+    int    reduced_motion;   /* DOC-43: disable animations/transitions */
+    double ui_scale;          /* DOC-45: UI chrome scale, independent of doc zoom */
+    int    first_run;         /* UI-30: show first-run splash until dismissed */
 };
 
 WubuSettings *wubusettings_create(void){
@@ -28,6 +31,9 @@ WubuSettings *wubusettings_create(void){
     s->language[0] = 'e'; s->language[1] = 'n'; s->language[2] = '\0';
     s->font_size   = 16;
     s->high_contrast = 0;
+    s->reduced_motion = 0;
+    s->ui_scale = 1.0;
+    s->first_run = 1;       /* UI-30: first launch shows onboarding splash */
     return s;
 }
 
@@ -84,6 +90,9 @@ int wubusettings_load(WubuSettings *s, const char *path){
         }
         if ((v = j_obj_get(root,"font_size")) && j_type(v)==J_NUM) s->font_size = (int)j_as_num(v);
         if ((v = j_obj_get(root,"high_contrast")) && j_type(v)==J_NUM) s->high_contrast = j_as_num(v)!=0;
+        if ((v = j_obj_get(root,"reduced_motion")) && j_type(v)==J_NUM) s->reduced_motion = j_as_num(v)!=0;
+        if ((v = j_obj_get(root,"ui_scale")) && j_type(v)==J_NUM){ double us=j_as_num(v); if(us<0.5)us=0.5; if(us>3.0)us=3.0; s->ui_scale=us; }
+        if ((v = j_obj_get(root,"first_run")) && j_type(v)==J_NUM) s->first_run = j_as_num(v)!=0;
         rc = 0;
     }
     j_free(root);
@@ -101,6 +110,9 @@ int wubusettings_save(const WubuSettings *s, const char *path){
     j_obj_put(root, "language", j_str(s->language));
     j_obj_put(root, "font_size", j_num((double)s->font_size));
     j_obj_put(root, "high_contrast", j_num((double)s->high_contrast));
+    j_obj_put(root, "reduced_motion", j_num((double)s->reduced_motion));
+    j_obj_put(root, "ui_scale", j_num(s->ui_scale));
+    j_obj_put(root, "first_run", j_num((double)s->first_run));
     char *txt = j_emit(root);
     j_free(root);
     if (!txt) return -1;
@@ -138,6 +150,23 @@ void wubusettings_set_font_size(WubuSettings *s, int px){ if (s){ if(px<8)px=8; 
 
 int  wubusettings_high_contrast(const WubuSettings *s){ return s ? s->high_contrast : 0; }
 void wubusettings_set_high_contrast(WubuSettings *s, int on){ if (s) s->high_contrast = on?1:0; }
+
+/* DOC-43: prefers-reduced-motion (disable animations/transitions). 1 on. */
+int  wubusettings_reduced_motion(const WubuSettings *s){ return s ? s->reduced_motion : 0; }
+void wubusettings_set_reduced_motion(WubuSettings *s, int on){ if (s) s->reduced_motion = on?1:0; }
+
+/* DOC-45: UI chrome scale, independent of document zoom (1.0 = 100%). */
+double wubusettings_ui_scale(const WubuSettings *s){ return s ? s->ui_scale : 1.0; }
+void   wubusettings_set_ui_scale(WubuSettings *s, double us){
+    if (!s) return;
+    if (us < 0.5) us = 0.5; if (us > 3.0) us = 3.0;
+    s->ui_scale = us;
+}
+
+/* UI-30: first-run splash flag. True on a fresh install; the shell clears it
+ * (and persists) once the user dismisses the onboarding overlay. */
+int  wubusettings_first_run(const WubuSettings *s){ return s ? s->first_run : 1; }
+void wubusettings_set_first_run(WubuSettings *s, int on){ if (s) s->first_run = on?1:0; }
 
 /* process-wide singleton (defined near top of this file) */
 WubuSettings *wubusettings_shared(void){

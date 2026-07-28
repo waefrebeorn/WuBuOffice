@@ -12,6 +12,7 @@ int main(void){
     /* factory defaults */
     if (wubusettings_zoom(s) != 1.0){ printf("FAIL default zoom\n"); fails++; }
     if (!wubusettings_dark(s)){ printf("FAIL default dark\n"); fails++; }
+    if (wubusettings_first_run(s) != 1){ printf("FAIL default first_run\n"); fails++; }  /* UI-30 */
     if (wubusettings_autosave_ms(s) != 5000){ printf("FAIL default autosave\n"); fails++; }
     if (strcmp(wubusettings_language(s), "en")){ printf("FAIL default lang\n"); fails++; }
 
@@ -28,6 +29,7 @@ int main(void){
     wubusettings_set_high_contrast(s, 1);
     wubusettings_set_reduced_motion(s, 1);   /* DOC-43 */
     wubusettings_set_ui_scale(s, 1.5);       /* DOC-45 */
+    wubusettings_set_first_run(s, 0);        /* UI-30: dismiss */
 
     /* round-trip through a temp file */
     const char *path = "/tmp/wubuos_settings_test.json";
@@ -44,6 +46,7 @@ int main(void){
     if (!wubusettings_high_contrast(s2)){ printf("FAIL reload high-contrast\n"); fails++; }
     if (!wubusettings_reduced_motion(s2)){ printf("FAIL reload reduced-motion\n"); fails++; }
     if (wubusettings_ui_scale(s2) != 1.5){ printf("FAIL reload ui-scale\n"); fails++; }
+    if (wubusettings_first_run(s2) != 0){ printf("FAIL reload first_run\n"); fails++; }  /* UI-30 */
     wubusettings_destroy(s2);
 
     /* shared singleton */
