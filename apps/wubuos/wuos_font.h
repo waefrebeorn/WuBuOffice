@@ -38,6 +38,18 @@ int  wuos_font_height(void);
 /* Pixel width of a string at the current font size (no draw). */
 int  wuos_font_text_width(const char *s, int size);
 
+/* ---- font family enumeration + selection (INT-15: font picker) ----
+ * Scans the standard system font directories for .ttf/.otf/.ttc faces,
+ * groups them by FreeType family_name, and lets the app switch the active
+ * family at runtime. Call wuos_font_scan() once after wuos_font_init(). */
+void wuos_font_scan(void);                 /* enumerate available families */
+int  wuos_font_family_count(void);         /* number of enumerated families */
+const char *wuos_font_family_name(int i);  /* family label (i in [0,count)) */
+/* Select family i (loads its regular + bold faces). Returns 0 on success. */
+int  wuos_font_set_family(int i);
+/* Index of the currently active family (-1 before any selection). */
+int  wuos_font_current_family(void);
+
 #ifdef __cplusplus
 }
 #endif

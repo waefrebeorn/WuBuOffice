@@ -20,6 +20,7 @@ struct WubuSettings {
     int    reduced_motion;   /* DOC-43: disable animations/transitions */
     double ui_scale;          /* DOC-45: UI chrome scale, independent of doc zoom */
     int    first_run;         /* UI-30: show first-run splash until dismissed */
+    char   font_family[64];    /* INT-15: preferred font family name */
 };
 
 WubuSettings *wubusettings_create(void){
@@ -34,6 +35,7 @@ WubuSettings *wubusettings_create(void){
     s->reduced_motion = 0;
     s->ui_scale = 1.0;
     s->first_run = 1;       /* UI-30: first launch shows onboarding splash */
+    s->font_family[0] = '\0'; /* INT-15: default family */
     return s;
 }
 
@@ -93,6 +95,9 @@ int wubusettings_load(WubuSettings *s, const char *path){
         if ((v = j_obj_get(root,"reduced_motion")) && j_type(v)==J_NUM) s->reduced_motion = j_as_num(v)!=0;
         if ((v = j_obj_get(root,"ui_scale")) && j_type(v)==J_NUM){ double us=j_as_num(v); if(us<0.5)us=0.5; if(us>3.0)us=3.0; s->ui_scale=us; }
         if ((v = j_obj_get(root,"first_run")) && j_type(v)==J_NUM) s->first_run = j_as_num(v)!=0;
+        if ((v = j_obj_get(root,"font_family")) && j_type(v)==J_STR){
+            const char *l = j_as_str(v); strncpy(s->font_family, l, sizeof s->font_family-1); s->font_family[sizeof s->font_family-1]='\0';
+        }
         rc = 0;
     }
     j_free(root);
@@ -113,6 +118,7 @@ int wubusettings_save(const WubuSettings *s, const char *path){
     j_obj_put(root, "reduced_motion", j_num((double)s->reduced_motion));
     j_obj_put(root, "ui_scale", j_num(s->ui_scale));
     j_obj_put(root, "first_run", j_num((double)s->first_run));
+    j_obj_put(root, "font_family", j_str(s->font_family));
     char *txt = j_emit(root);
     j_free(root);
     if (!txt) return -1;
@@ -167,6 +173,14 @@ void   wubusettings_set_ui_scale(WubuSettings *s, double us){
  * (and persists) once the user dismisses the onboarding overlay. */
 int  wubusettings_first_run(const WubuSettings *s){ return s ? s->first_run : 1; }
 void wubusettings_set_first_run(WubuSettings *s, int on){ if (s) s->first_run = on?1:0; }
+
+/* INT-15: preferred font family (FreeType family_name). */
+const char *wubusettings_font_family(const WubuSettings *s){ return s ? s->font_family : ""; }
+void wubusettings_set_font_family(WubuSettings *s, const char *family){
+    if (!s || !family) return;
+    strncpy(s->font_family, family, sizeof s->font_family-1);
+    s->font_family[sizeof s->font_family-1]='\0';
+}
 
 /* process-wide singleton (defined near top of this file) */
 WubuSettings *wubusettings_shared(void){

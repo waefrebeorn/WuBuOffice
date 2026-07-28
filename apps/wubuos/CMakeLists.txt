@@ -224,3 +224,12 @@ target_include_directories(test_gotoline PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_compile_options(test_gotoline PRIVATE -Wall -Wextra -Wpedantic)
 add_test(NAME gotoline COMMAND test_gotoline)
 set_tests_properties(gotoline PROPERTIES LABELS "gotoline;apps")
+
+# Headless test for the INT-15 font enumeration / family picker.
+add_executable(test_font test_font.c wuos_font.c)
+target_include_directories(test_font PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_SOURCE_DIR}/src/wububase ${FREETYPE_INCLUDE_DIRS})
+target_link_libraries(test_font PRIVATE ${FREETYPE_LIBRARIES} wububase)
+target_compile_options(test_font PRIVATE -Wall -Wextra -Wpedantic)
+add_test(NAME font COMMAND test_font)
+set_tests_properties(font PROPERTIES LABELS "font;apps")

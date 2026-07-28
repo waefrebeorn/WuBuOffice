@@ -31,7 +31,7 @@
 12. **P1** No app wires `wubumodel` change-events to a UI redraw — editing model ≠ visible update. Need a dirty/relayout signal. — CLOSED (views re-render each frame).
 13. **P2** `wubusvg` agent exists but no app consumes SVG output (charts/draw/math produce SVG strings that go nowhere). — **CLOSED**: new src/wubusvg/rast.c SVG→RGBA rasterizer consumed by Document tab Insert.
 14. **P2** `wubucell` formula engine not surfaced in WuBuWord tables (tables are static). — CLOSED (Cell tab live formula bar).
-15. **P2** `wubufont` CLI not exposed as a font-picker UI. — OPEN (polish).
+15. **P2** wubufont CLI not exposed as a font-picker UI. — **CLOSED**: the GUI's FreeType font helper (`wuos_font`) now scans the system font directories at init, enumerates families (grouped by FreeType `family_name`, regular+bold paths), and exposes `wuos_font_set_family(i)` / `wuos_font_family_count()` / `wuos_font_family_name(i)`. The command palette lists one "Font: <family>" command per family (Ctrl+K); selecting one swaps the live faces and persists the choice by name in `wubusettings` (`font_family`), restored on next launch. Headless-tested by `test_font`.
 
 ## UI — User Interface / UX (we have never seen it)
 16. **P0** There is no graphical, interactive editor app at all. Build the primary WuBuWord GUI (SDL2/Freetype per WuBuPad gfx backend). — **CLOSED**: wubuos SDL2/Freetype shell.
@@ -164,9 +164,8 @@ the code actually ships and a test exercises it.
 
 **Explicitly OPEN (carried forward):**
 - **INT-7** (P0) BIDI/RTL shaping share — closed in-repo via new wubushape module; the cross-repo share is superseded (no longer needed).
-- **INT-15** (P2) wubufont CLI not exposed as a font-picker UI. *(remaining genuine open item)*
 
-*Resolved this session:* **UI-30** (first-run splash) and **UI-31** (empty-state) are now CLOSED (see body). The only genuinely-open P2 frontier items left are INT-15 (font-picker) and the unmarked UI-37+ list below.
+*Resolved this session:* **INT-15** (font-picker), **UI-30** (first-run splash) and **UI-31** (empty-state) are now CLOSED (see body). With INT-15 done, the only remaining frontier items are the unmarked UI-37+ list below (modal focus mgmt, etc.) — no longer-blocked architecture work remains.
 
 **Unmarked frontier (no CLOSED/OPEN tag yet — open by omission):**
 - **UI-37** (P1) No modal-dialog focus management (a11y+UX).

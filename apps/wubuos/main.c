@@ -107,6 +107,15 @@ int main(int argc, char **argv){
     if (SDL_Init(SDL_INIT_VIDEO)!=0){ fprintf(stderr,"SDL init: %s\n",SDL_GetError()); return 1; }
     if (wuos_font_init()!=0){ fprintf(stderr,"font init failed\n"); SDL_Quit(); return 1; }
 
+    /* INT-15: restore the user's preferred font family (by name, so it
+     * survives index shifts between runs) */
+    { WubuSettings *sh = wubusettings_shared();
+      const char *pf = sh ? wubusettings_font_family(sh) : "";
+      if (pf && *pf){
+          for (int i=0;i<wuos_font_family_count();i++)
+              if (!strcmp(wuos_font_family_name(i), pf)){ wuos_font_set_family(i); break; }
+      } }
+
     SDL_Window *win = SDL_CreateWindow("WuBuOffice", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIN_W, WIN_H, 0);
     if (!win){ fprintf(stderr,"window: %s\n",SDL_GetError()); SDL_Quit(); return 1; }
     SDL_Renderer *ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
@@ -154,6 +163,11 @@ int main(int argc, char **argv){
  palette_add(g_palette, "Macro: Play",        31);
  palette_add(g_palette, "Macro: Save",        32);
  palette_add(g_palette, "Macro: Load",        33);
+    /* INT-15: one palette command per enumerated font family */
+    for (int fi=0; fi<wuos_font_family_count(); fi++){
+        char lbl[96]; snprintf(lbl, sizeof lbl, "Font: %s", wuos_font_family_name(fi));
+        palette_add(g_palette, lbl, 100 + fi);
+    }
     /* if a specific tab was requested and exists, activate it */
     if (want_tab || auto_tab){
         const char *t = want_tab? want_tab : auto_tab;
@@ -284,7 +298,20 @@ int main(int argc, char **argv){
                                    snprintf(buf,sizeof buf,"%s/wubuos_macro.mac", mp? mp : "/tmp");
                                    if (macro_load(buf)==0) toast_push(g_toasts, "Macro loaded", 90);
                                    else toast_push(g_toasts, "Macro load failed", 120); } break;
-                        default: break;
+                        default:
+                            /* INT-15: font-family commands (id == 100 + index) */
+                            if (cmd >= 100){
+                                int fi = cmd - 100;
+                                if (fi >= 0 && fi < wuos_font_family_count()){
+                                    if (wuos_font_set_family(fi)==0){
+                                        WubuSettings *sh = wubusettings_shared();
+                                        if (sh){ wubusettings_set_font_family(sh, wuos_font_family_name(fi));
+                                                 wubusettings_save(sh, NULL); }
+                                        toast_push(g_toasts, wuos_font_family_name(fi), 90);
+                                    } else toast_push(g_toasts, "Font switch failed", 120);
+                                }
+                            }
+                            break;
                         }
                     }
                     else if (k>=32 && k<128 && !(mod & KMOD_CTRL)) palette_input(g_palette, (char)k);

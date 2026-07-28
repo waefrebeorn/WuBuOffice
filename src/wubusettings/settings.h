@@ -54,6 +54,11 @@ void   wubusettings_set_ui_scale(WubuSettings *s, double us);
 int  wubusettings_first_run(const WubuSettings *s);
 void wubusettings_set_first_run(WubuSettings *s, int on);
 
+/* INT-15: preferred font family (FreeType family_name string; persisted so a
+ * restart restores the same face even if font indices shift). "" = default. */
+const char *wubusettings_font_family(const WubuSettings *s);
+void        wubusettings_set_font_family(WubuSettings *s, const char *family);
+
 /* Process-wide singleton (lazy). Returns NULL only on OOM. */
 WubuSettings *wubusettings_shared(void);
 
