@@ -227,6 +227,18 @@ const char *wubumodel_style_get_prop(const wubumodel_style *s, const char *name)
         if (strcmp(p->name, name) == 0) return p->value;
     return NULL;
 }
+int wubumodel_style_prop_at(const wubumodel_style *s, int i,
+                            const char **name, const char **value) {
+    if (!s || i < 0) return 0;
+    int k = 0;
+    for (style_prop *p = s->props; p; p = p->next, k++)
+        if (k == i) {
+            if (name)  *name  = p->name;
+            if (value) *value = p->value;
+            return 1;
+        }
+    return 0;
+}
 int wubumodel_node_set_style(wubumodel_node *n, wubumodel_style *s) {
     if (!n) return -1;
     if (n->style) wubumodel_style_destroy(n->style);

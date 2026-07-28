@@ -67,6 +67,11 @@ void wubumodel_style_destroy(wubumodel_style *s);
 int  wubumodel_style_set_prop(wubumodel_style *s, const char *name,
                               const char *value); /* 0 ok */
 const char *wubumodel_style_get_prop(const wubumodel_style *s, const char *name);
+/* Iterate props: returns 1 and fills *name/*value for index i (0-based), or 0
+ * past the end. Order is unspecified but stable between mutations. (DOC-74:
+ * lets a format-painter copy ALL props without knowing their names.) */
+int  wubumodel_style_prop_at(const wubumodel_style *s, int i,
+                             const char **name, const char **value);
 /* attach (shares pointer; COW performed by setter on internal mutation) */
 int  wubumodel_node_set_style(wubumodel_node *n, wubumodel_style *s);
 /* DOC-58: named-style presets. `wubumodel_style_named` returns a freshly
