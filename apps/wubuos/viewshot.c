@@ -33,6 +33,7 @@
 #define WIN_H 720
 #define TAB_H 30
 #define STATUS_H 26
+#define VSHOT_MENU_H 24   /* must precede all uses in this TU */
 
 /* Paint `text` onto the RGBA buffer at (px,py) using the shared FreeType
  * helper (replaces main.c's sdl_text, which draws to an SDL texture). */
@@ -105,19 +106,20 @@ int main(int argc, char **argv){
     if (!fb){ fprintf(stderr,"oom\n"); return 1; }
     buf_fill(fb, WIN_W, WIN_H, 0,0, WIN_W,WIN_H, 235,237,240);  /* base bg */
 
-    /* active view */
+    /* active view (placed below the tab strip AND the menu bar) */
     unsigned char *rgba=NULL; int rw=0, rh=0;
     int scroll = 0;
-    if (views[active]->render(views[active], WIN_W, WIN_H-TAB_H-STATUS_H, scroll, &rgba, &rw, &rh)==0 && rgba){
+    int view_top = TAB_H + VSHOT_MENU_H;
+    if (views[active]->render(views[active], WIN_W, WIN_H-view_top-STATUS_H, scroll, &rgba, &rw, &rh)==0 && rgba){
         int draw_w = rw, draw_h = rh;            /* zoom = 1.0 for screenshots */
-        int maxscroll = (rh > (WIN_H-TAB_H-STATUS_H))? rh-(WIN_H-TAB_H-STATUS_H):0;
+        int maxscroll = (rh > (WIN_H-view_top-STATUS_H))? rh-(WIN_H-view_top-STATUS_H):0;
         if (scroll>maxscroll) scroll=maxscroll;
         /* blit (zoom 1: direct row copy of the view's RGBA) */
-        int src_h = (draw_h < (WIN_H-TAB_H-STATUS_H))? draw_h : (WIN_H-TAB_H-STATUS_H);
+        int src_h = (draw_h < (WIN_H-view_top-STATUS_H))? draw_h : (WIN_H-view_top-STATUS_H);
         int src_w = (draw_w < WIN_W)? draw_w : WIN_W;
         for (int y=0; y<src_h; y++) for (int x=0; x<src_w; x++){
             size_t s=((size_t)y*src_w+x)*4;
-            size_t d=((size_t)(TAB_H+y)*WIN_W+x)*4;
+            size_t d=((size_t)(view_top+y)*WIN_W+x)*4;
             fb[d]=rgba[s]; fb[d+1]=rgba[s+1]; fb[d+2]=rgba[s+2]; fb[d+3]=255;
         }
         free(rgba);
@@ -145,6 +147,19 @@ int main(int argc, char **argv){
                  on?ttxo.r:ttx.r, on?ttxo.g:ttx.g, on?ttxo.b:ttx.b, views[i]->name);
         x+=tw;
     }
+
+    /* menu bar (UI-43): parity with main.c's live render. Top-level items only
+     * (dropdowns are live-interaction only; headless shots show the bar). */
+    static const char *vmenus[4] = { "File", "Edit", "View", "Help" };
+    buf_fill(fb, WIN_W, WIN_H, 0, TAB_H, WIN_W, VSHOT_MENU_H, tbb.r,tbb.g,tbb.b);
+    { int mx=0;
+      for (int mi=0; mi<4; mi++){
+          int mw=(int)strlen(vmenus[mi])*14+22;
+          buf_text(fb, WIN_W, WIN_H, mx+11, TAB_H + (VSHOT_MENU_H-wuos_font_height())/2 + 1,
+                   ttx.r,ttx.g,ttx.b, vmenus[mi]);
+          mx+=mw;
+      } }
+
     /* status bar */
     WuosRGB sb = (WuosRGB)WUOS_DARK_STATUS;
     WuosRGB stx= (WuosRGB)WUOS_DARK_STATUSTX;

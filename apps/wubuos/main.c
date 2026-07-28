@@ -39,13 +39,66 @@ static Palette *g_palette = NULL;   /* UI-29: command palette (Ctrl+K) */
 static int      g_cheat = 0;       /* UI-36: shortcut cheat-sheet overlay */
 static int      g_first_run = 0;    /* UI-30: first-run onboarding splash */
 static Dialog  *g_dlg = NULL;       /* modal text-input dialog */
-static int      g_dlg_action = 0;   /* 0 none,1 link,2 qr,3 image-alt */
+static int      g_dlg_action = 0;   /* 0 none,1 link,2 qr,3 image-alt,10 open,11 save-as */
+/* Menu bar (UI-43): top-level menus File/Edit/View/Help with dropdowns.
+ * Small opaque model; selecting an item runs a command id (same space the
+ * command palette uses). Pure chrome state here; views stay GUI-free. */
+#define MENU_H 24
+static const char *g_menu_names[4] = { "File", "Edit", "View", "Help" };
+/* each menu: list of {label, cmd} pairs, cmd 0 = separator */
+static const struct { const char *label; int cmd; } g_menus[4][8] = {
+  { {"Open...",         1000}, {"Save",            1001}, {"Save As...",  1002},
+    {"New Document",     1003}, {"Export EPUB",     1004}, {NULL,0} },
+  { {"Undo",            1005}, {"Redo",            1006}, {"Find...",     1007},
+    {"Replace...",       1008}, {"Go to Line...",   1009}, {"Toggle Theme",1010}, {NULL,0} },
+  { {"Zoom In",         1011}, {"Zoom Out",        1012}, {"Zoom Reset",   1013},
+    {"Word Wrap",       1014}, {"High Contrast",   1015}, {NULL,0} },
+  { {"Shortcuts",       1016}, {"First-run Tour",  1017}, {NULL,0} },
+};
+static int g_menu_open = -1;       /* which top menu is dropped, -1 none */
+static int g_menu_hover = -1;      /* hovered dropdown item */
+
 /* Plugin manager: loaded once at startup from ~/.wubuos/plugins. */
 static WuOSPluginMgr *g_plugins = NULL;
 static char   *g_plugin_msg = NULL;   /* last exec() result toast */
 static int     g_plugin_idx = 0;      /* next plugin to run via Ctrl+Shift+K */
 
 static void add_view(WuView *v){ if (v && nviews<8) views[nviews++]=v; }
+
+/* Run a menu command id (UI-43). Shares the action space with the command
+ * palette where possible. `cmd` 1000-1017 are menu-specific. */
+static void run_menu_cmd(int cmd){
+    switch (cmd){
+    case 1000: g_dlg_action = 10; dialog_open(g_dlg, "Open File", "Path:", "");
+               toast_push(g_toasts, "Open: type path, Enter", 120); return;
+    case 1001: if (views[active]->save) views[active]->save(views[active]);
+               toast_push(g_toasts, "Saved", 90); return;
+    case 1002: g_dlg_action = 11;
+               { const char *cur = (views[active]&&views[active]->get_path)? views[active]->get_path(views[active]):NULL;
+                 dialog_open(g_dlg, "Save As", "Path:", cur?cur:""); }
+               toast_push(g_toasts, "Save As: type path, Enter", 120); return;
+    case 1003: { WuView *nv = wuos_doc_create(NULL);
+                 if (nv && nviews<8){ add_view(nv); active=nviews-1; }
+                 toast_push(g_toasts, "New document", 90); } return;
+    case 1004: if (views[active]->on_key) views[active]->on_key(views[active], WUOS_KEY_EXPORT_EPUB, 1);
+               toast_push(g_toasts, "EPUB export requested", 120); return;
+    case 1005: if (views[active]->on_key) views[active]->on_key(views[active], WUOS_KEY_UNDO, 1); return;
+    case 1006: if (views[active]->on_key) views[active]->on_key(views[active], WUOS_KEY_REDO, 1); return;
+    case 1007: if (views[active]->on_key) views[active]->on_key(views[active], WUOS_KEY_FIND, 1); return;
+    case 1008: if (views[active]->on_key) views[active]->on_key(views[active], WUOS_KEY_REPLACE, 1); return;
+    case 1009: if (views[active]->on_key) views[active]->on_key(views[active], WUOS_KEY_GOTO, 1); return;
+    case 1010: { WubuSettings *sh=wubusettings_shared(); if (sh) wubusettings_set_dark(sh, !wubusettings_dark(sh));
+                 toast_push(g_toasts, "Theme toggled", 90); } return;
+    case 1011: g_zoom += 0.1f; if (g_zoom>3.0f) g_zoom=3.0f; toast_push(g_toasts, "Zoom in", 60); return;
+    case 1012: g_zoom -= 0.1f; if (g_zoom<0.5f) g_zoom=0.5f; toast_push(g_toasts, "Zoom out", 60); return;
+    case 1013: g_zoom = 1.0f; toast_push(g_toasts, "Zoom reset", 60); return;
+    case 1014: { WubuSettings *sh=wubusettings_shared(); if (sh){ wubusettings_set_word_wrap(sh, !wubusettings_word_wrap(sh)); wubusettings_save(sh,NULL);} toast_push(g_toasts, "Word wrap toggled", 90); } return;
+    case 1015: { WubuSettings *sh=wubusettings_shared(); if (sh) wubusettings_set_high_contrast(sh, !wubusettings_high_contrast(sh));
+                 toast_push(g_toasts, "High contrast toggled", 90); } return;
+    case 1016: g_cheat = !g_cheat; toast_push(g_toasts, "Shortcuts", 90); return;
+    case 1017: g_first_run = 1; toast_push(g_toasts, "Tour", 90); return;
+    }
+}
 
 /* Open `path` in a suitable tab (editor for text-ish, document otherwise),
  * make it active, and record it in the recent-documents list (UI-39). */
@@ -234,9 +287,53 @@ int main(int argc, char **argv){
             else if (e.type==SDL_MOUSEMOTION){
                 tab_hover = tab_at(e.motion.x);
                 if (e.motion.y < TAB_H){ /* over tab bar: let click switch */ }
+                /* UI-43: menu-bar hover (top row under the tab strip) */
+                g_menu_hover = -1;
+                if (e.motion.y >= TAB_H && e.motion.y < TAB_H+MENU_H){
+                    int mx=0;
+                    for (int mi=0; mi<4; mi++){
+                        int mw = (int)strlen(g_menu_names[mi])*14 + 22;
+                        if (e.motion.x>=mx && e.motion.x<mx+mw){ g_menu_hover=mi; break; }
+                        mx+=mw;
+                    }
+                    /* dropdown item hover when a menu is open */
+                    if (g_menu_open>=0 && g_menu_hover==g_menu_open){
+                        int n=0; while (g_menus[g_menu_open][n].label) n++;
+                        int dy = TAB_H + MENU_H, dy0 = e.motion.y - dy - 3;
+                        int ii = dy0/22;
+                        g_menu_hover = (ii>=0 && ii<n)? (g_menu_open*100+ii) : g_menu_open;
+                    }
+                }
             }
             else if (e.type==SDL_MOUSEBUTTONDOWN && e.button.button==SDL_BUTTON_LEFT){
-                if (e.button.y < TAB_H){ int t=tab_at(e.button.x); if(t>=0){ active=t; scroll=0; } }
+                /* UI-43: menu bar (row between TAB_H and TAB_H+MENU_H) */
+                if (e.button.y >= TAB_H && e.button.y < TAB_H+MENU_H){
+                    int mx=0, hit=-1;
+                    for (int mi=0; mi<4; mi++){
+                        int mw = (int)strlen(g_menu_names[mi])*14 + 22;
+                        if (e.button.x>=mx && e.button.x<mx+mw){ hit=mi; break; }
+                        mx+=mw;
+                    }
+                    if (hit>=0){
+                        /* if a dropdown is open and the click lands on an item, run it */
+                        if (g_menu_open>=0 && hit==g_menu_open){
+                            int n=0; while (g_menus[hit][n].label) n++;
+                            int dy = TAB_H + MENU_H, dy0 = e.button.y - dy - 3;
+                            int ii = dy0/22;
+                            if (ii>=0 && ii<n && g_menus[hit][ii].cmd){
+                                int c = g_menus[hit][ii].cmd;
+                                g_menu_open = -1; g_menu_hover = -1;
+                                run_menu_cmd(c);
+                                continue;
+                            }
+                        }
+                        g_menu_open = (g_menu_open==hit)? -1 : hit;
+                        g_menu_hover = g_menu_open;
+                    } else {
+                        g_menu_open = -1; g_menu_hover = -1;
+                    }
+                }
+                else if (e.button.y < TAB_H){ int t=tab_at(e.button.x); if(t>=0){ active=t; scroll=0; } }
                 else if (g_ctx){  /* UI-27: select context-menu item */
                     /* items: 0 Open File, 1 New Document, 2 Toggle Theme */
                     if (g_ctx_item==2){
@@ -246,7 +343,7 @@ int main(int argc, char **argv){
                 }
                 else if (views[active]->on_click){  /* clickable links/objects */
                     int lx = e.button.x;
-                    int ly = e.button.y - TAB_H;
+                    int ly = e.button.y - TAB_H - MENU_H;
                     if (ly >= 0) views[active]->on_click(views[active], lx, ly);
                 }
             }
@@ -407,6 +504,8 @@ int main(int argc, char **argv){
                 else if (k==SDLK_g && (mod & KMOD_CTRL)) code=WUOS_KEY_GOTO;
                 else if (k==SDLK_e && (mod & KMOD_CTRL)) code=WUOS_KEY_EOL;
                 else if (k==SDLK_BACKQUOTE && (mod & KMOD_CTRL)) code=WUOS_KEY_THEME;
+                else if (k==SDLK_z && (mod & KMOD_CTRL) && !(mod & KMOD_SHIFT)) code=WUOS_KEY_UNDO;
+                else if ((k==SDLK_y && (mod & KMOD_CTRL)) || (k==SDLK_z && (mod & KMOD_CTRL) && (mod & KMOD_SHIFT))) code=WUOS_KEY_REDO;
                 else if (k==SDLK_t && (mod & KMOD_CTRL)) code=WUOS_KEY_NEWDOC;
                 else if (k==SDLK_w && (mod & KMOD_CTRL)) code=WUOS_KEY_CLOSE;
                 else if (k==SDLK_TAB && (mod & KMOD_CTRL))
@@ -506,9 +605,10 @@ int main(int argc, char **argv){
             }
         }
 
-        /* render active view */
+        /* render active view (placed below the tab strip AND the menu bar) */
+        int view_top = TAB_H + MENU_H;
         unsigned char *rgba=NULL; int rw=0, rh=0;
-        if (views[active]->render(views[active], WIN_W, WIN_H - TAB_H - STATUS_H, scroll, &rgba, &rw, &rh)!=0)
+        if (views[active]->render(views[active], WIN_W, WIN_H - view_top - STATUS_H, scroll, &rgba, &rw, &rh)!=0)
             rgba=NULL;
 
         SDL_SetRenderDrawColor(ren, 235,237,240,255);
@@ -518,14 +618,14 @@ int main(int argc, char **argv){
             if (tex){
                 SDL_SetTextureBlendMode(tex, SDL_BLENDMODE_NONE);
                 SDL_UpdateTexture(tex, NULL, rgba, rw*4);
-                int maxscroll = (rh > (WIN_H-TAB_H-STATUS_H))? rh-(WIN_H-TAB_H-STATUS_H):0;
+                int maxscroll = (rh > (WIN_H-view_top-STATUS_H))? rh-(WIN_H-view_top-STATUS_H):0;
                 if (scroll>maxscroll) scroll=maxscroll;
                 /* UI-24: apply shell zoom by scaling the destination rect */
                 int draw_w = (int)(rw * g_zoom);
                 int draw_h = (int)(rh * g_zoom);
-                SDL_Rect src={0,scroll,rw,rh}; SDL_Rect dst={0,TAB_H,draw_w,draw_h};
-                if (draw_h < (WIN_H-TAB_H-STATUS_H)){ dst.y=TAB_H; dst.h=draw_h; src.h=rh; }
-                else { src.h=(WIN_H-TAB_H-STATUS_H); dst.h=(WIN_H-TAB_H-STATUS_H); }
+                SDL_Rect src={0,scroll,rw,rh}; SDL_Rect dst={0,view_top,draw_w,draw_h};
+                if (draw_h < (WIN_H-view_top-STATUS_H)){ dst.y=view_top; dst.h=draw_h; src.h=rh; }
+                else { src.h=(WIN_H-view_top-STATUS_H); dst.h=(WIN_H-view_top-STATUS_H); }
                 SDL_RenderCopy(ren, tex, &src, &dst);
                 SDL_DestroyTexture(tex);
             }
@@ -566,6 +666,51 @@ int main(int argc, char **argv){
                      on?ttxo.r:ttx.r, on?ttxo.g:ttx.g, on?ttxo.b:ttx.b,
                      views[i]->name);
             x+=tw;
+        }
+        /* menu bar (UI-43): second chrome row below the tab strip. Top-level
+         * items; the open one drops a command list. Neutral surface, accent
+         * underline on hover/active (matches the tab-bar language). */
+        {
+            int my = TAB_H;
+            SDL_SetRenderDrawColor(ren, tbb.r, tbb.g, tbb.b, 255);
+            SDL_RenderFillRect(ren, &(SDL_Rect){0, my, WIN_W, MENU_H});
+            int mx = 0;
+            for (int mi=0; mi<4; mi++){
+                int mw = (int)strlen(g_menu_names[mi])*14 + 22;
+                int on = (mi==g_menu_open);
+                int hovered = (g_menu_hover==mi || (g_menu_open==mi && g_menu_hover>=mi*100 && g_menu_hover<mi*100+100));
+                if (on || hovered){
+                    SDL_SetRenderDrawColor(ren, tto.r, tto.g, tto.b, 255);
+                    SDL_RenderFillRect(ren, &(SDL_Rect){mx, my, mw, MENU_H});
+                }
+                sdl_text(ren, mx+11, my + (MENU_H-wuos_font_height())/2 + 1,
+                         (on||hovered)?ttxo.r:ttx.r, (on||hovered)?ttxo.g:ttx.g, (on||hovered)?ttxo.b:ttx.b,
+                         g_menu_names[mi]);
+                if (on){
+                    /* dropdown */
+                    int n=0; while (g_menus[mi][n].label) n++;
+                    int dy = my + MENU_H;
+                    int dh = n*22 + 6;
+                    SDL_SetRenderDrawColor(ren, tto.r, tto.g, tto.b, 255);
+                    SDL_RenderFillRect(ren, &(SDL_Rect){mx, dy, mw, dh});
+                    SDL_SetRenderDrawColor(ren, bd.r, bd.g, bd.b, 255);
+                    SDL_RenderDrawRect(ren, &(SDL_Rect){mx, dy, mw, dh});
+                    for (int i=0;i<n;i++){
+                        int iy = dy + 3 + i*22;
+                        int item_hover = (g_menu_hover==mi*100+i);
+                        if (item_hover){
+                            SDL_SetRenderDrawColor(ren, ac.r, ac.g, ac.b, 255);
+                            SDL_RenderFillRect(ren, &(SDL_Rect){mx+1, iy, mw-2, 20});
+                        }
+                        sdl_text(ren, mx+8, iy + (20-wuos_font_height())/2 + 1,
+                                 item_hover?ttxo.r:ttx.r,
+                                 item_hover?ttxo.g:ttx.g,
+                                 item_hover?ttxo.b:ttx.b,
+                                 g_menus[mi][i].label);
+                    }
+                }
+                mx += mw;
+            }
         }
         /* status bar */
         char *st = views[active]->status? views[active]->status(views[active]) : NULL;

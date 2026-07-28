@@ -77,6 +77,9 @@ Real engine surface (surveyed, not guessed):
         Ctrl+Shift+A opens a Save-As path dialog; both reuse the opaque `Dialog`
         state machine. Editor gained a `set_path` vtable hook (Save As persists
         + re-bases crash-recovery autosave). Verified by `test_view`.
+      - Menu bar (UI-43): second chrome row (File/Edit/View/Help) with working
+        dropdowns + mouse handling; Ctrl+Z/Y undo-redo wired (WUOS_KEY_UNDO/
+        REDO). Rendered by both the live shell and `viewshot` (parity).
 
 > Engine-linkage status (accurate as of this steamroll):
 > - OCR, autosave (INT-2), spell (INT-8), chart/draw/math, EPUB export,

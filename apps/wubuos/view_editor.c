@@ -657,6 +657,10 @@ static void on_key(WuView *v, int key, int down){
     if (!down) return;
     e->frames = 0;  /* reset blink on activity */
 
+    /* ---- undo / redo (Ctrl+Z / Ctrl+Y, also wired from the menu bar) ---- */
+    if (key == WUOS_KEY_UNDO){ if (doc_can_undo(e->doc)) doc_undo(e->doc); return; }
+    if (key == WUOS_KEY_REDO){ if (doc_can_redo(e->doc)) doc_redo(e->doc); return; }
+
     /* ---- auto-completion popup intercepts keys ---- */
     if (e->ac && autocomp_opened(e->ac)){
         switch (key){
