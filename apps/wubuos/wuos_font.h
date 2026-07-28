@@ -26,6 +26,13 @@ int  wuos_font_draw_s(const char *s, int x, int y, int bold, int size,
                       unsigned char r, unsigned char g, unsigned char b,
                       unsigned char *fb, int fbw, int fbh);
 
+/* Adapter matching the wubusvg svg_text_fn signature (size in position 4,
+ * not bold), so views can pass a FreeType text callback to the SVG rasterizer
+ * without a type mismatch. Maps straight onto wuos_font_draw_s. */
+void wuos_svg_text(const char *s, int x, int y, int size,
+                   unsigned char r, unsigned char g, unsigned char b,
+                   unsigned char *fb, int fbw, int fbh);
+
 /* Pixel height of the current font. */
 int  wuos_font_height(void);
 /* Pixel width of a string at the current font size (no draw). */

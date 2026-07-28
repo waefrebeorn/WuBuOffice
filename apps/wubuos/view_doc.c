@@ -19,6 +19,7 @@
 #include "toc.h"          /* DOC-54: table-of-contents generator */
 #include "settings.h"      /* UXA-41: high-contrast colors */
 #include "script.h"        /* DOC-97: wubuscript computed fields */
+#include "doccmd.h"        /* opaque document-editing command module */
 
 #include <stdlib.h>
 #include <string.h>
@@ -79,283 +80,9 @@ typedef struct { Wurender *r; wubumodel_doc *doc; char *path;
                  int nlink;
 } DocV;
 
-/* Build a sample bar chart and rasterize it into a free overlay slot. */
-static void doc_insert_chart(DocV *e){
-    if (e->nobj >= DOC_MAX_OBJS) return;
-    Chart *c = chart_create("Sample Bar Chart");
-    chart_set_type(c, CHART_BAR);
-    chart_set_size(c, 320, 200);
-    double ys[4] = { 23, 41, 17, 52 };
-    const char *lbl[4] = { "Q1", "Q2", "Q3", "Q4" };
-    chart_add_series(c, "sales", ys, 4, lbl);
-    char *svg = chart_render_svg(c);
-    chart_free(c);
-    if (svg){
-        unsigned char *fb=NULL; int w=0,h=0;
-        int rc = svg_rasterize_cb(svg, strlen(svg), &fb, &w, &h, wuos_font_draw);
-        free(svg);
-        if (rc){ int i=e->nobj++; e->obj[i]=fb; e->objw[i]=w; e->objh[i]=h; }
-    }
-}
-/* Build a sample draw scene (rectangle + ellipse + line) and rasterize it. */
-static void doc_insert_draw(DocV *e){
-    if (e->nobj >= DOC_MAX_OBJS) return;
-    DrawScene *s = draw_create(320, 200);
-    draw_add_rect(s, 20, 20, 120, 80, "#4488cc", "#224466");
-    draw_add_ellipse(s, 240, 100, 50, 40, "#cc6644", "none");
-    draw_add_line(s, 20, 180, 300, 180, "#333333", 2);
-    draw_add_text(s, 30, 60, "Draw", 20, "#ffffff");
-    char *svg = draw_render_svg(s);
-    draw_destroy(s);
-    if (svg){
-        unsigned char *fb=NULL; int w=0,h=0;
-        int rc = svg_rasterize_cb(svg, strlen(svg), &fb, &w, &h, wuos_font_draw);
-        free(svg);
-        if (rc){ int i=e->nobj++; e->obj[i]=fb; e->objw[i]=w; e->objh[i]=h; }
-    }
-}
-/* Build a sample math equation (x^2 + 1) and rasterize it. */
-static void doc_insert_math(DocV *e){
-    if (e->nobj >= DOC_MAX_OBJS) return;
-    char *svg = math_render_svg("x^2 + 1 = \\frac{a}{b}");
-    if (svg){
-        unsigned char *fb=NULL; int w=0,h=0;
-        int rc = svg_rasterize_cb(svg, strlen(svg), &fb, &w, &h, wuos_font_draw);
-        free(svg);
-        if (rc){ int i=e->nobj++; e->obj[i]=fb; e->objw[i]=w; e->objh[i]=h; }
-    }
-}
-/* Export the current model doc to EPUB (INT-4). */
-static void doc_export_epub(DocV *e){
-    free(e->epub_msg); e->epub_msg = NULL;
-    if (!e->doc){ e->epub_msg = strdup("no model doc to export"); return; }
-    const char *out = "/tmp/wubuos_export.epub";
-    int rc = epub_write(e->doc, out, "WuBuOffice Document", "en");
-    if (rc==0){
-        char b[128]; snprintf(b,sizeof b,"EPUB written: %s", out);
-        e->epub_msg = strdup(b);
-    } else {
-        e->epub_msg = strdup("EPUB export failed");
-    }
-}
-/* DOC-76: save the model back to DOCX (round-trip). If the current path is a
- * .docx/.docm, overwrite it; otherwise write "<path>.docx" alongside. The model
- * is the same one we loaded from DOCX (or built), so structure is preserved. */
-static void doc_save(DocV *e){
-    free(e->epub_msg); e->epub_msg = NULL;
-    if (!e->doc){ e->epub_msg = strdup("no model doc to save"); return; }
-    char out[512];
-    if (e->path && (strstr(e->path,".docx")||strstr(e->path,".docm")||strstr(e->path,".dotx")))
-        snprintf(out,sizeof out,"%s", e->path);
-    else if (e->path && (strstr(e->path,".odt")||strstr(e->path,".fodt")))
-        snprintf(out,sizeof out,"%s", e->path);
-    else if (e->path)
-        snprintf(out,sizeof out,"%s.docx", e->path);
-    else
-        snprintf(out,sizeof out,"/tmp/wubuos_document.docx");
-    int rc;
-    if (strstr(out,".odt")||strstr(out,".fodt")) rc = wubumodel_write_odt(e->doc, out);
-    else rc = wubumodel_write_docx(e->doc, out);
-    if (rc==0){
-        char b[512]; const char *lab = (strstr(out,".odt")||strstr(out,".fodt"))?"ODT":"DOCX";
-        snprintf(b,sizeof b,"%s saved: %s", lab, out);
-        e->epub_msg = strdup(b);
-    } else {
-        e->epub_msg = strdup("DOCX/ODT save failed");
-    }
-}
-/* Run an a11y check on the current model doc (INT-5). */
-static void doc_a11y_check(DocV *e){
-    if (e->a11y_done) a11y_report_free(&e->a11y);
-    e->a11y.count = 0; e->a11y.items = NULL; e->a11y.cap = 0;
-    if (e->doc) a11y_check_doc(e->doc, 1, 0, &e->a11y);
-    e->a11y_done = 1;
-}
-/* Insert a hyperlink into the model (DOC-60): a LINK node whose RUN children
- * are the visible text and whose target is set via the model accessor. */
-static void doc_insert_link(DocV *e){
-    if (!e->doc) return;
-    wubumodel_node *sec = wubumodel_node_first_child(wubumodel_doc_root(e->doc));
-    if (!sec) return;
-    wubumodel_node *lk = wubumodel_node_create(e->doc, WUBUMODEL_LINK);
-    wubumodel_node *r = wubumodel_node_create(e->doc, WUBUMODEL_RUN);
-    wubumodel_run_set_text(r, "WuBuOffice");
-    wubumodel_node_append(e->doc, lk, r);
-    wubumodel_node_set_link(lk, "https://github.com/waefrebeorn/WuBuOffice");
-    wubumodel_node_append(e->doc, sec, lk);
-    e->toc_dirty = 1;
-}
-/* Insert a bullet-list item into the model (DOC-59): a paragraph styled
- * list=bullet whose RUN is the item text. */
-static void doc_insert_list(DocV *e){
-    if (!e->doc) return;
-    wubumodel_node *sec = wubumodel_node_first_child(wubumodel_doc_root(e->doc));
-    if (!sec) return;
-    wubumodel_node *p = wubumodel_node_create(e->doc, WUBUMODEL_PARAGRAPH);
-    wubumodel_style *st = wubumodel_style_create();
-    wubumodel_style_set_prop(st, "list", "bullet");
-    wubumodel_node_set_style(p, st);
-    wubumodel_style_destroy(st);
-    wubumodel_node *r = wubumodel_node_create(e->doc, WUBUMODEL_RUN);
-    wubumodel_run_set_text(r, "List item");
-    wubumodel_node_append(e->doc, p, r);
-    wubumodel_node_append(e->doc, sec, p);
-    e->toc_dirty = 1;
-}
-/* Insert a 2x2 table into the model (DOC-62): a TABLE of two CELL rows, each
- * CELL holding a paragraph with a sample run. Laid out per-cell by wubulayout;
- * the Document view draws cell borders from the layout boxes. */
-static void doc_insert_table(DocV *e){
-    if (!e->doc) return;
-    wubumodel_node *sec = wubumodel_node_first_child(wubumodel_doc_root(e->doc));
-    if (!sec) return;
-    wubumodel_node *tbl = wubumodel_node_create(e->doc, WUBUMODEL_TABLE);
-    for (int r=0; r<2; r++){
-        wubumodel_node *cell = wubumodel_node_create(e->doc, WUBUMODEL_CELL);
-        wubumodel_node *para = wubumodel_node_create(e->doc, WUBUMODEL_PARAGRAPH);
-        wubumodel_node *rr = wubumodel_node_create(e->doc, WUBUMODEL_RUN);
-        char buf[32]; snprintf(buf,sizeof buf,"Cell %d", r+1);
-        wubumodel_run_set_text(rr, buf);
-        wubumodel_node_append(e->doc, para, rr);
-        wubumodel_node_append(e->doc, cell, para);
-        wubumodel_node_append(e->doc, tbl, cell);
-    }
-    wubumodel_node_append(e->doc, sec, tbl);
-    e->toc_dirty = 1;
-}
-/* Insert a sample embedded image into the model (DOC-61): an IMAGE node
- * carrying a small RGBA raster (here a generated checker; real use would
- * decode a PNG via the in-tree wubuimage decoder and set the plane). The
- * Document view blits it into the layout box. */
-static void doc_insert_image(DocV *e){
-    if (!e->doc) return;
-    wubumodel_node *sec = wubumodel_node_first_child(wubumodel_doc_root(e->doc));
-    if (!sec) return;
-    wubumodel_node *im = wubumodel_node_create(e->doc, WUBUMODEL_IMAGE);
-    const int W=96, H=64;
-    uint8_t *px = malloc((size_t)W*H*4);
-    if (!px) return;
-    for (int y=0; y<H; y++)
-        for (int x=0; x<W; x++){
-            uint8_t *p = px + ((size_t)y*W+x)*4;
-            int chk = ((x/8)+(y/8)) & 1;
-            p[0] = chk? 60:220; p[1] = chk? 140:80; p[2] = chk? 220:60; p[3] = 255;
-        }
-    wubumodel_node_set_image(im, px, W, H);
-    free(px);
-    wubumodel_node_append(e->doc, sec, im);
-    e->toc_dirty = 1;
-}
-/* Insert a page break (DOC-57). */
-static void doc_insert_pagebreak(DocV *e){
-    if (!e->doc) return;
-    wubumodel_node *sec = wubumodel_node_first_child(wubumodel_doc_root(e->doc));
-    if (!sec) return;
-    wubumodel_node *b = wubumodel_node_create(e->doc, WUBUMODEL_PAGEBREAK);
-    wubumodel_node_set_break(b, 0);
-    wubumodel_node_append(e->doc, sec, b);
-    e->toc_dirty = 1;
-}
-/* Insert a section break (DOC-57). */
-static void doc_insert_sectionbreak(DocV *e){
-    if (!e->doc) return;
-    wubumodel_node *sec = wubumodel_node_first_child(wubumodel_doc_root(e->doc));
-    if (!sec) return;
-    wubumodel_node *b = wubumodel_node_create(e->doc, WUBUMODEL_SECTIONBREAK);
-    wubumodel_node_set_break(b, 1);
-    wubumodel_node_append(e->doc, sec, b);
-    e->toc_dirty = 1;
-}
-/* Insert a page header (DOC-56): a HEADER node with sample text. */
-static void doc_insert_header(DocV *e){
-    if (!e->doc) return;
-    wubumodel_node *sec = wubumodel_node_first_child(wubumodel_doc_root(e->doc));
-    if (!sec) return;
-    /* replace any existing header */
-    for (wubumodel_node *n = wubumodel_node_first_child(sec); n; n = wubumodel_node_next_sibling(n))
-        if (wubumodel_node_kind(n)==WUBUMODEL_HEADER){ wubumodel_node_set_text(n, "WuBuOffice Header"); return; }
-    wubumodel_node *hd = wubumodel_node_create(e->doc, WUBUMODEL_HEADER);
-    wubumodel_node_set_text(hd, "WuBuOffice Header");
-    wubumodel_node_append(e->doc, sec, hd);
-    e->toc_dirty = 1;
-}
-/* Insert a page footer (DOC-56). */
-static void doc_insert_footer(DocV *e){
-    if (!e->doc) return;
-    wubumodel_node *sec = wubumodel_node_first_child(wubumodel_doc_root(e->doc));
-    if (!sec) return;
-    for (wubumodel_node *n = wubumodel_node_first_child(sec); n; n = wubumodel_node_next_sibling(n))
-        if (wubumodel_node_kind(n)==WUBUMODEL_FOOTER){ wubumodel_node_set_text(n, "Page footer"); return; }
-    wubumodel_node *ft = wubumodel_node_create(e->doc, WUBUMODEL_FOOTER);
-    wubumodel_node_set_text(ft, "Page footer");
-    wubumodel_node_append(e->doc, sec, ft);
-    e->toc_dirty = 1;
-}
-/* Insert a review comment (DOC-63). */
-static void doc_insert_comment(DocV *e){
-    if (!e->doc) return;
-    wubumodel_node *sec = wubumodel_node_first_child(wubumodel_doc_root(e->doc));
-    if (!sec) return;
-    wubumodel_node *c = wubumodel_node_create(e->doc, WUBUMODEL_COMMENT);
-    wubumodel_node_set_text(c, "Please review this clause.");
-    wubumodel_node_set_author(c, "Reviewer");
-    wubumodel_node_append(e->doc, sec, c);
-    e->toc_dirty = 1;
-}
-/* Insert a track-change (DOC-64): a redline insertion. */
-static void doc_insert_trackchange(DocV *e){
-    if (!e->doc) return;
-    wubumodel_node *sec = wubumodel_node_first_child(wubumodel_doc_root(e->doc));
-    if (!sec) return;
-    wubumodel_node *t = wubumodel_node_create(e->doc, WUBUMODEL_TRACKCHANGE);
-    wubumodel_node_set_text(t, "proposed insertion");
-    wubumodel_node_set_tc(t, 0);
-    wubumodel_node_set_author(t, "Editor");
-    wubumodel_node_append(e->doc, sec, t);
-    e->toc_dirty = 1;
-}
-/* Insert a field (DOC-65): a date field whose value shows on render. */
-static void doc_insert_field(DocV *e){
-    if (!e->doc) return;
-    wubumodel_node *sec = wubumodel_node_first_child(wubumodel_doc_root(e->doc));
-    if (!sec) return;
-    wubumodel_node *f = wubumodel_node_create(e->doc, WUBUMODEL_FIELD);
-    wubumodel_node_set_field(f, "date");
-    wubumodel_node_set_text(f, "2026-07-27");
-    wubumodel_node_append(e->doc, sec, f);
-    e->toc_dirty = 1;
-}
-/* DOC-97: expose the wubuscript formula host in the UI as a computed field.
- * Evaluates `expr` (sandboxable arithmetic/vars/aggregates) and inserts the
- * numeric result as a FIELD node the layout renders inline. A minimal doc
- * resolver exposes `lines` (paragraph count) so expressions are meaningful. */
-static int doc_script_resolve(const char *name, double *out, void *ctx){
-    DocV *e = ctx;
-    if (!strcmp(name, "lines")){
-        int n = 0;
-        for (wubumodel_node *sec = wubumodel_node_first_child(wubumodel_doc_root(e->doc));
-             sec; sec = wubumodel_node_next_sibling(sec))
-            for (wubumodel_node *p = wubumodel_node_first_child(sec); p;
-                 p = wubumodel_node_next_sibling(p))
-                if (wubumodel_node_kind(p)==WUBUMODEL_PARAGRAPH) n++;
-        *out = (double)n; return 0;
-    }
-    (void)name; return -1;
-}
-static void doc_insert_script_field(DocV *e, const char *expr){
-    if (!e->doc) return;
-    wubumodel_node *sec = wubumodel_node_first_child(wubumodel_doc_root(e->doc));
-    if (!sec) return;
-    double v = 0;
-    char val[64];
-    if (script_eval(expr, doc_script_resolve, e, &v) != 0) v = 0;
-    snprintf(val, sizeof val, "%.4g", v);
-    wubumodel_node *f = wubumodel_node_create(e->doc, WUBUMODEL_FIELD);
-    wubumodel_node_set_field(f, "script");
-    wubumodel_node_set_text(f, val);
-    wubumodel_node_append(e->doc, sec, f);
-    e->toc_dirty = 1;
-}
+/* All document-editing commands now live in the opaque doccmd module
+ * (doccmd.h/doccmd.c); this view delegates to them below in on_key. */
+
 /* DOC-58: return the Nth top-level paragraph in the document body. */
 static wubumodel_node *doc_nth_paragraph(DocV *e, int idx){
     if (!e->doc) return NULL;
@@ -710,24 +437,33 @@ static char *status(WuView *v){
 static void on_key(WuView *v, int key, int down){
     DocV *e = v->priv;
     if (!down) return;
-    if (key==WUOS_KEY_INSERT_CHART){ doc_insert_chart(e); return; }
-    if (key==WUOS_KEY_INSERT_DRAW){ doc_insert_draw(e); return; }
-    if (key==WUOS_KEY_INSERT_MATH){ doc_insert_math(e); return; }
-    if (key==WUOS_KEY_EXPORT_EPUB){ doc_export_epub(e); return; }
-    if (key==WUOS_KEY_SAVE){ doc_save(e); return; }
-    if (key==WUOS_KEY_A11Y_CHECK){ doc_a11y_check(e); return; }
-    if (key==WUOS_KEY_INSERT_LINK){ doc_insert_link(e); return; }
-    if (key==WUOS_KEY_INSERT_LIST){ doc_insert_list(e); return; }
-    if (key==WUOS_KEY_INSERT_TABLE){ doc_insert_table(e); return; }
-    if (key==WUOS_KEY_INSERT_IMAGE){ doc_insert_image(e); return; }
-    if (key==WUOS_KEY_INSERT_PAGEBREAK){ doc_insert_pagebreak(e); return; }
-    if (key==WUOS_KEY_INSERT_SECTIONBREAK){ doc_insert_sectionbreak(e); return; }
-    if (key==WUOS_KEY_INSERT_HEADER){ doc_insert_header(e); return; }
-    if (key==WUOS_KEY_INSERT_FOOTER){ doc_insert_footer(e); return; }
-    if (key==WUOS_KEY_INSERT_COMMENT){ doc_insert_comment(e); return; }
-    if (key==WUOS_KEY_INSERT_TRACKCHANGE){ doc_insert_trackchange(e); return; }
-    if (key==WUOS_KEY_INSERT_FIELD){ doc_insert_field(e); return; }
-    if (key==WUOS_KEY_INSERT_SCRIPT){ doc_insert_script_field(e, "lines * 2"); return; }
+    if (key==WUOS_KEY_INSERT_CHART){
+        if (e->nobj < DOC_MAX_OBJS){ int w=0,h=0; unsigned char *fb=doccmd_insert_chart(wuos_svg_text,&w,&h);
+            if (fb){ int i=e->nobj++; e->obj[i]=fb; e->objw[i]=w; e->objh[i]=h; } }
+        return; }
+    if (key==WUOS_KEY_INSERT_DRAW){
+        if (e->nobj < DOC_MAX_OBJS){ int w=0,h=0; unsigned char *fb=doccmd_insert_draw(wuos_svg_text,&w,&h);
+            if (fb){ int i=e->nobj++; e->obj[i]=fb; e->objw[i]=w; e->objh[i]=h; } }
+        return; }
+    if (key==WUOS_KEY_INSERT_MATH){
+        if (e->nobj < DOC_MAX_OBJS){ int w=0,h=0; unsigned char *fb=doccmd_insert_math(wuos_svg_text,&w,&h);
+            if (fb){ int i=e->nobj++; e->obj[i]=fb; e->objw[i]=w; e->objh[i]=h; } }
+        return; }
+    if (key==WUOS_KEY_EXPORT_EPUB){ free(e->epub_msg); e->epub_msg = doccmd_export_epub(e->doc, "/tmp/wubuos_export.epub"); return; }
+    if (key==WUOS_KEY_SAVE){ free(e->epub_msg); e->epub_msg = doccmd_save(e->doc, e->path); return; }
+    if (key==WUOS_KEY_A11Y_CHECK){ doccmd_a11y_check(e->doc, &e->a11y); e->a11y_done = 1; return; }
+    if (key==WUOS_KEY_INSERT_LINK){ if (doccmd_insert_link(e->doc)) e->toc_dirty=1; return; }
+    if (key==WUOS_KEY_INSERT_LIST){ if (doccmd_insert_list(e->doc)) e->toc_dirty=1; return; }
+    if (key==WUOS_KEY_INSERT_TABLE){ if (doccmd_insert_table(e->doc)) e->toc_dirty=1; return; }
+    if (key==WUOS_KEY_INSERT_IMAGE){ if (doccmd_insert_image(e->doc)) e->toc_dirty=1; return; }
+    if (key==WUOS_KEY_INSERT_PAGEBREAK){ if (doccmd_insert_pagebreak(e->doc)) e->toc_dirty=1; return; }
+    if (key==WUOS_KEY_INSERT_SECTIONBREAK){ if (doccmd_insert_sectionbreak(e->doc)) e->toc_dirty=1; return; }
+    if (key==WUOS_KEY_INSERT_HEADER){ if (doccmd_insert_header(e->doc)) e->toc_dirty=1; return; }
+    if (key==WUOS_KEY_INSERT_FOOTER){ if (doccmd_insert_footer(e->doc)) e->toc_dirty=1; return; }
+    if (key==WUOS_KEY_INSERT_COMMENT){ if (doccmd_insert_comment(e->doc)) e->toc_dirty=1; return; }
+    if (key==WUOS_KEY_INSERT_TRACKCHANGE){ if (doccmd_insert_trackchange(e->doc)) e->toc_dirty=1; return; }
+    if (key==WUOS_KEY_INSERT_FIELD){ if (doccmd_insert_field(e->doc)) e->toc_dirty=1; return; }
+    if (key==WUOS_KEY_INSERT_SCRIPT){ if (doccmd_insert_script_field(e->doc, "lines * 2")) e->toc_dirty=1; return; }
     if (key==WUOS_KEY_STYLE_H1){ doc_apply_named_style(e, "Heading1"); return; }
     if (key==WUOS_KEY_STYLE_H2){ doc_apply_named_style(e, "Heading2"); return; }
     if (key==WUOS_KEY_STYLE_H3){ doc_apply_named_style(e, "Heading3"); return; }
@@ -801,6 +537,13 @@ static void destroy(WuView *v){
     free(v);
 }
 
+/* Thin view-level save hook: delegate to the doccmd module (DOC-76). */
+static void doc_save(WuView *v){
+    DocV *e = v ? v->priv : NULL;
+    if (!e) return;
+    free(e->epub_msg); e->epub_msg = doccmd_save(e->doc, e->path);
+}
+
 static const char *get_path(WuView *v){ return ((DocV*)v->priv)->path; }
 
 WuView *wuos_doc_create(const char *path){
@@ -859,7 +602,9 @@ WuView *wuos_doc_create(const char *path){
      * the Insert path is exercised + visible immediately. */
     e->nobj = 0; e->a11y_done = 0; e->a11y.count = 0; e->a11y.items = NULL; e->a11y.cap = 0;
     e->toc = NULL; e->toc_dirty = 1; e->jump_page = -1;
-    doc_insert_chart(e);
+    /* INT-1/3: seed one sample chart so the Insert path is exercised + visible. */
+    { int w=0,h=0; unsigned char *fb=doccmd_insert_chart(wuos_svg_text,&w,&h);
+      if (fb){ int i=e->nobj++; e->obj[i]=fb; e->objw[i]=w; e->objh[i]=h; } }
     WuView *v = calloc(1, sizeof *v);
     v->name = "Document";
     v->priv = e;

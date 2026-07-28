@@ -117,3 +117,12 @@ int wuos_font_draw_s(const char *s, int x, int y, int bold, int size,
     g_size = prev;
     return adv;
 }
+
+/* svg_text_fn adapter: size is in position 4 (not bold). Render with the
+ * sized variant at the requested size. */
+void wuos_svg_text(const char *s, int x, int y, int size,
+                   unsigned char r, unsigned char g, unsigned char b,
+                   unsigned char *fb, int fbw, int fbh){
+    if (!s || !fb) return;
+    wuos_font_draw_s(s, x, y, 0, size, r, g, b, fb, fbw, fbh);
+}

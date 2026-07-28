@@ -24,7 +24,8 @@ add_executable(wubuos
     findbar.c
     autocomp.c
     bkmk.c
-    codefold.c)
+    codefold.c
+    doccmd.c)
 target_include_directories(wubuos PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}/src/wubumodel
@@ -73,7 +74,7 @@ target_compile_options(wubuos PRIVATE -Wall -Wextra -Wpedantic)
 # Headless smoke test: create + render every view (real engines, no GUI).
 # Verifies each WuView adapter renders without crashing and returns a buffer.
 add_executable(test_view test_view.c wuos_font.c wuos_file.c plugin.c toast.c palette.c view_doc.c view_cell.c
-    view_slide.c view_ocr.c view_editor.c view_compare.c view_settings.c findbar.c autocomp.c bkmk.c codefold.c)
+    view_slide.c view_ocr.c view_editor.c view_compare.c view_settings.c findbar.c autocomp.c bkmk.c codefold.c doccmd.c)
 target_include_directories(test_view PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}/src/wubumodel
@@ -189,3 +190,21 @@ target_compile_definitions(test_findbar PRIVATE lex_free=wubupad_lex_free doc_cr
 target_compile_options(test_findbar PRIVATE -Wall -Wextra -Wpedantic)
 add_test(NAME findbar COMMAND test_findbar)
 set_tests_properties(findbar PROPERTIES LABELS "findbar;apps")
+
+# Unit test for the extracted opaque doccmd module.
+add_executable(test_doccmd test_doccmd.c doccmd.c)
+target_include_directories(test_doccmd PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_SOURCE_DIR}/src/wubumodel
+    ${CMAKE_SOURCE_DIR}/src/wubuchart
+    ${CMAKE_SOURCE_DIR}/src/wubudraw
+    ${CMAKE_SOURCE_DIR}/src/wubumath
+    ${CMAKE_SOURCE_DIR}/src/wubuepub
+    ${CMAKE_SOURCE_DIR}/src/wubua11y
+    ${CMAKE_SOURCE_DIR}/src/wubusvg
+    ${CMAKE_SOURCE_DIR}/src/wubuscript)
+target_link_libraries(test_doccmd PRIVATE
+    wubumodel wubuchart wubudraw wubumath wubuepub wubua11y wubusvg wubuscript)
+target_compile_options(test_doccmd PRIVATE -Wall -Wextra -Wpedantic)
+add_test(NAME doccmd COMMAND test_doccmd)
+set_tests_properties(doccmd PROPERTIES LABELS "doccmd;apps")
