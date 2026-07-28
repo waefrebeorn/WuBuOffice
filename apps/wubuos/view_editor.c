@@ -11,10 +11,10 @@
 #include "wuos.h"
 #include "wuos_font.h"
 #include "wuos_file.h"
+#include "findbar.h" /* opaque find/replace engine (extracted from this file) */
 
 #include "doc.h"    /* cross-repo: ~/WuBuPad/src */
 #include "lex.h"
-#include "search.h" /* WuBuPad regex/literal engine */
 #include "encode.h" /* WuBuPad encoding detect */
 #include "docs.h"   /* WuBuPad multi-document session (DONE engine) */
 #include "autosave.h" /* wubuautosave: crash-recovery (INT-2 P0) */
@@ -39,21 +39,11 @@ typedef struct {
     int   blink;      /* caret phase */
     int   frames;     /* for blink timing */
 
-    /* ---- find / replace (Phase B) ---- */
+    /* ---- find / replace (Phase B): delegated to the opaque FindBar engine ---- */
+    FindBar *fb;       /* owns all find/replace state (see findbar.h) */
     int   find_mode;  /* 0 none, 1 find, 2 replace */
     int   find_focus; /* in replace mode: 0=find field, 1=replace field */
-    char  find_q[256];
-    char  repl_s[256];
-    int   find_icase; /* case-insensitive */
-    int   find_regex; /* regex vs literal */
-    Regex *re;        /* compiled regex (lazy) */
-    int   re_bad;     /* last compile failed */
-    size_t find_ms, find_me; /* active match [start,end) in bytes */
-    int   find_active;       /* a match is currently selected */
-    int   find_total;        /* count of matches (lazy) */
-    int   find_idx;          /* 1-based index of active match */
-    char  find_msg[64];      /* transient status (e.g. "bad pattern") */
-    int   find_msg_t;        /* frames remaining to show msg */
+    int   find_msg_t; /* frames remaining to show msg */
 
     /* ---- go to line (Ctrl+G) ---- */
     int   goto_mode;
@@ -121,95 +111,13 @@ static void tok_color(LexTok k, unsigned char *r, unsigned char *g, unsigned cha
 static void save(WuView *v);          /* forward decl (used by on_key) */
 static void find_close(WuView *v);    /* forward decl */
 
-/* Recompile the regex if needed; returns 1 if a usable pattern is set. */
-static int find_ensure_re(Editor *e){
-    if (!e->find_regex) return 1;            /* literal mode: no regex needed */
-    if (e->re && !e->re_bad) return 1;
-    if (e->re) { regex_free(e->re); e->re = NULL; }
-    e->re_bad = 0;
-    if (e->find_q[0] == '\0') return 0;
-    e->re = regex_compile(e->find_q, e->find_icase);
-    if (!e->re){ e->re_bad = 1; return 0; }
-    return 1;
-}
-
-/* Find next match at/after `from` (bytes). Sets e->find_ms/me + idx/total.
- * Returns 1 on match, 0 if none. */
-static int find_next(Editor *e, size_t from){
-    char *t = doc_text(e->doc);
-    size_t n = doc_length(e->doc);
-    int got = 0;
-    size_t ms=0, me=0;
-    if (e->find_regex){
-        if (!find_ensure_re(e)){ free(t); return 0; }
-        if (e->re){
-            if (regex_find_from(e->re, t, n, from, &ms, &me)) got = 1;
-        }
-    } else {
-        size_t r = search_literal(t, n, e->find_q, strlen(e->find_q), from);
-        if (r != (size_t)-1){ ms = r; me = r + strlen(e->find_q); got = 1; }
-    }
-    free(t);
-    if (!got) return 0;
-    e->find_ms = ms; e->find_me = me; e->find_active = 1;
-    doc_set_selection(e->doc, ms, me);
-    doc_set_cursor(e->doc, me);
-    /* count total + index (small doc; linear scan) */
-    e->find_total = 0; e->find_idx = 0;
-    size_t pos = 0;
-    while (pos <= n){
-        size_t s=0, en=0; int ok=0;
-        char *tt = doc_text(e->doc);
-        if (e->find_regex){
-            if (e->re && regex_find_from(e->re, tt, n, pos, &s, &en)) ok = 1;
-        } else {
-            size_t rr = search_literal(tt, n, e->find_q, strlen(e->find_q), pos);
-            if (rr != (size_t)-1){ s = rr; en = rr + strlen(e->find_q); ok = 1; }
-        }
-        free(tt);
-        if (!ok) break;
-        e->find_total++;
-        if (s == ms && en == me) e->find_idx = e->find_total;
-        pos = en;
-        if (pos == 0) break;
-    }
-    if (e->find_idx == 0) e->find_idx = e->find_total; /* match moved */
-    return 1;
-}
-
-/* Find previous match (wrap to start). */
-static int find_prev(Editor *e){
-    char *t = doc_text(e->doc);
-    size_t n = doc_length(e->doc);
-    size_t prev_s=(size_t)-1, prev_e=(size_t)-1;
-    size_t pos = 0;
-    size_t start = e->find_active ? e->find_ms : 0;
-    while (pos <= start){
-        size_t s=0, en=0; int ok=0;
-        if (e->find_regex){
-            if (e->re && regex_find_from(e->re, t, n, pos, &s, &en)) ok = 1;
-        } else {
-            size_t rr = search_literal(t, n, e->find_q, strlen(e->find_q), pos);
-            if (rr != (size_t)-1){ s = rr; en = rr + strlen(e->find_q); ok = 1; }
-        }
-        if (!ok) break;
-        prev_s = s; prev_e = en;
-        pos = en;
-        if (pos == 0) break;
-    }
-    free(t);
-    if (prev_s == (size_t)-1) return find_next(e, 0); /* wrap: first match */
-    e->find_ms = prev_s; e->find_me = prev_e; e->find_active = 1;
-    doc_set_selection(e->doc, prev_s, prev_e);
-    doc_set_cursor(e->doc, prev_e);
-    return 1;
-}
+/* ---- find / replace now delegate to the opaque FindBar engine (findbar.c) ----
+ * The editor keeps only the UI-mode booleans; all search state lives in e->fb. */
 
 static void find_close(WuView *v){
     Editor *e = v->priv;
     e->find_mode = 0;
-    if (e->re){ regex_free(e->re); e->re = NULL; }
-    e->re_bad = 0;
+    if (e->fb) findbar_clear_active(e->fb);
     doc_set_selection(e->doc, doc_cursor(e->doc), doc_cursor(e->doc)); /* clear */
 }
 
@@ -218,34 +126,6 @@ static void find_open(WuView *v, int mode){
     Editor *e = v->priv;
     if (e->find_mode != mode){ e->find_mode = mode; e->find_focus = 0; }
     e->frames = 0;
-}
-
-/* Replace the active match with the replace string, then advance to next. */
-static void find_replace_one(WuView *v){
-    Editor *e = v->priv;
-    if (!e->find_active) return;
-    size_t ms = e->find_ms, me = e->find_me;
-    doc_replace(e->doc, ms, me, e->repl_s);
-    doc_set_cursor(e->doc, ms + strlen(e->repl_s));
-    doc_set_selection(e->doc, doc_cursor(e->doc), doc_cursor(e->doc));
-    e->find_active = 0;
-    find_next(e, ms);
-}
-
-/* Replace every match in the document. */
-static void find_replace_all(WuView *v){
-    Editor *e = v->priv;
-    if (!e->find_q[0]) return;
-    int guard = 0;
-    if (!find_next(e, 0)) return;
-    while (e->find_active && guard++ < 100000){
-        size_t ms = e->find_ms, me = e->find_me;
-        doc_replace(e->doc, ms, me, e->repl_s);
-        e->find_active = 0;
-        if (!find_next(e, ms + strlen(e->repl_s))) break;
-        if (e->find_ms == ms && e->find_me == me) break; /* no progress */
-    }
-    doc_set_selection(e->doc, doc_cursor(e->doc), doc_cursor(e->doc));
 }
 
 /* Byte offset of the start of 1-based line `lineN` (clamped to last line). */
@@ -571,8 +451,8 @@ static int render(WuView *v, int w, int h, int scroll,
         le = pos;
 
         /* ---- find match highlight (behind tokens) ---- */
-        if (e->find_active){
-            size_t m0 = e->find_ms, m1 = e->find_me;
+        if (e->fb && findbar_active(e->fb)){
+            size_t m0 = 0, m1 = 0; findbar_match(e->fb, &m0, &m1);
             if (m1 > line_start && m0 < le){
                 size_t h0 = m0 < line_start ? line_start : m0;
                 size_t h1 = m1 > le ? le : m1;
@@ -651,7 +531,6 @@ static int render(WuView *v, int w, int h, int scroll,
         int top = 6 + dofst;
         int x = gutter + 6;
         int ln = 0;
-        const char *p = text;
         /* small state machine: accumulate a word, check, draw squiggle */
         const char *word = NULL; int wlen = 0;
         for (size_t i=0;i<=tlen;i++){
@@ -723,7 +602,12 @@ static int render(WuView *v, int w, int h, int scroll,
     }
 
     /* ---- find bar (drawn over the bottom of the buffer) ---- */
-    if (e->find_mode){
+    if (e->find_mode && e->fb){
+        const char *q = findbar_query(e->fb);
+        const char *r = findbar_replace(e->fb);
+        int wq = (int)strlen(q), wr = (int)strlen(r);
+        if (wq > 80) wq = 80;   /* keep combined label within buffer */
+        if (wr > 80) wr = 80;
         int bh = lh + 4;
         int by = H - bh;
         for (int yy=by; yy<H; yy++) for (int xx=0; xx<w; xx++){
@@ -731,13 +615,10 @@ static int render(WuView *v, int w, int h, int scroll,
         }
         /* separators + labels */
         char label[224];
-        int wq = (int)sizeof(e->find_q)-1, wr = (int)sizeof(e->repl_s)-1;
-        if (wq > 80) wq = 80;   /* keep combined label within buffer */
-        if (wr > 80) wr = 80;
         if (e->find_mode==1){
-            snprintf(label,sizeof label,"Find: %.*s", wq, e->find_q);
+            snprintf(label,sizeof label,"Find: %.*s", wq, q);
         } else {
-            snprintf(label,sizeof label,"Find: %.*s   Replace: %.*s", wq, e->find_q, wr, e->repl_s);
+            snprintf(label,sizeof label,"Find: %.*s   Replace: %.*s", wq, q, wr, r);
         }
         /* caret position inside the active field */
         const char *left = (e->find_mode==2 && e->find_focus==1)? "Replace: " : "Find: ";
@@ -746,18 +627,19 @@ static int render(WuView *v, int w, int h, int scroll,
         /* draw options + match count on the right */
         char opts[96];
         snprintf(opts,sizeof opts,"%s%s  %s  %s",
-                 e->find_icase?"[Aa]":"[aa]",
-                 e->find_regex?"[.*]":"[ab]",
+                 findbar_icase(e->fb)?"[Aa]":"[aa]",
+                 findbar_regex(e->fb)?"[.*]":"[ab]",
                  (e->find_mode==2)?"F3 next|Enter rep|Ctrl+R all":"F3 next|Enter find",
-                 e->find_active? "":(e->find_q[0]?"no match":"type & Enter"));
-        if (e->find_active){
-            char cnt[32]; snprintf(cnt,sizeof cnt,"  [%d/%d]", e->find_idx, e->find_total);
+                 findbar_active(e->fb)? "":(q[0]?"no match":"type & Enter"));
+        if (findbar_active(e->fb)){
+            int fidx=0, ftot=0; findbar_counts(e->fb, &fidx, &ftot);
+            char cnt[32]; snprintf(cnt,sizeof cnt,"  [%d/%d]", fidx, ftot);
             strncat(opts, cnt, sizeof opts-1);
         }
         wuos_font_draw(opts, w - (int)wuos_font_draw(opts,w,0,0,0,0,0,NULL,0,0) - 8,
                        by+4+fh, 0, 110,114,122, fb, w, H);
         if (e->find_msg_t > 0){
-            wuos_font_draw(e->find_msg, gutter+6, by - lh + fh, 0, 200,40,40, fb, w, H);
+            wuos_font_draw(findbar_msg(e->fb), gutter+6, by - lh + fh, 0, 200,40,40, fb, w, H);
         }
         /* a thin field focus underline */
         int ulx0 = field_x - 2, ulx1 = w-8;
@@ -851,50 +733,58 @@ static void on_key(WuView *v, int key, int down){
     }
 
     /* ---- find / replace mode intercepts keys ---- */
-    if (e->find_mode){
+    if (e->find_mode && e->fb){
         switch (key){
             case WUOS_KEY_ESC:    find_close(v); return;
             case WUOS_KEY_FIND:   e->find_mode = 1; e->find_focus = 0; return;
             case WUOS_KEY_REPLACE: e->find_mode = 2; e->find_focus = 0; return;
             case WUOS_KEY_FINDNEXT:
-                if (!e->find_q[0]) return;
-                if (e->find_active) find_next(e, e->find_me);
-                else find_next(e, 0);
+                if (!findbar_query(e->fb)[0]) return;
+                if (findbar_active(e->fb)){ size_t m=0,x=0; findbar_match(e->fb,&m,&x); findbar_next(e->fb, e->doc, x); }
+                else findbar_next(e->fb, e->doc, 0);
                 return;
             case WUOS_KEY_FINDPREV:
-                if (!e->find_q[0]) return;
-                find_prev(e);
+                if (!findbar_query(e->fb)[0]) return;
+                findbar_prev(e->fb, e->doc);
                 return;
             case WUOS_KEY_REPLACEALL:
-                if (e->find_mode==2) find_replace_all(v);
+                if (e->find_mode==2) findbar_replace_all(e->fb, e->doc);
                 return;
             case WUOS_KEY_TAB:
                 if (e->find_mode==2) e->find_focus ^= 1;  /* toggle field */
                 return;
             case WUOS_KEY_RETURN:
                 if (e->find_mode==2 && e->find_focus==1){
-                    find_replace_one(v);              /* replace current */
+                    findbar_replace_one(e->fb, e->doc);              /* replace current */
                 } else {
-                    if (e->find_q[0]){
-                        if (e->find_active) find_next(e, e->find_me);
-                        else find_next(e, 0);
+                    if (findbar_query(e->fb)[0]){
+                        if (findbar_active(e->fb)){ size_t m=0,x=0; findbar_match(e->fb,&m,&x); findbar_next(e->fb, e->doc, x); }
+                        else findbar_next(e->fb, e->doc, 0);
                     }
                 }
                 return;
             case WUOS_KEY_BACKSPACE: {
-                char *buf = (e->find_mode==2 && e->find_focus==1)? e->repl_s : e->find_q;
+                char buf[512];
+                const char *cur = (e->find_mode==2 && e->find_focus==1)
+                    ? findbar_replace(e->fb) : findbar_query(e->fb);
+                snprintf(buf, sizeof buf, "%s", cur);
                 size_t l = strlen(buf);
                 if (l) buf[l-1]=0;
-                e->re_bad = 0;
+                if (e->find_mode==2 && e->find_focus==1) findbar_set_replace(e->fb, buf);
+                else findbar_set_query(e->fb, buf);
                 return;
             }
             default:
                 if (key>=32 && key<128){
-                    char *buf = (e->find_mode==2 && e->find_focus==1)? e->repl_s : e->find_q;
+                    char buf[512];
+                    const char *cur = (e->find_mode==2 && e->find_focus==1)
+                        ? findbar_replace(e->fb) : findbar_query(e->fb);
+                    snprintf(buf, sizeof buf, "%s", cur);
                     size_t l = strlen(buf);
-                    if (l < sizeof(e->find_q)-1){ buf[l]=(char)key; buf[l+1]=0; }
-                    e->re_bad = 0;
-                    if (!e->find_active) find_next(e, 0);
+                    if (l < sizeof buf - 1){ buf[l]=(char)key; buf[l+1]=0; }
+                    if (e->find_mode==2 && e->find_focus==1) findbar_set_replace(e->fb, buf);
+                    else findbar_set_query(e->fb, buf);
+                    if (!findbar_active(e->fb)) findbar_next(e->fb, e->doc, 0);
                     return;
                 }
                 return; /* swallow other keys (arrows etc.) while in find bar */
@@ -1054,6 +944,7 @@ static void destroy(WuView *v){
     Editor *e = v->priv;
     if (e->lex) lex_free(e->lex);
     if (e->docs) docs_free(e->docs);
+    if (e->fb) findbar_destroy(e->fb);
     if (e->asv){ wubuautosave_clear(e->asv); wubuautosave_destroy(e->asv); }
     if (e->spd) spell_free(e->spd);
     free(e);
@@ -1083,9 +974,10 @@ static const char *get_path(WuView *v){ return ((Editor*)v->priv)->path; }
 /* Test/inspection accessor: report find state without exposing the struct. */
 int wuos_editor_find_stats(WuView *v, int *active, int *total){
     Editor *e = v ? v->priv : NULL;
-    if (!e) return -1;
-    if (active) *active = e->find_active;
-    if (total)  *total  = e->find_total;
+    if (!e || !e->fb) return -1;
+    if (active) *active = findbar_active(e->fb);
+    if (total)  *total  = 0;
+    { int t=0; findbar_counts(e->fb, NULL, &t); if (total) *total = t; }
     return 0;
 }
 
@@ -1238,6 +1130,8 @@ WuView *wuos_editor_create(const char *path){
 
     e->docs = docs_create();
     if (!e->docs){ free(e); return NULL; }
+    e->fb = findbar_create();
+    if (!e->fb){ docs_free(e->docs); free(e); return NULL; }
 
     if (path){
         /* load via docs (detects encoding, seeds Doc); sets active doc */
