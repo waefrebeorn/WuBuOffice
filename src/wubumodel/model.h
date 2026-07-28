@@ -167,6 +167,13 @@ int wubumodel_load_odt(const char *path, wubumodel_doc **out);
  * 0 ok (ownership of *out passes to caller) or -1 on error (*out is NULL). */
 int wubumodel_load_rtf(const char *path, wubumodel_doc **out);
 
+/* Load an .epub (EPUB3) package into the model (EXP-82 import half).
+ * Reads the OEBPS content XHTML (sections -> <hN>, paragraphs -> <p>,
+ * tables -> <table>/<td>, links -> <a>) into a SECTION->PARAGRAPH->RUN
+ * tree. Returns 0 ok (ownership of *out passes to caller) or -1 on error
+ * (*out is NULL). No external deps: from-scratch ZIP read + our own DEFLATE. */
+int wubumodel_load_epub(const char *path, wubumodel_doc **out);
+
 #ifdef __cplusplus
 }
 #endif
