@@ -21,7 +21,8 @@ add_executable(wubuos
     view_editor.c
     view_compare.c
     view_settings.c
-    findbar.c)
+    findbar.c
+    autocomp.c)
 target_include_directories(wubuos PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}/src/wubumodel
@@ -70,7 +71,7 @@ target_compile_options(wubuos PRIVATE -Wall -Wextra -Wpedantic)
 # Headless smoke test: create + render every view (real engines, no GUI).
 # Verifies each WuView adapter renders without crashing and returns a buffer.
 add_executable(test_view test_view.c wuos_font.c wuos_file.c plugin.c toast.c palette.c view_doc.c view_cell.c
-    view_slide.c view_ocr.c view_editor.c view_compare.c view_settings.c findbar.c)
+    view_slide.c view_ocr.c view_editor.c view_compare.c view_settings.c findbar.c autocomp.c)
 target_include_directories(test_view PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}/src/wubumodel
@@ -140,6 +141,19 @@ add_test(NAME plugin_abi COMMAND test_plugin_abi
     "${CMAKE_CURRENT_BINARY_DIR}/plugins/sample_plugin.so"
     "${CMAKE_CURRENT_BINARY_DIR}/plugins/badabi_plugin.so")
 set_tests_properties(plugin_abi PROPERTIES LABELS "plugin;apps")
+
+# Unit test for the extracted opaque AutoComp engine (no GUI/SDL).
+add_executable(test_autocomp test_autocomp.c autocomp.c)
+target_include_directories(test_autocomp PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${WUBUPAD_SRC})
+target_sources(test_autocomp PRIVATE
+    ${WUBUPAD_SRC}/buffer.c ${WUBUPAD_SRC}/doc.c ${WUBUPAD_SRC}/search.c
+    ${WUBUPAD_SRC}/encode.c ${WUBUPAD_SRC}/diff.c ${WUBUPAD_SRC}/json.c ${WUBUPAD_SRC}/lex.c)
+target_compile_definitions(test_autocomp PRIVATE lex_free=wubupad_lex_free doc_create=wubupad_doc_create doc_text=wubupad_doc_text)
+target_compile_options(test_autocomp PRIVATE -Wall -Wextra -Wpedantic)
+add_test(NAME autocomp COMMAND test_autocomp)
+set_tests_properties(autocomp PROPERTIES LABELS "autocomp;apps")
 
 # Unit test for the extracted opaque FindBar engine (no GUI/SDL).
 add_executable(test_findbar test_findbar.c findbar.c)
