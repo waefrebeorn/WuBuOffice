@@ -8,6 +8,8 @@
  * This is genuine Notepad++-class editing, not a mockup -- it is the same
  * engine WuBuPad ships, embedded into the unified office shell.
  */
+#include <SDL2/SDL.h>
+
 #include "wuos.h"
 #include "wuos_font.h"
 #include "wuos_file.h"
@@ -869,12 +871,50 @@ static void on_key(WuView *v, int key, int down){
         case WUOS_KEY_PGUP: for(int i=0;i<20;i++) on_key(v,WUOS_KEY_UP,1); break;
         case WUOS_KEY_PGDN: for(int i=0;i<20;i++) on_key(v,WUOS_KEY_DOWN,1); break;
         case WUOS_KEY_SAVE:
-            save(v);
-            break;
-        default:
-            if (key>=32 && key<128){ char c=(char)key; doc_type(e->doc,&c,1); }
-            break;
-    }
+                    save(v);
+                    break;
+                case WUOS_KEY_CUT:
+                    if (doc_has_selection(e->doc)){
+                        char *t = doc_text(e->doc);
+                        size_t s = doc_sel_start(e->doc), en = doc_sel_end(e->doc);
+                        char *clip = malloc(en - s + 1);
+                        if (clip){ memcpy(clip, t + s, en - s); clip[en - s] = 0; }
+                        free(t);
+                        doc_delete(e->doc, s, en - s);
+                        doc_set_cursor(e->doc, s);
+                        doc_clear_selection(e->doc);
+                        if (clip){
+                            SDL_SetClipboardText(clip);
+                            free(clip);
+                        }
+                    }
+                    break;
+                case WUOS_KEY_COPY:
+                    if (doc_has_selection(e->doc)){
+                        char *t = doc_text(e->doc);
+                        size_t s = doc_sel_start(e->doc), en = doc_sel_end(e->doc);
+                        char *clip = malloc(en - s + 1);
+                        if (clip){ memcpy(clip, t + s, en - s); clip[en - s] = 0; SDL_SetClipboardText(clip); free(clip); }
+                        free(t);
+                    }
+                    break;
+                case WUOS_KEY_PASTE: {
+                    const char *clip = SDL_GetClipboardText();
+                    if (clip && clip[0]) doc_type(e->doc, clip, strlen(clip));
+                    break;
+                }
+                case WUOS_KEY_PASTE_PLAIN: {
+                    const char *clip = SDL_GetClipboardText();
+                    if (clip && clip[0]) doc_type(e->doc, clip, strlen(clip));
+                    break;
+                }
+                case WUOS_KEY_SELECT_ALL:
+                    doc_set_selection(e->doc, 0, doc_length(e->doc));
+                    break;
+                default:
+                    if (key>=32 && key<127){ char c=(char)key; doc_type(e->doc,&c,1); }
+                    break;
+            }
 }
 
 static void on_wheel(WuView *v, int dy){ (void)v; (void)dy; /* line scroll handled in render via caret */ }

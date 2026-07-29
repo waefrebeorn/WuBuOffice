@@ -48,12 +48,14 @@ static const char *g_menu_names[4] = { "File", "Edit", "View", "Help" };
 /* each menu: list of {label, cmd} pairs, cmd 0 = separator */
 static const struct { const char *label; int cmd; } g_menus[4][8] = {
   { {"Open...",         1000}, {"Save",            1001}, {"Save As...",  1002},
-    {"New Document",     1003}, {"Export EPUB",     1004}, {NULL,0} },
-  { {"Undo",            1005}, {"Redo",            1006}, {"Find...",     1007},
-    {"Replace...",       1008}, {"Go to Line...",   1009}, {"Toggle Theme",1010}, {NULL,0} },
+    {"New Document",     1003}, {"Close Tab",       1014}, {"Export EPUB",   1004},
+    {"Export PDF",      1023}, {NULL,0} },  { {"Undo",            1005}, {"Redo",            1006}, {"Find...",     1007},
+    {"Replace...",       1008}, {"Go to Line...",   1009}, {"Toggle Theme",1010},
+    {"Cut",             1018}, {"Copy",            1019}, {"Paste",        1020},
+    {"Paste Plain",     1021}, {"Select All",      1022}, {NULL,0} },
   { {"Zoom In",         1011}, {"Zoom Out",        1012}, {"Zoom Reset",   1013},
-    {"Word Wrap",       1014}, {"High Contrast",   1015}, {NULL,0} },
-  { {"Shortcuts",       1016}, {"First-run Tour",  1017}, {NULL,0} },
+    {"Word Wrap",       1014}, {"High Contrast",   1015}, {"Presentation",    1024}, {NULL,0} },
+  { {"Shortcuts",       1016}, {"First-run Tour",  1017}, {"About",          1025}, {NULL,0} },
 };
 static int g_menu_open = -1;       /* which top menu is dropped, -1 none */
 static int g_menu_hover = -1;      /* hovered dropdown item */
@@ -94,9 +96,18 @@ static void run_menu_cmd(int cmd){
     case 1013: g_zoom = 1.0f; toast_push(g_toasts, "Zoom reset", 60); return;
     case 1014: { WubuSettings *sh=wubusettings_shared(); if (sh){ wubusettings_set_word_wrap(sh, !wubusettings_word_wrap(sh)); wubusettings_save(sh,NULL);} toast_push(g_toasts, "Word wrap toggled", 90); } return;
     case 1015: { WubuSettings *sh=wubusettings_shared(); if (sh) wubusettings_set_high_contrast(sh, !wubusettings_high_contrast(sh));
-                 toast_push(g_toasts, "High contrast toggled", 90); } return;
+                  toast_push(g_toasts, "High contrast toggled", 90); } return;
     case 1016: g_cheat = !g_cheat; toast_push(g_toasts, "Shortcuts", 90); return;
     case 1017: g_first_run = 1; toast_push(g_toasts, "Tour", 90); return;
+    case 1018: if (views[active] && views[active]->on_key) views[active]->on_key(views[active], WUOS_KEY_CUT, 1); return;
+    case 1019: if (views[active] && views[active]->on_key) views[active]->on_key(views[active], WUOS_KEY_COPY, 1); return;
+    case 1020: SDL_StartTextInput(); return;
+    case 1021: if (views[active] && views[active]->on_key) views[active]->on_key(views[active], WUOS_KEY_PASTE_PLAIN, 1); return;
+    case 1022: if (views[active] && views[active]->on_key) views[active]->on_key(views[active], WUOS_KEY_SELECT_ALL, 1); return;
+    case 1023: toast_push(g_toasts, "PDF export: not yet implemented", 120); return;
+    case 1024: toast_push(g_toasts, "Presentation mode: not yet implemented", 120); return;
+    case 1025: SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "WuBuOffice",
+                 "WuBuOffice v0.1\nA from-scratch office suite with Notepad++ parity.\nBuilt with SDL2 + FreeType + C11.", NULL); return;
     }
 }
 
@@ -571,7 +582,13 @@ int main(int argc, char **argv){
                 else if (k==SDLK_PAGEUP) code=WUOS_KEY_PGUP;
                 else if (k==SDLK_PAGEDOWN) code=WUOS_KEY_PGDN;
                 else if (k==SDLK_DELETE) code=WUOS_KEY_DEL;
+                else if (k==SDLK_x && (mod&KMOD_CTRL)) code=WUOS_KEY_CUT;
+                else if (k==SDLK_c && (mod&KMOD_CTRL)) code=WUOS_KEY_COPY;
+                else if (k==SDLK_v && (mod&KMOD_CTRL) && !(mod&KMOD_SHIFT)) code=WUOS_KEY_PASTE;
                 else if (k==SDLK_v && (mod&KMOD_CTRL) && (mod&KMOD_SHIFT)) code=WUOS_KEY_PASTE_PLAIN;
+                else if (k==SDLK_a && (mod&KMOD_CTRL)) code=WUOS_KEY_SELECT_ALL;
+                else if (k==SDLK_w && (mod&KMOD_CTRL)) code=WUOS_KEY_CLOSE;
+                else if (k==SDLK_F5) code=WUOS_KEY_PRESENTATION;
                 else if (k>=32 && k<128) code=(int)k;
                 if (code && views[active]->on_key) views[active]->on_key(views[active], code, 1);
 

@@ -79,7 +79,9 @@ Real engine surface (surveyed, not guessed):
         + re-bases crash-recovery autosave). Verified by `test_view`.
       - Menu bar (UI-43): second chrome row (File/Edit/View/Help) with working
         dropdowns + mouse handling; Ctrl+Z/Y undo-redo wired (WUOS_KEY_UNDO/
-        REDO). Rendered by both the live shell and `viewshot` (parity).
+        REDO); Ctrl+X/C/V/Shift+V/A cut/copy/paste/paste-plain/select-all wired
+        (WUOS_KEY_CUT/COPY/PASTE/PASTE_PLAIN/SELECT_ALL). Rendered by both the
+        live shell and `viewshot` (parity).
 
 > Engine-linkage status (accurate as of this steamroll):
 > - OCR, autosave (INT-2), spell (INT-8), chart/draw/math, EPUB export,
