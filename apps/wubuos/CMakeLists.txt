@@ -43,6 +43,7 @@ target_include_directories(wubuos PRIVATE
     ${CMAKE_SOURCE_DIR}/src/wubudraw
     ${CMAKE_SOURCE_DIR}/src/wubumath
     ${CMAKE_SOURCE_DIR}/src/wubuepub
+    ${CMAKE_SOURCE_DIR}/src/wubupasteplain
     ${CMAKE_SOURCE_DIR}/src/wubua11y
     ${CMAKE_SOURCE_DIR}/src/wubusvg
     ${CMAKE_SOURCE_DIR}/src/wubusettings
@@ -70,7 +71,7 @@ target_compile_definitions(wubuos PRIVATE lex_free=wubupad_lex_free doc_create=w
 target_link_libraries(wubuos PRIVATE
     wubumodel wuburender wubuocr wubufont wubucell_app wubudoc wubuautosave
     wubuspell wubuchart wubudraw wubumath wubuepub wubua11y wubusvg
-    wubusettings wubushape wubulayout wubuexp wubutoc wubuscript
+    wubusettings wubushape wubulayout wubuexp wubutoc wubuscript wubupasteplain
     ${SDL2_LIBRARIES} ${FREETYPE_LIBRARIES} m dl)
 target_compile_options(wubuos PRIVATE -Wall -Wextra -Wpedantic)
 
@@ -92,6 +93,7 @@ target_include_directories(test_view PRIVATE
     ${CMAKE_SOURCE_DIR}/src/wubudraw
     ${CMAKE_SOURCE_DIR}/src/wubumath
     ${CMAKE_SOURCE_DIR}/src/wubuepub
+    ${CMAKE_SOURCE_DIR}/src/wubupasteplain
     ${CMAKE_SOURCE_DIR}/src/wubua11y
     ${CMAKE_SOURCE_DIR}/src/wubusvg
     ${CMAKE_SOURCE_DIR}/src/wubusettings
@@ -109,7 +111,7 @@ target_compile_definitions(test_view PRIVATE lex_free=wubupad_lex_free doc_creat
 target_link_libraries(test_view PRIVATE
     wubumodel wuburender wubuocr wubufont wubucell_app wubudoc wubuautosave
     wubuspell wubuchart wubudraw wubumath wubuepub wubua11y wubusvg
-    wubusettings wubushape wubulayout wubuexp wubutoc wubuscript
+    wubusettings wubushape wubulayout wubuexp wubutoc wubuscript wubupasteplain
     ${SDL2_LIBRARIES} ${FREETYPE_LIBRARIES} m dl)
 target_compile_options(test_view PRIVATE -Wall -Wextra -Wpedantic)
 add_test(NAME view COMMAND test_view)
@@ -203,6 +205,7 @@ target_include_directories(test_doccmd PRIVATE
     ${CMAKE_SOURCE_DIR}/src/wubudraw
     ${CMAKE_SOURCE_DIR}/src/wubumath
     ${CMAKE_SOURCE_DIR}/src/wubuepub
+    ${CMAKE_SOURCE_DIR}/src/wubupasteplain
     ${CMAKE_SOURCE_DIR}/src/wubua11y
     ${CMAKE_SOURCE_DIR}/src/wubusvg
     ${CMAKE_SOURCE_DIR}/src/wubuscript
@@ -263,6 +266,7 @@ target_include_directories(viewshot PRIVATE
     ${CMAKE_SOURCE_DIR}/src/wubudraw
     ${CMAKE_SOURCE_DIR}/src/wubumath
     ${CMAKE_SOURCE_DIR}/src/wubuepub
+    ${CMAKE_SOURCE_DIR}/src/wubupasteplain
     ${CMAKE_SOURCE_DIR}/src/wubua11y
     ${CMAKE_SOURCE_DIR}/src/wubusvg
     ${CMAKE_SOURCE_DIR}/src/wubusettings

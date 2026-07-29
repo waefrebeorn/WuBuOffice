@@ -571,6 +571,7 @@ int main(int argc, char **argv){
                 else if (k==SDLK_PAGEUP) code=WUOS_KEY_PGUP;
                 else if (k==SDLK_PAGEDOWN) code=WUOS_KEY_PGDN;
                 else if (k==SDLK_DELETE) code=WUOS_KEY_DEL;
+                else if (k==SDLK_v && (mod&KMOD_CTRL) && (mod&KMOD_SHIFT)) code=WUOS_KEY_PASTE_PLAIN;
                 else if (k>=32 && k<128) code=(int)k;
                 if (code && views[active]->on_key) views[active]->on_key(views[active], code, 1);
 
@@ -584,6 +585,21 @@ int main(int argc, char **argv){
                         free(g_plugin_msg);
                         g_plugin_msg = r;
                         g_plugin_idx = (g_plugin_idx + 1) % wuos_plugins_count(g_plugins);
+                    }
+                }
+
+                /* EXP-88 paste-plain: Ctrl+Shift+V strips formatting */
+                else if (code == WUOS_KEY_PASTE_PLAIN){
+                    char *clip = SDL_GetClipboardText();
+                    if (clip){
+                        char *plain = pasteplain_strip(clip);
+                        if (plain && views[active] && views[active]->on_key){
+                            for (char *p = plain; *p; p++){
+                                views[active]->on_key(views[active], (int)*p, 1);
+                            }
+                        }
+                        free(plain);
+                        SDL_free(clip);
                     }
                 }
 
