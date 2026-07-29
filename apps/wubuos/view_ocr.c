@@ -4,6 +4,7 @@
  * "copies" it (recorded in sel_text so other code / tests can read it). */
 #include "wuos.h"
 #include "wuos_font.h"
+#include "wuos_theme.h"
 #include "png.h"          /* ocr_image_from_png */
 #include "image.h"        /* OcrImage */
 #include "wubuocr.h"      /* ocr_page_analyze / OcrPage */
@@ -83,9 +84,11 @@ static int render(WuView *v, int w, int h, int scroll,
                   unsigned char **rgba, int *rw, int *rh){
     OcrV *e = v->priv;
     (void)scroll;
+    int dark = wubusettings_dark(wubusettings_shared());
+    WuosRGB ocr_bg = dark ? WUOS_DARK(TAB_BAR) : WUOS_LIGHT(TAB_BAR);
     unsigned char *fb = malloc((size_t)w*h*4);
     if (!fb) return -1;
-    for (int i=0;i<w*h;i++){ fb[i*4]=245;fb[i*4+1]=246;fb[i*4+2]=248;fb[i*4+3]=255; }
+    for (int i=0;i<w*h;i++){ size_t k=(size_t)i*4; fb[k]=ocr_bg.r;fb[k+1]=ocr_bg.g;fb[k+2]=ocr_bg.b;fb[k+3]=255; }
 
     int panel_x = w - 300; if (panel_x < w/2) panel_x = w/2;
 

@@ -12,40 +12,62 @@
 
 typedef struct { WubuSettings *s; int saved_flash; } SetV;
 
+/* ---- wu_theme.h ---- */
+#include "wuos_theme.h"
+
+static WuosRGB theme_bg(void){
+    int dark = wubusettings_dark(wubusettings_shared());
+    WuosRGB c = dark ? WUOS_DARK(TAB_BAR) : WUOS_LIGHT(TAB_BAR);
+    return c;
+}
+static WuosRGB theme_text(void){
+    int dark = wubusettings_dark(wubusettings_shared());
+    WuosRGB c = dark ? WUOS_DARK(TABTEXT_ON) : WUOS_LIGHT(TABTEXT_ON);
+    return c;
+}
+static WuosRGB theme_hint(void){
+    int dark = wubusettings_dark(wubusettings_shared());
+    WuosRGB c = dark ? WUOS_DARK(TABTEXT) : WUOS_LIGHT(TABTEXT);
+    return c;
+}
+
 static int render(WuView *v, int w, int h, int scroll,
                   unsigned char **rgba, int *rw, int *rh){
     (void)scroll;
     SetV *e = v->priv;
+    WuosRGB bg = theme_bg();
+    WuosRGB txt = theme_text();
+    WuosRGB hnt = theme_hint();
     unsigned char *fb = calloc((size_t)w*h, 4);
     if (!fb) return -1;
-    for (int i=0;i<w*h;i++){ size_t k=(size_t)i*4; fb[k]=30;fb[k+1]=33;fb[k+2]=40;fb[k+3]=255; }
-    int y = 40;
-    wuos_font_draw("WuBuOffice Settings", 20, y, 1, 235,237,240, fb, w, h); y += 36;
+    for (int i=0;i<w*h;i++){ size_t k=(size_t)i*4; fb[k]=bg.r;fb[k+1]=bg.g;fb[k+2]=bg.b;fb[k+3]=255; }
+    int y = WUOS_SPACE_8*5;
+    wuos_font_draw("WuBuOffice Settings", WUOS_SPACE_8, y, 1, txt.r,txt.g,txt.b, fb, w, h); y += WUOS_SPACE_8;
     char line[256];
     snprintf(line,sizeof line,"Zoom:            %.0f%%   (use + / -)", e->s?wubusettings_zoom(e->s)*100:100);
-    wuos_font_draw(line, 20, y, 0, 200,203,210, fb, w, h); y += 26;
+    wuos_font_draw(line, WUOS_SPACE_8, y, 0, txt.r,txt.g,txt.b, fb, w, h); y += WUOS_SPACE_8;
     snprintf(line,sizeof line,"Theme:           %s   (t)", wubusettings_dark(e->s)?"Dark":"Light");
-    wuos_font_draw(line, 20, y, 0, 200,203,210, fb, w, h); y += 26;
+    wuos_font_draw(line, WUOS_SPACE_8, y, 0, txt.r,txt.g,txt.b, fb, w, h); y += WUOS_SPACE_8;
     snprintf(line,sizeof line,"Autosave:        %s   (a)", wubusettings_autosave_ms(e->s)?"ON (5s)":"OFF");
-    wuos_font_draw(line, 20, y, 0, 200,203,210, fb, w, h); y += 26;
+    wuos_font_draw(line, WUOS_SPACE_8, y, 0, txt.r,txt.g,txt.b, fb, w, h); y += WUOS_SPACE_8;
     snprintf(line,sizeof line,"UI language:     %s   (l)", wubusettings_language(e->s));
-    wuos_font_draw(line, 20, y, 0, 200,203,210, fb, w, h); y += 26;
+    wuos_font_draw(line, WUOS_SPACE_8, y, 0, txt.r,txt.g,txt.b, fb, w, h); y += WUOS_SPACE_8;
     snprintf(line,sizeof line,"Base font size:  %d px   (f)", wubusettings_font_size(e->s));
-    wuos_font_draw(line, 20, y, 0, 200,203,210, fb, w, h); y += 26;
+    wuos_font_draw(line, WUOS_SPACE_8, y, 0, txt.r,txt.g,txt.b, fb, w, h); y += WUOS_SPACE_8;
     /* UI-26: live word-wrap + tab-width */
     snprintf(line,sizeof line,"Word wrap:       %s   (w)", wubusettings_word_wrap(e->s)?"ON":"OFF");
-    wuos_font_draw(line, 20, y, 0, 200,203,210, fb, w, h); y += 26;
+    wuos_font_draw(line, WUOS_SPACE_8, y, 0, txt.r,txt.g,txt.b, fb, w, h); y += WUOS_SPACE_8;
     snprintf(line,sizeof line,"Tab width:       %d sp   (i / Shift+i)", wubusettings_tab_width(e->s));
-    wuos_font_draw(line, 20, y, 0, 200,203,210, fb, w, h); y += 36;
+    wuos_font_draw(line, WUOS_SPACE_8, y, 0, txt.r,txt.g,txt.b, fb, w, h); y += WUOS_SPACE_8;
     /* UXA-41: high-contrast toggle */
     snprintf(line,sizeof line,"High contrast:   %s   (c)", wubusettings_high_contrast(e->s)?"ON":"OFF");
-    wuos_font_draw(line, 20, y, 0, 200,203,210, fb, w, h); y += 36;
-    wuos_font_draw("Keys:  + zoom in   - zoom out   0 reset zoom", 20, y, 0, 150,153,160, fb, w, h); y += 22;
-    wuos_font_draw("       t theme     a autosave  l language  f font-size", 20, y, 0, 150,153,160, fb, w, h); y += 22;
+    wuos_font_draw(line, WUOS_SPACE_8, y, 0, txt.r,txt.g,txt.b, fb, w, h); y += WUOS_SPACE_8;
+    wuos_font_draw("Keys:  + zoom in   - zoom out   0 reset zoom", WUOS_SPACE_8, y, 0, hnt.r,hnt.g,hnt.b, fb, w, h); y += WUOS_SPACE_4;
+    wuos_font_draw("       t theme     a autosave  l language  f font-size", WUOS_SPACE_8, y, 0, hnt.r,hnt.g,hnt.b, fb, w, h); y += WUOS_SPACE_4;
     snprintf(line,sizeof line,"       c high-contrast   s save to disk   (auto-saves on every change)");
-    wuos_font_draw(line, 20, y, 0, 150,153,160, fb, w, h); y += 22;
+    wuos_font_draw(line, WUOS_SPACE_8, y, 0, hnt.r,hnt.g,hnt.b, fb, w, h); y += WUOS_SPACE_4;
     if (e->saved_flash){
-        wuos_font_draw("saved.", 20, y, 0, 120,220,140, fb, w, h);
+        wuos_font_draw("saved.", WUOS_SPACE_8, y, 0, txt.r,txt.g,txt.b, fb, w, h);
     }
     *rgba = fb; *rw = w; *rh = h;
     return 0;

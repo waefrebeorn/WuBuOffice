@@ -73,7 +73,7 @@ typedef struct { unsigned char r, g, b; } WuosRGB;
 #define WUOS_LIGHT_OVERLAY_HIGHLIGHT {46, 98, 224}   /* brand tint */
 #define WUOS_LIGHT_OVERLAY_TEXT      {28, 32, 38}    /* body */
 #define WUOS_LIGHT_OVERLINE_TEXT     {60, 66, 78}    /* headings */
-#define WUOS_LIGHT_OVERLAY_HINTS     {150, 158, 170} /* muted */
+#define WUOS_LIGHT_OVERLAY_HINTS     {100, 110, 124} /* muted hints — AA 5.1:1 on white */
 
 /* ---- Utility: pick dark or light token ---- */
 #define WUOS_DARK(x)  ((WuosRGB)WUOS_DARK_##x)

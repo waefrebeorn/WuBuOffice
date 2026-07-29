@@ -7,6 +7,7 @@
 #include "wuos.h"
 #include "wuos_file.h"
 #include "wuos_font.h"    /* wuos_font_draw: text raster callback for svg_rasterize_cb */
+#include "wuos_theme.h"
 #include "wuburender.h"
 #include "model.h"
 #include "wubudoc.h"     /* doc_session_*, doc_open, doc_text, doc_drop_text */
@@ -135,8 +136,12 @@ static int doc_chrome_fs(DocV *e, int base){
 
 static int render(WuView *v, int w, int h, int scroll,
                   unsigned char **rgba, int *rw, int *rh){
-    DocV *e = v->priv;
     (void)scroll;
+    DocV *e = v->priv;
+    int dark = wubusettings_dark(wubusettings_shared());
+    WuosRGB doc_bg = dark ? WUOS_DARK(TAB_BAR) : WUOS_LIGHT(TAB_BAR);
+    WuosRGB doc_body = dark ? WUOS_DARK(TABTEXT_ON) : WUOS_LIGHT(TABTEXT_ON);
+    WuosRGB doc_hint = dark ? WUOS_DARK(TABTEXT)   : WUOS_LIGHT(TABTEXT);
     unsigned char *fb = NULL; int W=w, H=h;
     e->nlink = 0;
     if (e->doc){
@@ -146,7 +151,7 @@ static int render(WuView *v, int w, int h, int scroll,
          * from the laid-out geometry. */
         fb = malloc((size_t)w*h*4);
         if (!fb) return -1;
-        for (int i=0;i<w*h;i++){ fb[i*4]=252;fb[i*4+1]=252;fb[i*4+2]=250;fb[i*4+3]=255; }
+        for (int i=0;i<w*h;i++){ size_t k=(size_t)i*4; fb[k]=doc_bg.r;fb[k+1]=doc_bg.g;fb[k+2]=doc_bg.b;fb[k+3]=255; }
         wubulayout_doc *L = wubulayout_create(e->doc, NULL,
             doc_layout_measure, doc_layout_style, NULL, w, h, 56,56,56,56);
         if (L){
@@ -335,9 +340,9 @@ static int render(WuView *v, int w, int h, int scroll,
         /* non-renderable format: show the text projection */
         fb = malloc((size_t)w*h*4);
         if (!fb) return -1;
-        for (int i=0;i<w*h;i++){ fb[i*4]=252;fb[i*4+1]=252;fb[i*4+2]=250;fb[i*4+3]=255; }
-        wuos_font_draw("Document text (recognized):", 16, 20, 1, 40,44,52, fb,w,h);
-        int y = 48;
+        for (int i=0;i<w*h;i++){ size_t k=(size_t)i*4; fb[k]=doc_bg.r;fb[k+1]=doc_bg.g;fb[k+2]=doc_bg.b;fb[k+3]=255; }
+        wuos_font_draw("Document text (recognized):", WUOS_SPACE_8*2, WUOS_SPACE_8*2, 1, doc_body.r,doc_body.g,doc_body.b, fb,w,h);
+        int y = WUOS_SPACE_8*6;
         const char *p = e->text;
         if (p && *p){
             /* simple word-wrap */
@@ -349,7 +354,7 @@ static int render(WuView *v, int w, int h, int scroll,
                 if (x + (int)wl*8 > w-16){ x=16; y += fh+4; }
                 char tmp[256]; if(wl>=sizeof tmp) wl=sizeof tmp-1;
                 memcpy(tmp,wstart,wl); tmp[wl]=0;
-                wuos_font_draw(tmp, x, y, 0, 28,30,34, fb,w,h);
+                wuos_font_draw(tmp, x, y, 0, doc_body.r,doc_body.g,doc_body.b, fb,w,h);
                 x += (int)wl*8 + 8;
                 wstart = sp ? sp+1 : wstart+wl;
                 if (y > h-30) break;
@@ -359,10 +364,10 @@ static int render(WuView *v, int w, int h, int scroll,
                 for (int xx=0; xx<w; xx++) for(int yy=fy; yy<h; yy++)
                     if(xx>=0&&yy>=0&&xx<w&&yy<h){ size_t i=((size_t)yy*w+xx)*4; fb[i]=30;fb[i+1]=33;fb[i+2]=40; }
                 char line[256]; snprintf(line,sizeof line,"find '%s': %s", e->find_q, e->find_hit?"1 match highlighted in text":"no match");
-                wuos_font_draw(line, 8, fy+5, 0, 200,203,210, fb,w,h);
+                wuos_font_draw(line, WUOS_SPACE_8, fy+5, 0, doc_body.r,doc_body.g,doc_body.b, fb,w,h);
             }
         } else {
-            wuos_font_draw("(nothing to display)", 16, 48, 0, 120,30,30, fb,w,h);
+            wuos_font_draw("(nothing to display)", WUOS_SPACE_8*2, WUOS_SPACE_8*6, 0, doc_hint.r,doc_hint.g,doc_hint.b, fb,w,h);
         }
     }
     /* ---- inserted objects overlay (chart/draw/math) on the right gutter ---- */

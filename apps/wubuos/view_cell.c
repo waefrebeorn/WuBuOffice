@@ -1,10 +1,11 @@
-/* view_cell.c -- Spreadsheet view: renders a real wubucell workbook grid AND
+/* view_cell.c -- Spreadsheet cell view: renders a real wubucell workbook grid AND
  * is genuinely interactive. A formula bar (top) shows the active cell; typing
  * edits it; Enter commits through wubucell_cell_* and the real engine
  * recomputes (e.g. SUM/A1*2 cached values update on render). Arrow keys move
  * the active cell. Loads .csv/.xlsx/.ods when given a path. */
 #include "wuos.h"
 #include "wuos_font.h"
+#include "wuos_theme.h"
 #include "cell.h"          /* apps/wubucell */
 #include "cell_csv.h"      /* wubucell_read_csv */
 #include "cell_read.h"     /* wubucell_read */
@@ -23,16 +24,20 @@ static int render(WuView *v, int w, int h, int scroll,
                   unsigned char **rgba, int *rw, int *rh){
     CellV *e = v->priv;
     (void)scroll;
+    int dark = wubusettings_dark(wubusettings_shared());
+    WuosRGB cel_bg = dark ? WUOS_DARK(TAB_BAR) : WUOS_LIGHT(TAB_BAR);
+    WuosRGB cel_hdr = dark ? WUOS_DARK(OVERLINE_TEXT) : WUOS_LIGHT(OVERLINE_TEXT);
+    WuosRGB cel_body = dark ? WUOS_DARK(TABTEXT_ON) : WUOS_LIGHT(TABTEXT_ON);
     unsigned char *fb = malloc((size_t)w*h*4);
     if (!fb) return -1;
-    for (int i=0;i<w*h;i++){ fb[i*4]=255;fb[i*4+1]=255;fb[i*4+2]=255;fb[i*4+3]=255; }
+    for (int i=0;i<w*h;i++){ size_t k=(size_t)i*4; fb[k]=cel_bg.r;fb[k+1]=cel_bg.g;fb[k+2]=cel_bg.b;fb[k+3]=255; }
 
     int fh = wuos_font_height();
-    int lh = fh + 8;
-    int gx0 = 40, gy0 = 56, cw = 96, rh2 = lh;
+    int lh = fh + WUOS_SPACE_8;
+    int gx0 = WUOS_SPACE_8*5, gy0 = WUOS_SPACE_8*7, cw = WUOS_SPACE_8*12, rh2 = lh;
 
     /* formula bar */
-    wuos_font_draw("fx", 8, gy0-lh-2, 1, 90,94,102, fb,w,h);
+    wuos_font_draw("fx", WUOS_SPACE_8, gy0-lh-WUOS_SPACE_4, 1, cel_hdr.r,cel_hdr.g,cel_hdr.b, fb,w,h);
     for (int xx=30; xx<w-10; xx++) for (int yy=gy0-lh-8; yy<gy0-4; yy++){
         if (xx>=0&&yy>=0&&xx<w&&yy<h){ size_t i=((size_t)yy*w+xx)*4;
             int edge=(xx==30||yy==gy0-lh-8||xx==w-11||yy==gy0-5);

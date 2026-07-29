@@ -4,6 +4,7 @@
 #include "wuos.h"
 #include "wuos_font.h"
 #include "wuos_file.h"
+#include "wuos_theme.h"
 #include "diff.h"          /* cross-repo: ~/WuBuPad/src */
 
 #include <stdlib.h>
@@ -33,21 +34,25 @@ static int render(WuView *v, int w, int h, int scroll,
                   unsigned char **rgba, int *rw, int *rh){
     CmpV *e = v->priv;
     (void)scroll;
+    int dark = wubusettings_dark(wubusettings_shared());
+    WuosRGB cmp_bg = dark ? WUOS_DARK(TAB_BAR) : WUOS_LIGHT(TAB_BAR);
+    WuosRGB cmp_txt = dark ? WUOS_DARK(TABTEXT_ON) : WUOS_LIGHT(TABTEXT_ON);
+    WuosRGB cmp_err = dark ? WUOS_DARK(OVERLINE_TEXT) : WUOS_LIGHT(OVERLINE_TEXT);
     unsigned char *fb = malloc((size_t)w*h*4);
     if (!fb) return -1;
-    for (int i=0;i<w*h;i++){ fb[i*4]=255;fb[i*4+1]=255;fb[i*4+2]=255;fb[i*4+3]=255; }
+    for (int i=0;i<w*h;i++){ size_t k=(size_t)i*4; fb[k]=cmp_bg.r;fb[k+1]=cmp_bg.g;fb[k+2]=cmp_bg.b;fb[k+3]=255; }
 
     int fh = wuos_font_height();
-    int lh = fh + 4;
+    int lh = fh + WUOS_SPACE_4;
 
     if (!e->text){
-        wuos_font_draw("Compare: wubuos compare <a> <b>  (no files)", 10, 30, 1, 120,30,30, fb,w,h);
+        wuos_font_draw("Compare: wubuos compare <a> <b>  (no files)", WUOS_SPACE_8, WUOS_SPACE_8*3, 1, cmp_err.r,cmp_err.g,cmp_err.b, fb,w,h);
         *rgba=fb; *rw=w; *rh=h; return 0;
     }
     /* title */
     char title[256];
     snprintf(title,sizeof title,"Compare  %s  <->  %s", e->la?e->la:"(blank)", e->lb?e->lb:"(blank)");
-    wuos_font_draw(title, 10, 8, 1, 40,44,52, fb,w,h);
+    wuos_font_draw(title, WUOS_SPACE_8, WUOS_SPACE_4, 1, cmp_txt.r,cmp_txt.g,cmp_txt.b, fb,w,h);
 
     /* tokenize the unified diff into lines, paint with color by prefix */
     char *work = strdup(e->text);
