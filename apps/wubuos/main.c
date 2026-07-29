@@ -769,30 +769,41 @@ int main(int argc, char **argv){
         /* UI-27: right-click context menu overlay */
         if (g_ctx){
             const char *items[3] = { "Open File…", "New Document", "Toggle Theme" };
-            int mw = 160, mh = 3*26 + 8;
+            int mw = WUOS_SPACE_4 * 40, mh = WUOS_SPACE_4 * 20;
             int mx = g_ctx_x, my = g_ctx_y;
             if (mx+mw > WIN_W) mx = WIN_W-mw; if (my+mh > WIN_H-STATUS_H) my = WIN_H-STATUS_H-mh;
-            SDL_SetRenderDrawColor(ren, 26,29,36,255); SDL_RenderFillRect(ren,&(SDL_Rect){mx,my,mw,mh});
-            SDL_SetRenderDrawColor(ren, 70,76,90,255); SDL_RenderDrawRect(ren,&(SDL_Rect){mx,my,mw,mh});
+            WuosRGB ctx_bg = dark ? WUOS_DARK(OVERLAY_SURFACE) : WUOS_LIGHT(OVERLAY_SURFACE);
+            WuosRGB ctx_bd = dark ? WUOS_DARK(OVERLAY_BD)   : WUOS_LIGHT(OVERLAY_BD);
+            WuosRGB ctx_hl = dark ? WUOS_DARK(OVERLAY_HIGHLIGHT) : WUOS_LIGHT(OVERLAY_HIGHLIGHT);
+            WuosRGB ctx_txt = dark ? WUOS_DARK(OVERLAY_TEXT)    : WUOS_LIGHT(OVERLAY_TEXT);
+            SDL_SetRenderDrawColor(ren, ctx_bg.r, ctx_bg.g, ctx_bg.b, 255); SDL_RenderFillRect(ren,&(SDL_Rect){mx,my,mw,mh});
+            SDL_SetRenderDrawColor(ren, ctx_bd.r, ctx_bd.g, ctx_bd.b, 255); SDL_RenderDrawRect(ren,&(SDL_Rect){mx,my,mw,mh});
             for (int i=0;i<3;i++){
-                if (i==g_ctx_item){ SDL_SetRenderDrawColor(ren,94,135,255,255); SDL_RenderFillRect(ren,&(SDL_Rect){mx+2,my+4+i*26,mw-4,24}); }
-                sdl_text(ren, mx+10, my+8+i*26, 220,223,230, items[i]);
+                if (i==g_ctx_item){ SDL_SetRenderDrawColor(ren,ctx_hl.r,ctx_hl.g,ctx_hl.b,255); SDL_RenderFillRect(ren,&(SDL_Rect){mx+WUOS_SPACE_2,my+WUOS_SPACE_4+i*WUOS_SPACE_26,mw-WUOS_SPACE_4,WUOS_SPACE_24}); }
+                sdl_text(ren, mx+WUOS_SPACE_4, my+WUOS_SPACE_8+i*WUOS_SPACE_26, ctx_txt.r,ctx_txt.g,ctx_txt.b, items[i]);
             }
         }
 
         /* modal text-input dialog overlay (DOC-66/EXP-89/UXA-47) */
         if (dialog_active(g_dlg)){
-            int bw = 520, bx = (WIN_W-bw)/2, by = TAB_H + 80, bh = 120;
-            SDL_SetRenderDrawColor(ren, 26,29,36,252); SDL_RenderFillRect(ren,&(SDL_Rect){bx,by,bw,bh});
-            SDL_SetRenderDrawColor(ren, 70,76,90,255); SDL_RenderDrawRect(ren,&(SDL_Rect){bx,by,bw,bh});
-            sdl_text(ren, bx+20, by+12, 240,243,250, dialog_title(g_dlg));
-            sdl_text(ren, bx+20, by+40, 200,203,210, dialog_prompt(g_dlg));
-            sdl_text(ren, bx+20, by+68, 230,233,240, dialog_text(g_dlg));
+            int bw = WUOS_SPACE_32*16 + WUOS_SPACE_8*2, bx = (WIN_W-bw)/2, by = TAB_H + WUOS_SPACE_16, bh = WUOS_SPACE_24*5;
+            WuosRGB dlg_bg = dark ? WUOS_DARK(OVERLAY_SURFACE) : WUOS_LIGHT(OVERLAY_SURFACE);
+            WuosRGB dlg_bd = dark ? WUOS_DARK(OVERLAY_BD)     : WUOS_LIGHT(OVERLAY_BD);
+            WuosRGB dlg_ttl = dark ? WUOS_DARK(OVERLINE_TEXT) : WUOS_LIGHT(OVERLINE_TEXT);
+            WuosRGB dlg_pmt = dark ? WUOS_DARK(OVERLAY_HINTS) : WUOS_LIGHT(OVERLAY_HINTS);
+            WuosRGB dlg_txt = dark ? WUOS_DARK(OVERLAY_TEXT)    : WUOS_LIGHT(OVERLAY_TEXT);
+            WuosRGB dlg_crt = dark ? WUOS_DARK(TABTEXT_ON)       : WUOS_LIGHT(TABTEXT_ON);
+            WuosRGB dlg_hnt = dark ? WUOS_DARK(OVERLAY_HINTS)    : WUOS_LIGHT(OVERLAY_HINTS);
+            SDL_SetRenderDrawColor(ren, dlg_bg.r, dlg_bg.g, dlg_bg.b, 252); SDL_RenderFillRect(ren,&(SDL_Rect){bx,by,bw,bh});
+            SDL_SetRenderDrawColor(ren, dlg_bd.r, dlg_bd.g, dlg_bd.b, 255); SDL_RenderDrawRect(ren,&(SDL_Rect){bx,by,bw,bh});
+            sdl_text(ren, bx+WUOS_SPACE_8, by+WUOS_SPACE_4, dlg_ttl.r,dlg_ttl.g,dlg_ttl.b, dialog_title(g_dlg));
+            sdl_text(ren, bx+WUOS_SPACE_8, by+WUOS_SPACE_16, dlg_pmt.r,dlg_pmt.g,dlg_pmt.b, dialog_prompt(g_dlg));
+            sdl_text(ren, bx+WUOS_SPACE_8, by+WUOS_SPACE_24, dlg_txt.r,dlg_txt.g,dlg_txt.b, dialog_text(g_dlg));
             /* caret */
             int cw = wuos_font_text_width(dialog_text(g_dlg), 20);
-            SDL_SetRenderDrawColor(ren, 230,233,240,255);
-            SDL_RenderFillRect(ren,&(SDL_Rect){bx+20+cw, by+66, 2, 20});
-            sdl_text(ren, bx+20, by+bh-18, 150,153,160, "Enter to confirm · Esc to cancel");
+            SDL_SetRenderDrawColor(ren, dlg_crt.r, dlg_crt.g, dlg_crt.b, 255);
+            SDL_RenderFillRect(ren,&(SDL_Rect){bx+WUOS_SPACE_8+cw, by+WUOS_SPACE_20, 2, WUOS_SPACE_20});
+            sdl_text(ren, bx+WUOS_SPACE_8, by+bh-WUOS_SPACE_4, dlg_hnt.r,dlg_hnt.g,dlg_hnt.b, "Enter to confirm \xe2\x80\xa2 Esc to cancel");
         }
 
         /* UI-33: toast overlay (bottom-center) + tick */
@@ -808,46 +819,55 @@ int main(int argc, char **argv){
             if (!reduce && g_toast_a < 1.0f) g_toast_a += 0.12f;
             if (g_toast_a > 1.0f) g_toast_a = 1.0f;
             float ta = reduce ? 1.0f : g_toast_a;
-            int tw = (int)strlen(tt)*8 + 24;
-            int tx = (WIN_W - tw)/2, ty = WIN_H - STATUS_H - 42;
-            SDL_SetRenderDrawColor(ren, 28,31,38,(Uint8)(235*ta));
-            SDL_RenderFillRect(ren,&(SDL_Rect){tx,ty,tw,30});
-            SDL_SetRenderDrawColor(ren, 94,135,255,255);
-            SDL_RenderDrawRect(ren,&(SDL_Rect){tx,ty,tw,30});
-            sdl_text(ren, tx+12, ty+8, 220,223,230, tt);
+            int tw = (int)strlen(tt)*8 + WUOS_SPACE_8*3;
+            int tx = (WIN_W - tw)/2, ty = WIN_H - STATUS_H - WUOS_SPACE_8*5;
+            SDL_SetRenderDrawColor(ren, dark?WUOS_DARK(OVERLAY_SURFACE).r:WUOS_LIGHT(OVERLAY_SURFACE).r, dark?WUOS_DARK(OVERLAY_SURFACE).g:WUOS_LIGHT(OVERLAY_SURFACE).g, dark?WUOS_DARK(OVERLAY_SURFACE).b:WUOS_LIGHT(OVERLAY_SURFACE).b,(Uint8)(235*ta));
+            SDL_RenderFillRect(ren,&(SDL_Rect){tx,ty,tw,WUOS_SPACE_8*4});
+            SDL_SetRenderDrawColor(ren, dark?WUOS_DARK(ACCENT).r:WUOS_LIGHT(ACCENT).r, dark?WUOS_DARK(ACCENT).g:WUOS_LIGHT(ACCENT).g, dark?WUOS_DARK(ACCENT).b:WUOS_LIGHT(ACCENT).b, 255);
+            SDL_RenderDrawRect(ren,&(SDL_Rect){tx,ty,tw,WUOS_SPACE_8*4});
+            sdl_text(ren, tx+WUOS_SPACE_8*5, ty+WUOS_SPACE_8, dark?WUOS_DARK(OVERLAY_TEXT).r:WUOS_LIGHT(OVERLAY_TEXT).r, dark?WUOS_DARK(OVERLAY_TEXT).g:WUOS_LIGHT(OVERLAY_TEXT).g, dark?WUOS_DARK(OVERLAY_TEXT).b:WUOS_LIGHT(OVERLAY_TEXT).b, tt);
         }
 
         /* UI-29: command palette overlay (top-center) */
         if (palette_is_open(g_palette)){
-            int pw = 420, px = (WIN_W-pw)/2, py = TAB_H + 24;
+            int pw = WUOS_SPACE_32*13 + WUOS_SPACE_4, px = (WIN_W-pw)/2, py = TAB_H + WUOS_SPACE_4*6;
             int rows = palette_result_count(g_palette); if (rows>8) rows=8;
-            int ph = 40 + rows*26 + 8;
-            SDL_SetRenderDrawColor(ren, 26,29,36,245);
+            int ph = WUOS_SPACE_8*5 + rows*WUOS_SPACE_26 + WUOS_SPACE_8;
+            WuosRGB pal_bg  = dark ? WUOS_DARK(OVERLAY_SURFACE) : WUOS_LIGHT(OVERLAY_SURFACE);
+            WuosRGB pal_bd  = dark ? WUOS_DARK(OVERLAY_BD)     : WUOS_LIGHT(OVERLAY_BD);
+            WuosRGB pal_hl  = dark ? WUOS_DARK(OVERLAY_HIGHLIGHT) : WUOS_LIGHT(OVERLAY_HIGHLIGHT);
+            WuosRGB pal_txt = dark ? WUOS_DARK(OVERLAY_TEXT)    : WUOS_LIGHT(OVERLAY_TEXT);
+            WuosRGB pal_hnt = dark ? WUOS_DARK(OVERLAY_HINTS)    : WUOS_LIGHT(OVERLAY_HINTS);
+            SDL_SetRenderDrawColor(ren, pal_bg.r, pal_bg.g, pal_bg.b, 245);
             SDL_RenderFillRect(ren,&(SDL_Rect){px,py,pw,ph});
-            SDL_SetRenderDrawColor(ren, 70,76,90,255);
+            SDL_SetRenderDrawColor(ren, pal_bd.r, pal_bd.g, pal_bd.b, 255);
             SDL_RenderDrawRect(ren,&(SDL_Rect){px,py,pw,ph});
             char qline[96];
             snprintf(qline,sizeof qline,"> %s", palette_query(g_palette));
-            sdl_text(ren, px+12, py+10, 240,243,250, qline);
+            sdl_text(ren, px+WUOS_SPACE_8*2, py+WUOS_SPACE_8, pal_hnt.r,pal_hnt.g,pal_hnt.b, qline);
             for (int i=0;i<rows;i++){
                 if (i==palette_selected(g_palette)){
-                    SDL_SetRenderDrawColor(ren,94,135,255,255);
-                    SDL_RenderFillRect(ren,&(SDL_Rect){px+4,py+40+i*26,pw-8,24});
+                    SDL_SetRenderDrawColor(ren,pal_hl.r,pal_hl.g,pal_hl.b,255);
+                    SDL_RenderFillRect(ren,&(SDL_Rect){px+WUOS_SPACE_4,py+WUOS_SPACE_8*5+i*WUOS_SPACE_26,pw-WUOS_SPACE_8,WUOS_SPACE_24});
                 }
-                sdl_text(ren, px+14, py+44+i*26, 220,223,230,
+                sdl_text(ren, px+WUOS_SPACE_8*2, py+WUOS_SPACE_8*5+i*WUOS_SPACE_26, pal_txt.r,pal_txt.g,pal_txt.b,
                          palette_result_label(g_palette, i));
             }
         }
 
         /* UI-36: shortcut cheat-sheet overlay (F1) */
         if (g_cheat){
-            int cw = 460, cx = (WIN_W-cw)/2, cy = TAB_H + 40;
-            int ch = 320;
-            SDL_SetRenderDrawColor(ren, 20,22,28,250);
+            int cw = WUOS_SPACE_32*14 + WUOS_SPACE_4, cx = (WIN_W-cw)/2, cy = TAB_H + WUOS_SPACE_8*5;
+            int ch = WUOS_SPACE_32*10;
+            WuosRGB cheat_bg = dark ? WUOS_DARK(OVERLAY_SURFACE) : WUOS_LIGHT(OVERLAY_SURFACE);
+            WuosRGB cheat_bd = dark ? WUOS_DARK(OVERLAY_BD)     : WUOS_LIGHT(OVERLAY_BD);
+            WuosRGB cheat_ttl= dark ? WUOS_DARK(OVERLINE_TEXT)  : WUOS_LIGHT(OVERLINE_TEXT);
+            WuosRGB cheat_txt= dark ? WUOS_DARK(OVERLAY_TEXT)    : WUOS_LIGHT(OVERLAY_TEXT);
+            SDL_SetRenderDrawColor(ren, cheat_bg.r, cheat_bg.g, cheat_bg.b, 250);
             SDL_RenderFillRect(ren,&(SDL_Rect){cx,cy,cw,ch});
-            SDL_SetRenderDrawColor(ren, 70,76,90,255);
+            SDL_SetRenderDrawColor(ren, cheat_bd.r, cheat_bd.g, cheat_bd.b, 255);
             SDL_RenderDrawRect(ren,&(SDL_Rect){cx,cy,cw,ch});
-            sdl_text(ren, cx+14, cy+10, 240,243,250, "Keyboard shortcuts");
+            sdl_text(ren, cx+WUOS_SPACE_8*2, cy+WUOS_SPACE_8, cheat_ttl.r,cheat_ttl.g,cheat_ttl.b, "Keyboard shortcuts");
             const char *keys[] = {
                 "Ctrl+K   command palette",
                 "Ctrl+`   toggle dark/light theme",
@@ -877,18 +897,22 @@ int main(int argc, char **argv){
                 "Drag & drop a file to open"
             };
             for (int i=0;i<26;i++)
-                sdl_text(ren, cx+14, cy+40+i*22, 200,203,210, keys[i]);
+                sdl_text(ren, cx+WUOS_SPACE_8*2, cy+WUOS_SPACE_8*5+i*WUOS_SPACE_26, cheat_txt.r,cheat_txt.g,cheat_txt.b, keys[i]);
         }
 
         /* UI-30: first-run onboarding splash (dismiss with any key) */
         if (g_first_run){
-            int pw = 520, px = (WIN_W-pw)/2, py = TAB_H + 30;
-            int ph = 360;
-            SDL_SetRenderDrawColor(ren, 18,20,26,252);
+            int pw = WUOS_SPACE_32*16 + WUOS_SPACE_8*2, px = (WIN_W-pw)/2, py = TAB_H + WUOS_SPACE_4*8;
+            int ph = WUOS_SPACE_32*11;
+            WuosRGB sp_bg  = dark ? WUOS_DARK(OVERLAY_SURFACE) : WUOS_LIGHT(OVERLAY_SURFACE);
+            WuosRGB sp_bd  = dark ? WUOS_DARK(OVERLAY_BD)     : WUOS_LIGHT(OVERLAY_BD);
+            WuosRGB sp_ttl = dark ? WUOS_DARK(OVERLINE_TEXT)  : WUOS_LIGHT(OVERLINE_TEXT);
+            WuosRGB sp_txt = dark ? WUOS_DARK(OVERLAY_TEXT)    : WUOS_LIGHT(OVERLAY_TEXT);
+            SDL_SetRenderDrawColor(ren, sp_bg.r, sp_bg.g, sp_bg.b, 252);
             SDL_RenderFillRect(ren,&(SDL_Rect){px,py,pw,ph});
-            SDL_SetRenderDrawColor(ren, 70,76,90,255);
+            SDL_SetRenderDrawColor(ren, sp_bd.r, sp_bd.g, sp_bd.b, 255);
             SDL_RenderDrawRect(ren,&(SDL_Rect){px,py,pw,ph});
-            sdl_text(ren, px+20, py+16, 240,243,250, "Welcome to WuBuOffice");
+            sdl_text(ren, px+WUOS_SPACE_8*2, py+WUOS_SPACE_8*2, sp_ttl.r,sp_ttl.g,sp_ttl.b, "Welcome to WuBuOffice");
             const char *tips[] = {
                 "A clean-room office suite (word processor, editor,",
                 "spreadsheet, OCR, slides) - no third-party frameworks.",
@@ -903,7 +927,7 @@ int main(int argc, char **argv){
                 "Press any key to start"
             };
             for (int i=0;i<11;i++)
-                sdl_text(ren, px+20, py+52+i*26, 200,203,210, tips[i]);
+                sdl_text(ren, px+WUOS_SPACE_8*2, py+WUOS_SPACE_8*6+i*WUOS_SPACE_26, sp_txt.r,sp_txt.g,sp_txt.b, tips[i]);
         }
         SDL_Delay(16);
     }
