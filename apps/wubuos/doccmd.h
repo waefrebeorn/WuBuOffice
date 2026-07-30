@@ -64,6 +64,7 @@ char *doccmd_export_epub(wubumodel_doc *doc, const char *out);
  * visual styling -- that is a deliberate cap that keeps the doccmd API
  * minimal. */
 char *doccmd_export_pdf      (wubumodel_doc *doc);
+char *doccmd_export_pdf_direct(wubumodel_doc *doc);
 char *doccmd_export_html     (wubumodel_doc *doc);
 char *doccmd_export_markdown (wubumodel_doc *doc);
 char *doccmd_export_latex    (wubumodel_doc *doc);

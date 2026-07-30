@@ -52,6 +52,8 @@ target_include_directories(wubuos PRIVATE
     ${CMAKE_SOURCE_DIR}/src/wubuexp
     ${CMAKE_SOURCE_DIR}/src/wubutoc
     ${CMAKE_SOURCE_DIR}/src/wubuscript
+    ${CMAKE_SOURCE_DIR}/apps/wubupdf
+    ${CMAKE_SOURCE_DIR}/apps/wubuconv
     ${WUBUPAD_SRC})
 # WuBuPad headless core sources (SDL-free) compiled in directly.
 # lex.c is included for the editor's syntax highlighter. Its lex_free() name
@@ -72,6 +74,7 @@ target_link_libraries(wubuos PRIVATE
     wubumodel wuburender wubuocr wubufont wubucell_app wubudoc wubuautosave
     wubuspell wubuchart wubudraw wubumath wubuepub wubua11y wubusvg
     wubusettings wubushape wubulayout wubuexp wubutoc wubuscript wubupasteplain
+    wubupdf_app wubuconv_app
     ${SDL2_LIBRARIES} ${FREETYPE_LIBRARIES} m dl)
 target_compile_options(wubuos PRIVATE -Wall -Wextra -Wpedantic)
 
@@ -215,9 +218,12 @@ target_include_directories(test_doccmd PRIVATE
     ${CMAKE_SOURCE_DIR}/src/wubusettings
     ${CMAKE_SOURCE_DIR}/src/wubushape
     ${CMAKE_SOURCE_DIR}/src/wubulayout
-    ${CMAKE_SOURCE_DIR}/src/wubuocr)
+    ${CMAKE_SOURCE_DIR}/src/wubuocr
+    ${CMAKE_SOURCE_DIR}/apps/wubupdf
+    ${CMAKE_SOURCE_DIR}/apps/wubuedit)
 target_link_libraries(test_doccmd PRIVATE
-    wubumodel wubuchart wubudraw wubumath wubuepub wubuexp wubua11y wubusvg wubuscript wubusettings wubulayout wubushape wubuocr)
+    wubumodel wubuchart wubudraw wubumath wubuepub wubuexp wubua11y wubusvg wubuscript wubusettings wubulayout wubushape wubuocr
+    wubupdf_app wubuedit_app wubucell_app wubushow_app wubuword_app)
 target_compile_options(test_doccmd PRIVATE -Wall -Wextra -Wpedantic)
 add_test(NAME doccmd COMMAND test_doccmd)
 set_tests_properties(doccmd PROPERTIES LABELS "doccmd;apps")

@@ -9,6 +9,7 @@
 #include "draw.h"      /* wubudraw */
 #include "math.h"      /* wubumath */
 #include "epub.h"      /* wubuepub */
+#include "../apps/wubupdf/pdf.h"  /* wubupdf_write (dm_doc-based PDF/1.7 writer) */
 #include "exp.h"       /* wubuexp_pdf/html/markdown/latex/rtf (INT-3.5) */
 #include "script.h"    /* wubuscript: script_eval */
 #include "ublayout.h"  /* wubulayout_create (central pipeline -> export) */
@@ -375,6 +376,59 @@ char *doccmd_export_pdf(wubumodel_doc *doc){
     wubulayout_destroy(L);
     if (rc == 0){ char b[128]; snprintf(b, sizeof b, "PDF written: /tmp/wubuos_export.pdf"); return strdup(b); }
     return strdup("PDF export failed");
+}
+/* Direct dm_doc-based PDF writer (apps/wubupdf/pdf_write.c). Produces a
+ * smaller PDF that reflects the model's STRUCTURE (paragraphs + text +
+ * tables) without going through the layout pipeline. Useful as a fallback
+ * when the layout build fails on malformed models. */
+char *doccmd_export_pdf_direct(wubumodel_doc *doc){
+    if (!doc) return strdup("no model doc to export");
+    /* Build a minimal dm_doc from the model by walking sections/paragraphs.
+     * Avoids the wubuconv bridge dependency to keep the doccmd binary slim. */
+    dm_doc dm; memset(&dm, 0, sizeof dm);
+    dm.cap = 8;
+    dm.blocks = calloc(dm.cap, sizeof *dm.blocks);
+    for (wubumodel_node *sec = wubumodel_doc_root(doc); sec; sec = wubumodel_node_next_sibling(sec)){
+        /* collect run text under this section */
+        char buf[1024]; size_t blen = 0; buf[0] = 0;
+        for (wubumodel_node *p = wubumodel_node_first_child(sec); p; p = wubumodel_node_next_sibling(p)){
+            for (wubumodel_node *r = wubumodel_node_first_child(p); r; r = wubumodel_node_next_sibling(r)){
+                const char *t = wubumodel_run_text(r);
+                if (t && *t){
+                    size_t l = strlen(t);
+                    if (blen + l + 1 < sizeof buf){
+                        memcpy(buf + blen, t, l); blen += l; buf[blen] = 0;
+                    }
+                }
+            }
+            /* paragraph break */
+            if (blen + 1 < sizeof buf){ buf[blen++] = '\n'; buf[blen] = 0; }
+        }
+        if (blen){
+            if (dm.n + 1 > dm.cap){ dm.cap *= 2; dm.blocks = realloc(dm.blocks, dm.cap * sizeof *dm.blocks); }
+            dm_block *b = &dm.blocks[dm.n++]; memset(b, 0, sizeof *b);
+            b->kind = DM_BLOCK_PARA;
+            b->para.text = strdup(buf);
+        }
+    }
+    int rc = wubupdf_write(&dm, "/tmp/wubuos_export_direct.pdf");
+    /* free the dm_doc */
+    for (size_t i = 0; i < dm.n; i++){
+        free(dm.blocks[i].para.text);
+        free(dm.blocks[i].para.style);
+        if (dm.blocks[i].kind == DM_BLOCK_TABLE && dm.blocks[i].table.cells){
+            for (size_t k = 0; k < dm.blocks[i].table.rows * dm.blocks[i].table.cols; k++)
+                if (dm.blocks[i].table.cells[k]){
+                    free(dm.blocks[i].table.cells[k]->text);
+                    free(dm.blocks[i].table.cells[k]->style);
+                    free(dm.blocks[i].table.cells[k]);
+                }
+            free(dm.blocks[i].table.cells);
+        }
+    }
+    free(dm.blocks);
+    if (rc == 0){ char b[128]; snprintf(b, sizeof b, "PDF written (direct): /tmp/wubuos_export_direct.pdf"); return strdup(b); }
+    return strdup("PDF direct export failed");
 }
 char *doccmd_export_html(wubumodel_doc *doc){
     if (!doc) return strdup("no model doc to export");

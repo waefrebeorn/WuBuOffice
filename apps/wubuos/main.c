@@ -117,7 +117,7 @@ static void run_menu_cmd(int cmd){
     case 1020: SDL_StartTextInput(); return;
     case 1021: if (views[active] && views[active]->on_key) views[active]->on_key(views[active], WUOS_KEY_PASTE_PLAIN, 1); return;
     case 1022: if (views[active] && views[active]->on_key) views[active]->on_key(views[active], WUOS_KEY_SELECT_ALL, 1); return;
-    case 1023: toast_push(g_toasts, "PDF export: not yet implemented", 120); return;
+    case 1023: if (views[active]) views[active]->on_key(views[active], WUOS_KEY_EXPORT_PDF, 1); return;
     case 1024: toast_push(g_toasts, "Presentation mode: not yet implemented", 120); return;
     case 1025: SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "WuBuOffice",
                  "WuBuOffice v0.1\nA from-scratch office suite with Notepad++ parity.\nBuilt with SDL2 + FreeType + C11.", NULL); return;

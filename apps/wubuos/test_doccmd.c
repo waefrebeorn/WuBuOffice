@@ -132,17 +132,17 @@ int main(void){
      * wubulayout_doc from the model and calls wubuexp_*. */
     {
         const char *exports[] = {
-            "pdf", "html", "markdown", "latex", "rtf", NULL
+            "pdf", "pdf_direct", "html", "markdown", "latex", "rtf", NULL
         };
         char *(*fn[])(wubumodel_doc *) = {
-            doccmd_export_pdf, doccmd_export_html,
-            doccmd_export_markdown, doccmd_export_latex,
-            doccmd_export_rtf, NULL
+            doccmd_export_pdf, doccmd_export_pdf_direct,
+            doccmd_export_html, doccmd_export_markdown,
+            doccmd_export_latex, doccmd_export_rtf, NULL
         };
         const char *paths[] = {
-            "/tmp/wubuos_export.pdf", "/tmp/wubuos_export.html",
-            "/tmp/wubuos_export.md", "/tmp/wubuos_export.tex",
-            "/tmp/wubuos_export.rtf", NULL
+            "/tmp/wubuos_export.pdf", "/tmp/wubuos_export_direct.pdf",
+            "/tmp/wubuos_export.html", "/tmp/wubuos_export.md",
+            "/tmp/wubuos_export.tex", "/tmp/wubuos_export.rtf", NULL
         };
         for (int i = 0; exports[i]; i++){
             char *msg = fn[i](d);
