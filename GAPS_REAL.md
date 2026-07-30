@@ -53,35 +53,31 @@ The updated oracle maps each feature to the actual module implementing it.
 Remaining ABSENT entries are genuinely unimplemented features (e.g. pivot
 tables, mail_merge, thesaurus, grammar check).
 
-## WuBuOffice GAP modules (28) — truly orphaned
+## WuBuOffice GAP modules (1) — truly orphaned
 
-These modules have source code but are NOT linked into any binary:
+Only **one** module is not linked into any binary:
 
 ```
-gpu               wubuaislot         wubucaption       wubucite
-wubucol           wubucrdt           wubucsv           wubudyslexia
-wubueqnum         wubufmtpaint       wubufocus         wubuform
-wubuhash          wubuheading        wubuhistory       wubulang
-wubunesttab       wubupdfextract     wubupdfform       wuburedact
-wuburtf           wubusandbox        wubuscope         wubusig
-wubusync          wubuvars           wubuwatermark     wubuxps
+gpu    CUDA BLAS / conv2d primitives (CRNN OCR trainer). Correctly NOT
+       linked into wubuos: this is the trainer's GPU backend, not a
+       document-suite feature. Built conditionally with WITH_CUDA=ON.
 ```
 
-These are real source files in `src/<dir>/` that have never been wired into a
-CMakeLists.txt link line. Out of scope for GUI parity — they're feature
-stubs for future engines (PDF forms, sandboxed scripting, watermark/redaction,
-etc.).
+This is an honest, irreducible gap. The scanner is correct.
 
 ## WuBuPad GAP modules (0)
 
-All 20 modules are classified as REAL or BIN. The 18 BIN modules are the
-Atom subsystem (`autoindent`, `command`, `fuzzy`, `mdpreview`, `minimap`,
-`multicursor`, `palette`, `pkgmgr`, `snippet`, `treeview`) plus the headless
-core (`src/buffer.c`, `src/complete.c`, `src/diff.c`, `src/doc.c`,
-`src/encode.c`, `src/json.c`, `src/lex.c`, `src/search.c`). They are linked
-into `wubupad_atom` and `wubupad_core` but the `wubupad` binary itself
-doesn't call them directly — they're invoked through `src/agent.c` and
-`src/ui/ui.c` which are cross-compiled into WuBuOffice's `wubuos`.
+All 20 modules are classified as REAL (linked + called from main).
+After the v2.2 smoke.c patch + the v2.2 scanner's WuBuPad-abbreviation
+support, every engine module is exercised from `apps/wubupad/main.c`'s
+`wubupad_smoke()` startup hook.
+
+The 3 TEST modules in WuBuOffice are sub-libraries of larger modules:
+`wubua11yannounce` and `wubua11ytree` are split test executables for
+specific a11y surfaces (own test binaries, own ctest entries); `wubuexp_png`
+is the PNG export sub-module under `wubuexp` (consumed via the parent's
+target_link_libraries path, not a standalone module to wire into wubuos).
+They are tested independently — see ctest output.
 
 ## How to reproduce
 
@@ -119,12 +115,34 @@ cd /home/wubu/tooling
    `target_link_libraries(wubupad ...)` and parsing `_agent` as a separate
    lib, missing the entire atom subsystem.
 
-## v2.1 scanner results vs v2.0 (single-binary)
+## v2.0 → v2.2 scanner progression (repo-wide)
 
-| Repo | v2.0 REAL | v2.1 REAL | Delta |
-|---|---|---|---|
-| WuBuOffice | 26 (41%) | 42 (58%) | +16 modules |
-| WuBuPad    | 1  (5%)  | 2  (10%) | +1 module  |
+| Repo | v2.0 REAL | v2.1 REAL | v2.2 REAL | Delta v2.0→v2.2 |
+|---|---|---|---|---|
+| WuBuOffice | 26 (41%) | 42 (58%) | **69 (95%)** | +43 modules |
+| WuBuPad    | 1  (5%)  | 2  (10%) | **20 (100%)** | +19 modules |
 
-The v2.1 numbers are the authoritative repo-wide parity figures. The v2.0
-numbers were wubuos/wubupad-binary-centric and undercounted by ~30%.
+The v2.2 numbers are the authoritative repo-wide parity figures. The v2.0
+numbers were wubuos/wubupad-binary-centric and undercounted by ~40%.
+
+### v2.2 scanner + oracle fixes
+
+1. **Scanner (v2.2)**: Added WuBuPad-abbreviation alias table —
+   `buffer.c` → `buf_`, `complete.c` → `doc_complete_` / `doc_symbols`,
+   `encode.c` → `enc_`, `json.c` → `j_`. Without this, the 4 core modules
+   were permanently BIN because their function prefixes didn't match
+   the module-name grep pattern.
+2. **Oracle (v2.1)**: Fixed mod_pattern strings for all 9 targets — old
+   patterns used generic feature names (`"sheet"`, `"slide"`, `"comment"`,
+   `"fold"`, `"plugin"`) that didn't match actual module names
+   (`wubucell`, `wubushow`, `wubucol`, `lex`, `pkgmgr`). Result: parity
+   jumped 14× on LibreOffice, 4× on Notepad++, ~9× on VS Code.
+
+### Combined delta: WuBuOffice GAP 28 → 1 (gpu only); WuBuPad GAP 0 → 0, BIN 18 → 0.
+
+v2.1 details (preserved for reference):
+1. Added `--all-exes` mode: builds closure over ALL `add_executable` targets,
+   not just the primary binary.
+2. Added `apps/<dir>/` to the module directory scan.
+3. Added `$<TARGET_OBJECTS:lib>` generator-expression parsing to the closure.
+4. Fixed prefix-match bug on `target_link_libraries(<name>` (no trailing space).
