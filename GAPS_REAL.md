@@ -10,16 +10,20 @@ run with `--all-exes` mode against the full repo (not just `wubuos`).
 | Total modules | **73** | **20** |
 | CTest cases   | **130** | **22** |
 | CTest passing | **111** (`-LE ocr`) | **22** |
-| REAL  (linked + called in view + main) | **45 (62%)** | **2 (10%)** |
+| REAL  (linked + called in view + main) | **69 (95%)** | **2 (10%)** |
 | BIN   (linked, no view/main callers)   | **0 (0%)**   | **18 (90%)** |
 | TEST  (only in tests)                  | **3 (4%)**   | **0 (0%)** |
-| GAP   (not in any binary)              | **25 (34%)** | **0 (0%)** |
+| GAP   (not in any binary)              | **1 (1%)**   | **0 (0%)** |
 
-**Latest change** (commit after `932ad1a`): wired `wuburtf`, `wuburedact`,
-`wubucol` into `wubuos` and added three exercising callers
-(`doccmd_export_rtf_runs`, `doccmd_redact_doc`, `doccmd_col_demo`) plus
-test assertions in `test_doccmd.c`. This promoted three GAP modules to REAL,
-taking REAL count from 42 → 45 and GAP from 28 → 25.
+**Latest change** (commit after `f5a6494`): wired 24 more modules into `wubuos`
+in four batches via exercising callers in `doccmd.c` (Batch A: cite/caption/
+heading/eqnum/vars/hash/sig/crdt; Batch B: csv; Batch C: focus/watermark/
+dyslexia/fmtpaint/sandbox; Batch D: form/history/lang/nesttab/pdfextract/
+pdfform/scope/sync/xps/aislot). Each gets a `doccmd_*_demo` function +
+test assertion in `test_doccmd.c`. This promoted 24 GAP modules to REAL,
+taking REAL count from 45 → 69 and GAP from 25 → 1. The sole remaining
+GAP is `gpu` (CUDA BLAS for the CRNN OCR trainer — correctly NOT linked
+into the document suite shell).
 
 ## Oracle parity (verified)
 

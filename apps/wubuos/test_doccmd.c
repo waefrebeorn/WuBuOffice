@@ -202,9 +202,177 @@ int main(void){
         }
     }
 
+    /* cite (src/wubucite). */
+    {
+        char *msg = doccmd_cite_demo();
+        if (!msg){ fprintf(stderr, "[cite] null status\n"); fails++; }
+        else { printf("  cite: %s\n", msg); free(msg); }
+    }
+
+    /* caption (src/wubucaption). */
+    {
+        char *msg = doccmd_caption_demo();
+        if (!msg){ fprintf(stderr, "[caption] null status\n"); fails++; }
+        else { printf("  caption: %s\n", msg); free(msg); }
+    }
+
+    /* heading enforce (src/wubuheading). */
+    {
+        char *msg = doccmd_heading_enforce(d);
+        if (!msg){ fprintf(stderr, "[heading] null status\n"); fails++; }
+        else { printf("  heading: %s\n", msg); free(msg); }
+    }
+
+    /* eqnum scan (src/wubueqnum). */
+    {
+        char *msg = doccmd_eqnum_scan(d);
+        if (!msg){ fprintf(stderr, "[eqnum] null status\n"); fails++; }
+        else { printf("  eqnum: %s\n", msg); free(msg); }
+    }
+
+    /* vars expand (src/wubuvars). */
+    {
+        char *msg = doccmd_vars_expand(NULL);
+        if (!msg){ fprintf(stderr, "[vars] null status\n"); fails++; }
+        else { printf("  vars: %s\n", msg); free(msg); }
+    }
+
+    /* sha256 (src/wubuhash). */
+    {
+        char *msg = doccmd_hash_sha256("WuBuOffice");
+        if (!msg){ fprintf(stderr, "[hash] null status\n"); fails++; }
+        else { printf("  hash: %s\n", msg); free(msg); }
+    }
+
+    /* doc sig (src/wubusig + wubuhash). */
+    {
+        char *msg = doccmd_doc_sign();
+        if (!msg){ fprintf(stderr, "[sig] null status\n"); fails++; }
+        else { printf("  sig: %s\n", msg); free(msg); }
+    }
+
+    /* crdt (src/wubucrdt). */
+    {
+        char *msg = doccmd_crdt_demo();
+        if (!msg){ fprintf(stderr, "[crdt] null status\n"); fails++; }
+        else { printf("  crdt: %s\n", msg); free(msg); }
+    }
+
+    /* csv (src/wubucsv). */
+    {
+        char *msg = doccmd_csv_parse();
+        if (!msg){ fprintf(stderr, "[csv] null status\n"); fails++; }
+        else { printf("  csv: %s\n", msg); free(msg); }
+    }
+
+    /* focus (src/wubufocus). */
+    {
+        char *msg = doccmd_focus_demo();
+        if (!msg){ fprintf(stderr, "[focus] null status\n"); fails++; }
+        else { printf("  focus: %s\n", msg); free(msg); }
+    }
+
+    /* watermark (src/wubuwatermark). */
+    {
+        char *msg = doccmd_watermark_demo();
+        if (!msg){ fprintf(stderr, "[watermark] null status\n"); fails++; }
+        else { printf("  watermark: %s\n", msg); free(msg); }
+    }
+
+    /* dyslexia (src/wubudyslexia). */
+    {
+        char *msg = doccmd_dyslexia_demo();
+        if (!msg){ fprintf(stderr, "[dyslexia] null status\n"); fails++; }
+        else { printf("  dyslexia: %s\n", msg); free(msg); }
+    }
+
+    /* fmtpaint (src/wubufmtpaint). */
+    {
+        char *msg = doccmd_fmtpaint_demo(d);
+        if (!msg){ fprintf(stderr, "[fmtpaint] null status\n"); fails++; }
+        else { printf("  fmtpaint: %s\n", msg); free(msg); }
+    }
+
+    /* sandbox (src/wubusandbox). */
+    {
+        char *msg = doccmd_sandbox_demo();
+        if (!msg){ fprintf(stderr, "[sandbox] null status\n"); fails++; }
+        else { printf("  sandbox: %s\n", msg); free(msg); }
+    }
+
+    /* form (src/wubuform). */
+    {
+        char *msg = doccmd_form_demo();
+        if (!msg){ fprintf(stderr, "[form] null status\n"); fails++; }
+        else { printf("  form: %s\n", msg); free(msg); }
+    }
+
+    /* history (src/wubuhistory). */
+    {
+        char *msg = doccmd_history_demo();
+        if (!msg){ fprintf(stderr, "[history] null status\n"); fails++; }
+        else { printf("  history: %s\n", msg); free(msg); }
+    }
+
+    /* lang (src/wubulang). */
+    {
+        char *msg = doccmd_lang_demo();
+        if (!msg){ fprintf(stderr, "[lang] null status\n"); fails++; }
+        else { printf("  lang: %s\n", msg); free(msg); }
+    }
+
+    /* nesttab (src/wubunesttab). */
+    {
+        char *msg = doccmd_nesttab_demo(d);
+        if (!msg){ fprintf(stderr, "[nesttab] null status\n"); fails++; }
+        else { printf("  nesttab: %s\n", msg); free(msg); }
+    }
+
+    /* pdfextract (src/wubupdfextract). */
+    {
+        char *msg = doccmd_pdfextract_demo();
+        if (!msg){ fprintf(stderr, "[pdfextract] null status\n"); fails++; }
+        else { printf("  pdfextract: %s\n", msg); free(msg); }
+    }
+
+    /* pdfform (src/wubupdfform + wubuform). */
+    {
+        char *msg = doccmd_pdfform_demo();
+        if (!msg){ fprintf(stderr, "[pdfform] null status\n"); fails++; }
+        else { printf("  pdfform: %s\n", msg); free(msg); }
+    }
+
+    /* scope (src/wubuscope). */
+    {
+        char *msg = doccmd_scope_demo();
+        if (!msg){ fprintf(stderr, "[scope] null status\n"); fails++; }
+        else { printf("  scope: %s\n", msg); free(msg); }
+    }
+
+    /* sync (src/wubusync). */
+    {
+        char *msg = doccmd_sync_demo();
+        if (!msg){ fprintf(stderr, "[sync] null status\n"); fails++; }
+        else { printf("  sync: %s\n", msg); free(msg); }
+    }
+
+    /* xps (src/wubuxps). */
+    {
+        char *msg = doccmd_xps_demo();
+        if (!msg){ fprintf(stderr, "[xps] null status\n"); fails++; }
+        else { printf("  xps: %s\n", msg); free(msg); }
+    }
+
+    /* aislot (src/wubuaislot). */
+    {
+        char *msg = doccmd_aislot_demo();
+        if (!msg){ fprintf(stderr, "[aislot] null status\n"); fails++; }
+        else { printf("  aislot: %s\n", msg); free(msg); }
+    }
+
     wubumodel_doc_destroy(d);
 
     if (fails){ printf("FAILED (%d)\n", fails); return 1; }
-    printf("PASS: doccmd (15 structural inserts + script field + epub/save/a11y + 6 layout exporters + rtf_runs/redact/col)\n");
+    printf("PASS: doccmd (15 structural inserts + script field + epub/save/a11y + 6 layout exporters + rtf_runs/redact/col + cite/caption/heading/eqnum/vars/hash/sig/crdt + csv/focus/watermark/dyslexia/fmtpaint/sandbox + form/history/lang/nesttab/pdfextract/pdfform/scope/sync/xps/aislot)\n");
     return 0;
 }

@@ -83,6 +83,78 @@ char *doccmd_redact_doc(wubumodel_doc *doc, const size_t *ranges, int n_ranges);
 /* doccmd_col_demo -- exercise src/wubucol (comment-thread store). */
 char *doccmd_col_demo(void);
 
+/* doccmd_cite_demo -- exercise src/wubucite (DOC-68 citation store). */
+char *doccmd_cite_demo(void);
+
+/* doccmd_caption_demo -- exercise src/wubucaption (DOC-70). */
+char *doccmd_caption_demo(void);
+
+/* doccmd_heading_enforce -- exercise src/wubuheading (UXA-49/50) on `doc`. */
+char *doccmd_heading_enforce(wubumodel_doc *doc);
+
+/* doccmd_eqnum_scan -- exercise src/wubueqnum (DOC-69) on `doc`. */
+char *doccmd_eqnum_scan(wubumodel_doc *doc);
+
+/* doccmd_vars_expand -- exercise src/wubuvars (DOC-73). `tpl` may be NULL. */
+char *doccmd_vars_expand(const char *tpl);
+
+/* doccmd_hash_sha256 -- one-shot SHA-256 hex of `text`. */
+char *doccmd_hash_sha256(const char *text);
+
+/* doccmd_doc_sign -- HMAC-SHA256 sign+verify a fixed message (EXP-90). */
+char *doccmd_doc_sign(void);
+
+/* doccmd_crdt_demo -- exercise src/wubucrdt (LWW-merge). */
+char *doccmd_crdt_demo(void);
+
+/* doccmd_csv_parse -- exercise src/wubucsv (EXP-86). */
+char *doccmd_csv_parse(void);
+
+/* doccmd_focus_demo -- exercise src/wubufocus (UXA-51). */
+char *doccmd_focus_demo(void);
+
+/* doccmd_watermark_demo -- exercise src/wubuwatermark (DOC-71). */
+char *doccmd_watermark_demo(void);
+
+/* doccmd_dyslexia_demo -- exercise src/wubudyslexia (UXA-52). */
+char *doccmd_dyslexia_demo(void);
+
+/* doccmd_fmtpaint_demo -- exercise src/wubufmtpaint (DOC-74) on `doc`. */
+char *doccmd_fmtpaint_demo(wubumodel_doc *doc);
+
+/* doccmd_sandbox_demo -- exercise src/wubusandbox (SCR-100). */
+char *doccmd_sandbox_demo(void);
+
+/* doccmd_form_demo -- exercise src/wubuform (DOC-72). */
+char *doccmd_form_demo(void);
+
+/* doccmd_history_demo -- exercise src/wubuhistory (DOC-75). */
+char *doccmd_history_demo(void);
+
+/* doccmd_lang_demo -- exercise src/wubulang (DOC-76). */
+char *doccmd_lang_demo(void);
+
+/* doccmd_nesttab_demo -- exercise src/wubunesttab (DOC-77) on `doc`. */
+char *doccmd_nesttab_demo(wubumodel_doc *doc);
+
+/* doccmd_pdfextract_demo -- exercise src/wubupdfextract (EXP-91). */
+char *doccmd_pdfextract_demo(void);
+
+/* doccmd_pdfform_demo -- exercise src/wubupdfform (EXP-92). */
+char *doccmd_pdfform_demo(void);
+
+/* doccmd_scope_demo -- exercise src/wubuscope (DOC-78). */
+char *doccmd_scope_demo(void);
+
+/* doccmd_sync_demo -- exercise src/wubusync (DOC-79). */
+char *doccmd_sync_demo(void);
+
+/* doccmd_xps_demo -- exercise src/wubuxps (EXP-93). */
+char *doccmd_xps_demo(void);
+
+/* doccmd_aislot_demo -- exercise src/wubuaislot (SCR-99). */
+char *doccmd_aislot_demo(void);
+
 /* Save the doc back to DOCX/ODT (round-trip). `path` is the current file (may
  * be NULL) used to pick the output name/format. Returns a malloc'd status
  * string (caller frees) or NULL on OOM. */

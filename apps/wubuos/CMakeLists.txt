@@ -52,6 +52,30 @@ target_include_directories(wubuos PRIVATE
     ${CMAKE_SOURCE_DIR}/src/wubuexp
     ${CMAKE_SOURCE_DIR}/src/wubutoc
     ${CMAKE_SOURCE_DIR}/src/wubuscript
+    ${CMAKE_SOURCE_DIR}/src/wubucite
+    ${CMAKE_SOURCE_DIR}/src/wubucaption
+    ${CMAKE_SOURCE_DIR}/src/wubuheading
+    ${CMAKE_SOURCE_DIR}/src/wubueqnum
+    ${CMAKE_SOURCE_DIR}/src/wubuvars
+    ${CMAKE_SOURCE_DIR}/src/wubuhash
+    ${CMAKE_SOURCE_DIR}/src/wubusig
+    ${CMAKE_SOURCE_DIR}/src/wubucrdt
+    ${CMAKE_SOURCE_DIR}/src/wubucsv
+    ${CMAKE_SOURCE_DIR}/src/wubufocus
+    ${CMAKE_SOURCE_DIR}/src/wubuwatermark
+    ${CMAKE_SOURCE_DIR}/src/wubudyslexia
+    ${CMAKE_SOURCE_DIR}/src/wubufmtpaint
+    ${CMAKE_SOURCE_DIR}/src/wubusandbox
+    ${CMAKE_SOURCE_DIR}/src/wubuform
+    ${CMAKE_SOURCE_DIR}/src/wubuhistory
+    ${CMAKE_SOURCE_DIR}/src/wubulang
+    ${CMAKE_SOURCE_DIR}/src/wubunesttab
+    ${CMAKE_SOURCE_DIR}/src/wubupdfextract
+    ${CMAKE_SOURCE_DIR}/src/wubupdfform
+    ${CMAKE_SOURCE_DIR}/src/wubuscope
+    ${CMAKE_SOURCE_DIR}/src/wubusync
+    ${CMAKE_SOURCE_DIR}/src/wubuxps
+    ${CMAKE_SOURCE_DIR}/src/wubuaislot
     ${CMAKE_SOURCE_DIR}/src/wuburtf
     ${CMAKE_SOURCE_DIR}/src/wuburedact
     ${CMAKE_SOURCE_DIR}/src/wubucol
@@ -78,6 +102,9 @@ target_link_libraries(wubuos PRIVATE
     wubuspell wubuchart wubudraw wubumath wubuepub wubua11y wubusvg
     wubusettings wubushape wubulayout wubuexp wubutoc wubuscript wubupasteplain
     wuburtf wuburedact wubucol
+    wubucite wubucaption wubuheading wubueqnum wubuvars wubuhash wubusig wubucrdt
+    wubucsv wubufocus wubuwatermark wubudyslexia wubufmtpaint wubusandbox
+    wubuform wubuhistory wubulang wubunesttab wubupdfextract wubupdfform wubuscope wubusync wubuxps wubuaislot
     wubupdf_app wubuconv_app
     ${SDL2_LIBRARIES} ${FREETYPE_LIBRARIES} m dl)
 target_compile_options(wubuos PRIVATE -Wall -Wextra -Wpedantic)
@@ -109,6 +136,30 @@ target_include_directories(test_view PRIVATE
     ${CMAKE_SOURCE_DIR}/src/wubuexp
     ${CMAKE_SOURCE_DIR}/src/wubutoc
     ${CMAKE_SOURCE_DIR}/src/wubuscript
+    ${CMAKE_SOURCE_DIR}/src/wubucite
+    ${CMAKE_SOURCE_DIR}/src/wubucaption
+    ${CMAKE_SOURCE_DIR}/src/wubuheading
+    ${CMAKE_SOURCE_DIR}/src/wubueqnum
+    ${CMAKE_SOURCE_DIR}/src/wubuvars
+    ${CMAKE_SOURCE_DIR}/src/wubuhash
+    ${CMAKE_SOURCE_DIR}/src/wubusig
+    ${CMAKE_SOURCE_DIR}/src/wubucrdt
+    ${CMAKE_SOURCE_DIR}/src/wubucsv
+    ${CMAKE_SOURCE_DIR}/src/wubufocus
+    ${CMAKE_SOURCE_DIR}/src/wubuwatermark
+    ${CMAKE_SOURCE_DIR}/src/wubudyslexia
+    ${CMAKE_SOURCE_DIR}/src/wubufmtpaint
+    ${CMAKE_SOURCE_DIR}/src/wubusandbox
+    ${CMAKE_SOURCE_DIR}/src/wubuform
+    ${CMAKE_SOURCE_DIR}/src/wubuhistory
+    ${CMAKE_SOURCE_DIR}/src/wubulang
+    ${CMAKE_SOURCE_DIR}/src/wubunesttab
+    ${CMAKE_SOURCE_DIR}/src/wubupdfextract
+    ${CMAKE_SOURCE_DIR}/src/wubupdfform
+    ${CMAKE_SOURCE_DIR}/src/wubuscope
+    ${CMAKE_SOURCE_DIR}/src/wubusync
+    ${CMAKE_SOURCE_DIR}/src/wubuxps
+    ${CMAKE_SOURCE_DIR}/src/wubuaislot
     ${CMAKE_SOURCE_DIR}/src/wuburtf
     ${CMAKE_SOURCE_DIR}/src/wuburedact
     ${CMAKE_SOURCE_DIR}/src/wubucol
@@ -123,6 +174,9 @@ target_link_libraries(test_view PRIVATE
     wubuspell wubuchart wubudraw wubumath wubuepub wubua11y wubusvg
     wubusettings wubushape wubulayout wubuexp wubutoc wubuscript wubupasteplain
     wuburtf wuburedact wubucol
+    wubucite wubucaption wubuheading wubueqnum wubuvars wubuhash wubusig wubucrdt
+    wubucsv wubufocus wubuwatermark wubudyslexia wubufmtpaint wubusandbox
+    wubuform wubuhistory wubulang wubunesttab wubupdfextract wubupdfform wubuscope wubusync wubuxps wubuaislot
     ${SDL2_LIBRARIES} ${FREETYPE_LIBRARIES} m dl)
 target_compile_options(test_view PRIVATE -Wall -Wextra -Wpedantic)
 add_test(NAME view COMMAND test_view)
@@ -223,6 +277,30 @@ target_include_directories(test_doccmd PRIVATE
     ${CMAKE_SOURCE_DIR}/src/wubua11y
     ${CMAKE_SOURCE_DIR}/src/wubusvg
     ${CMAKE_SOURCE_DIR}/src/wubuscript
+    ${CMAKE_SOURCE_DIR}/src/wubucite
+    ${CMAKE_SOURCE_DIR}/src/wubucaption
+    ${CMAKE_SOURCE_DIR}/src/wubuheading
+    ${CMAKE_SOURCE_DIR}/src/wubueqnum
+    ${CMAKE_SOURCE_DIR}/src/wubuvars
+    ${CMAKE_SOURCE_DIR}/src/wubuhash
+    ${CMAKE_SOURCE_DIR}/src/wubusig
+    ${CMAKE_SOURCE_DIR}/src/wubucrdt
+    ${CMAKE_SOURCE_DIR}/src/wubucsv
+    ${CMAKE_SOURCE_DIR}/src/wubufocus
+    ${CMAKE_SOURCE_DIR}/src/wubuwatermark
+    ${CMAKE_SOURCE_DIR}/src/wubudyslexia
+    ${CMAKE_SOURCE_DIR}/src/wubufmtpaint
+    ${CMAKE_SOURCE_DIR}/src/wubusandbox
+    ${CMAKE_SOURCE_DIR}/src/wubuform
+    ${CMAKE_SOURCE_DIR}/src/wubuhistory
+    ${CMAKE_SOURCE_DIR}/src/wubulang
+    ${CMAKE_SOURCE_DIR}/src/wubunesttab
+    ${CMAKE_SOURCE_DIR}/src/wubupdfextract
+    ${CMAKE_SOURCE_DIR}/src/wubupdfform
+    ${CMAKE_SOURCE_DIR}/src/wubuscope
+    ${CMAKE_SOURCE_DIR}/src/wubusync
+    ${CMAKE_SOURCE_DIR}/src/wubuxps
+    ${CMAKE_SOURCE_DIR}/src/wubuaislot
     ${CMAKE_SOURCE_DIR}/src/wubusettings
     ${CMAKE_SOURCE_DIR}/src/wubushape
     ${CMAKE_SOURCE_DIR}/src/wubulayout
@@ -235,6 +313,9 @@ target_include_directories(test_doccmd PRIVATE
 target_link_libraries(test_doccmd PRIVATE
     wubumodel wubuchart wubudraw wubumath wubuepub wubuexp wubua11y wubusvg wubuscript wubusettings wubulayout wubushape wubuocr
     wuburtf wuburedact wubucol
+    wubucite wubucaption wubuheading wubueqnum wubuvars wubuhash wubusig wubucrdt
+    wubucsv wubufocus wubuwatermark wubudyslexia wubufmtpaint wubusandbox
+    wubuform wubuhistory wubulang wubunesttab wubupdfextract wubupdfform wubuscope wubusync wubuxps wubuaislot
     wubupdf_app wubuedit_app wubucell_app wubushow_app wubuword_app)
 target_compile_options(test_doccmd PRIVATE -Wall -Wextra -Wpedantic)
 add_test(NAME doccmd COMMAND test_doccmd)
@@ -299,6 +380,30 @@ target_include_directories(viewshot PRIVATE
     ${CMAKE_SOURCE_DIR}/src/wubuexp
     ${CMAKE_SOURCE_DIR}/src/wubutoc
     ${CMAKE_SOURCE_DIR}/src/wubuscript
+    ${CMAKE_SOURCE_DIR}/src/wubucite
+    ${CMAKE_SOURCE_DIR}/src/wubucaption
+    ${CMAKE_SOURCE_DIR}/src/wubuheading
+    ${CMAKE_SOURCE_DIR}/src/wubueqnum
+    ${CMAKE_SOURCE_DIR}/src/wubuvars
+    ${CMAKE_SOURCE_DIR}/src/wubuhash
+    ${CMAKE_SOURCE_DIR}/src/wubusig
+    ${CMAKE_SOURCE_DIR}/src/wubucrdt
+    ${CMAKE_SOURCE_DIR}/src/wubucsv
+    ${CMAKE_SOURCE_DIR}/src/wubufocus
+    ${CMAKE_SOURCE_DIR}/src/wubuwatermark
+    ${CMAKE_SOURCE_DIR}/src/wubudyslexia
+    ${CMAKE_SOURCE_DIR}/src/wubufmtpaint
+    ${CMAKE_SOURCE_DIR}/src/wubusandbox
+    ${CMAKE_SOURCE_DIR}/src/wubuform
+    ${CMAKE_SOURCE_DIR}/src/wubuhistory
+    ${CMAKE_SOURCE_DIR}/src/wubulang
+    ${CMAKE_SOURCE_DIR}/src/wubunesttab
+    ${CMAKE_SOURCE_DIR}/src/wubupdfextract
+    ${CMAKE_SOURCE_DIR}/src/wubupdfform
+    ${CMAKE_SOURCE_DIR}/src/wubuscope
+    ${CMAKE_SOURCE_DIR}/src/wubusync
+    ${CMAKE_SOURCE_DIR}/src/wubuxps
+    ${CMAKE_SOURCE_DIR}/src/wubuaislot
     ${CMAKE_SOURCE_DIR}/src/wubupng
     ${WUBUPAD_SRC})
 target_sources(viewshot PRIVATE
