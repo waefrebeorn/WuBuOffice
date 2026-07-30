@@ -10,8 +10,8 @@ run with `--all-exes` mode against the full repo (not just `wubuos`).
 | Total modules | **73** | **20** |
 | CTest cases   | **130** | **22** |
 | CTest passing | **111** (`-LE ocr`) | **22** |
-| REAL  (linked + called in view + main) | **69 (95%)** | **2 (10%)** |
-| BIN   (linked, no view/main callers)   | **0 (0%)**   | **18 (90%)** |
+| REAL  (linked + called in view + main) | **69 (95%)** | **20 (100%)** |
+| BIN   (linked, no view/main callers)   | **0 (0%)**   | **0 (0%)** |
 | TEST  (only in tests)                  | **3 (4%)**   | **0 (0%)** |
 | GAP   (not in any binary)              | **1 (1%)**   | **0 (0%)** |
 
