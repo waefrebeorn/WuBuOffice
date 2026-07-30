@@ -197,6 +197,8 @@ add_test(NAME findbar COMMAND test_findbar)
 set_tests_properties(findbar PROPERTIES LABELS "findbar;apps")
 
 # Unit test for the extracted opaque doccmd module.
+# Layout-based exporters use a font-free measure callback (see doccmd.c),
+# so no app-font object is needed here.
 add_executable(test_doccmd test_doccmd.c doccmd.c)
 target_include_directories(test_doccmd PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
@@ -205,13 +207,17 @@ target_include_directories(test_doccmd PRIVATE
     ${CMAKE_SOURCE_DIR}/src/wubudraw
     ${CMAKE_SOURCE_DIR}/src/wubumath
     ${CMAKE_SOURCE_DIR}/src/wubuepub
+    ${CMAKE_SOURCE_DIR}/src/wubuexp
     ${CMAKE_SOURCE_DIR}/src/wubupasteplain
     ${CMAKE_SOURCE_DIR}/src/wubua11y
     ${CMAKE_SOURCE_DIR}/src/wubusvg
     ${CMAKE_SOURCE_DIR}/src/wubuscript
+    ${CMAKE_SOURCE_DIR}/src/wubusettings
+    ${CMAKE_SOURCE_DIR}/src/wubushape
+    ${CMAKE_SOURCE_DIR}/src/wubulayout
     ${CMAKE_SOURCE_DIR}/src/wubuocr)
 target_link_libraries(test_doccmd PRIVATE
-    wubumodel wubuchart wubudraw wubumath wubuepub wubua11y wubusvg wubuscript wubuocr)
+    wubumodel wubuchart wubudraw wubumath wubuepub wubuexp wubua11y wubusvg wubuscript wubusettings wubulayout wubushape wubuocr)
 target_compile_options(test_doccmd PRIVATE -Wall -Wextra -Wpedantic)
 add_test(NAME doccmd COMMAND test_doccmd)
 set_tests_properties(doccmd PROPERTIES LABELS "doccmd;apps")

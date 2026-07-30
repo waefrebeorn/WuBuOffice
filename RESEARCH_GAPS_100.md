@@ -1,5 +1,15 @@
 # WuBuOffice — 100 Missing Gaps (Research-Driven Roadmap)
 
+> ⚠️ **STALE — DO NOT USE FOR PLANNING.** This document contains misleading
+> "CLOSED" markers. Most items marked CLOSED are MODULE-level implementations
+> that exist in `src/` but are NOT wired into the `wubuos` GUI shell.
+>
+> **Use [GAPS_REAL.md](GAPS_REAL.md) instead** — it is the verified, honest gap
+> list generated from source audit + build + ctest (71/71 green) + web research
+> against LibreOffice 26.2, OnlyOffice, Microsoft Office 2025.
+>
+> This document is kept for historical reference only.
+
 *Generated 2026-07-26 from a 2-pass web research run (69 + 75 query clusters,
 ~297 result snippets) plus an internal integration audit. Categories:*
 

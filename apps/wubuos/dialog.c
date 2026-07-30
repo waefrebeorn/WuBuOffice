@@ -3,6 +3,7 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #define DLG_TITLE 64
 #define DLG_PROMPT 128

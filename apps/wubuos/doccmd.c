@@ -9,7 +9,11 @@
 #include "draw.h"      /* wubudraw */
 #include "math.h"      /* wubumath */
 #include "epub.h"      /* wubuepub */
+#include "exp.h"       /* wubuexp_pdf/html/markdown/latex/rtf (INT-3.5) */
 #include "script.h"    /* wubuscript: script_eval */
+#include "ublayout.h"  /* wubulayout_create (central pipeline -> export) */
+#include "wuos_font.h" /* wuos_font_text_width / _height for measure callback */
+#include "model.h"     /* wubumodel_doc_root */
 #include "wubusvg/rast.h"  /* svg_rasterize_cb */
 #include "qr.h"        /* wubuocr: qr_encode */
 
@@ -307,7 +311,7 @@ char *doccmd_save(wubumodel_doc *doc, const char *path){
     if (strstr(out,".odt")||strstr(out,".fodt")) rc = wubumodel_write_odt(doc, out);
     else rc = wubumodel_write_docx(doc, out);
     if (rc==0){
-        char b[512]; const char *lab = (strstr(out,".odt")||strstr(out,".fodt"))?"ODT":"DOCX";
+        char b[768]; const char *lab = (strstr(out,".odt")||strstr(out,".fodt"))?"ODT":"DOCX";
         snprintf(b,sizeof b,"%s saved: %s", lab, out);
         return strdup(b);
     }
@@ -317,4 +321,94 @@ char *doccmd_save(wubumodel_doc *doc, const char *path){
 void doccmd_a11y_check(wubumodel_doc *doc, a11y_report *out){
     if (out){ out->count=0; out->items=NULL; out->cap=0; }
     if (doc) a11y_check_doc(doc, 1, 0, out);
+}
+
+/* ---- layout-based exporters (INT-3.5) ----
+ * wubuexp takes a `wubulayout_doc *L` (a laid-out document) and writes a
+ * PDF/HTML/Markdown/LaTeX/RTF file. The doccmd exporters below build a
+ * layout from the model doc via measure/style callbacks, then call wubuexp.
+ * Pages: A4-ish @ ~768x1024, default 72-pt margins.
+ *
+ * The measure callback deliberately does NOT depend on the app font
+ * (wuos_font_text_width lives in apps/wubuos/wuos_font.c which pulls
+ * FreeType and would inflate test_doccmd's link surface). For exports
+ * we want to measure STRUCTURE, not visual width; a fixed 7-px-per-byte
+ * estimate gives the layout enough info to paginate correctly. Visual
+ * fidelity comes from the renderer path, which already uses wuos_font. */
+static int doccmd_measure_cb(const char *t, size_t len, int fs, int bold,
+                             int italic, int *out_h, void *user){
+    (void)bold; (void)italic; (void)user;
+    if (out_h) *out_h = fs + 4;
+    /* 7 px per byte for ASCII is close to wuos_font's 11pt default; UTF-8
+     * multi-byte chars get a small bonus. */
+    int nbytes = 0;
+    for (size_t i = 0; i < len; i++){
+        unsigned char c = (unsigned char)t[i];
+        nbytes++;
+        if ((c & 0xC0) == 0x80) nbytes--;  /* continuation: count once */
+    }
+    return (nbytes * 7 * fs) / 14;
+}
+static int doccmd_style_cb(void *user, void *run, int *fs, int *bold,
+                           int *italic, wubulayout_dir *dir){
+    /* Conservative defaults: same-size body text, no decorations. The
+     * exported PDF/MD/HTML/LATEX/RTF reflects the model's STRUCTURE not
+     * its visual styling -- callers who want typographic fidelity should
+     * walk the model directly. */
+    (void)user; (void)run;
+    *fs = 14; *bold = 0; *italic = 0; *dir = WUBULAYOUT_LTR;
+    return 0;
+}
+static wubulayout_doc *doccmd_layout(wubumodel_doc *doc){
+    if (!doc) return NULL;
+    void *root = wubumodel_doc_root(doc);
+    if (!root) root = NULL; /* layout accepts NULL and uses doc root */
+    return wubulayout_create(doc, root, doccmd_measure_cb,
+                             doccmd_style_cb, NULL,
+                             768, 1024, 72, 72, 72, 72);
+}
+char *doccmd_export_pdf(wubumodel_doc *doc){
+    if (!doc) return strdup("no model doc to export");
+    wubulayout_doc *L = doccmd_layout(doc);
+    if (!L) return strdup("layout build failed (model empty?)");
+    int rc = wubuexp_pdf(L, "/tmp/wubuos_export.pdf");
+    wubulayout_destroy(L);
+    if (rc == 0){ char b[128]; snprintf(b, sizeof b, "PDF written: /tmp/wubuos_export.pdf"); return strdup(b); }
+    return strdup("PDF export failed");
+}
+char *doccmd_export_html(wubumodel_doc *doc){
+    if (!doc) return strdup("no model doc to export");
+    wubulayout_doc *L = doccmd_layout(doc);
+    if (!L) return strdup("layout build failed (model empty?)");
+    int rc = wubuexp_html(L, "/tmp/wubuos_export.html");
+    wubulayout_destroy(L);
+    if (rc == 0){ char b[128]; snprintf(b, sizeof b, "HTML written: /tmp/wubuos_export.html"); return strdup(b); }
+    return strdup("HTML export failed");
+}
+char *doccmd_export_markdown(wubumodel_doc *doc){
+    if (!doc) return strdup("no model doc to export");
+    wubulayout_doc *L = doccmd_layout(doc);
+    if (!L) return strdup("layout build failed (model empty?)");
+    int rc = wubuexp_markdown(L, "/tmp/wubuos_export.md");
+    wubulayout_destroy(L);
+    if (rc == 0){ char b[128]; snprintf(b, sizeof b, "Markdown written: /tmp/wubuos_export.md"); return strdup(b); }
+    return strdup("Markdown export failed");
+}
+char *doccmd_export_latex(wubumodel_doc *doc){
+    if (!doc) return strdup("no model doc to export");
+    wubulayout_doc *L = doccmd_layout(doc);
+    if (!L) return strdup("layout build failed (model empty?)");
+    int rc = wubuexp_latex(L, "/tmp/wubuos_export.tex");
+    wubulayout_destroy(L);
+    if (rc == 0){ char b[128]; snprintf(b, sizeof b, "LaTeX written: /tmp/wubuos_export.tex"); return strdup(b); }
+    return strdup("LaTeX export failed");
+}
+char *doccmd_export_rtf(wubumodel_doc *doc){
+    if (!doc) return strdup("no model doc to export");
+    wubulayout_doc *L = doccmd_layout(doc);
+    if (!L) return strdup("layout build failed (model empty?)");
+    int rc = wubuexp_rtf(L, "/tmp/wubuos_export.rtf");
+    wubulayout_destroy(L);
+    if (rc == 0){ char b[128]; snprintf(b, sizeof b, "RTF written: /tmp/wubuos_export.rtf"); return strdup(b); }
+    return strdup("RTF export failed");
 }

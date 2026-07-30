@@ -128,3 +128,174 @@ void wubuconv_text_to_show(const dm_doc *d, wubushow_pres *p) {
     if (title) { wubushow_slide(p, title, body ? body : ""); }
     free(title); free(body);
 }
+
+/* ---------- MODEL -> TEXT ---------- */
+
+/* Collect all RUN text under a node (depth-first), into a growable buffer. */
+static void model_collect_runs(const wubumodel_node *n,
+                               char **buf, size_t *cap, size_t *len) {
+    if (!n) return;
+    /* if this node is itself a RUN, grab its text */
+    if (wubumodel_node_kind(n) == WUBUMODEL_RUN) {
+        const char *t = wubumodel_run_text(n);
+        if (t) {
+            size_t l = strlen(t);
+            if (*buf == NULL || *len + l + 1 > *cap) {
+                size_t nc = *cap ? *cap * 2 : 64;
+                while (*len + l + 1 > nc) nc *= 2;
+                *buf = realloc(*buf, nc); *cap = nc;
+            }
+            memcpy(*buf + *len, t, l); *len += l; (*buf)[*len] = '\0';
+        }
+    }
+    /* also handle nodes that carry a direct text payload */
+    const char *nt = wubumodel_node_text(n);
+    if (nt && *nt) {
+        size_t l = strlen(nt);
+        if (*buf == NULL || *len + l + 1 > *cap) {
+            size_t nc = *cap ? *cap * 2 : 64;
+            while (*len + l + 1 > nc) nc *= 2;
+            *buf = realloc(*buf, nc); *cap = nc;
+        }
+        memcpy(*buf + *len, nt, l); *len += l; (*buf)[*len] = '\0';
+    }
+    /* recurse into children */
+    for (wubumodel_node *c = wubumodel_node_first_child(n); c;
+         c = wubumodel_node_next_sibling(c))
+        model_collect_runs(c, buf, cap, len);
+}
+
+void wubuconv_model_to_text(const wubumodel_doc *m, dm_doc *out) {
+    memset(out, 0, sizeof *out);
+    out->cap = 8; out->blocks = calloc(out->cap, sizeof *out->blocks);
+    if (!out->blocks) return;
+
+    /* Walk the top-level sections. Each section maps to one or more
+     * dm_blocks: headings become styled paragraphs, paragraphs become
+     * plain paragraphs, tables become dm_table blocks. */
+    for (wubumodel_node *sec = wubumodel_doc_root(m); sec;
+         sec = wubumodel_node_next_sibling(sec)) {
+        wubumodel_kind k = wubumodel_node_kind(sec);
+
+        if (k == WUBUMODEL_TABLE) {
+            /* Direct table at section level: extract cells. */
+            /* Count rows/cols by walking children. */
+            size_t rows = 0, cols = 0;
+            for (wubumodel_node *r = wubumodel_node_first_child(sec); r;
+                 r = wubumodel_node_next_sibling(r)) {
+                rows++;
+                size_t rc = 0;
+                for (wubumodel_node *cell = wubumodel_node_first_child(r); cell;
+                     cell = wubumodel_node_next_sibling(cell)) {
+                    rc++;
+                    /* collect cell text */
+                }
+                if (rc > cols) cols = rc;
+            }
+            if (rows && cols) {
+                dm_para **cells = calloc(rows * cols, sizeof(dm_para *));
+                if (cells) {
+                    size_t ri = 0;
+                    for (wubumodel_node *r = wubumodel_node_first_child(sec); r;
+                         r = wubumodel_node_next_sibling(r), ri++) {
+                        size_t ci = 0;
+                        for (wubumodel_node *cell = wubumodel_node_first_child(r); cell;
+                             cell = wubumodel_node_next_sibling(cell), ci++) {
+                            char buf[256]; size_t bcap = sizeof buf, blen = 0;
+                            char *dyn = NULL;
+                            model_collect_runs(cell, &dyn, &bcap, &blen);
+                            const char *txt = dyn ? dyn : "";
+                            if (!dyn) { strncpy(buf, txt, sizeof buf - 1); buf[sizeof buf - 1] = 0; txt = buf; }
+                            dm_para *cp = calloc(1, sizeof *cp);
+                            cp->text = strdup(txt ? txt : "");
+                            cells[ri * cols + ci] = cp;
+                            free(dyn);
+                        }
+                    }
+                    dm_block *t; DM_PUSH(out, t);
+                    t->kind = DM_BLOCK_TABLE;
+                    t->table.rows = rows; t->table.cols = cols;
+                    t->table.cells = cells;
+                }
+            }
+            continue;
+        }
+
+        /* For non-table nodes, collect text and emit a paragraph. */
+        char buf[1024]; size_t bcap = sizeof buf, blen = 0;
+        char *dyn = NULL;
+        model_collect_runs(sec, &dyn, &bcap, &blen);
+        const char *txt = dyn ? dyn : "";
+        if (dyn && blen >= sizeof buf) {
+            /* dyn is the full text */
+            txt = dyn;
+        } else if (!dyn) {
+            txt = "";
+        }
+
+        /* Determine if this is a heading (SECTION with a HEADER child, or
+         * a node with a "Title"/"Heading" style). */
+        const char *style = NULL;
+        wubumodel_style *s = wubumodel_node_style(sec);
+        if (s) {
+            /* Check for heading-like style properties */
+            const char *pval = wubumodel_style_get_prop(s, "pStyle");
+            if (pval && strncmp(pval, "Heading", 7) == 0) style = pval;
+            if (!style) {
+                const char *sz = wubumodel_style_get_prop(s, "sz");
+                if (sz && atoi(sz) >= 32) style = "Heading1";
+            }
+        }
+
+        /* Also check children for heading structure */
+        if (!style) {
+            for (wubumodel_node *c = wubumodel_node_first_child(sec); c;
+                 c = wubumodel_node_next_sibling(c)) {
+                if (wubumodel_node_kind(c) == WUBUMODEL_HEADER) {
+                    /* This section has a header — treat the section as a heading */
+                    char hbuf[256]; size_t hcap = sizeof hbuf, hlen = 0;
+                    char *hdyn = NULL;
+                    model_collect_runs(c, &hdyn, &hcap, &hlen);
+                    const char *htxt = hdyn ? hdyn : "";
+                    dm_block *h; DM_PUSH(out, h);
+                    h->kind = DM_BLOCK_PARA;
+                    h->para.style = strdup("Heading1");
+                    h->para.text = strdup(htxt);
+                    free(hdyn);
+                    /* Emit body paragraphs from non-header children */
+                    for (wubumodel_node *c2 = wubumodel_node_first_child(sec); c2;
+                         c2 = wubumodel_node_next_sibling(c2)) {
+                        if (wubumodel_node_kind(c2) == WUBUMODEL_HEADER) continue;
+                        if (wubumodel_node_kind(c2) == WUBUMODEL_PARAGRAPH ||
+                            wubumodel_node_kind(c2) == WUBUMODEL_BLOCK) {
+                            char b2[1024]; size_t b2cap = sizeof b2, b2len = 0;
+                            char *b2dyn = NULL;
+                            model_collect_runs(c2, &b2dyn, &b2cap, &b2len);
+                            const char *b2txt = b2dyn ? b2dyn : "";
+                            if (b2len > 0) {
+                                dm_block *p; DM_PUSH(out, p);
+                                p->kind = DM_BLOCK_PARA;
+                                p->para.style = NULL;
+                                p->para.bold = 0;
+                                p->para.text = strdup(b2txt);
+                            }
+                            free(b2dyn);
+                        }
+                    }
+                    free(dyn);
+                    continue;
+                }
+            }
+        }
+
+        /* Plain paragraph */
+        if (blen > 0 || !style) {
+            dm_block *p; DM_PUSH(out, p);
+            p->kind = DM_BLOCK_PARA;
+            p->para.style = style ? strdup(style) : NULL;
+            p->para.bold = 0;
+            p->para.text = strdup(txt);
+        }
+        free(dyn);
+    }
+}

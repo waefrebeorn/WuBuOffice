@@ -1,5 +1,15 @@
 # GUI Parity Plan — whole office suite + Notepad++ in one shell
 
+> ⚠️ **STALE — DO NOT USE FOR PLANNING.** This document contains misleading
+> "ALL CLOSED" markers. Many items marked CLOSED are MODULE-level implementations
+> that exist in `src/` but are NOT wired into the `wubuos` GUI shell.
+>
+> **Use [GAPS_REAL.md](GAPS_REAL.md) instead** — it is the verified, honest gap
+> list generated from source audit + build + ctest (71/71 green) + web research
+> against LibreOffice 26.2, OnlyOffice, Microsoft Office 2025.
+>
+> This document is kept for historical reference only.
+
 Single unified SDL2 shell (`apps/wubuos`) hosts every WuBuOffice engine behind a
 `WuView` adapter (tab). Goal: full GUI + Notepad++ parity for the *entire* suite.
 Aligned to `~/WuBuPad/PLAN_BLITZ.md` (Phase A gfx → B find/replace → C layout/theming

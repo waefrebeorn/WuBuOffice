@@ -95,10 +95,10 @@ int macro_load(const char *path){
     if (c != 1){ fclose(f); return -1; }
     snprintf(m->name, sizeof m->name, "%s", nm);
     m->len = 0; m->n = 0; m->rec = 0;
-    int hi;
-    while (fscanf(f, "%2x", &hi) == 1){
+    unsigned int hu;
+    while (fscanf(f, "%2x", &hu) == 1){
         if (m->len >= MACRO_CAP) break;
-        m->ops[m->len++] = (unsigned char)hi;
+        m->ops[m->len++] = (unsigned char)hu;
     }
     for (int i = 0; i < m->len; ){ m->n++; i += (m->ops[i] == MACRO_OP_CHAR) ? 2 : 1; }
     fclose(f);

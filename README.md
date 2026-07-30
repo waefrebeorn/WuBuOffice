@@ -240,18 +240,18 @@ present in this repo.
 |-----|----------|
 | [README.md](README.md) | This file — quick start + format coverage + usage |
 | [GUI_PARITY_PLAN.md](GUI_PARITY_PLAN.md) | SDL2 GUI steamroller plan: every view, every feature, every keybinding |
-| [GAPS_100.md](GAPS_100.md) | 100 tracked gaps (INT/UI/UXA/DOC/EXP/COL/SCR/PRF/ART), statuses, priorities |
+| [GAPS_REAL.md](GAPS_REAL.md) | **VERIFIED gap list** (source audit + build + ctest) — use this for planning |
 | [FORMATS.md](FORMATS.md) | Format roadmap with tier breakdown (OOXML → ODF → legacy) |
 | [FORMATS_GUI.md](FORMATS_GUI.md) | Native TUI (`wubutui` + `wubuview`) design — terminal human interface |
-| [FORMATS_*.md](FORMATS_STD.md, FORMATS_OCR.md) | Standards track + OCR pipeline spec |
 | [FORMATS_STD.md](FORMATS_STD.md) | Format coverage + ISO/IEC/W3C standards reference |
+| [FORMATS_OCR.md](FORMATS_OCR.md) | Standards track + OCR pipeline spec |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Module map + design rules |
 | [docs/SLERM.md](docs/SLERM.md) | SLERM definitions + what reference repos contributed |
 | [docs/fork-vs-slerm.md](docs/fork-vs-slerm.md) | Fork vs SLERM vs Vendoring comparison |
 | [docs/FEATURES_100.md](docs/FEATURES_100.md) | Feature-by-feature status board |
 | [UI_TRIPLE_REVIEW.md](UI_TRIPLE_REVIEW.md) | Vision + architectural + artistic UI critique |
-| [RESEARCH_GAPS.md](RESEARCH_GAPS.md) | 20-web-search gap analysis (LibreOffice, OCR, perf, etc.) |
-| [RESEARCH_GAPS_100.md](RESEARCH_GAPS_100.md) | 100-item gap inventory with sources |
+| [RESEARCH_GAPS_100.md](RESEARCH_GAPS_100.md) | 100 tracked gaps (STALE — see GAPS_REAL.md) |
+| [RESEARCH_GAPS.md](RESEARCH_GAPS.md) | 20-web-search gap analysis (STALE — see GAPS_REAL.md) |
 | [ROADMAP_OCR.md](ROADMAP_OCR.md) | OCR pipeline roadmap (Phase 0 → 3) |
 | [steamroller_plan.md](steamroller_plan.md) | GUI steamroller passes (render → paste-plain → polish) |
 | [MODULARIZATION.md](MODULARIZATION.md) | Build modularization + code reuse survey (wububase, wubupng, wuburender) |
@@ -319,7 +319,8 @@ WuBuOffice/
 ├── LICENSE           # Waefrebeorn Umbrella License v3.0
 ├── FORMATS.md        # Format roadmap
 ├── GUI_PARITY_PLAN.md# SDL2 GUI steamroller plan
-├── GAPS_100.md       # 100 tracked gaps
+├── GAPS_REAL.md       # **VERIFIED gap list** (source audit + build + ctest)
+├── GAPS_100.md       # 100 tracked gaps (STALE — see GAPS_REAL.md)
 └── MODULARIZATION.md # Build + reuse strategy
 ```
 

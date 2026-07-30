@@ -629,13 +629,44 @@ char *wubulayout_page_text(const wubulayout_doc *L, int page){
 char *wubulayout_doc_text(const wubulayout_doc *L){
     size_t cap=4096, len=0; char *buf=malloc(cap); if(!buf) return NULL; buf[0]=0;
     for (int pg=0; pg<L->npages; pg++){
+        /* wubushape (INT-7): if ANY run on the page is RTL, the page's
+         * text needs Bidi visual reorder before export/a11y can read it
+         * correctly. We detect via shape_is_rtl_codepoint on the first
+         * codepoint of the first run. shape_reorder returns visual order
+         * for the whole concatenated string. */
         char *pt = wubulayout_page_text(L, pg);
         if (!pt) continue;
-        size_t add=strlen(pt); size_t need=len+add+2;
-        if (need>=cap){ while(need>=cap) cap*=2; char *nb=realloc(buf,cap); if(!nb){free(pt);free(buf);return NULL;} buf=nb; }
-        if (len && buf[len-1]!='\n'){ buf[len++]='\n'; }
-        memcpy(buf+len, pt, add); len+=add; buf[len]=0;
-        free(pt);
+        const char *emit = pt;
+        size_t emit_n = strlen(pt);
+        char *vis = NULL;
+        LPage *pp = L->pages[pg];
+        int rtl_present = 0;
+        for (int i=0; i<pp->nrun; i++){
+            const char *t = pp->run[i].text;
+            size_t tl = pp->run[i].text_len;
+            size_t q = 0;
+            while (q < tl){
+                unsigned long cp; int nb = utf8_cp(t+q, &cp); q += nb;
+                if (shape_is_rtl_codepoint(cp)){ rtl_present = 1; break; }
+                if (cp > ' ' && !shape_is_rtl_codepoint(cp)) break;
+            }
+            if (rtl_present) break;
+        }
+        if (rtl_present){
+            /* shape_reorder needs cap > strlen(text)+1; allocate then free. */
+            vis = malloc(emit_n + 1);
+            if (vis){
+                shape_reorder(emit, SHAPE_LTR, vis, emit_n + 1);
+                emit = vis;
+                emit_n = strlen(vis);
+            }
+        }
+        size_t need = len + emit_n + 2;
+        if (need >= cap){ while (need >= cap) cap *= 2;
+            char *nb = realloc(buf, cap); if (!nb){ free(pt); free(vis); return NULL; } buf = nb; }
+        if (len && buf[len-1] != '\n'){ buf[len++] = '\n'; }
+        memcpy(buf+len, emit, emit_n); len += emit_n; buf[len] = 0;
+        free(pt); free(vis);
     }
     return buf;
 }

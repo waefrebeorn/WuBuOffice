@@ -192,7 +192,8 @@ static void editor_sync_active(Editor *e){
         free(t);
     }
     const char *p = docs_path(e->docs, a);
-    e->path = (p && *p)? (char*)p : NULL;   /* docs owns the string; we only read */
+    free(e->path);
+    e->path = (p && *p)? strdup(p) : NULL;   /* owned copy */
     e->enc_label = "UTF-8";
 }
 
@@ -951,6 +952,7 @@ static void destroy(WuView *v){
     if (e->gto) gotoline_destroy(e->gto);
     if (e->asv){ wubuautosave_clear(e->asv); wubuautosave_destroy(e->asv); }
     if (e->spd) spell_free(e->spd);
+    free(e->path);
     free(e);
     free(v);
 }

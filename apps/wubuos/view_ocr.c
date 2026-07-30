@@ -47,9 +47,15 @@ static OcrFontBank *build_recognizer_bank(const void ***out_fonts, size_t *out_n
     }
     if (n == 0){ free(fonts); if(out_fonts)*out_fonts=NULL; if(out_n)*out_n=0; return NULL; }
     OcrFontBank *bank = ocr_fontbank_build(fonts, n, 6, 32, NULL);
-    if (!bank){ for (size_t i=0;i<n;i++) font_free((Font*)fonts[i]); free(fonts);
-                if(out_fonts)*out_fonts=NULL; if(out_n)*out_n=0; return NULL; }
-    if(out_fonts)*out_fonts=fonts; if(out_n)*out_n=n;
+    if (!bank){
+        for (size_t i=0;i<n;i++) font_free((Font*)fonts[i]);
+        free(fonts);
+        if(out_fonts)*out_fonts=NULL;
+        if(out_n)*out_n=0;
+        return NULL;
+    }
+    if(out_fonts)*out_fonts=fonts;
+    if(out_n)*out_n=n;
     return bank;
 }
 

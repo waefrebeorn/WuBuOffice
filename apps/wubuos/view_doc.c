@@ -17,6 +17,7 @@
 #include "a11y.h"        /* wubua11y: check (INT-5) */
 #include "rast.h"        /* wubusvg rasterizer: SVG -> RGBA (gap #13) */
 #include "ublayout.h"      /* central text pipeline: model -> laid-out pages */
+#include "shape.h"        /* wubushape: Bidi per-run reorder for RTL */
 #include "toc.h"          /* DOC-54: table-of-contents generator */
 #include "settings.h"      /* UXA-41: high-contrast colors */
 #include "script.h"        /* DOC-97: wubuscript computed fields */
@@ -129,7 +130,8 @@ static int doc_chrome_fs(DocV *e, int base){
     WubuSettings *sh = wubusettings_shared();
     if (sh) us = wubusettings_ui_scale(sh);
     int fs = (int)(base * us + 0.5);
-    if (fs < 8) fs = 8; if (fs > 64) fs = 64;
+    if (fs < 8) fs = 8;
+    if (fs > 64) fs = 64;
     (void)e;
     return fs;
 }
@@ -158,12 +160,14 @@ static int render(WuView *v, int w, int h, int scroll,
             int pages = wubulayout_page_count(L);
             int pg = e->jump_page; e->jump_page = -1;
             if (pg < 0) pg = scroll / (h - 112);
-            if (pg<0) pg=0; if (pg>=pages) pg=pages-1;
+            if (pg<0) pg=0;
+            if (pg>=pages) pg=pages-1;
             /* UXA-41: high-contrast swaps to maximal-distinction palette */
             int hc = wubusettings_high_contrast(wubusettings_shared());
             unsigned char BG[3] = { hc?255:252, hc?255:252, hc?255:250 };
             unsigned char FG[3] = { hc?0:28,   hc?0:30,   hc?0:34 };
             unsigned char MU[3] = { hc?0:120, hc?0:124, hc?0:132 };
+            (void)BG;  /* page background override; retained for future use */
             unsigned char LN[3] = { hc?127:150, hc?127:154, hc?127:162 };
             unsigned char TT[3] = { hc?0:200, hc?120:203, hc?200:210 };
             /* page header (DOC-56: use model HEADER if present) */
@@ -193,10 +197,12 @@ static int render(WuView *v, int w, int h, int scroll,
                         int dw = bx->w, dh = bx->h;
                         for (int yy=0; yy<dh; yy++){
                             int sy = (iw>0)? (yy*dh<ih*dw ? yy*ih/dh : ih-1) : 0;
-                            if (sy<0) sy=0; if (sy>=ih) sy=ih-1;
+                            if (sy<0) sy=0;
+                            if (sy>=ih) sy=ih-1;
                             for (int xx=0; xx<dw; xx++){
                                 int sx = (iw>0)? (xx*dw<iw*dh ? xx*iw/dw : iw-1) : 0;
-                                if (sx<0) sx=0; if (sx>=iw) sx=iw-1;
+                                if (sx<0) sx=0;
+                                if (sx>=iw) sx=iw-1;
                                 const uint8_t *p = px + ((size_t)sy*iw+sx)*4;
                                 int dx = bx->x + xx, dy = bx->y + yy;
                                 if (dx<0||dy<0||dx>=w||dy>=h) continue;
@@ -227,7 +233,16 @@ static int render(WuView *v, int w, int h, int scroll,
                 const wubulayout_run *r = wubulayout_run_at(L, pg, i);
                 if (!r || !r->text || !r->text_len) continue;
                 char seg[2048]; size_t l=r->text_len; if(l>=sizeof seg)l=sizeof seg-1;
-                memcpy(seg, r->text, l); seg[l]=0;
+                /* INT-7: RTL/BIDI reorder per run. layout.c sets r->rtl
+                 * when the dominant direction of this run is RTL. */
+                const char *draw_text = r->text;
+                if (r->rtl && l < sizeof seg - 1) {
+                    char vis[2048];
+                    shape_reorder(r->text, SHAPE_RTL, vis, sizeof vis);
+                    draw_text = vis;
+                    l = strlen(vis);
+                }
+                memcpy(seg, draw_text, l); seg[l]=0;
                 /* DOC-60: links are blue + underlined; record box for clicks */
                 int is_link = 0; unsigned char lk[3];
                 lk[0]=hc?0:24; lk[1]=hc?80:64; lk[2]=hc?220:200;
@@ -268,6 +283,9 @@ static int render(WuView *v, int w, int h, int scroll,
                         else { lk[0]=ti[0];lk[1]=ti[1];lk[2]=ti[2]; }
                     } else if (rk == WUBUMODEL_FIELD){ is_field=1; lk[0]=fd[0];lk[1]=fd[1];lk[2]=fd[2]; }
                 }
+                /* Markers retained for downstream consumers (a11y checks etc.)
+                 * that may consult view-internal state; here they only feed lk[]. */
+                (void)is_comment; (void)is_tc_ins; (void)is_tc_del; (void)is_field;
                 wuos_font_draw(seg, r->x, r->y, r->bold, lk[0],lk[1],lk[2], fb, w, h);
                 if (is_link){ /* underline */
                     int yy = r->y + 2;
@@ -298,12 +316,12 @@ static int render(WuView *v, int w, int h, int scroll,
             /* UI-34: minimap on the right edge — one tick per line, colored by
              * heading level if the TOC knows about it. */
             int mmx = w - 10;
-            int span = (h - 112);
             for (int li=0; li<nl; li++){
                 const wubulayout_line *ln = wubulayout_line_at(L, pg, li);
                 if (!ln) continue;
                 int my = 56 + (int)((double)(ln->y) / (h) * (h-120));
-                if (my < 0) my = 0; if (my >= h) my = h-1;
+                if (my < 0) my = 0;
+                if (my >= h) my = h-1;
                 if (mmx >= 0 && mmx < w){
                     fb[((size_t)my*w+mmx)*4]   = MU[0];
                     fb[((size_t)my*w+mmx)*4+1] = MU[1];
@@ -377,7 +395,8 @@ static int render(WuView *v, int w, int h, int scroll,
         int oy = 40;
         for (int i=0;i<e->nobj;i++){
             int pw = e->objw[i], ph = e->objh[i];
-            if (ox+pw > W) pw = W-ox; if (oy+ph > H) ph = H-oy;
+            if (ox+pw > W) pw = W-ox;
+            if (oy+ph > H) ph = H-oy;
             for (int yy=0; yy<ph; yy++) for (int xx=0; xx<pw; xx++){
                 size_t si=((size_t)yy*e->objw[i]+xx)*4;
                 size_t di=((size_t)(oy+yy)*W+(ox+xx))*4;
@@ -455,6 +474,11 @@ static void on_key(WuView *v, int key, int down){
             if (fb){ int i=e->nobj++; e->obj[i]=fb; e->objw[i]=w; e->objh[i]=h; } }
         return; }
     if (key==WUOS_KEY_EXPORT_EPUB){ free(e->epub_msg); e->epub_msg = doccmd_export_epub(e->doc, "/tmp/wubuos_export.epub"); return; }
+    if (key==WUOS_KEY_EXPORT_PDF){      free(e->epub_msg); e->epub_msg = doccmd_export_pdf     (e->doc); return; }
+    if (key==WUOS_KEY_EXPORT_HTML){     free(e->epub_msg); e->epub_msg = doccmd_export_html    (e->doc); return; }
+    if (key==WUOS_KEY_EXPORT_MARKDOWN){ free(e->epub_msg); e->epub_msg = doccmd_export_markdown(e->doc); return; }
+    if (key==WUOS_KEY_EXPORT_LATEX){    free(e->epub_msg); e->epub_msg = doccmd_export_latex   (e->doc); return; }
+    if (key==WUOS_KEY_EXPORT_RTF){      free(e->epub_msg); e->epub_msg = doccmd_export_rtf     (e->doc); return; }
     if (key==WUOS_KEY_SAVE){ free(e->epub_msg); e->epub_msg = doccmd_save(e->doc, e->path); return; }
     if (key==WUOS_KEY_A11Y_CHECK){ doccmd_a11y_check(e->doc, &e->a11y); e->a11y_done = 1; return; }
     if (key==WUOS_KEY_INSERT_LINK){ if (doccmd_insert_link(e->doc)) e->toc_dirty=1; return; }
@@ -575,10 +599,10 @@ WuView *wuos_doc_create(const char *path){
         if (!e->doc){
             /* DOC-76: open Word files into a real, round-trippable model so
              * save-as-DOCX preserves structure (headings/paragraphs/runs). */
-            int is_docx = (strstr(path,".docx")||strstr(path,".docm")||strstr(path,".dotx"));
-            int is_odt  = (strstr(path,".odt")||strstr(path,".fodt"));
-            int is_rtf  = (strstr(path,".rtf"));
-            int is_epub = (strstr(path,".epub")||strstr(path,".epub3"));
+            int is_docx = (strstr(path,".docx")!=NULL||strstr(path,".docm")!=NULL||strstr(path,".dotx")!=NULL);
+            int is_odt  = (strstr(path,".odt")!=NULL||strstr(path,".fodt")!=NULL);
+            int is_rtf  = (strstr(path,".rtf")!=NULL);
+            int is_epub = (strstr(path,".epub")!=NULL||strstr(path,".epub3")!=NULL);
             if (is_docx){
                 wubumodel_doc *md = NULL;
                 if (wubumodel_load_docx(path, &md) == 0 && md) e->doc = md;
@@ -598,7 +622,7 @@ WuView *wuos_doc_create(const char *path){
             DocSession *s = doc_session_create();
             long id = doc_open(s, path);
             if (id >= 0){
-                char *dt = doc_text(s, id);
+                const char *dt = doc_text(s, id);
                 if (dt){ free(e->text); e->text = dt; }
                 doc_session_free(s);
             }

@@ -1,5 +1,15 @@
 # Office Suite — Gap Analysis (research-grounded)
 
+> ⚠️ **STALE — DO NOT USE FOR PLANNING.** This document contains outdated
+> "GAP" markers. Some items marked GAP are actually MODULE-level implementations
+> that exist in `src/` but are NOT wired into the `wubuos` GUI shell.
+>
+> **Use [GAPS_REAL.md](GAPS_REAL.md) instead** — it is the verified, honest gap
+> list generated from source audit + build + ctest (71/71 green) + web research
+> against LibreOffice 26.2, OnlyOffice, Microsoft Office 2025.
+>
+> This document is kept for historical reference only.
+
 > Source: 20 web searches (LibreOffice modules, ODF/OOXML libs, spell/CRDT/
 > shaping/fonts, editor perf, scripting, i18n, PDF) + local inventory of
 > WuBuOffice apps + WuBuPad blitz. Posture: telegraphic, prioritized,

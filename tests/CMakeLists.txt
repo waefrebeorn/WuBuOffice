@@ -158,6 +158,14 @@ target_compile_definitions(test_convert PRIVATE
     ODF_ORACLE_SCRIPT="${CMAKE_SOURCE_DIR}/tests/conformance/odf_oracle.py")
 add_test(NAME convert COMMAND test_convert)
 
+# MODEL -> TEXT bridge: wubuconv_model_to_text projects wubumodel_doc onto dm_doc.
+add_executable(test_conv_model test_conv_model.c)
+target_link_libraries(test_conv_model PRIVATE wubumodel wubuconv wubuedit_app)
+target_include_directories(test_conv_model PRIVATE
+    ${CMAKE_SOURCE_DIR}/apps/wubuconv ${CMAKE_SOURCE_DIR}/apps/wubuedit ${CMAKE_SOURCE_DIR}/src/wubumodel)
+add_test(NAME conv_model COMMAND test_conv_model)
+set_tests_properties(conv_model PROPERTIES LABELS "convert;apps")
+
 # Word lists (bullet + numbered) feature: assemble + re-read validation.
 add_executable(test_word_lists test_word_lists.c)
 target_link_libraries(test_word_lists PRIVATE wubuword_app wubuoxml wubuxml wubuzip)

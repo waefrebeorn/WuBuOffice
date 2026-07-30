@@ -37,42 +37,50 @@ static int render(WuView *v, int w, int h, int scroll,
     int dark = wubusettings_dark(wubusettings_shared());
     WuosRGB cmp_bg = dark ? WUOS_DARK(TAB_BAR) : WUOS_LIGHT(TAB_BAR);
     WuosRGB cmp_txt = dark ? WUOS_DARK(TABTEXT_ON) : WUOS_LIGHT(TABTEXT_ON);
-    WuosRGB cmp_err = dark ? WUOS_DARK(OVERLINE_TEXT) : WUOS_LIGHT(OVERLINE_TEXT);
+    WuosRGB cmp_hdr = dark ? WUOS_DARK(OVERLINE_TEXT) : WUOS_LIGHT(OVERLINE_TEXT);
+    /* Diff line colors as semantic tokens (added/removed/context/hunk) */
+    WuosRGB diff_add = dark ? WUOS_DARK(ACCENT) : WUOS_LIGHT(ACCENT);        /* green-ish accent for additions */
+    WuosRGB diff_rem = {200, 70, 70};  /* red for removals - could add token later */
+    WuosRGB diff_hunk = dark ? WUOS_DARK(OVERLAY_HINTS) : WUOS_LIGHT(OVERLAY_HINTS); /* hunk/file header */
+    WuosRGB diff_ctx = cmp_txt;        /* context lines use main text color */
+
     unsigned char *fb = malloc((size_t)w*h*4);
     if (!fb) return -1;
     for (int i=0;i<w*h;i++){ size_t k=(size_t)i*4; fb[k]=cmp_bg.r;fb[k+1]=cmp_bg.g;fb[k+2]=cmp_bg.b;fb[k+3]=255; }
 
     int fh = wuos_font_height();
-    int lh = fh + WUOS_SPACE_4;
+    int line_h = fh + WUOS_SPACE_4;  /* 24px baseline-to-baseline */
+    int margin_x = WUOS_SPACE_16;    /* 16px left margin */
 
     if (!e->text){
-        wuos_font_draw("Compare: wubuos compare <a> <b>  (no files)", WUOS_SPACE_8, WUOS_SPACE_8*3, 1, cmp_err.r,cmp_err.g,cmp_err.b, fb,w,h);
+        wuos_font_draw("Compare: wubuos compare <a> <b>  (no files)", margin_x, WUOS_SPACE_16 + fh, 1, cmp_hdr.r,cmp_hdr.g,cmp_hdr.b, fb,w,h);
         *rgba=fb; *rw=w; *rh=h; return 0;
     }
     /* title */
     char title[256];
     snprintf(title,sizeof title,"Compare  %s  <->  %s", e->la?e->la:"(blank)", e->lb?e->lb:"(blank)");
-    wuos_font_draw(title, WUOS_SPACE_8, WUOS_SPACE_4, 1, cmp_txt.r,cmp_txt.g,cmp_txt.b, fb,w,h);
+    int title_y = WUOS_SPACE_16 + fh;  /* 16px margin + font height = first baseline */
+    wuos_font_draw(title, margin_x, title_y, 1, cmp_txt.r,cmp_txt.g,cmp_txt.b, fb,w,h);
 
     /* tokenize the unified diff into lines, paint with color by prefix */
     char *work = strdup(e->text);
-    int y = 30;
+    int y = title_y + line_h * 2;  /* start content 2 lines below title */
     char *p = work;
     while (p && *p && y < h){
         char *nl = strpbrk(p, "\n");
         if (nl) *nl = 0;
-        int r=40,g=44,b=52;        /* context (dark) */
-        if (p[0]=='-' && p[1]==' '){ r=200;g=40;b=40; }      /* removed */
-        else if (p[0]=='+' && p[1]==' '){ r=40;g=160;b=70; } /* added */
-        else if (p[0]=='@'){ r=90;g=110;b=170; }             /* hunk header */
-        else if (p[0]=='-' && p[1]=='-'){ r=90;g=110;b=170; }/* file header */
+        WuosRGB c = diff_ctx;
+        if (p[0]=='-' && p[1]==' '){ c = diff_rem; }           /* removed */
+        else if (p[0]=='+' && p[1]==' '){ c = diff_add; }      /* added */
+        else if (p[0]=='@'){ c = diff_hunk; }                  /* hunk header */
+        else if (p[0]=='-' && p[1]=='-'){ c = diff_hunk; }     /* file header */
         /* clip long lines */
         char buf[256];
         size_t L = strlen(p);
         if (L > 250){ memcpy(buf,p,250); buf[250]=0; }
         else { memcpy(buf,p,L+1); }
-        wuos_font_draw(buf, 10, y+fh, 0, r,g,b, fb,w,h);
-        y += lh;
+        wuos_font_draw(buf, margin_x, y + fh, 0, c.r,c.g,c.b, fb,w,h);
+        y += line_h;
         if (!nl) break;
         p = nl+1;
     }

@@ -52,6 +52,23 @@ int doccmd_insert_script_field(wubumodel_doc *doc, const char *expr);
  * (caller frees) describing success/failure, or NULL on OOM. */
 char *doccmd_export_epub(wubumodel_doc *doc, const char *out);
 
+/* Layout-based exporters (INT-3.5). Each builds a wubulayout_doc from `doc`,
+ * invokes the matching wubuexp_* function, and returns a malloc'd status
+ * string (caller frees). Output paths are fixed:
+ *   PDF       -> /tmp/wubuos_export.pdf
+ *   HTML      -> /tmp/wubuos_export.html
+ *   Markdown  -> /tmp/wubuos_export.md
+ *   LaTeX     -> /tmp/wubuos_export.tex
+ *   RTF       -> /tmp/wubuos_export.rtf
+ * The exports reflect the model's STRUCTURE (paragraphs + text), not its
+ * visual styling -- that is a deliberate cap that keeps the doccmd API
+ * minimal. */
+char *doccmd_export_pdf      (wubumodel_doc *doc);
+char *doccmd_export_html     (wubumodel_doc *doc);
+char *doccmd_export_markdown (wubumodel_doc *doc);
+char *doccmd_export_latex    (wubumodel_doc *doc);
+char *doccmd_export_rtf      (wubumodel_doc *doc);
+
 /* Save the doc back to DOCX/ODT (round-trip). `path` is the current file (may
  * be NULL) used to pick the output name/format. Returns a malloc'd status
  * string (caller frees) or NULL on OOM. */

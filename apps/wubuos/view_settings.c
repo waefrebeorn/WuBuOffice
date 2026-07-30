@@ -41,33 +41,41 @@ static int render(WuView *v, int w, int h, int scroll,
     unsigned char *fb = calloc((size_t)w*h, 4);
     if (!fb) return -1;
     for (int i=0;i<w*h;i++){ size_t k=(size_t)i*4; fb[k]=bg.r;fb[k+1]=bg.g;fb[k+2]=bg.b;fb[k+3]=255; }
-    int y = WUOS_SPACE_8*5;
-    wuos_font_draw("WuBuOffice Settings", WUOS_SPACE_8, y, 1, txt.r,txt.g,txt.b, fb, w, h); y += WUOS_SPACE_8;
+
+    /* Layout constants: font height ~20px, line spacing = fh + 4px (WUOS_SPACE_24 = 24px) */
+    int fh = wuos_font_height();
+    int line_h = fh + WUOS_SPACE_4;  /* 24px baseline-to-baseline */
+    int margin_x = WUOS_SPACE_16;    /* 16px left margin */
+    int y = WUOS_SPACE_16 + fh;      /* start at margin + font height (first baseline) */
+
+    wuos_font_draw("WuBuOffice Settings", margin_x, y, 1, txt.r,txt.g,txt.b, fb, w, h); y += line_h;
     char line[256];
     snprintf(line,sizeof line,"Zoom:            %.0f%%   (use + / -)", e->s?wubusettings_zoom(e->s)*100:100);
-    wuos_font_draw(line, WUOS_SPACE_8, y, 0, txt.r,txt.g,txt.b, fb, w, h); y += WUOS_SPACE_8;
+    wuos_font_draw(line, margin_x, y, 0, txt.r,txt.g,txt.b, fb, w, h); y += line_h;
     snprintf(line,sizeof line,"Theme:           %s   (t)", wubusettings_dark(e->s)?"Dark":"Light");
-    wuos_font_draw(line, WUOS_SPACE_8, y, 0, txt.r,txt.g,txt.b, fb, w, h); y += WUOS_SPACE_8;
+    wuos_font_draw(line, margin_x, y, 0, txt.r,txt.g,txt.b, fb, w, h); y += line_h;
     snprintf(line,sizeof line,"Autosave:        %s   (a)", wubusettings_autosave_ms(e->s)?"ON (5s)":"OFF");
-    wuos_font_draw(line, WUOS_SPACE_8, y, 0, txt.r,txt.g,txt.b, fb, w, h); y += WUOS_SPACE_8;
+    wuos_font_draw(line, margin_x, y, 0, txt.r,txt.g,txt.b, fb, w, h); y += line_h;
     snprintf(line,sizeof line,"UI language:     %s   (l)", wubusettings_language(e->s));
-    wuos_font_draw(line, WUOS_SPACE_8, y, 0, txt.r,txt.g,txt.b, fb, w, h); y += WUOS_SPACE_8;
+    wuos_font_draw(line, margin_x, y, 0, txt.r,txt.g,txt.b, fb, w, h); y += line_h;
     snprintf(line,sizeof line,"Base font size:  %d px   (f)", wubusettings_font_size(e->s));
-    wuos_font_draw(line, WUOS_SPACE_8, y, 0, txt.r,txt.g,txt.b, fb, w, h); y += WUOS_SPACE_8;
+    wuos_font_draw(line, margin_x, y, 0, txt.r,txt.g,txt.b, fb, w, h); y += line_h;
     /* UI-26: live word-wrap + tab-width */
     snprintf(line,sizeof line,"Word wrap:       %s   (w)", wubusettings_word_wrap(e->s)?"ON":"OFF");
-    wuos_font_draw(line, WUOS_SPACE_8, y, 0, txt.r,txt.g,txt.b, fb, w, h); y += WUOS_SPACE_8;
+    wuos_font_draw(line, margin_x, y, 0, txt.r,txt.g,txt.b, fb, w, h); y += line_h;
     snprintf(line,sizeof line,"Tab width:       %d sp   (i / Shift+i)", wubusettings_tab_width(e->s));
-    wuos_font_draw(line, WUOS_SPACE_8, y, 0, txt.r,txt.g,txt.b, fb, w, h); y += WUOS_SPACE_8;
+    wuos_font_draw(line, margin_x, y, 0, txt.r,txt.g,txt.b, fb, w, h); y += line_h;
     /* UXA-41: high-contrast toggle */
     snprintf(line,sizeof line,"High contrast:   %s   (c)", wubusettings_high_contrast(e->s)?"ON":"OFF");
-    wuos_font_draw(line, WUOS_SPACE_8, y, 0, txt.r,txt.g,txt.b, fb, w, h); y += WUOS_SPACE_8;
-    wuos_font_draw("Keys:  + zoom in   - zoom out   0 reset zoom", WUOS_SPACE_8, y, 0, hnt.r,hnt.g,hnt.b, fb, w, h); y += WUOS_SPACE_4;
-    wuos_font_draw("       t theme     a autosave  l language  f font-size", WUOS_SPACE_8, y, 0, hnt.r,hnt.g,hnt.b, fb, w, h); y += WUOS_SPACE_4;
+    wuos_font_draw(line, margin_x, y, 0, txt.r,txt.g,txt.b, fb, w, h); y += line_h;
+
+    int hint_y = y + WUOS_SPACE_8;  /* extra gap before hints */
+    wuos_font_draw("Keys:  + zoom in   - zoom out   0 reset zoom", margin_x, hint_y, 0, hnt.r,hnt.g,hnt.b, fb, w, h); hint_y += line_h;
+    wuos_font_draw("       t theme     a autosave  l language  f font-size", margin_x, hint_y, 0, hnt.r,hnt.g,hnt.b, fb, w, h); hint_y += line_h;
     snprintf(line,sizeof line,"       c high-contrast   s save to disk   (auto-saves on every change)");
-    wuos_font_draw(line, WUOS_SPACE_8, y, 0, hnt.r,hnt.g,hnt.b, fb, w, h); y += WUOS_SPACE_4;
+    wuos_font_draw(line, margin_x, hint_y, 0, hnt.r,hnt.g,hnt.b, fb, w, h); hint_y += line_h;
     if (e->saved_flash){
-        wuos_font_draw("saved.", WUOS_SPACE_8, y, 0, txt.r,txt.g,txt.b, fb, w, h);
+        wuos_font_draw("saved.", margin_x, hint_y, 0, txt.r,txt.g,txt.b, fb, w, h);
     }
     *rgba = fb; *rw = w; *rh = h;
     return 0;

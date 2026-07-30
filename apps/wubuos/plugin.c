@@ -59,8 +59,8 @@ WuOSPluginMgr *wuos_plugins_load(const char *dir){
         void *h = dlopen(full, RTLD_NOW | RTLD_LOCAL);
         if (!h){ fprintf(stderr, "[plugin] dlopen %s: %s\n", full, dlerror()); continue; }
 
-        WuOSPlugin *(*initfn)(void) =
-            (WuOSPlugin *(*)(void)) dlsym(h, "wuos_plugin_init");
+        WuOSPlugin *(*initfn)(void) = NULL;
+        *(void **)(&initfn) = dlsym(h, "wuos_plugin_init");
         if (!initfn){
             fprintf(stderr, "[plugin] %s: missing wuos_plugin_init (%s)\n", full, dlerror());
             dlclose(h); continue;
@@ -130,8 +130,8 @@ int wuos_plugin_load_path(const char *so){
     }
     void *h = dlopen(so, RTLD_NOW | RTLD_LOCAL);
     if (!h){ fprintf(stderr, "[plugin] dlopen %s: %s\n", so, dlerror()); return -1; }
-    WuOSPlugin *(*initfn)(void) =
-        (WuOSPlugin *(*)(void)) dlsym(h, "wuos_plugin_init");
+    WuOSPlugin *(*initfn)(void) = NULL;
+    *(void **)(&initfn) = dlsym(h, "wuos_plugin_init");
     if (!initfn){ dlclose(h); return -1; }
     WuOSPlugin *p = initfn();
     if (!p || p->abi_version != WUOS_PLUGIN_ABI_VERSION){

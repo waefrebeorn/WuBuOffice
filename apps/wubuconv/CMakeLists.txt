@@ -17,7 +17,8 @@ target_include_directories(wubuconv_app PRIVATE
     ${CMAKE_SOURCE_DIR}/apps/wuburead
     ${CMAKE_SOURCE_DIR}/src/wubujson
     ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(wubuconv_app PUBLIC wubuoxml wubuxml wubuzip wubucfb wuburead_app wubujson)
+target_link_libraries(wubuconv_app PUBLIC wubuoxml wubuxml wubuzip wubucfb wuburead_app wubujson wubumodel)
+target_include_directories(wubuconv_app PRIVATE ${CMAKE_SOURCE_DIR}/src/wubumodel)
 
 # A real static lib wrapping the conv objects, so downstream link ordering
 # (wubujson must precede the conv objects) is handled by CMake automatically.
@@ -34,4 +35,4 @@ add_library(wubuconv STATIC
     $<TARGET_OBJECTS:wubulegacy_app>
     $<TARGET_OBJECTS:wubupdf_app>)
 target_link_libraries(wubuconv PUBLIC
-    wubuoxml wubuxml wubuzip wubucfb wuburead_app wubujson wubuformula)
+    wubuoxml wubuxml wubuzip wubucfb wuburead_app wubujson wubuformula wubumodel)

@@ -127,9 +127,38 @@ int main(void){
         }
     }
 
+    /* INT-3.5: layout-based exporters (PDF/HTML/Markdown/LaTeX/RTF) return a
+     * non-null status string and write a file to /tmp. Each builds a
+     * wubulayout_doc from the model and calls wubuexp_*. */
+    {
+        const char *exports[] = {
+            "pdf", "html", "markdown", "latex", "rtf", NULL
+        };
+        char *(*fn[])(wubumodel_doc *) = {
+            doccmd_export_pdf, doccmd_export_html,
+            doccmd_export_markdown, doccmd_export_latex,
+            doccmd_export_rtf, NULL
+        };
+        const char *paths[] = {
+            "/tmp/wubuos_export.pdf", "/tmp/wubuos_export.html",
+            "/tmp/wubuos_export.md", "/tmp/wubuos_export.tex",
+            "/tmp/wubuos_export.rtf", NULL
+        };
+        for (int i = 0; exports[i]; i++){
+            char *msg = fn[i](d);
+            if (!msg){ fprintf(stderr, "[export %s] null status\n", exports[i]); fails++; }
+            else {
+                FILE *f = fopen(paths[i], "rb");
+                if (!f){ fprintf(stderr, "[export %s] file not written: %s\n", exports[i], msg); fails++; }
+                else { fclose(f); printf("  export %s: %s\n", exports[i], msg); }
+                free(msg);
+            }
+        }
+    }
+
     wubumodel_doc_destroy(d);
 
     if (fails){ printf("FAILED (%d)\n", fails); return 1; }
-    printf("PASS: doccmd (15 structural inserts + script field + epub/save/a11y)\n");
+    printf("PASS: doccmd (15 structural inserts + script field + epub/save/a11y + 5 layout exporters)\n");
     return 0;
 }

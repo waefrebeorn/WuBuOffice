@@ -14,6 +14,13 @@
 #ifndef WUBUOFFICE_WUOS_THEME_H
 #define WUBUOFFICE_WUOS_THEME_H
 
+/* Forward-declare the settings accessors used by the WUOS_TOKEN macro below,
+ * so every file that includes this header can use the macro without separately
+ * including settings.h. See src/wubusettings/settings.h for the full API. */
+struct WubuSettings;
+int  wubusettings_dark(const struct WubuSettings *s);
+struct WubuSettings *wubusettings_shared(void);
+
 typedef struct { unsigned char r, g, b; } WuosRGB;
 
 /* ---- 4px spacing scale ---- */

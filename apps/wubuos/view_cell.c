@@ -28,28 +28,51 @@ static int render(WuView *v, int w, int h, int scroll,
     WuosRGB cel_bg = dark ? WUOS_DARK(TAB_BAR) : WUOS_LIGHT(TAB_BAR);
     WuosRGB cel_hdr = dark ? WUOS_DARK(OVERLINE_TEXT) : WUOS_LIGHT(OVERLINE_TEXT);
     WuosRGB cel_body = dark ? WUOS_DARK(TABTEXT_ON) : WUOS_LIGHT(TABTEXT_ON);
+    WuosRGB cel_edge = dark ? WUOS_DARK(BORDER) : WUOS_LIGHT(BORDER);
+    WuosRGB cel_active = dark ? WUOS_DARK(OVERLAY_HIGHLIGHT) : WUOS_LIGHT(OVERLAY_HIGHLIGHT);
+    WuosRGB cel_fx_bg = dark ? (WuosRGB){36,40,47} : (WuosRGB){233,236,241};  /* SURFACE_3 */
+    WuosRGB cel_fx_edge = dark ? WUOS_DARK(BORDER) : WUOS_LIGHT(BORDER);
+    WuosRGB cel_fx_text = dark ? WUOS_DARK(OVERLAY_TEXT) : WUOS_LIGHT(OVERLAY_TEXT);
     unsigned char *fb = malloc((size_t)w*h*4);
     if (!fb) return -1;
     for (int i=0;i<w*h;i++){ size_t k=(size_t)i*4; fb[k]=cel_bg.r;fb[k+1]=cel_bg.g;fb[k+2]=cel_bg.b;fb[k+3]=255; }
 
     int fh = wuos_font_height();
     int lh = fh + WUOS_SPACE_8;
-    int gx0 = WUOS_SPACE_8*5, gy0 = WUOS_SPACE_8*7, cw = WUOS_SPACE_8*12, rh2 = lh;
+    int margin_x = WUOS_SPACE_8 * 5;    /* 40px */
+    int margin_y = WUOS_SPACE_8 * 7;    /* 56px */
+    int cw = WUOS_SPACE_8 * 12;         /* 96px cell width */
+    int rh2 = lh;
 
-    /* formula bar */
-    wuos_font_draw("fx", WUOS_SPACE_8, gy0-lh-WUOS_SPACE_4, 1, cel_hdr.r,cel_hdr.g,cel_hdr.b, fb,w,h);
-    for (int xx=30; xx<w-10; xx++) for (int yy=gy0-lh-8; yy<gy0-4; yy++){
-        if (xx>=0&&yy>=0&&xx<w&&yy<h){ size_t i=((size_t)yy*w+xx)*4;
-            int edge=(xx==30||yy==gy0-lh-8||xx==w-11||yy==gy0-5);
-            fb[i]=edge?180:248; fb[i+1]=edge?184:250; fb[i+2]=edge?190:252; }
-    }
+    /* formula bar area: WUOS_SPACE_8*3 (24px) high, starts at margin_y - lh - WUOS_SPACE_8 */
+    int fx_y0 = margin_y - lh - WUOS_SPACE_8;
+    int fx_h = lh + WUOS_SPACE_8;  /* formula bar height */
+
+    /* "fx" label */
+    wuos_font_draw("fx", margin_x, fx_y0 + WUOS_SPACE_4 + fh, 1, cel_hdr.r,cel_hdr.g,cel_hdr.b, fb,w,h);
+
+    /* formula bar background */
+    int fx_x0 = margin_x + WUOS_SPACE_8 * 3;  /* after "fx " */
+    int fx_x1 = w - WUOS_SPACE_8;
+    for (int xx=fx_x0; xx<fx_x1; xx++)
+        for (int yy=fx_y0; yy<fx_y0+fx_h; yy++)
+            if (xx>=0 && yy>=0 && xx<w && yy<h){
+                size_t i=((size_t)yy*w+xx)*4;
+                int edge = (xx==fx_x0 || yy==fx_y0 || xx==fx_x1-1 || yy==fx_y0+fx_h-1);
+                fb[i] = edge ? cel_fx_edge.r : cel_fx_bg.r;
+                fb[i+1] = edge ? cel_fx_edge.g : cel_fx_bg.g;
+                fb[i+2] = edge ? cel_fx_edge.b : cel_fx_bg.b;
+            }
+
+    /* cell address label (A1, B2, etc.) */
     char ab[8]; int cc=e->curc-1; ab[0]=(cc<26)?'A'+cc:('A'+(cc/26)-1);
     if(cc>=26) ab[1]='A'+(cc%26); else ab[1]=0;
     char lbl[16]; snprintf(lbl,sizeof lbl,"%s%d",ab,e->curr);
-    wuos_font_draw(lbl, 32, gy0-lh-4, 0, 60,66,74, fb,w,h);
+    wuos_font_draw(lbl, fx_x0 + WUOS_SPACE_4, fx_y0 + WUOS_SPACE_4 + fh, 0, cel_fx_text.r,cel_fx_text.g,cel_fx_text.b, fb,w,h);
+
+    /* cell content in formula bar */
     const char *shown = e->editing ? e->fbuf : "";
     if (!e->editing){
-        /* show the formula/text of the active cell when not editing */
         wubucell_ckind k; const char *t=NULL; double num=0,c=0;
         if (wubucell_get(e->b,1,e->curc,e->curr,&k,&t,&num,&c)==0){
             static char disp[80];
@@ -58,31 +81,39 @@ static int render(WuView *v, int w, int h, int scroll,
             shown = disp;
         }
     }
-    wuos_font_draw(shown, 70, gy0-lh-4, 0, 20,24,30, fb,w,h);
+    wuos_font_draw(shown, fx_x0 + WUOS_SPACE_8 * 6, fx_y0 + WUOS_SPACE_4 + fh, 0, cel_fx_text.r,cel_fx_text.g,cel_fx_text.b, fb,w,h);
 
-    /* column headers */
-    for (int c=1;c<=e->maxc;c++){
+    /* column headers (A, B, C...) */
+    for (int c=1; c<=e->maxc; c++){
         char lab[8]; int cc=c-1; lab[0]=(cc<26)?'A'+cc:(('A'+(cc/26)-1)); if(cc>=26) lab[1]='A'+(cc%26); else lab[1]=0;
         int on=(c==e->curc);
-        wuos_font_draw(lab, gx0 + c*cw + 4, gy0, 0, on?40:110, on?70:114, on?120:120, fb,w,h);
+        WuosRGB hdr_col = on ? cel_active : cel_hdr;
+        wuos_font_draw(lab, margin_x + c*cw + WUOS_SPACE_4, margin_y + fh, 0, hdr_col.r,hdr_col.g,hdr_col.b, fb,w,h);
     }
 
-    for (int r=1;r<=e->maxr;r++){
+    /* row headers + cells */
+    for (int r=1; r<=e->maxr; r++){
         char rn[16]; snprintf(rn,sizeof rn,"%d",r);
         int on=(r==e->curr);
-        wuos_font_draw(rn, gx0-30, gy0 + r*rh2 + fh, 0, on?40:110, on?70:114, on?120:120, fb,w,h);
-        for (int c=1;c<=e->maxc;c++){
+        WuosRGB hdr_col = on ? cel_active : cel_hdr;
+        wuos_font_draw(rn, margin_x - WUOS_SPACE_8 * 4, margin_y + r*rh2 + fh, 0, hdr_col.r,hdr_col.g,hdr_col.b, fb,w,h);
+        for (int c=1; c<=e->maxc; c++){
             wubucell_ckind k; const char *t=NULL; double num=0, cached=0;
             int has = wubucell_get(e->b, 1, c, r, &k, &t, &num, &cached);
-            int x = gx0 + c*cw, y = gy0 + r*rh2;
+            int x = margin_x + c*cw;
+            int y = margin_y + r*rh2;
             int active = (c==e->curc && r==e->curr);
             for (int yy=y; yy<y+rh2; yy++) {
                 for (int xx=x; xx<x+cw; xx++) {
                     if (xx>=w||yy>=h) continue;
                     size_t i=((size_t)yy*w+xx)*4;
                     int edge = (xx==x||yy==y||xx==x+cw-1||yy==y+rh2-1);
-                    if (active){ fb[i]=210;fb[i+1]=232;fb[i+2]=255; }
-                    else { fb[i]=edge?200:255; fb[i+1]=edge?203:255; fb[i+2]=edge?208:255; }
+                    if (active){
+                        fb[i]=cel_active.r; fb[i+1]=cel_active.g; fb[i+2]=cel_active.b;
+                    } else {
+                        WuosRGB cell_bg = edge ? cel_edge : cel_bg;
+                        fb[i]=cell_bg.r; fb[i+1]=cell_bg.g; fb[i+2]=cell_bg.b;
+                    }
                 }
             }
             if (has){
@@ -93,7 +124,7 @@ static int render(WuView *v, int w, int h, int scroll,
                 } else {
                     snprintf(buf,sizeof buf,"%s", t?t:"");
                 }
-                wuos_font_draw(buf, x+5, y+fh, 0, 30,33,38, fb,w,h);
+                wuos_font_draw(buf, x+WUOS_SPACE_4, y+fh, 0, cel_body.r,cel_body.g,cel_body.b, fb,w,h);
             }
         }
     }
