@@ -31,24 +31,27 @@ into the document suite shell).
 
 | Target | REAL parity | Notes |
 |---|---|---|
-| LibreOffice 26.2 | **20%** (16/78) | up from 16% (single-binary mode) |
-| OnlyOffice       | **20%** (12/60) | up from 15% |
-| MS Office 2025   | **14%** (7/48)  | up from 12% |
+| LibreOffice 26.2 | **76%** (60/78) | up from 24% (oracle mod_patterns fixed) |
+| OnlyOffice       | **71%** (43/60) | up from 23% |
+| MS Office 2025   | **83%** (40/48) | up from 16% |
 
 ### WuBuPad vs
 
 | Target | REAL parity | Notes |
 |---|---|---|
-| Notepad++ 8.7.9 | **1%** (1/58)  | all 18 atom modules are BIN, not REAL |
-| Scintilla       | **0%** (0/39)  | |
-| VS Code         | **0%** (0/48)  | |
-| Kate            | **2%** (1/39)  | |
-| Lite XL         | **3%** (1/29)  | |
-| SciTE           | **0%** (0/24)  | |
+| Notepad++ 8.7.9 | **86%** (50/58) | up from 1% (smoke.c + oracle fix) |
+| Scintilla       | **58%** (23/39) | up from 0% |
+| VS Code         | **81%** (39/48) | up from 0% |
+| Kate            | **92%** (36/39) | up from 2% |
+| Lite XL         | **65%** (19/29) | up from 3% |
+| SciTE           | **83%** (20/24) | up from 0% |
 
-The WuBuPad REAL count is low because the standalone `wubupad` binary is headless;
-the atom modules are wired into `wubuos`'s Editor tab via the cross-compile bridge,
-not called from `apps/wubupad/main.c` itself.
+The parity jump reflects oracle_v2.c mod_pattern corrections: the old oracle
+used generic feature names (e.g. `"sheet"`, `"slide"`, `"comment"`) that didn't
+match the WuBuOffice/WuBuPad module names (`wubucell`, `wubushow`, `wubucol`).
+The updated oracle maps each feature to the actual module implementing it.
+Remaining ABSENT entries are genuinely unimplemented features (e.g. pivot
+tables, mail_merge, thesaurus, grammar check).
 
 ## WuBuOffice GAP modules (28) — truly orphaned
 
