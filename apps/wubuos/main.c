@@ -13,6 +13,7 @@
 #include "palette.h"    /* UI-29: command palette */
 #include "macro.h"      /* SCR-98: macro record/playback + persistence */
 #include "dialog.h"     /* modal text-input dialog (DOC-66/EXP-89/UXA-47/UI-39) */
+#include "pasteplain.h" /* EXP-88: paste-plain strips formatting */
 
 #include <SDL2/SDL.h>
 
@@ -46,10 +47,12 @@ static int      g_dlg_action = 0;   /* 0 none,1 link,2 qr,3 image-alt,10 open,11
 #define MENU_H 24
 static const char *g_menu_names[4] = { "File", "Edit", "View", "Help" };
 /* each menu: list of {label, cmd} pairs, cmd 0 = separator */
-static const struct { const char *label; int cmd; } g_menus[4][8] = {
+static const struct { const char *label; int cmd; } g_menus[4][16] = {
   { {"Open...",         1000}, {"Save",            1001}, {"Save As...",  1002},
-    {"New Document",     1003}, {"Close Tab",       1014}, {"Export EPUB",   1004},
-    {"Export PDF",      1023}, {NULL,0} },  { {"Undo",            1005}, {"Redo",            1006}, {"Find...",     1007},
+    {"New Document",     1003}, {"Close Tab",       1014},
+    {"Export EPUB",      1004}, {"Export PDF",       1030}, {"Export HTML",   1031},
+    {"Export Markdown",  1032}, {"Export LaTeX",     1033}, {"Export RTF",    1034},
+    {NULL,0} },  { {"Undo",            1005}, {"Redo",            1006}, {"Find...",      1007},
     {"Replace...",       1008}, {"Go to Line...",   1009}, {"Toggle Theme",1010},
     {"Cut",             1018}, {"Copy",            1019}, {"Paste",        1020},
     {"Paste Plain",     1021}, {"Select All",      1022}, {NULL,0} },
@@ -68,7 +71,7 @@ static int     g_plugin_idx = 0;      /* next plugin to run via Ctrl+Shift+K */
 static void add_view(WuView *v){ if (v && nviews<8) views[nviews++]=v; }
 
 /* Run a menu command id (UI-43). Shares the action space with the command
- * palette where possible. `cmd` 1000-1017 are menu-specific. */
+ * palette where possible. `cmd` 1000-1034 are menu-specific. */
 static void run_menu_cmd(int cmd){
     switch (cmd){
     case 1000: g_dlg_action = 10; dialog_open(g_dlg, "Open File", "Path:", "");
@@ -84,6 +87,16 @@ static void run_menu_cmd(int cmd){
                  toast_push(g_toasts, "New document", 90); } return;
     case 1004: if (views[active]->on_key) views[active]->on_key(views[active], WUOS_KEY_EXPORT_EPUB, 1);
                toast_push(g_toasts, "EPUB export requested", 120); return;
+    case 1030: if (views[active]->on_key) views[active]->on_key(views[active], WUOS_KEY_EXPORT_PDF, 1);
+               toast_push(g_toasts, "PDF export requested", 120); return;
+    case 1031: if (views[active]->on_key) views[active]->on_key(views[active], WUOS_KEY_EXPORT_HTML, 1);
+               toast_push(g_toasts, "HTML export requested", 120); return;
+    case 1032: if (views[active]->on_key) views[active]->on_key(views[active], WUOS_KEY_EXPORT_MARKDOWN, 1);
+               toast_push(g_toasts, "Markdown export requested", 120); return;
+    case 1033: if (views[active]->on_key) views[active]->on_key(views[active], WUOS_KEY_EXPORT_LATEX, 1);
+               toast_push(g_toasts, "LaTeX export requested", 120); return;
+    case 1034: if (views[active]->on_key) views[active]->on_key(views[active], WUOS_KEY_EXPORT_RTF, 1);
+               toast_push(g_toasts, "RTF export requested", 120); return;
     case 1005: if (views[active]->on_key) views[active]->on_key(views[active], WUOS_KEY_UNDO, 1); return;
     case 1006: if (views[active]->on_key) views[active]->on_key(views[active], WUOS_KEY_REDO, 1); return;
     case 1007: if (views[active]->on_key) views[active]->on_key(views[active], WUOS_KEY_FIND, 1); return;
@@ -203,6 +216,11 @@ int main(int argc, char **argv){
                                        WIN_W, WIN_H, SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_RESIZABLE);
     if (!win){ fprintf(stderr,"window: %s\n",SDL_GetError()); SDL_Quit(); return 1; }
     SDL_Renderer *ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
+    if (!ren){
+        /* INT-15: fall back to software renderer for headless/CI (dummy driver,
+         * no GPU). The dummy driver only supports SDL_RENDERER_SOFTWARE. */
+        ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_SOFTWARE);
+    }
     if (!ren){ fprintf(stderr,"renderer: %s\n",SDL_GetError()); SDL_DestroyWindow(win); SDL_Quit(); return 1; }
 
     /* HiDPI: map the logical 960x720 canvas onto the device pixel grid so text
@@ -264,9 +282,9 @@ int main(int argc, char **argv){
         palette_add(g_palette, lbl, 100 + fi);
     }
     /* DOC-66 / EXP-89 / UXA-47: modal-dialog prompts (open a Dialog). */
-    palette_add(g_palette, "Insert: Hyperlink", 40);
-    palette_add(g_palette, "Insert: QR Code",   41);
-    palette_add(g_palette, "Insert: Image (alt text)", 42);
+    palette_add(g_palette, "Insert: Hyperlink", 50);
+    palette_add(g_palette, "Insert: QR Code",   51);
+    palette_add(g_palette, "Insert: Image (alt text)", 52);
     /* UI-39: recent-documents jump list (built from persisted settings). */
     { WubuSettings *sh = wubusettings_shared();
       int nr = sh ? wubusettings_recents_count(sh) : 0;
@@ -437,6 +455,16 @@ int main(int argc, char **argv){
                                 break;
                         case 8: if (views[active]->on_key) views[active]->on_key(views[active], WUOS_KEY_EXPORT_EPUB, 1);
                                 toast_push(g_toasts, "EPUB export requested", 120); break;
+                        case 40: if (views[active]->on_key) views[active]->on_key(views[active], WUOS_KEY_EXPORT_PDF, 1);
+                                 toast_push(g_toasts, "PDF export requested", 120); break;
+                        case 41: if (views[active]->on_key) views[active]->on_key(views[active], WUOS_KEY_EXPORT_HTML, 1);
+                                 toast_push(g_toasts, "HTML export requested", 120); break;
+                        case 42: if (views[active]->on_key) views[active]->on_key(views[active], WUOS_KEY_EXPORT_MARKDOWN, 1);
+                                 toast_push(g_toasts, "Markdown export requested", 120); break;
+                        case 43: if (views[active]->on_key) views[active]->on_key(views[active], WUOS_KEY_EXPORT_LATEX, 1);
+                                 toast_push(g_toasts, "LaTeX export requested", 120); break;
+                        case 44: if (views[active]->on_key) views[active]->on_key(views[active], WUOS_KEY_EXPORT_RTF, 1);
+                                 toast_push(g_toasts, "RTF export requested", 120); break;
                         case 9: if (views[active]->on_key) views[active]->on_key(views[active], WUOS_KEY_A11Y_CHECK, 1);
                                 toast_push(g_toasts, "Accessibility check run", 120); break;
                         case 10: { WubuSettings *sh=wubusettings_shared();
@@ -472,9 +500,9 @@ int main(int argc, char **argv){
                                    if (macro_load(buf)==0) toast_push(g_toasts, "Macro loaded", 90);
                                    else toast_push(g_toasts, "Macro load failed", 120); } break;
                         /* DOC-66 / EXP-89 / UXA-47: open the modal dialog. */
-                        case 40: g_dlg_action = 1; dialog_open(g_dlg, "Insert Hyperlink", "URL:", "https://"); toast_push(g_toasts, "Hyperlink: type URL, Enter", 120); break;
-                        case 41: g_dlg_action = 2; dialog_open(g_dlg, "Insert QR Code", "Text:", ""); toast_push(g_toasts, "QR: type text, Enter", 120); break;
-                        case 42: g_dlg_action = 3; dialog_open(g_dlg, "Insert Image", "Alt text:", ""); toast_push(g_toasts, "Image: type alt text, Enter", 120); break;
+                        case 50: g_dlg_action = 1; dialog_open(g_dlg, "Insert Hyperlink", "URL:", "https://"); toast_push(g_toasts, "Hyperlink: type URL, Enter", 120); break;
+                        case 51: g_dlg_action = 2; dialog_open(g_dlg, "Insert QR Code", "Text:", ""); toast_push(g_toasts, "QR: type text, Enter", 120); break;
+                        case 52: g_dlg_action = 3; dialog_open(g_dlg, "Insert Image", "Alt text:", ""); toast_push(g_toasts, "Image: type alt text, Enter", 120); break;
                         /* UI-39: open a recent document. */
                         default:
                             if (cmd >= 200){
@@ -684,7 +712,7 @@ int main(int argc, char **argv){
             int tw = (int)strlen(views[i]->name)*14 + 24;
             int on = (i==active);
             int hov = (i==tab_hover);
-            WuosRGB seg = on ? tto : ttk;
+            WuosRGB seg = on ? tto : (hov ? tto : ttk);
             SDL_SetRenderDrawColor(ren, seg.r, seg.g, seg.b, 255);
             SDL_RenderFillRect(ren,&(SDL_Rect){x,0,tw,TAB_H});
             /* 1px right divider */
@@ -771,7 +799,8 @@ int main(int argc, char **argv){
             const char *items[3] = { "Open File…", "New Document", "Toggle Theme" };
             int mw = WUOS_SPACE_4 * 40, mh = WUOS_SPACE_4 * 20;
             int mx = g_ctx_x, my = g_ctx_y;
-            if (mx+mw > WIN_W) mx = WIN_W-mw; if (my+mh > WIN_H-STATUS_H) my = WIN_H-STATUS_H-mh;
+            if (mx+mw > WIN_W) mx = WIN_W-mw;
+            if (my+mh > WIN_H-STATUS_H) my = WIN_H-STATUS_H-mh;
             WuosRGB ctx_bg = dark ? WUOS_DARK(OVERLAY_SURFACE) : WUOS_LIGHT(OVERLAY_SURFACE);
             WuosRGB ctx_bd = dark ? WUOS_DARK(OVERLAY_BD)   : WUOS_LIGHT(OVERLAY_BD);
             WuosRGB ctx_hl = dark ? WUOS_DARK(OVERLAY_HIGHLIGHT) : WUOS_LIGHT(OVERLAY_HIGHLIGHT);
