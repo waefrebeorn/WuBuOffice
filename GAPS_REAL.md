@@ -10,10 +10,16 @@ run with `--all-exes` mode against the full repo (not just `wubuos`).
 | Total modules | **73** | **20** |
 | CTest cases   | **130** | **22** |
 | CTest passing | **111** (`-LE ocr`) | **22** |
-| REAL  (linked + called in view + main) | **42 (58%)** | **2 (10%)** |
+| REAL  (linked + called in view + main) | **45 (62%)** | **2 (10%)** |
 | BIN   (linked, no view/main callers)   | **0 (0%)**   | **18 (90%)** |
-| TEST  (only in tests)                  | **3 (4%)**   | **0 (0%)**   |
-| GAP   (not in any binary)              | **28 (38%)** | **0 (0%)**   |
+| TEST  (only in tests)                  | **3 (4%)**   | **0 (0%)** |
+| GAP   (not in any binary)              | **25 (34%)** | **0 (0%)** |
+
+**Latest change** (commit after `932ad1a`): wired `wuburtf`, `wuburedact`,
+`wubucol` into `wubuos` and added three exercising callers
+(`doccmd_export_rtf_runs`, `doccmd_redact_doc`, `doccmd_col_demo`) plus
+test assertions in `test_doccmd.c`. This promoted three GAP modules to REAL,
+taking REAL count from 42 → 45 and GAP from 28 → 25.
 
 ## Oracle parity (verified)
 

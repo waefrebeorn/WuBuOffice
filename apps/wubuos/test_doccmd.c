@@ -156,9 +156,55 @@ int main(void){
         }
     }
 
+    /* rtf_runs (src/wuburtf direct write, no layout pass). */
+    {
+        RtfRun runs[] = {
+            { "Hello ", 1, 0, 0 },
+            { "bold-italic ", 1, 1, 0 },
+            { "mono", 0, 0, 1 },
+        };
+        char *msg = doccmd_export_rtf_runs(runs, 3);
+        if (!msg){ fprintf(stderr, "[export rtf_runs] null status\n"); fails++; }
+        else {
+            FILE *f = fopen("/tmp/wubuos_export_runs.rtf", "rb");
+            if (!f){ fprintf(stderr, "[export rtf_runs] file not written: %s\n", msg); fails++; }
+            else {
+                fclose(f);
+                printf("  export rtf_runs: %s\n", msg);
+            }
+            free(msg);
+        }
+    }
+
+    /* redact (src/wuburedact). Walks d's RUNs, marks [0,5). */
+    {
+        size_t ranges[] = { 0, 5 };
+        char *msg = doccmd_redact_doc(d, ranges, 1);
+        if (!msg){ fprintf(stderr, "[redact] null status\n"); fails++; }
+        else {
+            FILE *f = fopen("/tmp/wubuos_redacted.txt", "rb");
+            if (!f){ fprintf(stderr, "[redact] file not written: %s\n", msg); fails++; }
+            else {
+                fclose(f);
+                printf("  redact: %s\n", msg);
+            }
+            free(msg);
+        }
+    }
+
+    /* col (src/wubucol). */
+    {
+        char *msg = doccmd_col_demo();
+        if (!msg){ fprintf(stderr, "[col] null status\n"); fails++; }
+        else {
+            printf("  col: %s\n", msg);
+            free(msg);
+        }
+    }
+
     wubumodel_doc_destroy(d);
 
     if (fails){ printf("FAILED (%d)\n", fails); return 1; }
-    printf("PASS: doccmd (15 structural inserts + script field + epub/save/a11y + 5 layout exporters)\n");
+    printf("PASS: doccmd (15 structural inserts + script field + epub/save/a11y + 6 layout exporters + rtf_runs/redact/col)\n");
     return 0;
 }

@@ -11,6 +11,9 @@
 #include "epub.h"      /* wubuepub */
 #include "../apps/wubupdf/pdf.h"  /* wubupdf_write (dm_doc-based PDF/1.7 writer) */
 #include "exp.h"       /* wubuexp_pdf/html/markdown/latex/rtf (INT-3.5) */
+#include "rtf.h"       /* rtf_write (run-based RTF writer from src/wuburtf) */
+#include "redact.h"    /* redact_create/mark/apply (redaction engine) */
+#include "col.h"       /* col_create/add/reply/resolve (comment-thread store) */
 #include "script.h"    /* wubuscript: script_eval */
 #include "ublayout.h"  /* wubulayout_create (central pipeline -> export) */
 #include "wuos_font.h" /* wuos_font_text_width / _height for measure callback */
@@ -465,4 +468,89 @@ char *doccmd_export_rtf(wubumodel_doc *doc){
     wubulayout_destroy(L);
     if (rc == 0){ char b[128]; snprintf(b, sizeof b, "RTF written: /tmp/wubuos_export.rtf"); return strdup(b); }
     return strdup("RTF export failed");
+}
+
+/* doccmd_export_rtf_runs -- direct RTF write via src/wuburtf (run-based, no
+ * layout pass). Used when caller already has styled runs; skips wubulayout.
+ * Writes /tmp/wubuos_export_runs.rtf. */
+char *doccmd_export_rtf_runs(const RtfRun *runs, int n){
+    if (!runs || n <= 0) return strdup("no runs to export");
+    char *out = rtf_write(runs, n);
+    if (!out) return strdup("RTF write failed");
+    FILE *f = fopen("/tmp/wubuos_export_runs.rtf", "wb");
+    if (!f){ free(out); return strdup("open output failed"); }
+    fputs(out, f); fclose(f); free(out);
+    return strdup("RTF runs written: /tmp/wubuos_export_runs.rtf");
+}
+
+/* doccmd_redact_doc -- redact ranges of the model's plain-text dump. Used by
+ * Privacy / Export-Marked-Document. Walks the doc tree and concatenates run
+ * text into a buffer, then applies ranges. Returns strdup'd status. */
+char *doccmd_redact_doc(wubumodel_doc *doc, const size_t *ranges, int n_ranges){
+    if (!doc) return strdup("no model doc to redact");
+    wubumodel_node *root = wubumodel_doc_root(doc);
+    if (!root) return strdup("doc has no root");
+    size_t off = 0, cap = 256;
+    char *plain = (char*)malloc(cap);
+    if (!plain) return strdup("oom");
+    plain[0] = 0;
+    /* DFS walk, collect WUBUMODEL_RUN text into `plain`. */
+    wubumodel_node *stack[256]; int sp = 0;
+    stack[sp++] = root;
+    while (sp > 0){
+        wubumodel_node *n = stack[--sp];
+        for (wubumodel_node *c = wubumodel_node_first_child(n); c;
+             c = wubumodel_node_next_sibling(c)){
+            int k = wubumodel_node_kind(c);
+            const char *txt = wubumodel_node_text(c);
+            if (k == WUBUMODEL_RUN && txt){
+                size_t tlen = strlen(txt);
+                size_t need = off + tlen + 1;
+                if (need > cap){ while (cap < need) cap *= 2;
+                    char *nb = realloc(plain, cap);
+                    if (!nb){ free(plain); return strdup("oom"); }
+                    plain = nb;
+                }
+                memcpy(plain + off, txt, tlen); off += tlen;
+            }
+            if (sp < 255) stack[sp++] = c;
+        }
+    }
+    plain[off] = 0;
+    if (!ranges || n_ranges <= 0){
+        free(plain);
+        return strdup("no redact ranges given");
+    }
+    Redact *rd = redact_create();
+    if (!rd){ free(plain); return strdup("redact create failed"); }
+    for (int i = 0; i < n_ranges; i++){
+        if (!redact_mark(rd, ranges[i*2], ranges[i*2 + 1])){
+            redact_destroy(rd); free(plain);
+            return strdup("redact_mark failed (out of bounds?)");
+        }
+    }
+    char *out = redact_apply(rd, plain);
+    redact_destroy(rd); free(plain);
+    if (!out) return strdup("redact_apply failed");
+    FILE *f = fopen("/tmp/wubuos_redacted.txt", "wb");
+    if (!f){ free(out); return strdup("open output failed"); }
+    fputs(out, f); fclose(f); free(out);
+    return strdup("Redacted text written: /tmp/wubuos_redacted.txt");
+}
+
+/* doccmd_col_demo -- append/resolve a thread on the comment store. Used to
+ * exercise the wubucol engine from the document shell. Returns status. */
+char *doccmd_col_demo(void){
+    Col *c = col_create();
+    if (!c) return strdup("col_create failed");
+    int tid = col_add(c, "doc:root", "user", "first comment on root");
+    if (tid < 0){ col_destroy(c); return strdup("col_add failed"); }
+    col_reply(c, tid, "reviewer", "agreed");
+    col_resolve(c, tid, 1);
+    int n = col_thread_count(c);
+    char b[128];
+    snprintf(b, sizeof b, "col ok: threads=%d resolved=%d",
+             n, col_resolved(c, tid));
+    col_destroy(c);
+    return strdup(b);
 }

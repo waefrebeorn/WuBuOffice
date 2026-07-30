@@ -15,6 +15,7 @@
 #include <stddef.h>
 #include "wubumodel/model.h"   /* wubumodel_doc, node kinds */
 #include "a11y.h"              /* a11y_report, a11y_check_doc */
+#include "rtf.h"               /* RtfRun, rtf_write (src/wuburtf) */
 
 typedef void (*svg_text_fn)(const char *s, int x, int y, int size,
                             unsigned char r, unsigned char g, unsigned char b,
@@ -69,6 +70,18 @@ char *doccmd_export_html     (wubumodel_doc *doc);
 char *doccmd_export_markdown (wubumodel_doc *doc);
 char *doccmd_export_latex    (wubumodel_doc *doc);
 char *doccmd_export_rtf      (wubumodel_doc *doc);
+
+/* doccmd_export_rtf_runs -- direct RTF write via src/wuburtf (run-based,
+ * no layout pass). Used by callers that already have styled runs. */
+char *doccmd_export_rtf_runs(const RtfRun *runs, int n);
+
+/* doccmd_redact_doc -- redact ranges of the model's plain-text dump
+ * (src/wuburedact). `ranges` is a flat array of n_ranges*2 size_t byte
+ * offsets; result written to /tmp/wubuos_redacted.txt. */
+char *doccmd_redact_doc(wubumodel_doc *doc, const size_t *ranges, int n_ranges);
+
+/* doccmd_col_demo -- exercise src/wubucol (comment-thread store). */
+char *doccmd_col_demo(void);
 
 /* Save the doc back to DOCX/ODT (round-trip). `path` is the current file (may
  * be NULL) used to pick the output name/format. Returns a malloc'd status
