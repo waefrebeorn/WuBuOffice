@@ -1,5 +1,7 @@
 /* test_sync.c -- headless local-first CRDT sync + shared lock test. */
 #include "sync.h"
+#include <sys/stat.h>
+#include <stdlib.h>
 #include "crdt.h"
 #include <stdio.h>
 #include <string.h>

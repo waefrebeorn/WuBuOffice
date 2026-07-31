@@ -1,5 +1,6 @@
 /* test_history.c -- headless version-history test. */
 #include "history.h"
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 

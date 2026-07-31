@@ -1,5 +1,6 @@
 /* test_vars.c */
 #include "vars.h"
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 static int fails=0;

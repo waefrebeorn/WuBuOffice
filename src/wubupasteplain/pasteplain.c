@@ -10,7 +10,6 @@ char *pasteplain_strip(const char *in){
     if (!out) return NULL;
     const char *p = in;
     int intag = 0;       /* inside <...> */
-    int inrtf = 0;       /* after a backslash control word */
     while (*p){
         if (intag){
             if (*p=='>') intag=0;
@@ -22,7 +21,6 @@ char *pasteplain_strip(const char *in){
             p++;
             while (*p && ((*p>='a'&&*p<='z')||(*p>='A'&&*p<='Z'))) p++;
             if (*p==' ') p++;       /* consume one space delimiter */
-            inrtf=0;
             continue;
         }
         while (len+2>cap){ cap*=2; char *no=realloc(out,cap); if(!no){free(out);return NULL;} out=no; }

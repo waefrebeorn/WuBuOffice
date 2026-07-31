@@ -89,7 +89,7 @@ int wubusettings_load(WubuSettings *s, const char *path){
     JVal *root = j_parse(buf, NULL);
     free(buf);
     if (root && j_type(root)==J_OBJ){
-        JVal *v;
+        const JVal *v;
         if ((v = j_obj_get(root,"zoom")) && j_type(v)==J_NUM) s->zoom = j_as_num(v);
         if ((v = j_obj_get(root,"dark")) && j_type(v)==J_NUM) s->dark = j_as_num(v)!=0;
         if ((v = j_obj_get(root,"autosave_ms")) && j_type(v)==J_NUM) s->autosave_ms = (int)j_as_num(v);
@@ -164,7 +164,8 @@ int wubusettings_save(const WubuSettings *s, const char *path){
 double wubusettings_zoom(const WubuSettings *s){ return s ? s->zoom : 1.0; }
 void wubusettings_set_zoom(WubuSettings *s, double z){
     if (!s) return;
-    if (z < 0.5) z = 0.5; if (z > 3.0) z = 3.0;
+    if (z < 0.5) z = 0.5;
+    if (z > 3.0) z = 3.0;
     s->zoom = z;
 }
 int  wubusettings_dark(const WubuSettings *s){ return s ? s->dark : 1; }
@@ -195,7 +196,8 @@ void wubusettings_set_reduced_motion(WubuSettings *s, int on){ if (s) s->reduced
 double wubusettings_ui_scale(const WubuSettings *s){ return s ? s->ui_scale : 1.0; }
 void   wubusettings_set_ui_scale(WubuSettings *s, double us){
     if (!s) return;
-    if (us < 0.5) us = 0.5; if (us > 3.0) us = 3.0;
+    if (us < 0.5) us = 0.5;
+    if (us > 3.0) us = 3.0;
     s->ui_scale = us;
 }
 

@@ -69,7 +69,6 @@ ConvConfig3 CONV_BIGMAP = { 32,32, 32,3,1, 64,3,1, 128,3,1 };  /* stride-1, 1 po
 
 /* deterministic xorshift RNG for He-init */
 static uint32_t s_rng = 0x1234ABCDu;
-static void   c3_seed(uint32_t s){ s_rng = s ? s : 0x9E3779B9u; }
 static float  c3_uni(float lo,float hi){
     s_rng ^= s_rng<<13; s_rng ^= s_rng>>17; s_rng ^= s_rng<<5;
     float u=(float)s_rng/(float)0xFFFFFFFFu; return lo+u*(hi-lo);
@@ -501,7 +500,9 @@ void convnet3_forward(const ConvNet3 *cn, const float *img, float *out){
 /* Global average pool: ft = [H][W][C] row-major (C inner), out = [C] (1 avg per channel). */
 void convnet3_gap(const ConvNet3 *cn, const float *features, float *gap_out, int *H, int *W, int *C){
     int h=cn->c3H, w=cn->c3W, c=cn->K3;
-    if(H)*H=h; if(W)*W=w; if(C)*C=c;
+    if(H)*H=h;
+    if(W)*W=w;
+    if(C)*C=c;
     int n=h*w;
     for(int k=0;k<c;k++){ float s=0; for(int p=0;p<n;p++) s+=features[(size_t)p*c+k]; gap_out[k]=s/(float)n; }
 }
@@ -658,7 +659,6 @@ void convnet3_backward(ConvNet3 *cn, const float *img, const float *feat, const 
     /* TEMP DEBUG: dump intermediate gradient buffers for oracle diff */
     if(getenv("DUMP_DC")){
         FILE*f=fopen("/tmp/dc_c.txt","w");
-        int n;
         #define WR(name,buf,n) do{ fprintf(f,"%s",name); for(int _i=0;_i<(n);_i++) fprintf(f," %.6f",(buf)[_i]); fprintf(f,"\n"); }while(0)
         WR("dc3",cn->dc3,cn->c3H*cn->c3W*cn->K3);
         WR("dp2",cn->dp2,cn->c2H*cn->c2W*cn->K2);

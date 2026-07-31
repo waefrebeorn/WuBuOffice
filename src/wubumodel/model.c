@@ -173,17 +173,26 @@ int wubumodel_node_set_image(wubumodel_node *n, const uint8_t *rgba,
 }
 const uint8_t *wubumodel_node_image(const wubumodel_node *n, int *w, int *h){
     if (!n || !n->img) return NULL;
-    if (w) *w = n->img_w; if (h) *h = n->img_h;
+    if (w) *w = n->img_w;
+    if (h) *h = n->img_h;
     return n->img;
 }
 
 /* ---- review/field/break metadata (DOC-56..65) ---- */
 int  wubumodel_node_set_author(wubumodel_node *n, const char *a){
-    if (!n) return -1; char *c = a?strdup(a):NULL; free(n->author); n->author=c; return 0;
+    if (!n) return -1;
+    char *c = a?strdup(a):NULL;
+    free(n->author);
+    n->author=c;
+    return 0;
 }
 const char *wubumodel_node_author(const wubumodel_node *n){ return n?n->author:NULL; }
 int  wubumodel_node_set_field(wubumodel_node *n, const char *f){
-    if (!n) return -1; char *c = f?strdup(f):NULL; free(n->field); n->field=c; return 0;
+    if (!n) return -1;
+    char *c = f?strdup(f):NULL;
+    free(n->field);
+    n->field=c;
+    return 0;
 }
 const char *wubumodel_node_field(const wubumodel_node *n){ return n?n->field:NULL; }
 int  wubumodel_node_set_tc(wubumodel_node *n, int t){ if(!n)return -1; n->tc=t; return 0; }

@@ -1,5 +1,6 @@
 /* test_crdt.c -- headless convergence + move/delete test for the CRDT. */
 #include "crdt.h"
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 

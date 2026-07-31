@@ -26,7 +26,8 @@ static void path_for(Sync *s, const char *key, const char *suffix, char *out){
             safe[k++]=c; else safe[k++]='_';
     }
     safe[k]=0;
-    snprintf(out, PATH_MAX, "%s/%s%s", s->dir, safe, suffix? suffix : "");
+    /* suffix is short ("/v.n" etc.), but cap to be safe. */
+    snprintf(out, PATH_MAX, "%.4000s/%s%s", s->dir ? s->dir : "", safe, suffix? suffix : "");
 }
 
 Sync *sync_open(const char *dir){

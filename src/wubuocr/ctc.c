@@ -151,7 +151,8 @@ int ctc_greedy_decode(int T, int C, const float *logits, int *out){
  * paths are not spuriously favoured. Outperforms greedy on ambiguous/long words. */
 typedef struct { int *seq; int len; float pb; float pnb; int last; } Prefix;
 int ctc_beam_decode(int T, int C, const float *logits, int beam, int *out){
-    if(beam<1) beam=1; if(beam>64) beam=64;
+    if(beam<1) beam=1;
+    if(beam>64) beam=64;
     Prefix A[128]; int nA=0;
     A[nA].seq=malloc(64*sizeof(int)); A[nA].len=0; A[nA].pb=1.0f; A[nA].pnb=0.0f; A[nA].last=0; nA=1;
     for(int t=0;t<T;t++){

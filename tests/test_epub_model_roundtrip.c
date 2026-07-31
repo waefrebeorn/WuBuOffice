@@ -11,6 +11,7 @@
  *   <table><tr><td> -> TABLE -> CELL(row) -> CELL(cell) -> RUN
  *   <a href>text</a> -> LINK(target) + child RUN(text) */
 #include "epub.h"
+#include <unistd.h>
 #include "model.h"
 #include <stdio.h>
 #include <stdlib.h>

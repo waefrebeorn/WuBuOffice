@@ -118,7 +118,8 @@ int main(void){
         int ok=1; for(int t=0;t<3;t++){ int d=ext[t+1]-ext[t]; if(d<0||d>2) ok=0; }
         if(!ok) continue;
         int seq[4],m=0; for(int t=0;t<4;t++){ int s=ext[t];
-            if(s==0||s==2||s==4) continue; int ch=(s==1)?1:2;
+            if(s==0||s==2||s==4) continue;
+            int ch=(s==1)?1:2;
             if(m&&seq[m-1]==ch) continue; seq[m++]=ch; }
         if(m==2 && seq[0]==1 && seq[1]==2) cnt++;
     }

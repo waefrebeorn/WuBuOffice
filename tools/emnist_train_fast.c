@@ -133,7 +133,8 @@ int main(int argc, char **argv) {
     const char *arch = getenv("CN_ARCH") ? getenv("CN_ARCH") : "med";
     int nth = getenv("CN_THREADS") ? atoi(getenv("CN_THREADS")) : 4;
     int nprocs = (int)sysconf(_SC_NPROCESSORS_ONLN); if(nprocs<1) nprocs=1;
-    if(nth>nprocs) nth=nprocs; if(nth<1) nth=1;
+    if(nth>nprocs) nth=nprocs;
+    if(nth<1) nth=1;
     int warmup = getenv("CN_WARMUP") ? atoi(getenv("CN_WARMUP")) : 3;
     int do_aug = getenv("CN_AUG") ? atoi(getenv("CN_AUG")) : 1;
     int do_norm = getenv("CN_DO_NORM") ? atoi(getenv("CN_DO_NORM")) : 1;

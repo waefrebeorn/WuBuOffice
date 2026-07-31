@@ -12,7 +12,7 @@ typedef struct Form Form;   /* wubuform */
 
 /* Build the PDF bytes for `form` (malloc'd, caller frees). Page is US-Letter
  * (612x792). Fields are stacked top-down starting at y=700, 24pt tall.
- * Returns 1 ok (sets *out/*out_len), 0 error. */
+ * Returns 1 ok (sets *out and *out_len), 0 error. */
 int pdfform_build(const Form *form, uint8_t **out, size_t *out_len);
 
 /* Convenience: write to `path`. Returns 0 ok, -1 error. */

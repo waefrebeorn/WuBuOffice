@@ -1,5 +1,6 @@
 /* test_a11ytree.c -- needs wubumodel to build a doc. */
 #include "a11ytree.h"
+#include <stdlib.h>
 #include "model.h"
 #include <stdio.h>
 #include <string.h>

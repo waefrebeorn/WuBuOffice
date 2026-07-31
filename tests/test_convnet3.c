@@ -27,6 +27,7 @@ static uint32_t rng = 0x1234ABCDu;
 static uint32_t xr(void){ rng^=rng<<13; rng^=rng>>17; rng^=rng<<5; return rng; }
 static float fr(void){ return (float)xr()/(float)0xFFFFFFFFu; }
 
+static int easy_label(const float *im) __attribute__((unused));
 static int easy_label(const float *im){
     float s=0; for(int i=0;i<784;i++) s+=im[i];
     return s>3.5f ? 1 : 0;

@@ -623,7 +623,7 @@ WuView *wuos_doc_create(const char *path){
             long id = doc_open(s, path);
             if (id >= 0){
                 const char *dt = doc_text(s, id);
-                if (dt){ free(e->text); e->text = dt; }
+                if (dt){ free(e->text); e->text = strdup(dt); }
                 doc_session_free(s);
             }
         }

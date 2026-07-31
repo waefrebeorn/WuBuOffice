@@ -1,5 +1,6 @@
 /* test_epub.c -- wubuepub acceptance test (valid EPUB3 container). */
 #include "epub.h"
+#include <unistd.h>
 #include "model.h"
 #include <stdio.h>
 #include <stdlib.h>

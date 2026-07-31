@@ -90,8 +90,11 @@ static int on_event(wubuxml_event evt, const wubuxml_info *info, void *user) {
                     const char *colon = strchr(ref, ':');
                     if (colon) {
                         size_t k = 0;
-                        for (const char *p = ref; p < colon && k < 31; p++) a1[k++] = *p; a1[k] = '\0';
-                        k = 0; for (const char *p = colon + 1; *p && k < 31; p++) b2[k++] = *p; b2[k] = '\0';
+                        for (const char *p = ref; p < colon && k < 31; p++) a1[k++] = *p;
+                        a1[k] = '\0';
+                        k = 0;
+                        for (const char *p = colon + 1; *p && k < 31; p++) b2[k++] = *p;
+                        b2[k] = '\0';
                         int c0 = 0, r0 = 0, c1 = 0, r1 = 0;
                         const char *p = a1; while (*p && isalpha((unsigned char)*p)) { c0 = c0 * 26 + (toupper((unsigned char)*p) - 'A' + 1); p++; }
                         r0 = atoi(p);

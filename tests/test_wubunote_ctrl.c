@@ -14,6 +14,7 @@ static int fails = 0;
 #define CK(c, msg) do { if (!(c)) { printf("FAIL: %s\n", (msg)); fails++; } } while (0)
 
 static TuiKey ch(char c) { TuiKey k; k.type = TUI_KEY_CHAR; k.ch = c; return k; }
+static TuiKey ev(const char *s) __attribute__((unused));
 static TuiKey ev(const char *s) {
     TuiKey k; k.type = TUI_KEY_NONE; k.ch = 0;
     k.mouse_action = TUI_MOUSE_PRESS; k.mouse_button = TUI_MBTN_NONE;

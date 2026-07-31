@@ -193,7 +193,8 @@ int wubuexp_pdf(const wubulayout_doc *L, const char *out){
                 if(need>=cap){cap=need*2;char*nb=realloc(content,cap);if(!nb){free(content);free(t);free(page_ids);fclose(f);return -1;}content=nb;}
                 len += (size_t)snprintf(content+len, cap-len, "BT /F1 12 Tf 72 %d Td (%s) Tj ET\n", y, esc);
                 y -= 16;
-                if(!nl) break; line=nl+1;
+                if (!nl) break;
+                line = nl+1;
             }
             free(t);
         }

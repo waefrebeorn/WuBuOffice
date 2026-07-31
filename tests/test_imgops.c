@@ -11,8 +11,11 @@ static OcrImage *make_grad(int W,int H){ /* horizontal gradient 0..255 */
         ocr_image_set(im,(size_t)x,(size_t)y,(uint8_t)(255*x/(W>1?W-1:1)));
     return im;
 }
-static OcrImage *make_uni(int W,int H,uint8_t v){ OcrImage *im=ocr_image_create((size_t)W,(size_t)H);
-    for(int y=0;y<H;y++) for(int x=0;x<W;x++) ocr_image_set(im,(size_t)x,(size_t)y,v); return im; }
+static OcrImage *make_uni(int W,int H,uint8_t v){
+    OcrImage *im=ocr_image_create((size_t)W,(size_t)H);
+    for(int y=0;y<H;y++) for(int x=0;x<W;x++) ocr_image_set(im,(size_t)x,(size_t)y,v);
+    return im;
+}
 
 int main(void){
     int fail=0;

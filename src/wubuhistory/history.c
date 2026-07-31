@@ -1,6 +1,7 @@
 /* history.c -- opaque version-history store. See history.h. */
 #include "history.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 

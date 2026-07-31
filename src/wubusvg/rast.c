@@ -1,15 +1,12 @@
 /* rast.c -- minimal SVG -> RGBA rasterizer (see rast.h). */
 #include "rast.h"
 #include "wubusvg.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
 
 /* ---- small helpers ---- */
-static double atof_def(const char *s, double def){
-    if (!s || !*s) return def;
-    return atof(s);
-}
 static int atoi_def(const char *s, int def){
     if (!s || !*s) return def;
     return (int)atof(s);
@@ -153,7 +150,8 @@ int svg_rasterize_cb(const char *svg, size_t len,
     if (!root){ svg_free(doc); return 0; }
     int W = atoi_def(svg_attr(root,"width"), 640);
     int H = atoi_def(svg_attr(root,"height"), 400);
-    if (W<=0) W=640; if (H<=0) H=400;
+    if (W<=0) W=640;
+    if (H<=0) H=400;
     unsigned char *fb = calloc((size_t)W*H, 4);
     if (!fb){ svg_free(doc); return 0; }
     for (int i=0;i<W*H;i++){ fb[i*4]=255; fb[i*4+1]=255; fb[i*4+2]=255; fb[i*4+3]=255; }

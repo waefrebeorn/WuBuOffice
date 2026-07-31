@@ -47,7 +47,7 @@ int xps_build(const char *text, int W, int H, uint8_t **out, size_t *out_len){
     if (!b) return 0;
     #define NEED(k) do{ while(off+(k)>cap){ cap*=2; uint8_t*nb=realloc(b,cap); if(!nb){free(b);return 0;} b=nb; } }while(0)
 
-    size_t cd_off[2]; uint32_t cd_crc[2]; uint32_t cd_size[2]; size_t cd_lho[2];
+    uint32_t cd_crc[2]; uint32_t cd_size[2]; size_t cd_lho[2];
     for (int i=0;i<n;i++){
         uint32_t crc = crc32_buf(data[i], len[i]);
         cd_crc[i]=crc; cd_size[i]=(uint32_t)len[i]; cd_lho[i]=off;

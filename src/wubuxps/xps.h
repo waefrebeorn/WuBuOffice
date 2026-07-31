@@ -10,7 +10,7 @@
 
 /* Build an XPS document (malloc'd ZIP bytes, caller frees) for one page of
  * `W`x`H` (in 1/96 inch units) containing `text`. Returns 1 on success and
- * sets *out/*out_len; 0 on error. */
+ * sets *out and *out_len; 0 on error. */
 int xps_build(const char *text, int W, int H,
               uint8_t **out, size_t *out_len);
 

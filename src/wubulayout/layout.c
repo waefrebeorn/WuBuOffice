@@ -143,6 +143,7 @@ static int lay_paragraph(wubulayout_doc *L, void *para, int *pen_y){
                 marker = "\xe2\x80\xa2 ";   /* • */
             else if (!strcmp(lv, "1") || !strcmp(lv, "ol")){
                 list_seq++;   /* consecutive numbered paragraphs */
+                if (list_seq > 99999999) list_seq = 99999999;  /* cap snprintf */
                 snprintf(markerbuf, sizeof markerbuf, "%d. ", list_seq);
                 marker = markerbuf;
             }
@@ -155,10 +156,9 @@ static int lay_paragraph(wubulayout_doc *L, void *para, int *pen_y){
     /* gather segments {text, len, run} from the paragraph's RUN children */
     typedef struct { const char *t; size_t off; size_t len; void *run; } Seg;
     Seg segs[1024]; int nseg=0;
-    int marker_seg = -1;
     if (marker){
         if (nseg < 1024){ segs[nseg].t=marker; segs[nseg].off=0; segs[nseg].len=strlen(marker);
-                          segs[nseg].run=NULL; marker_seg=nseg; nseg++; }
+                          segs[nseg].run=NULL; nseg++; }
     }
     for (wubumodel_node *r = wubumodel_node_first_child((wubumodel_node*)para);
          r; r = wubumodel_node_next_sibling(r)){
@@ -209,15 +209,18 @@ static int lay_paragraph(wubulayout_doc *L, void *para, int *pen_y){
         int line_y = *pen_y;
         int max_h = 0;
         /* determine how many words fit on this line */
-        int last_fit = w; int last_x = x0;
+        int last_fit = w;
         while (w < nw){
             Word *wd = &words[w];
             style_of(L, segs[wd->seg].run);
             int ww = measure_seg(L, wd->base+wd->off, wd->len);
-            int h = g_font_size + 4; if (h>max_h) max_h=h;
+            int h = g_font_size + 4;
+            if (h>max_h) max_h=h;
             int nx = cur_x + ww;
             if (w > line_start && nx - x0 > content_w) break; /* overflow -> wrap */
-            cur_x = nx; last_fit = w; last_x = cur_x; w++;
+            cur_x = nx;
+            last_fit = w;
+            w++;
         }
         if (last_fit == line_start && w == line_start){
             /* single word wider than the page: force place it, advance */
@@ -560,11 +563,14 @@ const wubulayout_page_info *wubulayout_page(const wubulayout_doc *L, int page){
     return &info;
 }
 int wubulayout_run_count(const wubulayout_doc *L, int page){
-    if (page<0||page>=L->npages) return 0; return L->pages[page]->nrun;
+    if (page<0||page>=L->npages) return 0;
+    return L->pages[page]->nrun;
 }
 const wubulayout_run *wubulayout_run_at(const wubulayout_doc *L, int page, int i){
     if (page<0||page>=L->npages) return NULL;
-    LPage *p=L->pages[page]; if (i<0||i>=p->nrun) return NULL; return &p->run[i];
+    LPage *p=L->pages[page];
+    if (i<0||i>=p->nrun) return NULL;
+    return &p->run[i];
 }
 int wubulayout_line_count(const wubulayout_doc *L, int page){
     if (page<0||page>=L->npages) return 0;
@@ -577,20 +583,27 @@ const wubulayout_line *wubulayout_line_at(const wubulayout_doc *L, int page, int
     static wubulayout_line ln;
     LPage *p=L->pages[page];
     int x0=1<<30, x1=-1, y0=1<<30, y1=-1, found=0;
-    for (int i=0;i<p->nrun;i++){ if (p->run[i].line!=li) continue;
-        found=1; if (p->run[i].x<x0) x0=p->run[i].x; if (p->run[i].x+p->run[i].w>x1) x1=p->run[i].x+p->run[i].w;
-        if (p->run[i].y-y0<0) y0=p->run[i].y; if (p->run[i].y>y1) y1=p->run[i].y; }
+    for (int i=0;i<p->nrun;i++){
+        if (p->run[i].line!=li) continue;
+        found=1;
+        if (p->run[i].x<x0) x0=p->run[i].x;
+        if (p->run[i].x+p->run[i].w>x1) x1=p->run[i].x+p->run[i].w;
+        if (p->run[i].y-y0<0) y0=p->run[i].y;
+        if (p->run[i].y>y1) y1=p->run[i].y;
+    }
     if (!found) return NULL;
     ln.x=x0; ln.y=y0; ln.w=x1-x0; ln.h=(y1-y0)+4; ln.page=page; ln.line=li;
     return &ln;
 }
 
 int wubulayout_box_count(const wubulayout_doc *L, int page){
-    if (page<0||page>=L->npages) return 0; return L->pages[page]->nobj;
+    if (page<0||page>=L->npages) return 0;
+    return L->pages[page]->nobj;
 }
 const wubulayout_box *wubulayout_box_at(const wubulayout_doc *L, int page, int i){
     if (page<0||page>=L->npages) return NULL;
-    LPage *p=L->pages[page]; if (i<0||i>=p->nobj) return NULL;
+    LPage *p=L->pages[page];
+    if (i<0||i>=p->nobj) return NULL;
     static wubulayout_box b;
     b.x=p->obj[i].x; b.y=p->obj[i].y; b.w=p->obj[i].w; b.h=p->obj[i].h;
     b.user=p->obj[i].user;
@@ -604,7 +617,8 @@ int wubulayout_hit_test(const wubulayout_doc *L, int page, int x, int y, int *ou
     for (int i=0;i<p->nrun;i++){
         wubulayout_run *r=&p->run[i];
         if (x>=r->x && x<=r->x+r->w && y>=r->y-r->h && y<=r->y+4){
-            if (out_line) *out_line=r->line; return i;
+            if (out_line) *out_line=r->line;
+            return i;
         }
     }
     if (out_line) *out_line=-1;
@@ -615,7 +629,8 @@ char *wubulayout_page_text(const wubulayout_doc *L, int page){
     if (page<0||page>=L->npages) return NULL;
     LPage *p=L->pages[page];
     size_t cap=1024, len=0; char *buf=malloc(cap);
-    if (!buf) return NULL; buf[0]=0;
+    if (!buf) return NULL;
+    buf[0]=0;
     int cur=-1;
     for (int i=0;i<p->nrun;i++){
         wubulayout_run *r=&p->run[i];

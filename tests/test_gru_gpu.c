@@ -54,7 +54,8 @@ int main(void){
     uint32_t sr=0x55u;
     for(int c=0;c<ncheck;c++){
         int idx = (int)( ((sr^=sr<<13,sr^=sr>>17,sr^=sr<<5,(float)(sr&0xFFFFFF)/(float)0xFFFFFF)) * nparams );
-        if(idx<0)idx=-idx; if(idx>=nparams)idx=nparams-1;
+        if(idx<0) idx=-idx;
+        if(idx>=nparams) idx=nparams-1;
         float eps=1e-3f;
         float orig=p[idx];
         p[idx]=orig+eps; double lp=out_sum(r,T,x,y);

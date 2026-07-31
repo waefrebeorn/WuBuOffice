@@ -123,7 +123,7 @@ int main(void) {
             if (cr) {
                 size_t cw = ocr_image_width(cr), ch = ocr_image_height(cr);
                 /* 20px square + 8px pad => ~28px, must be < 100 */
-                CHECK(cw < W && ch < H, "autocrop shrinks image");
+                CHECK(cw < (size_t)W && ch < (size_t)H, "autocrop shrinks image");
                 CHECK(cw >= 20 && ch >= 20, "autocrop keeps content");
                 ocr_image_free(cr);
             }

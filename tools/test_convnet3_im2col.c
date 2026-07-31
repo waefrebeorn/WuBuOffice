@@ -39,7 +39,8 @@ int main(void){
     }
     float *p1=malloc(p1H*p1W*K1*sizeof(float));
     for(int k=0;k<K1;k++)for(int py=0;py<p1H;py++)for(int px=0;px<p1W;px++){
-        float bv=-1e30f; for(int dy=0;dy<2;dy++)for(int dx=0;dx<2;dx++)
+        float bv=-1e30f;
+        for(int dy=0;dy<2;dy++)for(int dx=0;dx<2;dx++)
             bv=fmaxf(bv,c1[((py*2+dy)*c1W+(px*2+dx))*K1+k]); p1[(py*p1W+px)*K1+k]=bv;
     }
     float *c2=malloc(c2H*c2W*K2*sizeof(float));

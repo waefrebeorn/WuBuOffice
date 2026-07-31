@@ -50,8 +50,10 @@ static size_t generate_phi_spiral(GoldPoint *pts, size_t npts, int W, int H) {
         double r = a * exp(b * ang);
         if (r > mr) r = mr;
         double x = cx + r * cos(ang), y = cy + r * sin(ang);
-        if (x < 0) x = 0; if (x >= (double)W) x = (double)W - 1;
-        if (y < 0) y = 0; if (y >= (double)H) y = (double)H - 1;
+        if (x < 0) x = 0;
+        if (x >= (double)W) x = (double)W - 1;
+        if (y < 0) y = 0;
+        if (y >= (double)H) y = (double)H - 1;
         pts[gen++] = (GoldPoint){x, y};
         ang += step;
         if (gen >= npts) break;

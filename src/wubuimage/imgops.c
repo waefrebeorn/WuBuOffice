@@ -30,7 +30,9 @@ OcrImage *ocr_image_rotate(const OcrImage *im, double deg, uint8_t fill){
 OcrImage *ocr_image_contrast_stretch(const OcrImage *im, int lo_pct, int hi_pct){
     int W=(int)ocr_image_width(im), H=(int)ocr_image_height(im);
     OcrImage *o=clone_like(im); if(!o) return NULL;
-    if(lo_pct<0)lo_pct=0; if(hi_pct>100)hi_pct=100; if(lo_pct>=hi_pct)hi_pct=lo_pct+1;
+    if (lo_pct<0) lo_pct=0;
+    if (hi_pct>100) hi_pct=100;
+    if (lo_pct>=hi_pct) hi_pct=lo_pct+1;
     size_t hist[256]; memset(hist,0,sizeof hist);
     size_t total=(size_t)W*H;
     for(int y=0;y<H;y++) for(int x=0;x<W;x++) hist[ocr_image_get(im,(size_t)x,(size_t)y)]++;
@@ -72,7 +74,6 @@ OcrImage *ocr_image_median(const OcrImage *im, int radius){
 static void box_blur(const OcrImage *im, OcrImage *o, int r){
     int W=(int)ocr_image_width(im), H=(int)ocr_image_height(im);
     OcrImage *tmp=clone_like(im); if(!tmp) return;
-    int win=2*r+1;
     for(int y=0;y<H;y++){
         long s=0; int cnt=0;
         for(int x=-r;x<=r;x++){ int xx=x<0?0:(x>=W?W-1:x); s+=ocr_image_get(im,(size_t)xx,(size_t)y); cnt++; }
@@ -110,7 +111,8 @@ OcrImage *ocr_image_shading_correct(const OcrImage *im, int blur_radius){
         int f=ocr_image_get(field,(size_t)x,(size_t)y); if(f<1)f=1;
         double corr=(double)v * 128.0 / f;          /* normalize to field mean ~128 */
         int s=(int)(corr* (fmean/128.0));         /* keep overall brightness */
-        if(s<0)s=0; if(s>255)s=255;
+        if (s<0) s=0;
+        if (s>255) s=255;
         ocr_image_set(o,(size_t)x,(size_t)y,(uint8_t)s);
     }
     ocr_image_free(field);
@@ -127,7 +129,8 @@ OcrImage *ocr_image_sharpen(const OcrImage *im, int blur_radius, double amount){
         int v=ocr_image_get(im,(size_t)x,(size_t)y);
         int b=ocr_image_get(blur,(size_t)x,(size_t)y);
         int s=(int)(v + amount*(v-b));
-        if(s<0)s=0; if(s>255)s=255;
+        if (s<0) s=0;
+        if (s>255) s=255;
         ocr_image_set(o,(size_t)x,(size_t)y,(uint8_t)s);
     }
     ocr_image_free(blur);

@@ -1,5 +1,6 @@
 /* test_pdfextract.c */
 #include "pdfextract.h"
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 static int fails=0;

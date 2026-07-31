@@ -52,10 +52,6 @@ size_t shape_reorder(const char *text, ShapeDir base, char *out, size_t outcap){
      * characters share direction (RTL/LTR), with neutrals (spaces/punct) that
      * are NOT at run boundaries absorbed into the surrounding run direction.
      * For each run whose direction differs from base, reverse its bytes. */
-    size_t n = strlen(text);
-    /* copy logical into a working buffer we can reverse in place */
-    char *work = (char*)text;  /* read-only source; we copy to out in passes */
-    (void)work;
 
     /* Simpler correct approach: walk codepoints, classify each as its run
      * direction, then emit. We collect runs as [start,end) byte ranges. */

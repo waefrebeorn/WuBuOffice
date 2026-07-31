@@ -1,5 +1,6 @@
 /* test_a11yannounce.c */
 #include "a11yannounce.h"
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 static int fails=0;

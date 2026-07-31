@@ -405,6 +405,7 @@ target_include_directories(viewshot PRIVATE
     ${CMAKE_SOURCE_DIR}/src/wubuxps
     ${CMAKE_SOURCE_DIR}/src/wubuaislot
     ${CMAKE_SOURCE_DIR}/src/wubupng
+    ${CMAKE_SOURCE_DIR}/src/wuburtf
     ${WUBUPAD_SRC})
 target_sources(viewshot PRIVATE
     ${WUBUPAD_SRC}/buffer.c ${WUBUPAD_SRC}/doc.c ${WUBUPAD_SRC}/search.c
@@ -415,5 +416,9 @@ target_link_libraries(viewshot PRIVATE
     wubumodel wuburender wubuocr wubufont wubucell_app wubudoc wubuautosave
     wubuspell wubuchart wubudraw wubumath wubuepub wubua11y wubusvg
     wubusettings wubushape wubulayout wubuexp wubutoc wubuscript wubupng
+    wuburtf wuburedact wubucol
+    wubucite wubucaption wubuheading wubueqnum wubuvars wubuhash wubusig wubucrdt
+    wubucsv wubufocus wubuwatermark wubudyslexia wubufmtpaint wubusandbox
+    wubuform wubuhistory wubulang wubunesttab wubupdfextract wubupdfform wubuscope wubusync wubuxps wubuaislot
     ${SDL2_LIBRARIES} ${FREETYPE_LIBRARIES} m dl)
 target_compile_options(viewshot PRIVATE -Wall -Wextra -Wpedantic)
