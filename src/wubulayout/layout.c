@@ -134,7 +134,7 @@ static LOb *push_obj(LPage *p){
 static int lay_paragraph(wubulayout_doc *L, void *para, int *pen_y){
     /* DOC-59: list paragraphs get a bullet / number prefix run. */
     static int list_seq = 0;
-    const char *marker = NULL; char markerbuf[8];
+    const char *marker = NULL; char markerbuf[16];
     wubumodel_style *pst = wubumodel_node_style((wubumodel_node*)para);
     if (pst){
         const char *lv = wubumodel_style_get_prop(pst, "list");
@@ -143,7 +143,7 @@ static int lay_paragraph(wubulayout_doc *L, void *para, int *pen_y){
                 marker = "\xe2\x80\xa2 ";   /* • */
             else if (!strcmp(lv, "1") || !strcmp(lv, "ol")){
                 list_seq++;   /* consecutive numbered paragraphs */
-                if (list_seq > 99999999) list_seq = 99999999;  /* cap snprintf */
+                if (list_seq > 9999999) list_seq = 9999999;  /* fits "%d. " in markerbuf[16] */
                 snprintf(markerbuf, sizeof markerbuf, "%d. ", list_seq);
                 marker = markerbuf;
             }

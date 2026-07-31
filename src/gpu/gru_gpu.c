@@ -79,14 +79,6 @@ static void ensure_t(GRU *r,int T){
     r->WT=realloc(r->WT,th*sizeof(float));  /* reused size; real W-transpose is H*D, smaller */
 }
 
-/* transpose helpers (tiny; negligible vs GEMM) */
-static void transpose_TD(const float *M,int T,int D,float *Mt){ /* M[T*D] -> Mt[D*T] */
-    for(int t=0;t<T;t++) for(int i=0;i<D;i++) Mt[i*T+t]=M[t*D+i];
-}
-static void transpose_TH(const float *M,int T,int H,float *Mt){ /* M[T*H] -> Mt[H*T] */
-    for(int t=0;t<T;t++) for(int j=0;j<H;j++) Mt[j*T+t]=M[t*H+j];
-}
-
 /* forward one direction — same two-pass structure as gru.c: all z,r gates for
  * the timestep are computed BEFORE any candidate, so candidates only ever see
  * this timestep's reset gates. The W·x gate GEMM parts are precomputed per
@@ -135,11 +127,15 @@ void gru_forward(GRU *r,int T,const float *x){
     if(r->bidir) gru_fwd_dir(r,T,x,1);
 }
 void gru_get_output(const GRU *r,float *y){
-    if(!r) return; int H=r->hid; int T=r->Tcur;
+    if(!r) return;
+    int H=r->hid; int T=r->Tcur;
     for(int t=0;t<T;t++){
-        if(!r->bidir) memcpy(y+(size_t)t*H,r->hf+(size_t)t*H,H*sizeof(float));
-        else { memcpy(y+(size_t)t*2*H,r->hf+(size_t)t*H,H*sizeof(float));
-               memcpy(y+(size_t)t*2*H+H,r->hb+(size_t)t*H,H*sizeof(float)); }
+        if(!r->bidir) {
+            memcpy(y+(size_t)t*H,r->hf+(size_t)t*H,H*sizeof(float));
+        } else {
+            memcpy(y+(size_t)t*2*H,r->hf+(size_t)t*H,H*sizeof(float));
+            memcpy(y+(size_t)t*2*H+H,r->hb+(size_t)t*H,H*sizeof(float));
+        }
     }
 }
 
@@ -162,7 +158,7 @@ static void gru_bwd_dir(GRU *r,int T,const float *dy,float *dx,int dir){
         memset(drg,0,H*sizeof(float));
         for(int j=0;j<H;j++){
             float hprev=(t==0)?0:h[(size_t)(t-1)*H+j];
-            float zv=z[t*H+j],rv=rr[t*H+j];
+            float zv=z[t*H+j];
             int ti=dir?(T-1-t):t; const float *xt=r->xcache+(size_t)ti*D;
             float a=0; for(int i=0;i<D;i++) a+=Wh[j*D+i]*xt[i];
             for(int k=0;k<H;k++){ float pv=(t==0)?0:h[(size_t)(t-1)*H+k]; a+=Uh[j*H+k]*(rr[t*H+k]*pv); }

@@ -15,8 +15,9 @@ int main(void){
     CK(f!=NULL,"file");
     if (f){ uint8_t sig[8]; size_t r=fread(sig,1,8,f); fclose(f);
         CK(r==8 && sig[0]==0x89 && sig[1]=='P' && sig[2]=='N' && sig[3]=='G',"png sig"); }
-    free(px);
+    /* null-path test must run BEFORE freeing px */
     CK(exp_png_write(NULL,32,px,W,H)==-1,"null path fails");
+    free(px);
     if(fails){ printf("FAILED (%d)\n",fails); return 1; }
     printf("PASS: exp_png (write + PNG signature)\n"); return 0;
 }

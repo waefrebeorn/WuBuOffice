@@ -107,7 +107,7 @@ static int find_pos(const Crdt *c, int pos){
 static void make_id(Crdt *c, char out[CRDT_ID_LEN]){
     /* "<clock>:<site>" — CRDT_ID_LEN=18 is tight; cap the %s width so the
      * longest possible id ("4294967295:site1234") always fits with NUL. */
-    snprintf(out, CRDT_ID_LEN, "%u:%.8s", ++c->clock, c->site ? c->site : "");
+    snprintf(out, CRDT_ID_LEN, "%u:%.8s", ++c->clock, c->site);
 }
 
 const char *crdt_insert(Crdt *c, int pos, const char *value){

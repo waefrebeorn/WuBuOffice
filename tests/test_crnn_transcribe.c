@@ -95,9 +95,21 @@ int main(void) {
 
     printf("transcribed JSON: %s\n", json);
     printf("paragraphs=%d blocks(text)=%d\n", npara, nblocks);
+
+    /* accuracy check: each ground-truth line gt[l] should appear verbatim in
+     * the transcribed JSON (same font is rendered then recognised, so the
+     * recognised text must contain the expected substring). */
+    int matched = 0;
+    for (int l = 0; l < NLINES; l++) {
+        if (strlen(gt[l]) > 0 && strstr(json, gt[l]) != NULL) matched++;
+    }
+    printf("ground-truth lines matched in output: %d/%d\n", matched, NLINES);
+
     free(json);
 
-    int ok = (npara == NLINES) && (nblocks == NLINES);
-    printf(ok ? "PASS: crnn_transcribe produced %d lines\n" : "FAIL: expected %d lines, got %d\n", NLINES, npara);
+    int ok = (npara == NLINES) && (nblocks == NLINES) && (matched == NLINES);
+    printf(ok ? "PASS: crnn_transcribe produced %d lines, all matched\n"
+              : "FAIL: expected %d lines matched, got para=%d matched=%d\n",
+           NLINES, npara, matched);
     return ok ? 0 : 1;
 }

@@ -167,7 +167,6 @@ int wubuexp_pdf(const wubulayout_doc *L, const char *out){
     long pages_obj_pos = ftell(f);
     fputs("2 0 obj\n<< /Type /Pages /Kids [", f);
     int *page_ids = malloc(sizeof(int)*pg);
-    int content_ids[4096];
     for (int p=0;p<pg;p++){
         /* content stream */
         char *t = wubulayout_page_text(L, p);
@@ -203,7 +202,6 @@ int wubuexp_pdf(const wubulayout_doc *L, const char *out){
         off[nobj++] = ftell(f);
         fprintf(f, "%d 0 obj\n<< /Length %zu >>\nstream\n%s\nendstream\nendobj\n",
                 cid, strlen(content), content);
-        content_ids[p]=cid;
         free(content);
         /* page object */
         int pid = cid+1;

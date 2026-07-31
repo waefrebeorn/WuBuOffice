@@ -12,7 +12,7 @@ static int fails = 0;
 
 int main(void){
     char dir[] = "/tmp/wubu_sync_test.XXXXXX";
-    mkdtemp(dir);
+    if (!mkdtemp(dir)) { fprintf(stderr, "mkdtemp failed\n"); return 1; }
     Sync *s = sync_open(dir);
     CHECK(s != NULL, "sync_open");
 

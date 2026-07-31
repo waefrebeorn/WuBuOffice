@@ -22,7 +22,7 @@
 
 #define STRIP 20
 #define PPM   16
-#define GAP   10
+#define LINE_GAP   10
 #define NLINES 6
 #define MAXW  10
 
@@ -30,12 +30,12 @@ static uint32_t s = 0x1234ABCDu;
 static float rndf(void){ s ^= s<<13; s ^= s>>17; s ^= s<<5; return (float)(s&0xFFFFFF)/(float)0xFFFFFF; }
 
 static OcrImage *build_page(Font *f, char lines[NLINES][MAXW+1]){
-    int W = (MAXW+2)*STRIP, H = NLINES*(STRIP+GAP)+GAP;
+    int W = (MAXW+2)*STRIP, H = NLINES*(STRIP+LINE_GAP)+LINE_GAP;
     OcrImage *im = ocr_image_create(W,H);
     for(int y=0;y<H;y++) for(int x=0;x<W;x++) ocr_image_set(im,(size_t)x,(size_t)y,15); /* dark bg */
     const char *CH="ABCDEFGHIJKLMNOPQRSTUVWXYZ"; int nch=(int)strlen(CH);
     for(int l=0;l<NLINES;l++){
-        int L=4+(int)(rndf()*6); int y0=GAP+l*(STRIP+GAP);
+        int L=4+(int)(rndf()*6); int y0=LINE_GAP+l*(STRIP+LINE_GAP);
         for(int i=0;i<L;i++){
             char ch=CH[(int)(rndf()*nch)]; lines[l][i]=ch;
             uint8_t*bits=NULL; int w=0,h=0;
