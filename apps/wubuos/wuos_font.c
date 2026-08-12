@@ -168,6 +168,17 @@ void wuos_font_quit(void){
 
 int wuos_font_height(void){ return g_size; }
 
+/* Set the base font pixel size (rasterizer uses it). Clamped to a sane range.
+ * Haiku-DPI pattern (research 2026-08-12): chrome heights derive from this, so
+ * zoom scales the whole UI, not just the view rect. */
+void wuos_font_set_size(int size){
+    if (size < 12) size = 12;
+    if (size > 96) size = 96;
+    g_size = size;
+    if (g_reg)  FT_Set_Pixel_Sizes(g_reg, 0, (FT_UInt)g_size);
+    if (g_bold) FT_Set_Pixel_Sizes(g_bold,0, (FT_UInt)g_size);
+}
+
 /* Pixel width of `s` at the current font size (no rasterization). */
 int wuos_font_text_width(const char *s, int size){
     FT_Face face = g_reg;  /* width uses the regular face */

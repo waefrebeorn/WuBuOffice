@@ -35,6 +35,7 @@ void wuos_svg_text(const char *s, int x, int y, int size,
 
 /* Pixel height of the current font. */
 int  wuos_font_height(void);
+void wuos_font_set_size(int size);   /* base pixel size; chrome derives from it */
 /* Pixel width of a string at the current font size (no draw). */
 int  wuos_font_text_width(const char *s, int size);
 

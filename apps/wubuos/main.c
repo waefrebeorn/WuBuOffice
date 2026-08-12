@@ -25,15 +25,15 @@
 
 #define WIN_W 960
 #define WIN_H 720
-#define TAB_H 30
-#define MENU_H 24
-#define TOOLBAR_H 26   /* formatting / quick-access toolbar row (UI gap: reference
-                        * office apps + Notepad++ all expose a clickable button
-                        * strip; the shell previously reached these commands only
-                        * via keyboard / menu / palette). */
-#define SIDEBAR_W 220  /* docked right-side Navigator panel (reference office
-                        * apps: LibreOffice/OnlyOffice/MS Office sidebar). */
-#define STATUS_H 26
+/* Chrome heights derive from the base font size (Haiku-DPI pattern, research
+ * 2026-08-12): zooming scales the whole UI, not just the view rect. At the
+ * default fh=20 these equal the former fixed values (30/24/26/26/220), so the
+ * tricorder's deterministic region coordinates stay valid at 100% zoom. */
+#define TAB_H      ((wuos_font_height()*3)/2)          /* 30 @ fh20 */
+#define MENU_H     (wuos_font_height()+4)              /* 24 @ fh20 */
+#define TOOLBAR_H  (wuos_font_height()+6)              /* 26 @ fh20 */
+#define SIDEBAR_W  (wuos_font_height()*11)             /* 220 @ fh20 */
+#define STATUS_H   (wuos_font_height()+6)              /* 26 @ fh20 */
 
 static WuView *views[8];
 static int     nviews = 0;
@@ -99,6 +99,15 @@ static void zoom_from_x(int x){
     g_zoom = (float)(zmin/100.0 + frac*(zmax/100.0 - zmin/100.0));
     if (g_zoom < 0.5f) g_zoom = 0.5f;
     if (g_zoom > 3.0f) g_zoom = 3.0f;
+    wuos_font_set_size((int)(20.0 * g_zoom));   /* scale whole UI (Haiku-DPI) */
+    WubuSettings *sh=wubusettings_shared(); if(sh) wubusettings_set_zoom(sh, g_zoom);
+}
+
+/* Re-apply zoom -> font size after any direct g_zoom change (menu/toolbar/keys). */
+static void apply_zoom(void){
+    if (g_zoom < 0.5f) g_zoom = 0.5f;
+    if (g_zoom > 3.0f) g_zoom = 3.0f;
+    wuos_font_set_size((int)(20.0 * g_zoom));
     WubuSettings *sh=wubusettings_shared(); if(sh) wubusettings_set_zoom(sh, g_zoom);
 }
 
@@ -153,9 +162,9 @@ static void run_menu_cmd(int cmd){
     case 1009: if (views[active]->on_key) views[active]->on_key(views[active], WUOS_KEY_GOTO, 1); return;
     case 1010: { WubuSettings *sh=wubusettings_shared(); if (sh) wubusettings_set_dark(sh, !wubusettings_dark(sh));
                  toast_push(g_toasts, "Theme toggled", 90); } return;
-    case 1011: g_zoom += 0.1f; if (g_zoom>3.0f) g_zoom=3.0f; toast_push(g_toasts, "Zoom in", 60); return;
-    case 1012: g_zoom -= 0.1f; if (g_zoom<0.5f) g_zoom=0.5f; toast_push(g_toasts, "Zoom out", 60); return;
-    case 1013: g_zoom = 1.0f; toast_push(g_toasts, "Zoom reset", 60); return;
+    case 1011: g_zoom += 0.1f; apply_zoom(); toast_push(g_toasts, "Zoom in", 60); return;
+    case 1012: g_zoom -= 0.1f; apply_zoom(); toast_push(g_toasts, "Zoom out", 60); return;
+    case 1013: g_zoom = 1.0f; apply_zoom(); toast_push(g_toasts, "Zoom reset", 60); return;
     case 1014: { WubuSettings *sh=wubusettings_shared(); if (sh){ wubusettings_set_word_wrap(sh, !wubusettings_word_wrap(sh)); wubusettings_save(sh,NULL);} toast_push(g_toasts, "Word wrap toggled", 90); } return;
     case 1015: { WubuSettings *sh=wubusettings_shared(); if (sh) wubusettings_set_high_contrast(sh, !wubusettings_high_contrast(sh));
                   toast_push(g_toasts, "High contrast toggled", 90); } return;
@@ -548,11 +557,11 @@ int main(int argc, char **argv){
                         case 3: { WubuSettings *sh=wubusettings_shared();
                                   if (sh) wubusettings_set_dark(sh, !wubusettings_dark(sh));
                                   toast_push(g_toasts, "Theme toggled", 90); } break;
-                        case 4: g_zoom += 0.1f; if (g_zoom>3.0f) g_zoom=3.0f;
+                        case 4: g_zoom += 0.1f; apply_zoom();
                                 toast_push(g_toasts, "Zoom in", 60); break;
-                        case 5: g_zoom -= 0.1f; if (g_zoom<0.5f) g_zoom=0.5f;
+                        case 5: g_zoom -= 0.1f; apply_zoom();
                                 toast_push(g_toasts, "Zoom out", 60); break;
-                        case 6: g_zoom = 1.0f; toast_push(g_toasts, "Zoom reset", 60); break;
+                        case 6: g_zoom = 1.0f; apply_zoom(); toast_push(g_toasts, "Zoom reset", 60); break;
                         case 7: for (int i=0;i<nviews;i++) if (!strcmp(views[i]->name,"Settings")){ active=i; scroll=0; break; }
                                 break;
                         case 8: if (views[active]->on_key) views[active]->on_key(views[active], WUOS_KEY_EXPORT_EPUB, 1);
@@ -753,14 +762,11 @@ int main(int argc, char **argv){
 
                 /* ---- shell-level features (not forwarded to the view) ---- */
                 if (code == WUOS_KEY_ZOOM_IN){
-                    g_zoom += 0.1f; if (g_zoom>3.0f) g_zoom=3.0f;
-                    WubuSettings *sh = wubusettings_shared(); if (sh) wubusettings_set_zoom(sh, g_zoom);
+                    g_zoom += 0.1f; apply_zoom();
                 } else if (code == WUOS_KEY_ZOOM_OUT){
-                    g_zoom -= 0.1f; if (g_zoom<0.5f) g_zoom=0.5f;
-                    WubuSettings *sh = wubusettings_shared(); if (sh) wubusettings_set_zoom(sh, g_zoom);
+                    g_zoom -= 0.1f; apply_zoom();
                 } else if (code == WUOS_KEY_ZOOM_RESET){
-                    g_zoom = 1.0f;
-                    WubuSettings *sh = wubusettings_shared(); if (sh) wubusettings_set_zoom(sh, g_zoom);
+                    g_zoom = 1.0f; apply_zoom();
                 } else if (code == WUOS_KEY_SETTINGS){
                     for (int i=0;i<nviews;i++) if (!strcmp(views[i]->name,"Settings")){ active=i; scroll=0; break; }
                 } else if (code == WUOS_KEY_SIDEBAR){
@@ -1204,6 +1210,8 @@ int main(int argc, char **argv){
                 dump = getenv("WUOS_DUMP");
                 const char *dm = getenv("WUOS_DUMP_MENU");
                 if (dm && *dm){ int mi = atoi(dm); if (mi>=0 && mi<4){ g_menu_open=mi; g_menu_hover=mi; } }
+                const char *dz = getenv("WUOS_DUMP_ZOOM");
+                if (dz && *dz){ g_zoom = (float)atof(dz); apply_zoom(); }
             }
             frames++;
             if (dump && !dumped && frames >= 12){   /* wait for view+font render */
