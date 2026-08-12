@@ -26,14 +26,16 @@
 #define WIN_W 960
 #define WIN_H 720
 /* Chrome heights derive from the base font size (Haiku-DPI pattern, research
- * 2026-08-12): zooming scales the whole UI, not just the view rect. At the
- * default fh=20 these equal the former fixed values (30/24/26/26/220), so the
- * tricorder's deterministic region coordinates stay valid at 100% zoom. */
-#define TAB_H      ((wuos_font_height()*3)/2)          /* 30 @ fh20 */
-#define MENU_H     (wuos_font_height()+4)              /* 24 @ fh20 */
-#define TOOLBAR_H  (wuos_font_height()+6)              /* 26 @ fh20 */
-#define SIDEBAR_W  (wuos_font_height()*11)             /* 220 @ fh20 */
-#define STATUS_H   (wuos_font_height()+6)              /* 26 @ fh20 */
+ * 2026-08-12): zooming scales the whole UI, not just the view rect. Each is
+ * rounded to the 8pt grid (multiple of 4) so all chrome aligns to the spacing
+ * scale (Atlassian/USWDS research). At default fh=20 they are 32/24/28/28/224.
+ * Note: the tricorder's region coordinates in gui_audit_test.sh must match
+ * these defaults (tabs 0-32, menu 32-56, toolbar 56-84, status 692-720). */
+#define TAB_H      ((((wuos_font_height()*3)/2) + 2) & ~3)   /* 32 @ fh20 */
+#define MENU_H     ((wuos_font_height()+4) & ~3)             /* 24 @ fh20 */
+#define TOOLBAR_H  (((wuos_font_height()+6) + 2) & ~3)       /* 28 @ fh20 */
+#define SIDEBAR_W  (((wuos_font_height()*11) + 2) & ~3)      /* 224 @ fh20 */
+#define STATUS_H   (((wuos_font_height()+6) + 2) & ~3)       /* 28 @ fh20 */
 
 static WuView *views[8];
 static int     nviews = 0;
@@ -409,7 +411,7 @@ int main(int argc, char **argv){
                     if (g_menu_open>=0 && g_menu_hover==g_menu_open){
                         int n=0; while (g_menus[g_menu_open][n].label) n++;
                         int dy = TAB_H + MENU_H, dy0 = e.motion.y - dy - 3;
-                        int ii = dy0/22;
+                        int ii = dy0/24;
                         g_menu_hover = (ii>=0 && ii<n)? (g_menu_open*100+ii) : g_menu_open;
                     }
                 }
@@ -428,7 +430,7 @@ int main(int argc, char **argv){
                         if (g_menu_open>=0 && hit==g_menu_open){
                             int n=0; while (g_menus[hit][n].label) n++;
                             int dy = TAB_H + MENU_H, dy0 = e.button.y - dy - 3;
-                            int ii = dy0/22;
+                            int ii = dy0/24;
                             if (ii>=0 && ii<n && g_menus[hit][ii].cmd){
                                 int c = g_menus[hit][ii].cmd;
                                 g_menu_open = -1; g_menu_hover = -1;
@@ -888,13 +890,13 @@ int main(int argc, char **argv){
                     /* dropdown */
                     int n=0; while (g_menus[mi][n].label) n++;
                     int dy = my + MENU_H;
-                    int dh = n*22 + 6;
+                    int dh = n*24 + 6;
                     SDL_SetRenderDrawColor(ren, tto.r, tto.g, tto.b, 255);
                     SDL_RenderFillRect(ren, &(SDL_Rect){mx, dy, dw, dh});
                     SDL_SetRenderDrawColor(ren, bd.r, bd.g, bd.b, 255);
                     SDL_RenderDrawRect(ren, &(SDL_Rect){mx, dy, dw, dh});
                     for (int i=0;i<n;i++){
-                        int iy = dy + 3 + i*22;
+                        int iy = dy + 3 + i*24;
                         int item_hover = (g_menu_hover==mi*100+i);
                         if (item_hover){
                             SDL_SetRenderDrawColor(ren, ac.r, ac.g, ac.b, 255);
