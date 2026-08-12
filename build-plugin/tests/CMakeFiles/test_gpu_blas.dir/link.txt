@@ -1,1 +1,1 @@
-/usr/bin/cc -O3 -DNDEBUG CMakeFiles/test_gpu_blas.dir/test_gpu_blas.c.o -o test_gpu_blas  ../src/gpu/libgpublas.a -lm 
+/usr/bin/cc -O3 -DNDEBUG -fopenmp CMakeFiles/test_gpu_blas.dir/test_gpu_blas.c.o -o test_gpu_blas  ../src/gpu/libgpublas.a -lm 

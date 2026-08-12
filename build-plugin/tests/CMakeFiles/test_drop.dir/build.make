@@ -107,9 +107,10 @@ tests/test_drop: apps/wubuconv/libwubuconv.a
 tests/test_drop: src/wubucfb/libwubucfb.a
 tests/test_drop: src/wubujson/libwubujson.a
 tests/test_drop: src/wubuxml/libwubuxml.a
+tests/test_drop: src/wubuformula/libwubuformula.a
+tests/test_drop: src/wubumodel/libwubumodel.a
 tests/test_drop: src/wubuoxml/libwubuoxml.a
 tests/test_drop: src/wubuzip/libwubuzip.a
-tests/test_drop: src/wubuformula/libwubuformula.a
 tests/test_drop: tests/CMakeFiles/test_drop.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking C executable test_drop"
 	cd /home/wubu/WuBuOffice/build-plugin/tests && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/test_drop.dir/link.txt --verbose=$(VERBOSE)

@@ -212,6 +212,30 @@ model.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f src/wubumodel/CMakeFiles/wubumodel.dir/build.make src/wubumodel/CMakeFiles/wubumodel.dir/model.c.s
 .PHONY : model.c.s
 
+model_epub.o: model_epub.c.o
+.PHONY : model_epub.o
+
+# target to build an object file
+model_epub.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f src/wubumodel/CMakeFiles/wubumodel.dir/build.make src/wubumodel/CMakeFiles/wubumodel.dir/model_epub.c.o
+.PHONY : model_epub.c.o
+
+model_epub.i: model_epub.c.i
+.PHONY : model_epub.i
+
+# target to preprocess a source file
+model_epub.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f src/wubumodel/CMakeFiles/wubumodel.dir/build.make src/wubumodel/CMakeFiles/wubumodel.dir/model_epub.c.i
+.PHONY : model_epub.c.i
+
+model_epub.s: model_epub.c.s
+.PHONY : model_epub.s
+
+# target to generate assembly for a file
+model_epub.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f src/wubumodel/CMakeFiles/wubumodel.dir/build.make src/wubumodel/CMakeFiles/wubumodel.dir/model_epub.c.s
+.PHONY : model_epub.c.s
+
 model_io.o: model_io.c.o
 .PHONY : model_io.o
 
@@ -236,6 +260,54 @@ model_io.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f src/wubumodel/CMakeFiles/wubumodel.dir/build.make src/wubumodel/CMakeFiles/wubumodel.dir/model_io.c.s
 .PHONY : model_io.c.s
 
+model_odt.o: model_odt.c.o
+.PHONY : model_odt.o
+
+# target to build an object file
+model_odt.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f src/wubumodel/CMakeFiles/wubumodel.dir/build.make src/wubumodel/CMakeFiles/wubumodel.dir/model_odt.c.o
+.PHONY : model_odt.c.o
+
+model_odt.i: model_odt.c.i
+.PHONY : model_odt.i
+
+# target to preprocess a source file
+model_odt.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f src/wubumodel/CMakeFiles/wubumodel.dir/build.make src/wubumodel/CMakeFiles/wubumodel.dir/model_odt.c.i
+.PHONY : model_odt.c.i
+
+model_odt.s: model_odt.c.s
+.PHONY : model_odt.s
+
+# target to generate assembly for a file
+model_odt.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f src/wubumodel/CMakeFiles/wubumodel.dir/build.make src/wubumodel/CMakeFiles/wubumodel.dir/model_odt.c.s
+.PHONY : model_odt.c.s
+
+model_rtf.o: model_rtf.c.o
+.PHONY : model_rtf.o
+
+# target to build an object file
+model_rtf.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f src/wubumodel/CMakeFiles/wubumodel.dir/build.make src/wubumodel/CMakeFiles/wubumodel.dir/model_rtf.c.o
+.PHONY : model_rtf.c.o
+
+model_rtf.i: model_rtf.c.i
+.PHONY : model_rtf.i
+
+# target to preprocess a source file
+model_rtf.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f src/wubumodel/CMakeFiles/wubumodel.dir/build.make src/wubumodel/CMakeFiles/wubumodel.dir/model_rtf.c.i
+.PHONY : model_rtf.c.i
+
+model_rtf.s: model_rtf.c.s
+.PHONY : model_rtf.s
+
+# target to generate assembly for a file
+model_rtf.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f src/wubumodel/CMakeFiles/wubumodel.dir/build.make src/wubumodel/CMakeFiles/wubumodel.dir/model_rtf.c.s
+.PHONY : model_rtf.c.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -255,9 +327,18 @@ help:
 	@echo "... model.o"
 	@echo "... model.i"
 	@echo "... model.s"
+	@echo "... model_epub.o"
+	@echo "... model_epub.i"
+	@echo "... model_epub.s"
 	@echo "... model_io.o"
 	@echo "... model_io.i"
 	@echo "... model_io.s"
+	@echo "... model_odt.o"
+	@echo "... model_odt.i"
+	@echo "... model_odt.s"
+	@echo "... model_rtf.o"
+	@echo "... model_rtf.i"
+	@echo "... model_rtf.s"
 .PHONY : help
 
 

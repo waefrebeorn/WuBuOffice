@@ -1,1 +1,1 @@
-/usr/bin/cc -O3 -DNDEBUG CMakeFiles/test_gru_cmp.dir/test_gru_cmp.c.o CMakeFiles/test_gru_cmp.dir/__/src/gpu/gru_gpu.c.o CMakeFiles/test_gru_cmp.dir/__/src/wubuocr/gru_layout.c.o CMakeFiles/test_gru_cmp.dir/__/src/wubuocr/ocl_gru.c.o -o test_gru_cmp  ../src/gpu/libgpublas.a -lm 
+/usr/bin/cc -O3 -DNDEBUG -fopenmp CMakeFiles/test_gru_cmp.dir/test_gru_cmp.c.o CMakeFiles/test_gru_cmp.dir/__/src/gpu/gru_gpu.c.o CMakeFiles/test_gru_cmp.dir/__/src/wubuocr/gru_layout.c.o CMakeFiles/test_gru_cmp.dir/__/src/wubuocr/ocl_gru.c.o -o test_gru_cmp  ../src/gpu/libgpublas.a -lm 

@@ -4,7 +4,7 @@
 # compile C with /usr/bin/cc
 C_DEFINES = -D_POSIX_C_SOURCE=200809L
 
-C_INCLUDES = -I/home/wubu/WuBuOffice/apps/wubunote -I/home/wubu/WuBuOffice/src/wubunote -I/home/wubu/WuBuOffice/src/wubutui -I/home/wubu/WuBuOffice/src/wubudoc -I/home/wubu/WuBuOffice/src/wubujson -I/home/wubu/WuBuOffice/src/wubusvg -I/home/wubu/WuBuOffice/src/wubufont -I/home/wubu/WuBuOffice/src/wubuzip -I/home/wubu/WuBuOffice/src/wubucfb -I/home/wubu/WuBuOffice/src/wubuxml -I/home/wubu/WuBuOffice/src/wubuoxml -I/home/wubu/WuBuOffice/src/wubuformula -I/home/wubu/WuBuOffice/src/wubuformula/functions -I/home/wubu/WuBuOffice/src/wubuimage -I/home/wubu/WuBuOffice/src/wubuocr -I/home/wubu/WuBuOffice/src/wubupdf -I/home/wubu/WuBuOffice/src/wubupng
+C_INCLUDES = -I/home/wubu/WuBuOffice/apps/wubunote -I/home/wubu/WuBuOffice/src/wubunote -I/home/wubu/WuBuOffice/src/wubutui -I/home/wubu/WuBuOffice/src/wubudoc -I/home/wubu/WuBuOffice/src/wubujson -I/home/wubu/WuBuOffice/src/wubusvg -I/home/wubu/WuBuOffice/src/wubufont -I/home/wubu/WuBuOffice/src/wubuzip -I/home/wubu/WuBuOffice/src/wubucfb -I/home/wubu/WuBuOffice/src/wubuxml -I/home/wubu/WuBuOffice/src/wubuoxml -I/home/wubu/WuBuOffice/src/wubuformula -I/home/wubu/WuBuOffice/src/wubuformula/functions -I/home/wubu/WuBuOffice/src/wubumodel -I/home/wubu/WuBuOffice/src/wubuimage -I/home/wubu/WuBuOffice/src/wubuocr -I/home/wubu/WuBuOffice/src/wubupdf -I/home/wubu/WuBuOffice/src/wubupng
 
-C_FLAGS = -O3 -DNDEBUG -std=c11 -Wall -Wextra -Wpedantic -Wno-unused-parameter
+C_FLAGS = -O3 -DNDEBUG -std=c11 -Wall -Wextra -Wpedantic -Wno-unused-parameter -fopenmp
 

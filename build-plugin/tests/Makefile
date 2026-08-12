@@ -281,6 +281,20 @@ test_epub/fast:
 .PHONY : test_epub/fast
 
 # Convenience name for target.
+tests/CMakeFiles/test_epub_model_roundtrip.dir/rule:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_epub_model_roundtrip.dir/rule
+.PHONY : tests/CMakeFiles/test_epub_model_roundtrip.dir/rule
+
+# Convenience name for target.
+test_epub_model_roundtrip: tests/CMakeFiles/test_epub_model_roundtrip.dir/rule
+.PHONY : test_epub_model_roundtrip
+
+# fast build rule for target.
+test_epub_model_roundtrip/fast:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_epub_model_roundtrip.dir/build.make tests/CMakeFiles/test_epub_model_roundtrip.dir/build
+.PHONY : test_epub_model_roundtrip/fast
+
+# Convenience name for target.
 tests/CMakeFiles/test_a11y.dir/rule:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_a11y.dir/rule
 .PHONY : tests/CMakeFiles/test_a11y.dir/rule
@@ -587,6 +601,20 @@ test_convert: tests/CMakeFiles/test_convert.dir/rule
 test_convert/fast:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_convert.dir/build.make tests/CMakeFiles/test_convert.dir/build
 .PHONY : test_convert/fast
+
+# Convenience name for target.
+tests/CMakeFiles/test_conv_model.dir/rule:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_conv_model.dir/rule
+.PHONY : tests/CMakeFiles/test_conv_model.dir/rule
+
+# Convenience name for target.
+test_conv_model: tests/CMakeFiles/test_conv_model.dir/rule
+.PHONY : test_conv_model
+
+# fast build rule for target.
+test_conv_model/fast:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_conv_model.dir/build.make tests/CMakeFiles/test_conv_model.dir/build
+.PHONY : test_conv_model/fast
 
 # Convenience name for target.
 tests/CMakeFiles/test_word_lists.dir/rule:
@@ -1050,6 +1078,62 @@ test_gru_cmp/fast:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_gru_cmp.dir/build.make tests/CMakeFiles/test_gru_cmp.dir/build
 .PHONY : test_gru_cmp/fast
 
+# Convenience name for target.
+tests/CMakeFiles/test_layout.dir/rule:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_layout.dir/rule
+.PHONY : tests/CMakeFiles/test_layout.dir/rule
+
+# Convenience name for target.
+test_layout: tests/CMakeFiles/test_layout.dir/rule
+.PHONY : test_layout
+
+# fast build rule for target.
+test_layout/fast:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_layout.dir/build.make tests/CMakeFiles/test_layout.dir/build
+.PHONY : test_layout/fast
+
+# Convenience name for target.
+tests/CMakeFiles/test_exp.dir/rule:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_exp.dir/rule
+.PHONY : tests/CMakeFiles/test_exp.dir/rule
+
+# Convenience name for target.
+test_exp: tests/CMakeFiles/test_exp.dir/rule
+.PHONY : test_exp
+
+# fast build rule for target.
+test_exp/fast:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_exp.dir/build.make tests/CMakeFiles/test_exp.dir/build
+.PHONY : test_exp/fast
+
+# Convenience name for target.
+tests/CMakeFiles/test_settings.dir/rule:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_settings.dir/rule
+.PHONY : tests/CMakeFiles/test_settings.dir/rule
+
+# Convenience name for target.
+test_settings: tests/CMakeFiles/test_settings.dir/rule
+.PHONY : test_settings
+
+# fast build rule for target.
+test_settings/fast:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_settings.dir/build.make tests/CMakeFiles/test_settings.dir/build
+.PHONY : test_settings/fast
+
+# Convenience name for target.
+tests/CMakeFiles/test_toc.dir/rule:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_toc.dir/rule
+.PHONY : tests/CMakeFiles/test_toc.dir/rule
+
+# Convenience name for target.
+test_toc: tests/CMakeFiles/test_toc.dir/rule
+.PHONY : test_toc
+
+# fast build rule for target.
+test_toc/fast:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_toc.dir/build.make tests/CMakeFiles/test_toc.dir/build
+.PHONY : test_toc/fast
+
 __/apps/wubunote/note_controller.o: __/apps/wubunote/note_controller.c.o
 .PHONY : __/apps/wubunote/note_controller.o
 
@@ -1440,6 +1524,30 @@ test_conformance.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_conformance.dir/build.make tests/CMakeFiles/test_conformance.dir/test_conformance.c.s
 .PHONY : test_conformance.c.s
 
+test_conv_model.o: test_conv_model.c.o
+.PHONY : test_conv_model.o
+
+# target to build an object file
+test_conv_model.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_conv_model.dir/build.make tests/CMakeFiles/test_conv_model.dir/test_conv_model.c.o
+.PHONY : test_conv_model.c.o
+
+test_conv_model.i: test_conv_model.c.i
+.PHONY : test_conv_model.i
+
+# target to preprocess a source file
+test_conv_model.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_conv_model.dir/build.make tests/CMakeFiles/test_conv_model.dir/test_conv_model.c.i
+.PHONY : test_conv_model.c.i
+
+test_conv_model.s: test_conv_model.c.s
+.PHONY : test_conv_model.s
+
+# target to generate assembly for a file
+test_conv_model.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_conv_model.dir/build.make tests/CMakeFiles/test_conv_model.dir/test_conv_model.c.s
+.PHONY : test_conv_model.c.s
+
 test_convert.o: test_convert.c.o
 .PHONY : test_convert.o
 
@@ -1727,6 +1835,54 @@ test_epub.s: test_epub.c.s
 test_epub.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_epub.dir/build.make tests/CMakeFiles/test_epub.dir/test_epub.c.s
 .PHONY : test_epub.c.s
+
+test_epub_model_roundtrip.o: test_epub_model_roundtrip.c.o
+.PHONY : test_epub_model_roundtrip.o
+
+# target to build an object file
+test_epub_model_roundtrip.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_epub_model_roundtrip.dir/build.make tests/CMakeFiles/test_epub_model_roundtrip.dir/test_epub_model_roundtrip.c.o
+.PHONY : test_epub_model_roundtrip.c.o
+
+test_epub_model_roundtrip.i: test_epub_model_roundtrip.c.i
+.PHONY : test_epub_model_roundtrip.i
+
+# target to preprocess a source file
+test_epub_model_roundtrip.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_epub_model_roundtrip.dir/build.make tests/CMakeFiles/test_epub_model_roundtrip.dir/test_epub_model_roundtrip.c.i
+.PHONY : test_epub_model_roundtrip.c.i
+
+test_epub_model_roundtrip.s: test_epub_model_roundtrip.c.s
+.PHONY : test_epub_model_roundtrip.s
+
+# target to generate assembly for a file
+test_epub_model_roundtrip.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_epub_model_roundtrip.dir/build.make tests/CMakeFiles/test_epub_model_roundtrip.dir/test_epub_model_roundtrip.c.s
+.PHONY : test_epub_model_roundtrip.c.s
+
+test_exp.o: test_exp.c.o
+.PHONY : test_exp.o
+
+# target to build an object file
+test_exp.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_exp.dir/build.make tests/CMakeFiles/test_exp.dir/test_exp.c.o
+.PHONY : test_exp.c.o
+
+test_exp.i: test_exp.c.i
+.PHONY : test_exp.i
+
+# target to preprocess a source file
+test_exp.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_exp.dir/build.make tests/CMakeFiles/test_exp.dir/test_exp.c.i
+.PHONY : test_exp.c.i
+
+test_exp.s: test_exp.c.s
+.PHONY : test_exp.s
+
+# target to generate assembly for a file
+test_exp.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_exp.dir/build.make tests/CMakeFiles/test_exp.dir/test_exp.c.s
+.PHONY : test_exp.c.s
 
 test_extract.o: test_extract.c.o
 .PHONY : test_extract.o
@@ -2063,6 +2219,30 @@ test_latin1.s: test_latin1.c.s
 test_latin1.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_latin1.dir/build.make tests/CMakeFiles/test_latin1.dir/test_latin1.c.s
 .PHONY : test_latin1.c.s
+
+test_layout.o: test_layout.c.o
+.PHONY : test_layout.o
+
+# target to build an object file
+test_layout.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_layout.dir/build.make tests/CMakeFiles/test_layout.dir/test_layout.c.o
+.PHONY : test_layout.c.o
+
+test_layout.i: test_layout.c.i
+.PHONY : test_layout.i
+
+# target to preprocess a source file
+test_layout.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_layout.dir/build.make tests/CMakeFiles/test_layout.dir/test_layout.c.i
+.PHONY : test_layout.c.i
+
+test_layout.s: test_layout.c.s
+.PHONY : test_layout.s
+
+# target to generate assembly for a file
+test_layout.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_layout.dir/build.make tests/CMakeFiles/test_layout.dir/test_layout.c.s
+.PHONY : test_layout.c.s
 
 test_legacy_pdf.o: test_legacy_pdf.c.o
 .PHONY : test_legacy_pdf.o
@@ -2424,6 +2604,30 @@ test_script.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_script.dir/build.make tests/CMakeFiles/test_script.dir/test_script.c.s
 .PHONY : test_script.c.s
 
+test_settings.o: test_settings.c.o
+.PHONY : test_settings.o
+
+# target to build an object file
+test_settings.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_settings.dir/build.make tests/CMakeFiles/test_settings.dir/test_settings.c.o
+.PHONY : test_settings.c.o
+
+test_settings.i: test_settings.c.i
+.PHONY : test_settings.i
+
+# target to preprocess a source file
+test_settings.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_settings.dir/build.make tests/CMakeFiles/test_settings.dir/test_settings.c.i
+.PHONY : test_settings.c.i
+
+test_settings.s: test_settings.c.s
+.PHONY : test_settings.s
+
+# target to generate assembly for a file
+test_settings.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_settings.dir/build.make tests/CMakeFiles/test_settings.dir/test_settings.c.s
+.PHONY : test_settings.c.s
+
 test_spell.o: test_spell.c.o
 .PHONY : test_spell.o
 
@@ -2447,6 +2651,30 @@ test_spell.s: test_spell.c.s
 test_spell.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_spell.dir/build.make tests/CMakeFiles/test_spell.dir/test_spell.c.s
 .PHONY : test_spell.c.s
+
+test_toc.o: test_toc.c.o
+.PHONY : test_toc.o
+
+# target to build an object file
+test_toc.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_toc.dir/build.make tests/CMakeFiles/test_toc.dir/test_toc.c.o
+.PHONY : test_toc.c.o
+
+test_toc.i: test_toc.c.i
+.PHONY : test_toc.i
+
+# target to preprocess a source file
+test_toc.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_toc.dir/build.make tests/CMakeFiles/test_toc.dir/test_toc.c.i
+.PHONY : test_toc.c.i
+
+test_toc.s: test_toc.c.s
+.PHONY : test_toc.s
+
+# target to generate assembly for a file
+test_toc.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_toc.dir/build.make tests/CMakeFiles/test_toc.dir/test_toc.c.s
+.PHONY : test_toc.c.s
 
 test_word_lists.o: test_word_lists.c.o
 .PHONY : test_word_lists.o
@@ -2803,6 +3031,7 @@ help:
 	@echo "... test_cold_start"
 	@echo "... test_columns"
 	@echo "... test_conformance"
+	@echo "... test_conv_model"
 	@echo "... test_convert"
 	@echo "... test_crnn_transcribe"
 	@echo "... test_crnn_transcribe_full"
@@ -2815,6 +3044,8 @@ help:
 	@echo "... test_drop"
 	@echo "... test_edit"
 	@echo "... test_epub"
+	@echo "... test_epub_model_roundtrip"
+	@echo "... test_exp"
 	@echo "... test_extract"
 	@echo "... test_flat_epub"
 	@echo "... test_fontbank"
@@ -2829,6 +3060,7 @@ help:
 	@echo "... test_imgops"
 	@echo "... test_inflate"
 	@echo "... test_latin1"
+	@echo "... test_layout"
 	@echo "... test_legacy_pdf"
 	@echo "... test_load_async"
 	@echo "... test_md"
@@ -2843,7 +3075,9 @@ help:
 	@echo "... test_readers"
 	@echo "... test_rtf_json"
 	@echo "... test_script"
+	@echo "... test_settings"
 	@echo "... test_spell"
+	@echo "... test_toc"
 	@echo "... test_word_lists"
 	@echo "... test_wubudoc"
 	@echo "... test_wubufont"
@@ -2907,6 +3141,9 @@ help:
 	@echo "... test_conformance.o"
 	@echo "... test_conformance.i"
 	@echo "... test_conformance.s"
+	@echo "... test_conv_model.o"
+	@echo "... test_conv_model.i"
+	@echo "... test_conv_model.s"
 	@echo "... test_convert.o"
 	@echo "... test_convert.i"
 	@echo "... test_convert.s"
@@ -2943,6 +3180,12 @@ help:
 	@echo "... test_epub.o"
 	@echo "... test_epub.i"
 	@echo "... test_epub.s"
+	@echo "... test_epub_model_roundtrip.o"
+	@echo "... test_epub_model_roundtrip.i"
+	@echo "... test_epub_model_roundtrip.s"
+	@echo "... test_exp.o"
+	@echo "... test_exp.i"
+	@echo "... test_exp.s"
 	@echo "... test_extract.o"
 	@echo "... test_extract.i"
 	@echo "... test_extract.s"
@@ -2985,6 +3228,9 @@ help:
 	@echo "... test_latin1.o"
 	@echo "... test_latin1.i"
 	@echo "... test_latin1.s"
+	@echo "... test_layout.o"
+	@echo "... test_layout.i"
+	@echo "... test_layout.s"
 	@echo "... test_legacy_pdf.o"
 	@echo "... test_legacy_pdf.i"
 	@echo "... test_legacy_pdf.s"
@@ -3030,9 +3276,15 @@ help:
 	@echo "... test_script.o"
 	@echo "... test_script.i"
 	@echo "... test_script.s"
+	@echo "... test_settings.o"
+	@echo "... test_settings.i"
+	@echo "... test_settings.s"
 	@echo "... test_spell.o"
 	@echo "... test_spell.i"
 	@echo "... test_spell.s"
+	@echo "... test_toc.o"
+	@echo "... test_toc.i"
+	@echo "... test_toc.s"
 	@echo "... test_word_lists.o"
 	@echo "... test_word_lists.i"
 	@echo "... test_word_lists.s"

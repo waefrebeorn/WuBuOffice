@@ -140,53 +140,29 @@ wubuoffice/fast:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuoffice/CMakeFiles/wubuoffice.dir/build.make apps/wubuoffice/CMakeFiles/wubuoffice.dir/build
 .PHONY : wubuoffice/fast
 
-__/__/tools/image2doc.o: __/__/tools/image2doc.c.o
-.PHONY : __/__/tools/image2doc.o
+wubuoffice.o: wubuoffice.c.o
+.PHONY : wubuoffice.o
 
 # target to build an object file
-__/__/tools/image2doc.c.o:
-	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuoffice/CMakeFiles/wubuoffice.dir/build.make apps/wubuoffice/CMakeFiles/wubuoffice.dir/__/__/tools/image2doc.c.o
-.PHONY : __/__/tools/image2doc.c.o
+wubuoffice.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuoffice/CMakeFiles/wubuoffice.dir/build.make apps/wubuoffice/CMakeFiles/wubuoffice.dir/wubuoffice.c.o
+.PHONY : wubuoffice.c.o
 
-__/__/tools/image2doc.i: __/__/tools/image2doc.c.i
-.PHONY : __/__/tools/image2doc.i
-
-# target to preprocess a source file
-__/__/tools/image2doc.c.i:
-	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuoffice/CMakeFiles/wubuoffice.dir/build.make apps/wubuoffice/CMakeFiles/wubuoffice.dir/__/__/tools/image2doc.c.i
-.PHONY : __/__/tools/image2doc.c.i
-
-__/__/tools/image2doc.s: __/__/tools/image2doc.c.s
-.PHONY : __/__/tools/image2doc.s
-
-# target to generate assembly for a file
-__/__/tools/image2doc.c.s:
-	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuoffice/CMakeFiles/wubuoffice.dir/build.make apps/wubuoffice/CMakeFiles/wubuoffice.dir/__/__/tools/image2doc.c.s
-.PHONY : __/__/tools/image2doc.c.s
-
-main.o: main.c.o
-.PHONY : main.o
-
-# target to build an object file
-main.c.o:
-	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuoffice/CMakeFiles/wubuoffice.dir/build.make apps/wubuoffice/CMakeFiles/wubuoffice.dir/main.c.o
-.PHONY : main.c.o
-
-main.i: main.c.i
-.PHONY : main.i
+wubuoffice.i: wubuoffice.c.i
+.PHONY : wubuoffice.i
 
 # target to preprocess a source file
-main.c.i:
-	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuoffice/CMakeFiles/wubuoffice.dir/build.make apps/wubuoffice/CMakeFiles/wubuoffice.dir/main.c.i
-.PHONY : main.c.i
+wubuoffice.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuoffice/CMakeFiles/wubuoffice.dir/build.make apps/wubuoffice/CMakeFiles/wubuoffice.dir/wubuoffice.c.i
+.PHONY : wubuoffice.c.i
 
-main.s: main.c.s
-.PHONY : main.s
+wubuoffice.s: wubuoffice.c.s
+.PHONY : wubuoffice.s
 
 # target to generate assembly for a file
-main.c.s:
-	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuoffice/CMakeFiles/wubuoffice.dir/build.make apps/wubuoffice/CMakeFiles/wubuoffice.dir/main.c.s
-.PHONY : main.c.s
+wubuoffice.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuoffice/CMakeFiles/wubuoffice.dir/build.make apps/wubuoffice/CMakeFiles/wubuoffice.dir/wubuoffice.c.s
+.PHONY : wubuoffice.c.s
 
 # Help Target
 help:
@@ -198,12 +174,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... test"
 	@echo "... wubuoffice"
-	@echo "... __/__/tools/image2doc.o"
-	@echo "... __/__/tools/image2doc.i"
-	@echo "... __/__/tools/image2doc.s"
-	@echo "... main.o"
-	@echo "... main.i"
-	@echo "... main.s"
+	@echo "... wubuoffice.o"
+	@echo "... wubuoffice.i"
+	@echo "... wubuoffice.s"
 .PHONY : help
 
 

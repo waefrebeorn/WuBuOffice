@@ -7,6 +7,7 @@ apps/wubuconv/CMakeFiles/wubuconv_app.dir/conv_bridge.c.o
  /home/wubu/WuBuOffice/apps/wubuedit/docmodel.h
  /home/wubu/WuBuOffice/apps/wubushow/show.h
  /home/wubu/WuBuOffice/apps/wubuconv/conv_bridge.h
+ /home/wubu/WuBuOffice/src/wubumodel/model.h
  /home/wubu/WuBuOffice/src/wubuoxml/package.h
  /usr/include/features-time64.h
  /usr/include/features.h
@@ -87,6 +88,7 @@ apps/wubuconv/CMakeFiles/wubuconv_app.dir/conv_map.c.o
  /home/wubu/WuBuOffice/apps/wubuconv/conv_map.h
  /home/wubu/WuBuOffice/apps/wubuconv/model_from_json.h
  /home/wubu/WuBuOffice/src/wubujson/json.h
+ /home/wubu/WuBuOffice/src/wubumodel/model.h
  /home/wubu/WuBuOffice/src/wubuoxml/docx_text.h
  /home/wubu/WuBuOffice/src/wubuoxml/package.h
  /home/wubu/WuBuOffice/src/wubuoxml/reader.h

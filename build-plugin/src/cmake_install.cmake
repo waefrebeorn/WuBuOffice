@@ -70,6 +70,11 @@ if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   include("/home/wubu/WuBuOffice/build-plugin/src/wubunote/cmake_install.cmake")
   include("/home/wubu/WuBuOffice/build-plugin/src/wubudoc/cmake_install.cmake")
   include("/home/wubu/WuBuOffice/build-plugin/src/gpu/cmake_install.cmake")
+  include("/home/wubu/WuBuOffice/build-plugin/src/wubusettings/cmake_install.cmake")
+  include("/home/wubu/WuBuOffice/build-plugin/src/wubushape/cmake_install.cmake")
+  include("/home/wubu/WuBuOffice/build-plugin/src/wubulayout/cmake_install.cmake")
+  include("/home/wubu/WuBuOffice/build-plugin/src/wubuexp/cmake_install.cmake")
+  include("/home/wubu/WuBuOffice/build-plugin/src/wubutoc/cmake_install.cmake")
 
 endif()
 

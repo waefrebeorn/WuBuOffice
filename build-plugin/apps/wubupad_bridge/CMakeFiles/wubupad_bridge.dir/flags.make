@@ -4,7 +4,7 @@
 # compile C with /usr/bin/cc
 C_DEFINES = -D_POSIX_C_SOURCE=200809L
 
-C_INCLUDES = -I/home/wubu/WuBuPad/src -I/home/wubu/WuBuOffice/apps/wubupad_bridge
+C_INCLUDES = -I/home/wubu/WuBuOffice/apps/wubupad_bridge -isystem /home/wubu/WuBuPad/src
 
-C_FLAGS = -O3 -DNDEBUG -std=c11 -Wall -Wextra -Wpedantic -Wno-unused-parameter
+C_FLAGS = -O3 -DNDEBUG -std=c11 -Wall -Wextra -Wpedantic -Wno-unused-parameter -fopenmp
 

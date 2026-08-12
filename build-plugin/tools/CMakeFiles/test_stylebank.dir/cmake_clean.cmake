@@ -1,4 +1,6 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/test_stylebank.dir/__/src/wubuocr/conv_gemm.c.o"
+  "CMakeFiles/test_stylebank.dir/__/src/wubuocr/conv_gemm.c.o.d"
   "CMakeFiles/test_stylebank.dir/__/src/wubuocr/convnet3.c.o"
   "CMakeFiles/test_stylebank.dir/__/src/wubuocr/convnet3.c.o.d"
   "CMakeFiles/test_stylebank.dir/__/src/wubuocr/mlp.c.o"

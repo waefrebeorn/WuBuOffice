@@ -97,10 +97,52 @@ src/wubumodel/CMakeFiles/wubumodel.dir/model_io.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/wubumodel.dir/model_io.c.s"
 	cd /home/wubu/WuBuOffice/build-plugin/src/wubumodel && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/wubu/WuBuOffice/src/wubumodel/model_io.c -o CMakeFiles/wubumodel.dir/model_io.c.s
 
+src/wubumodel/CMakeFiles/wubumodel.dir/model_odt.c.o: src/wubumodel/CMakeFiles/wubumodel.dir/flags.make
+src/wubumodel/CMakeFiles/wubumodel.dir/model_odt.c.o: /home/wubu/WuBuOffice/src/wubumodel/model_odt.c
+src/wubumodel/CMakeFiles/wubumodel.dir/model_odt.c.o: src/wubumodel/CMakeFiles/wubumodel.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object src/wubumodel/CMakeFiles/wubumodel.dir/model_odt.c.o"
+	cd /home/wubu/WuBuOffice/build-plugin/src/wubumodel && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT src/wubumodel/CMakeFiles/wubumodel.dir/model_odt.c.o -MF CMakeFiles/wubumodel.dir/model_odt.c.o.d -o CMakeFiles/wubumodel.dir/model_odt.c.o -c /home/wubu/WuBuOffice/src/wubumodel/model_odt.c
+
+src/wubumodel/CMakeFiles/wubumodel.dir/model_odt.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/wubumodel.dir/model_odt.c.i"
+	cd /home/wubu/WuBuOffice/build-plugin/src/wubumodel && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/wubu/WuBuOffice/src/wubumodel/model_odt.c > CMakeFiles/wubumodel.dir/model_odt.c.i
+
+src/wubumodel/CMakeFiles/wubumodel.dir/model_odt.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/wubumodel.dir/model_odt.c.s"
+	cd /home/wubu/WuBuOffice/build-plugin/src/wubumodel && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/wubu/WuBuOffice/src/wubumodel/model_odt.c -o CMakeFiles/wubumodel.dir/model_odt.c.s
+
+src/wubumodel/CMakeFiles/wubumodel.dir/model_rtf.c.o: src/wubumodel/CMakeFiles/wubumodel.dir/flags.make
+src/wubumodel/CMakeFiles/wubumodel.dir/model_rtf.c.o: /home/wubu/WuBuOffice/src/wubumodel/model_rtf.c
+src/wubumodel/CMakeFiles/wubumodel.dir/model_rtf.c.o: src/wubumodel/CMakeFiles/wubumodel.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object src/wubumodel/CMakeFiles/wubumodel.dir/model_rtf.c.o"
+	cd /home/wubu/WuBuOffice/build-plugin/src/wubumodel && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT src/wubumodel/CMakeFiles/wubumodel.dir/model_rtf.c.o -MF CMakeFiles/wubumodel.dir/model_rtf.c.o.d -o CMakeFiles/wubumodel.dir/model_rtf.c.o -c /home/wubu/WuBuOffice/src/wubumodel/model_rtf.c
+
+src/wubumodel/CMakeFiles/wubumodel.dir/model_rtf.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/wubumodel.dir/model_rtf.c.i"
+	cd /home/wubu/WuBuOffice/build-plugin/src/wubumodel && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/wubu/WuBuOffice/src/wubumodel/model_rtf.c > CMakeFiles/wubumodel.dir/model_rtf.c.i
+
+src/wubumodel/CMakeFiles/wubumodel.dir/model_rtf.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/wubumodel.dir/model_rtf.c.s"
+	cd /home/wubu/WuBuOffice/build-plugin/src/wubumodel && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/wubu/WuBuOffice/src/wubumodel/model_rtf.c -o CMakeFiles/wubumodel.dir/model_rtf.c.s
+
+src/wubumodel/CMakeFiles/wubumodel.dir/model_epub.c.o: src/wubumodel/CMakeFiles/wubumodel.dir/flags.make
+src/wubumodel/CMakeFiles/wubumodel.dir/model_epub.c.o: /home/wubu/WuBuOffice/src/wubumodel/model_epub.c
+src/wubumodel/CMakeFiles/wubumodel.dir/model_epub.c.o: src/wubumodel/CMakeFiles/wubumodel.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object src/wubumodel/CMakeFiles/wubumodel.dir/model_epub.c.o"
+	cd /home/wubu/WuBuOffice/build-plugin/src/wubumodel && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT src/wubumodel/CMakeFiles/wubumodel.dir/model_epub.c.o -MF CMakeFiles/wubumodel.dir/model_epub.c.o.d -o CMakeFiles/wubumodel.dir/model_epub.c.o -c /home/wubu/WuBuOffice/src/wubumodel/model_epub.c
+
+src/wubumodel/CMakeFiles/wubumodel.dir/model_epub.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/wubumodel.dir/model_epub.c.i"
+	cd /home/wubu/WuBuOffice/build-plugin/src/wubumodel && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/wubu/WuBuOffice/src/wubumodel/model_epub.c > CMakeFiles/wubumodel.dir/model_epub.c.i
+
+src/wubumodel/CMakeFiles/wubumodel.dir/model_epub.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/wubumodel.dir/model_epub.c.s"
+	cd /home/wubu/WuBuOffice/build-plugin/src/wubumodel && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/wubu/WuBuOffice/src/wubumodel/model_epub.c -o CMakeFiles/wubumodel.dir/model_epub.c.s
+
 src/wubumodel/CMakeFiles/wubumodel.dir/doc_cache.c.o: src/wubumodel/CMakeFiles/wubumodel.dir/flags.make
 src/wubumodel/CMakeFiles/wubumodel.dir/doc_cache.c.o: /home/wubu/WuBuOffice/src/wubumodel/doc_cache.c
 src/wubumodel/CMakeFiles/wubumodel.dir/doc_cache.c.o: src/wubumodel/CMakeFiles/wubumodel.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object src/wubumodel/CMakeFiles/wubumodel.dir/doc_cache.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building C object src/wubumodel/CMakeFiles/wubumodel.dir/doc_cache.c.o"
 	cd /home/wubu/WuBuOffice/build-plugin/src/wubumodel && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT src/wubumodel/CMakeFiles/wubumodel.dir/doc_cache.c.o -MF CMakeFiles/wubumodel.dir/doc_cache.c.o.d -o CMakeFiles/wubumodel.dir/doc_cache.c.o -c /home/wubu/WuBuOffice/src/wubumodel/doc_cache.c
 
 src/wubumodel/CMakeFiles/wubumodel.dir/doc_cache.c.i: cmake_force
@@ -114,7 +156,7 @@ src/wubumodel/CMakeFiles/wubumodel.dir/doc_cache.c.s: cmake_force
 src/wubumodel/CMakeFiles/wubumodel.dir/load_async.c.o: src/wubumodel/CMakeFiles/wubumodel.dir/flags.make
 src/wubumodel/CMakeFiles/wubumodel.dir/load_async.c.o: /home/wubu/WuBuOffice/src/wubumodel/load_async.c
 src/wubumodel/CMakeFiles/wubumodel.dir/load_async.c.o: src/wubumodel/CMakeFiles/wubumodel.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object src/wubumodel/CMakeFiles/wubumodel.dir/load_async.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building C object src/wubumodel/CMakeFiles/wubumodel.dir/load_async.c.o"
 	cd /home/wubu/WuBuOffice/build-plugin/src/wubumodel && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT src/wubumodel/CMakeFiles/wubumodel.dir/load_async.c.o -MF CMakeFiles/wubumodel.dir/load_async.c.o.d -o CMakeFiles/wubumodel.dir/load_async.c.o -c /home/wubu/WuBuOffice/src/wubumodel/load_async.c
 
 src/wubumodel/CMakeFiles/wubumodel.dir/load_async.c.i: cmake_force
@@ -129,6 +171,9 @@ src/wubumodel/CMakeFiles/wubumodel.dir/load_async.c.s: cmake_force
 wubumodel_OBJECTS = \
 "CMakeFiles/wubumodel.dir/model.c.o" \
 "CMakeFiles/wubumodel.dir/model_io.c.o" \
+"CMakeFiles/wubumodel.dir/model_odt.c.o" \
+"CMakeFiles/wubumodel.dir/model_rtf.c.o" \
+"CMakeFiles/wubumodel.dir/model_epub.c.o" \
 "CMakeFiles/wubumodel.dir/doc_cache.c.o" \
 "CMakeFiles/wubumodel.dir/load_async.c.o"
 
@@ -137,11 +182,14 @@ wubumodel_EXTERNAL_OBJECTS =
 
 src/wubumodel/libwubumodel.a: src/wubumodel/CMakeFiles/wubumodel.dir/model.c.o
 src/wubumodel/libwubumodel.a: src/wubumodel/CMakeFiles/wubumodel.dir/model_io.c.o
+src/wubumodel/libwubumodel.a: src/wubumodel/CMakeFiles/wubumodel.dir/model_odt.c.o
+src/wubumodel/libwubumodel.a: src/wubumodel/CMakeFiles/wubumodel.dir/model_rtf.c.o
+src/wubumodel/libwubumodel.a: src/wubumodel/CMakeFiles/wubumodel.dir/model_epub.c.o
 src/wubumodel/libwubumodel.a: src/wubumodel/CMakeFiles/wubumodel.dir/doc_cache.c.o
 src/wubumodel/libwubumodel.a: src/wubumodel/CMakeFiles/wubumodel.dir/load_async.c.o
 src/wubumodel/libwubumodel.a: src/wubumodel/CMakeFiles/wubumodel.dir/build.make
 src/wubumodel/libwubumodel.a: src/wubumodel/CMakeFiles/wubumodel.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking C static library libwubumodel.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Linking C static library libwubumodel.a"
 	cd /home/wubu/WuBuOffice/build-plugin/src/wubumodel && $(CMAKE_COMMAND) -P CMakeFiles/wubumodel.dir/cmake_clean_target.cmake
 	cd /home/wubu/WuBuOffice/build-plugin/src/wubumodel && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/wubumodel.dir/link.txt --verbose=$(VERBOSE)
 

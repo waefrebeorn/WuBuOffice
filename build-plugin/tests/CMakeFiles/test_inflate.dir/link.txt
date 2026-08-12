@@ -1,1 +1,1 @@
-/usr/bin/cc -O3 -DNDEBUG CMakeFiles/test_inflate.dir/test_inflate.c.o -o test_inflate  ../src/wubuzip/libwubuzip.a -lz 
+/usr/bin/cc -O3 -DNDEBUG -fopenmp CMakeFiles/test_inflate.dir/test_inflate.c.o -o test_inflate  ../src/wubuzip/libwubuzip.a -lz 

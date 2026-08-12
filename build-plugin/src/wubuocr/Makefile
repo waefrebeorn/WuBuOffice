@@ -202,6 +202,30 @@ components.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f src/wubuocr/CMakeFiles/wubuocr.dir/build.make src/wubuocr/CMakeFiles/wubuocr.dir/components.c.s
 .PHONY : components.c.s
 
+conv_gemm.o: conv_gemm.c.o
+.PHONY : conv_gemm.o
+
+# target to build an object file
+conv_gemm.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f src/wubuocr/CMakeFiles/wubuocr.dir/build.make src/wubuocr/CMakeFiles/wubuocr.dir/conv_gemm.c.o
+.PHONY : conv_gemm.c.o
+
+conv_gemm.i: conv_gemm.c.i
+.PHONY : conv_gemm.i
+
+# target to preprocess a source file
+conv_gemm.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f src/wubuocr/CMakeFiles/wubuocr.dir/build.make src/wubuocr/CMakeFiles/wubuocr.dir/conv_gemm.c.i
+.PHONY : conv_gemm.c.i
+
+conv_gemm.s: conv_gemm.c.s
+.PHONY : conv_gemm.s
+
+# target to generate assembly for a file
+conv_gemm.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f src/wubuocr/CMakeFiles/wubuocr.dir/build.make src/wubuocr/CMakeFiles/wubuocr.dir/conv_gemm.c.s
+.PHONY : conv_gemm.c.s
+
 convnet.o: convnet.c.o
 .PHONY : convnet.o
 
@@ -987,6 +1011,9 @@ help:
 	@echo "... components.o"
 	@echo "... components.i"
 	@echo "... components.s"
+	@echo "... conv_gemm.o"
+	@echo "... conv_gemm.i"
+	@echo "... conv_gemm.s"
 	@echo "... convnet.o"
 	@echo "... convnet.i"
 	@echo "... convnet.s"

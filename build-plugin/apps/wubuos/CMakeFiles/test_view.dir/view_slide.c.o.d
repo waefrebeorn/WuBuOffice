@@ -18,7 +18,9 @@ apps/wubuos/CMakeFiles/test_view.dir/view_slide.c.o: \
  /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
- /home/wubu/WuBuOffice/apps/wubuos/wuos_font.h /usr/include/stdlib.h \
+ /home/wubu/WuBuOffice/src/wubumodel/model.h \
+ /home/wubu/WuBuOffice/apps/wubuos/wuos_font.h \
+ /home/wubu/WuBuOffice/apps/wubuos/wuos_theme.h /usr/include/stdlib.h \
  /usr/include/x86_64-linux-gnu/bits/waitflags.h \
  /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
  /usr/include/x86_64-linux-gnu/bits/floatn.h \

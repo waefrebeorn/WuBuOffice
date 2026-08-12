@@ -6,5 +6,5 @@ C_DEFINES = -DFLAT_EPUB_ORACLE=\"/home/wubu/WuBuOffice/tests/conformance/flat_ep
 
 C_INCLUDES = -I/home/wubu/WuBuOffice/apps/wubuodf -I/home/wubu/WuBuOffice/apps/wubudoc -I/home/wubu/WuBuOffice/apps/wubucell -I/home/wubu/WuBuOffice/apps/wubushow -I/home/wubu/WuBuOffice/apps/wubuword -I/home/wubu/WuBuOffice/apps/wubuedit -I/home/wubu/WuBuOffice/src/wubuoxml -I/home/wubu/WuBuOffice/src/wubuxml -I/home/wubu/WuBuOffice/src/wubuzip -I/home/wubu/WuBuOffice/src/wubuformula -I/home/wubu/WuBuOffice/src/wubuformula/functions
 
-C_FLAGS = -O3 -DNDEBUG -std=c11 -Wall -Wextra -Wpedantic -Wno-unused-parameter
+C_FLAGS = -O3 -DNDEBUG -std=c11 -Wall -Wextra -Wpedantic -Wno-unused-parameter -fopenmp
 

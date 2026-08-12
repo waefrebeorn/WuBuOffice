@@ -125,10 +125,38 @@ apps/wubuos/CMakeFiles/test_view.dir/plugin.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/test_view.dir/plugin.c.s"
 	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/wubu/WuBuOffice/apps/wubuos/plugin.c -o CMakeFiles/test_view.dir/plugin.c.s
 
+apps/wubuos/CMakeFiles/test_view.dir/toast.c.o: apps/wubuos/CMakeFiles/test_view.dir/flags.make
+apps/wubuos/CMakeFiles/test_view.dir/toast.c.o: /home/wubu/WuBuOffice/apps/wubuos/toast.c
+apps/wubuos/CMakeFiles/test_view.dir/toast.c.o: apps/wubuos/CMakeFiles/test_view.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object apps/wubuos/CMakeFiles/test_view.dir/toast.c.o"
+	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT apps/wubuos/CMakeFiles/test_view.dir/toast.c.o -MF CMakeFiles/test_view.dir/toast.c.o.d -o CMakeFiles/test_view.dir/toast.c.o -c /home/wubu/WuBuOffice/apps/wubuos/toast.c
+
+apps/wubuos/CMakeFiles/test_view.dir/toast.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/test_view.dir/toast.c.i"
+	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/wubu/WuBuOffice/apps/wubuos/toast.c > CMakeFiles/test_view.dir/toast.c.i
+
+apps/wubuos/CMakeFiles/test_view.dir/toast.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/test_view.dir/toast.c.s"
+	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/wubu/WuBuOffice/apps/wubuos/toast.c -o CMakeFiles/test_view.dir/toast.c.s
+
+apps/wubuos/CMakeFiles/test_view.dir/palette.c.o: apps/wubuos/CMakeFiles/test_view.dir/flags.make
+apps/wubuos/CMakeFiles/test_view.dir/palette.c.o: /home/wubu/WuBuOffice/apps/wubuos/palette.c
+apps/wubuos/CMakeFiles/test_view.dir/palette.c.o: apps/wubuos/CMakeFiles/test_view.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building C object apps/wubuos/CMakeFiles/test_view.dir/palette.c.o"
+	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT apps/wubuos/CMakeFiles/test_view.dir/palette.c.o -MF CMakeFiles/test_view.dir/palette.c.o.d -o CMakeFiles/test_view.dir/palette.c.o -c /home/wubu/WuBuOffice/apps/wubuos/palette.c
+
+apps/wubuos/CMakeFiles/test_view.dir/palette.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/test_view.dir/palette.c.i"
+	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/wubu/WuBuOffice/apps/wubuos/palette.c > CMakeFiles/test_view.dir/palette.c.i
+
+apps/wubuos/CMakeFiles/test_view.dir/palette.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/test_view.dir/palette.c.s"
+	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/wubu/WuBuOffice/apps/wubuos/palette.c -o CMakeFiles/test_view.dir/palette.c.s
+
 apps/wubuos/CMakeFiles/test_view.dir/view_doc.c.o: apps/wubuos/CMakeFiles/test_view.dir/flags.make
 apps/wubuos/CMakeFiles/test_view.dir/view_doc.c.o: /home/wubu/WuBuOffice/apps/wubuos/view_doc.c
 apps/wubuos/CMakeFiles/test_view.dir/view_doc.c.o: apps/wubuos/CMakeFiles/test_view.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object apps/wubuos/CMakeFiles/test_view.dir/view_doc.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building C object apps/wubuos/CMakeFiles/test_view.dir/view_doc.c.o"
 	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT apps/wubuos/CMakeFiles/test_view.dir/view_doc.c.o -MF CMakeFiles/test_view.dir/view_doc.c.o.d -o CMakeFiles/test_view.dir/view_doc.c.o -c /home/wubu/WuBuOffice/apps/wubuos/view_doc.c
 
 apps/wubuos/CMakeFiles/test_view.dir/view_doc.c.i: cmake_force
@@ -142,7 +170,7 @@ apps/wubuos/CMakeFiles/test_view.dir/view_doc.c.s: cmake_force
 apps/wubuos/CMakeFiles/test_view.dir/view_cell.c.o: apps/wubuos/CMakeFiles/test_view.dir/flags.make
 apps/wubuos/CMakeFiles/test_view.dir/view_cell.c.o: /home/wubu/WuBuOffice/apps/wubuos/view_cell.c
 apps/wubuos/CMakeFiles/test_view.dir/view_cell.c.o: apps/wubuos/CMakeFiles/test_view.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building C object apps/wubuos/CMakeFiles/test_view.dir/view_cell.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building C object apps/wubuos/CMakeFiles/test_view.dir/view_cell.c.o"
 	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT apps/wubuos/CMakeFiles/test_view.dir/view_cell.c.o -MF CMakeFiles/test_view.dir/view_cell.c.o.d -o CMakeFiles/test_view.dir/view_cell.c.o -c /home/wubu/WuBuOffice/apps/wubuos/view_cell.c
 
 apps/wubuos/CMakeFiles/test_view.dir/view_cell.c.i: cmake_force
@@ -156,7 +184,7 @@ apps/wubuos/CMakeFiles/test_view.dir/view_cell.c.s: cmake_force
 apps/wubuos/CMakeFiles/test_view.dir/view_slide.c.o: apps/wubuos/CMakeFiles/test_view.dir/flags.make
 apps/wubuos/CMakeFiles/test_view.dir/view_slide.c.o: /home/wubu/WuBuOffice/apps/wubuos/view_slide.c
 apps/wubuos/CMakeFiles/test_view.dir/view_slide.c.o: apps/wubuos/CMakeFiles/test_view.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building C object apps/wubuos/CMakeFiles/test_view.dir/view_slide.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building C object apps/wubuos/CMakeFiles/test_view.dir/view_slide.c.o"
 	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT apps/wubuos/CMakeFiles/test_view.dir/view_slide.c.o -MF CMakeFiles/test_view.dir/view_slide.c.o.d -o CMakeFiles/test_view.dir/view_slide.c.o -c /home/wubu/WuBuOffice/apps/wubuos/view_slide.c
 
 apps/wubuos/CMakeFiles/test_view.dir/view_slide.c.i: cmake_force
@@ -170,7 +198,7 @@ apps/wubuos/CMakeFiles/test_view.dir/view_slide.c.s: cmake_force
 apps/wubuos/CMakeFiles/test_view.dir/view_ocr.c.o: apps/wubuos/CMakeFiles/test_view.dir/flags.make
 apps/wubuos/CMakeFiles/test_view.dir/view_ocr.c.o: /home/wubu/WuBuOffice/apps/wubuos/view_ocr.c
 apps/wubuos/CMakeFiles/test_view.dir/view_ocr.c.o: apps/wubuos/CMakeFiles/test_view.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building C object apps/wubuos/CMakeFiles/test_view.dir/view_ocr.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building C object apps/wubuos/CMakeFiles/test_view.dir/view_ocr.c.o"
 	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT apps/wubuos/CMakeFiles/test_view.dir/view_ocr.c.o -MF CMakeFiles/test_view.dir/view_ocr.c.o.d -o CMakeFiles/test_view.dir/view_ocr.c.o -c /home/wubu/WuBuOffice/apps/wubuos/view_ocr.c
 
 apps/wubuos/CMakeFiles/test_view.dir/view_ocr.c.i: cmake_force
@@ -184,7 +212,7 @@ apps/wubuos/CMakeFiles/test_view.dir/view_ocr.c.s: cmake_force
 apps/wubuos/CMakeFiles/test_view.dir/view_editor.c.o: apps/wubuos/CMakeFiles/test_view.dir/flags.make
 apps/wubuos/CMakeFiles/test_view.dir/view_editor.c.o: /home/wubu/WuBuOffice/apps/wubuos/view_editor.c
 apps/wubuos/CMakeFiles/test_view.dir/view_editor.c.o: apps/wubuos/CMakeFiles/test_view.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building C object apps/wubuos/CMakeFiles/test_view.dir/view_editor.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building C object apps/wubuos/CMakeFiles/test_view.dir/view_editor.c.o"
 	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT apps/wubuos/CMakeFiles/test_view.dir/view_editor.c.o -MF CMakeFiles/test_view.dir/view_editor.c.o.d -o CMakeFiles/test_view.dir/view_editor.c.o -c /home/wubu/WuBuOffice/apps/wubuos/view_editor.c
 
 apps/wubuos/CMakeFiles/test_view.dir/view_editor.c.i: cmake_force
@@ -198,7 +226,7 @@ apps/wubuos/CMakeFiles/test_view.dir/view_editor.c.s: cmake_force
 apps/wubuos/CMakeFiles/test_view.dir/view_compare.c.o: apps/wubuos/CMakeFiles/test_view.dir/flags.make
 apps/wubuos/CMakeFiles/test_view.dir/view_compare.c.o: /home/wubu/WuBuOffice/apps/wubuos/view_compare.c
 apps/wubuos/CMakeFiles/test_view.dir/view_compare.c.o: apps/wubuos/CMakeFiles/test_view.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building C object apps/wubuos/CMakeFiles/test_view.dir/view_compare.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building C object apps/wubuos/CMakeFiles/test_view.dir/view_compare.c.o"
 	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT apps/wubuos/CMakeFiles/test_view.dir/view_compare.c.o -MF CMakeFiles/test_view.dir/view_compare.c.o.d -o CMakeFiles/test_view.dir/view_compare.c.o -c /home/wubu/WuBuOffice/apps/wubuos/view_compare.c
 
 apps/wubuos/CMakeFiles/test_view.dir/view_compare.c.i: cmake_force
@@ -209,10 +237,122 @@ apps/wubuos/CMakeFiles/test_view.dir/view_compare.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/test_view.dir/view_compare.c.s"
 	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/wubu/WuBuOffice/apps/wubuos/view_compare.c -o CMakeFiles/test_view.dir/view_compare.c.s
 
+apps/wubuos/CMakeFiles/test_view.dir/view_settings.c.o: apps/wubuos/CMakeFiles/test_view.dir/flags.make
+apps/wubuos/CMakeFiles/test_view.dir/view_settings.c.o: /home/wubu/WuBuOffice/apps/wubuos/view_settings.c
+apps/wubuos/CMakeFiles/test_view.dir/view_settings.c.o: apps/wubuos/CMakeFiles/test_view.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building C object apps/wubuos/CMakeFiles/test_view.dir/view_settings.c.o"
+	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT apps/wubuos/CMakeFiles/test_view.dir/view_settings.c.o -MF CMakeFiles/test_view.dir/view_settings.c.o.d -o CMakeFiles/test_view.dir/view_settings.c.o -c /home/wubu/WuBuOffice/apps/wubuos/view_settings.c
+
+apps/wubuos/CMakeFiles/test_view.dir/view_settings.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/test_view.dir/view_settings.c.i"
+	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/wubu/WuBuOffice/apps/wubuos/view_settings.c > CMakeFiles/test_view.dir/view_settings.c.i
+
+apps/wubuos/CMakeFiles/test_view.dir/view_settings.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/test_view.dir/view_settings.c.s"
+	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/wubu/WuBuOffice/apps/wubuos/view_settings.c -o CMakeFiles/test_view.dir/view_settings.c.s
+
+apps/wubuos/CMakeFiles/test_view.dir/findbar.c.o: apps/wubuos/CMakeFiles/test_view.dir/flags.make
+apps/wubuos/CMakeFiles/test_view.dir/findbar.c.o: /home/wubu/WuBuOffice/apps/wubuos/findbar.c
+apps/wubuos/CMakeFiles/test_view.dir/findbar.c.o: apps/wubuos/CMakeFiles/test_view.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building C object apps/wubuos/CMakeFiles/test_view.dir/findbar.c.o"
+	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT apps/wubuos/CMakeFiles/test_view.dir/findbar.c.o -MF CMakeFiles/test_view.dir/findbar.c.o.d -o CMakeFiles/test_view.dir/findbar.c.o -c /home/wubu/WuBuOffice/apps/wubuos/findbar.c
+
+apps/wubuos/CMakeFiles/test_view.dir/findbar.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/test_view.dir/findbar.c.i"
+	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/wubu/WuBuOffice/apps/wubuos/findbar.c > CMakeFiles/test_view.dir/findbar.c.i
+
+apps/wubuos/CMakeFiles/test_view.dir/findbar.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/test_view.dir/findbar.c.s"
+	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/wubu/WuBuOffice/apps/wubuos/findbar.c -o CMakeFiles/test_view.dir/findbar.c.s
+
+apps/wubuos/CMakeFiles/test_view.dir/autocomp.c.o: apps/wubuos/CMakeFiles/test_view.dir/flags.make
+apps/wubuos/CMakeFiles/test_view.dir/autocomp.c.o: /home/wubu/WuBuOffice/apps/wubuos/autocomp.c
+apps/wubuos/CMakeFiles/test_view.dir/autocomp.c.o: apps/wubuos/CMakeFiles/test_view.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building C object apps/wubuos/CMakeFiles/test_view.dir/autocomp.c.o"
+	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT apps/wubuos/CMakeFiles/test_view.dir/autocomp.c.o -MF CMakeFiles/test_view.dir/autocomp.c.o.d -o CMakeFiles/test_view.dir/autocomp.c.o -c /home/wubu/WuBuOffice/apps/wubuos/autocomp.c
+
+apps/wubuos/CMakeFiles/test_view.dir/autocomp.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/test_view.dir/autocomp.c.i"
+	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/wubu/WuBuOffice/apps/wubuos/autocomp.c > CMakeFiles/test_view.dir/autocomp.c.i
+
+apps/wubuos/CMakeFiles/test_view.dir/autocomp.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/test_view.dir/autocomp.c.s"
+	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/wubu/WuBuOffice/apps/wubuos/autocomp.c -o CMakeFiles/test_view.dir/autocomp.c.s
+
+apps/wubuos/CMakeFiles/test_view.dir/bkmk.c.o: apps/wubuos/CMakeFiles/test_view.dir/flags.make
+apps/wubuos/CMakeFiles/test_view.dir/bkmk.c.o: /home/wubu/WuBuOffice/apps/wubuos/bkmk.c
+apps/wubuos/CMakeFiles/test_view.dir/bkmk.c.o: apps/wubuos/CMakeFiles/test_view.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building C object apps/wubuos/CMakeFiles/test_view.dir/bkmk.c.o"
+	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT apps/wubuos/CMakeFiles/test_view.dir/bkmk.c.o -MF CMakeFiles/test_view.dir/bkmk.c.o.d -o CMakeFiles/test_view.dir/bkmk.c.o -c /home/wubu/WuBuOffice/apps/wubuos/bkmk.c
+
+apps/wubuos/CMakeFiles/test_view.dir/bkmk.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/test_view.dir/bkmk.c.i"
+	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/wubu/WuBuOffice/apps/wubuos/bkmk.c > CMakeFiles/test_view.dir/bkmk.c.i
+
+apps/wubuos/CMakeFiles/test_view.dir/bkmk.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/test_view.dir/bkmk.c.s"
+	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/wubu/WuBuOffice/apps/wubuos/bkmk.c -o CMakeFiles/test_view.dir/bkmk.c.s
+
+apps/wubuos/CMakeFiles/test_view.dir/codefold.c.o: apps/wubuos/CMakeFiles/test_view.dir/flags.make
+apps/wubuos/CMakeFiles/test_view.dir/codefold.c.o: /home/wubu/WuBuOffice/apps/wubuos/codefold.c
+apps/wubuos/CMakeFiles/test_view.dir/codefold.c.o: apps/wubuos/CMakeFiles/test_view.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building C object apps/wubuos/CMakeFiles/test_view.dir/codefold.c.o"
+	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT apps/wubuos/CMakeFiles/test_view.dir/codefold.c.o -MF CMakeFiles/test_view.dir/codefold.c.o.d -o CMakeFiles/test_view.dir/codefold.c.o -c /home/wubu/WuBuOffice/apps/wubuos/codefold.c
+
+apps/wubuos/CMakeFiles/test_view.dir/codefold.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/test_view.dir/codefold.c.i"
+	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/wubu/WuBuOffice/apps/wubuos/codefold.c > CMakeFiles/test_view.dir/codefold.c.i
+
+apps/wubuos/CMakeFiles/test_view.dir/codefold.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/test_view.dir/codefold.c.s"
+	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/wubu/WuBuOffice/apps/wubuos/codefold.c -o CMakeFiles/test_view.dir/codefold.c.s
+
+apps/wubuos/CMakeFiles/test_view.dir/doccmd.c.o: apps/wubuos/CMakeFiles/test_view.dir/flags.make
+apps/wubuos/CMakeFiles/test_view.dir/doccmd.c.o: /home/wubu/WuBuOffice/apps/wubuos/doccmd.c
+apps/wubuos/CMakeFiles/test_view.dir/doccmd.c.o: apps/wubuos/CMakeFiles/test_view.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building C object apps/wubuos/CMakeFiles/test_view.dir/doccmd.c.o"
+	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT apps/wubuos/CMakeFiles/test_view.dir/doccmd.c.o -MF CMakeFiles/test_view.dir/doccmd.c.o.d -o CMakeFiles/test_view.dir/doccmd.c.o -c /home/wubu/WuBuOffice/apps/wubuos/doccmd.c
+
+apps/wubuos/CMakeFiles/test_view.dir/doccmd.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/test_view.dir/doccmd.c.i"
+	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/wubu/WuBuOffice/apps/wubuos/doccmd.c > CMakeFiles/test_view.dir/doccmd.c.i
+
+apps/wubuos/CMakeFiles/test_view.dir/doccmd.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/test_view.dir/doccmd.c.s"
+	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/wubu/WuBuOffice/apps/wubuos/doccmd.c -o CMakeFiles/test_view.dir/doccmd.c.s
+
+apps/wubuos/CMakeFiles/test_view.dir/macro.c.o: apps/wubuos/CMakeFiles/test_view.dir/flags.make
+apps/wubuos/CMakeFiles/test_view.dir/macro.c.o: /home/wubu/WuBuOffice/apps/wubuos/macro.c
+apps/wubuos/CMakeFiles/test_view.dir/macro.c.o: apps/wubuos/CMakeFiles/test_view.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building C object apps/wubuos/CMakeFiles/test_view.dir/macro.c.o"
+	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT apps/wubuos/CMakeFiles/test_view.dir/macro.c.o -MF CMakeFiles/test_view.dir/macro.c.o.d -o CMakeFiles/test_view.dir/macro.c.o -c /home/wubu/WuBuOffice/apps/wubuos/macro.c
+
+apps/wubuos/CMakeFiles/test_view.dir/macro.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/test_view.dir/macro.c.i"
+	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/wubu/WuBuOffice/apps/wubuos/macro.c > CMakeFiles/test_view.dir/macro.c.i
+
+apps/wubuos/CMakeFiles/test_view.dir/macro.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/test_view.dir/macro.c.s"
+	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/wubu/WuBuOffice/apps/wubuos/macro.c -o CMakeFiles/test_view.dir/macro.c.s
+
+apps/wubuos/CMakeFiles/test_view.dir/gotoline.c.o: apps/wubuos/CMakeFiles/test_view.dir/flags.make
+apps/wubuos/CMakeFiles/test_view.dir/gotoline.c.o: /home/wubu/WuBuOffice/apps/wubuos/gotoline.c
+apps/wubuos/CMakeFiles/test_view.dir/gotoline.c.o: apps/wubuos/CMakeFiles/test_view.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building C object apps/wubuos/CMakeFiles/test_view.dir/gotoline.c.o"
+	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT apps/wubuos/CMakeFiles/test_view.dir/gotoline.c.o -MF CMakeFiles/test_view.dir/gotoline.c.o.d -o CMakeFiles/test_view.dir/gotoline.c.o -c /home/wubu/WuBuOffice/apps/wubuos/gotoline.c
+
+apps/wubuos/CMakeFiles/test_view.dir/gotoline.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/test_view.dir/gotoline.c.i"
+	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/wubu/WuBuOffice/apps/wubuos/gotoline.c > CMakeFiles/test_view.dir/gotoline.c.i
+
+apps/wubuos/CMakeFiles/test_view.dir/gotoline.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/test_view.dir/gotoline.c.s"
+	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/wubu/WuBuOffice/apps/wubuos/gotoline.c -o CMakeFiles/test_view.dir/gotoline.c.s
+
 apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/buffer.c.o: apps/wubuos/CMakeFiles/test_view.dir/flags.make
 apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/buffer.c.o: /home/wubu/WuBuPad/src/buffer.c
 apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/buffer.c.o: apps/wubuos/CMakeFiles/test_view.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building C object apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/buffer.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Building C object apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/buffer.c.o"
 	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/buffer.c.o -MF CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/buffer.c.o.d -o CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/buffer.c.o -c /home/wubu/WuBuPad/src/buffer.c
 
 apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/buffer.c.i: cmake_force
@@ -226,7 +366,7 @@ apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/buffer.c.s: cmake_for
 apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/doc.c.o: apps/wubuos/CMakeFiles/test_view.dir/flags.make
 apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/doc.c.o: /home/wubu/WuBuPad/src/doc.c
 apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/doc.c.o: apps/wubuos/CMakeFiles/test_view.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building C object apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/doc.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Building C object apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/doc.c.o"
 	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/doc.c.o -MF CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/doc.c.o.d -o CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/doc.c.o -c /home/wubu/WuBuPad/src/doc.c
 
 apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/doc.c.i: cmake_force
@@ -240,7 +380,7 @@ apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/doc.c.s: cmake_force
 apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/search.c.o: apps/wubuos/CMakeFiles/test_view.dir/flags.make
 apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/search.c.o: /home/wubu/WuBuPad/src/search.c
 apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/search.c.o: apps/wubuos/CMakeFiles/test_view.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building C object apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/search.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_23) "Building C object apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/search.c.o"
 	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/search.c.o -MF CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/search.c.o.d -o CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/search.c.o -c /home/wubu/WuBuPad/src/search.c
 
 apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/search.c.i: cmake_force
@@ -254,7 +394,7 @@ apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/search.c.s: cmake_for
 apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/encode.c.o: apps/wubuos/CMakeFiles/test_view.dir/flags.make
 apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/encode.c.o: /home/wubu/WuBuPad/src/encode.c
 apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/encode.c.o: apps/wubuos/CMakeFiles/test_view.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building C object apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/encode.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_24) "Building C object apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/encode.c.o"
 	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/encode.c.o -MF CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/encode.c.o.d -o CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/encode.c.o -c /home/wubu/WuBuPad/src/encode.c
 
 apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/encode.c.i: cmake_force
@@ -268,7 +408,7 @@ apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/encode.c.s: cmake_for
 apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/diff.c.o: apps/wubuos/CMakeFiles/test_view.dir/flags.make
 apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/diff.c.o: /home/wubu/WuBuPad/src/diff.c
 apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/diff.c.o: apps/wubuos/CMakeFiles/test_view.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building C object apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/diff.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_25) "Building C object apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/diff.c.o"
 	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/diff.c.o -MF CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/diff.c.o.d -o CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/diff.c.o -c /home/wubu/WuBuPad/src/diff.c
 
 apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/diff.c.i: cmake_force
@@ -282,7 +422,7 @@ apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/diff.c.s: cmake_force
 apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/docs.c.o: apps/wubuos/CMakeFiles/test_view.dir/flags.make
 apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/docs.c.o: /home/wubu/WuBuPad/src/docs.c
 apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/docs.c.o: apps/wubuos/CMakeFiles/test_view.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building C object apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/docs.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_26) "Building C object apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/docs.c.o"
 	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/docs.c.o -MF CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/docs.c.o.d -o CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/docs.c.o -c /home/wubu/WuBuPad/src/docs.c
 
 apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/docs.c.i: cmake_force
@@ -296,7 +436,7 @@ apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/docs.c.s: cmake_force
 apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/json.c.o: apps/wubuos/CMakeFiles/test_view.dir/flags.make
 apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/json.c.o: /home/wubu/WuBuPad/src/json.c
 apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/json.c.o: apps/wubuos/CMakeFiles/test_view.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building C object apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/json.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_27) "Building C object apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/json.c.o"
 	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/json.c.o -MF CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/json.c.o.d -o CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/json.c.o -c /home/wubu/WuBuPad/src/json.c
 
 apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/json.c.i: cmake_force
@@ -310,7 +450,7 @@ apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/json.c.s: cmake_force
 apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/lex.c.o: apps/wubuos/CMakeFiles/test_view.dir/flags.make
 apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/lex.c.o: /home/wubu/WuBuPad/src/lex.c
 apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/lex.c.o: apps/wubuos/CMakeFiles/test_view.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building C object apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/lex.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_28) "Building C object apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/lex.c.o"
 	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/lex.c.o -MF CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/lex.c.o.d -o CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/lex.c.o -c /home/wubu/WuBuPad/src/lex.c
 
 apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/lex.c.i: cmake_force
@@ -327,12 +467,22 @@ test_view_OBJECTS = \
 "CMakeFiles/test_view.dir/wuos_font.c.o" \
 "CMakeFiles/test_view.dir/wuos_file.c.o" \
 "CMakeFiles/test_view.dir/plugin.c.o" \
+"CMakeFiles/test_view.dir/toast.c.o" \
+"CMakeFiles/test_view.dir/palette.c.o" \
 "CMakeFiles/test_view.dir/view_doc.c.o" \
 "CMakeFiles/test_view.dir/view_cell.c.o" \
 "CMakeFiles/test_view.dir/view_slide.c.o" \
 "CMakeFiles/test_view.dir/view_ocr.c.o" \
 "CMakeFiles/test_view.dir/view_editor.c.o" \
 "CMakeFiles/test_view.dir/view_compare.c.o" \
+"CMakeFiles/test_view.dir/view_settings.c.o" \
+"CMakeFiles/test_view.dir/findbar.c.o" \
+"CMakeFiles/test_view.dir/autocomp.c.o" \
+"CMakeFiles/test_view.dir/bkmk.c.o" \
+"CMakeFiles/test_view.dir/codefold.c.o" \
+"CMakeFiles/test_view.dir/doccmd.c.o" \
+"CMakeFiles/test_view.dir/macro.c.o" \
+"CMakeFiles/test_view.dir/gotoline.c.o" \
 "CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/buffer.c.o" \
 "CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/doc.c.o" \
 "CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/search.c.o" \
@@ -356,12 +506,22 @@ apps/wubuos/test_view: apps/wubuos/CMakeFiles/test_view.dir/test_view.c.o
 apps/wubuos/test_view: apps/wubuos/CMakeFiles/test_view.dir/wuos_font.c.o
 apps/wubuos/test_view: apps/wubuos/CMakeFiles/test_view.dir/wuos_file.c.o
 apps/wubuos/test_view: apps/wubuos/CMakeFiles/test_view.dir/plugin.c.o
+apps/wubuos/test_view: apps/wubuos/CMakeFiles/test_view.dir/toast.c.o
+apps/wubuos/test_view: apps/wubuos/CMakeFiles/test_view.dir/palette.c.o
 apps/wubuos/test_view: apps/wubuos/CMakeFiles/test_view.dir/view_doc.c.o
 apps/wubuos/test_view: apps/wubuos/CMakeFiles/test_view.dir/view_cell.c.o
 apps/wubuos/test_view: apps/wubuos/CMakeFiles/test_view.dir/view_slide.c.o
 apps/wubuos/test_view: apps/wubuos/CMakeFiles/test_view.dir/view_ocr.c.o
 apps/wubuos/test_view: apps/wubuos/CMakeFiles/test_view.dir/view_editor.c.o
 apps/wubuos/test_view: apps/wubuos/CMakeFiles/test_view.dir/view_compare.c.o
+apps/wubuos/test_view: apps/wubuos/CMakeFiles/test_view.dir/view_settings.c.o
+apps/wubuos/test_view: apps/wubuos/CMakeFiles/test_view.dir/findbar.c.o
+apps/wubuos/test_view: apps/wubuos/CMakeFiles/test_view.dir/autocomp.c.o
+apps/wubuos/test_view: apps/wubuos/CMakeFiles/test_view.dir/bkmk.c.o
+apps/wubuos/test_view: apps/wubuos/CMakeFiles/test_view.dir/codefold.c.o
+apps/wubuos/test_view: apps/wubuos/CMakeFiles/test_view.dir/doccmd.c.o
+apps/wubuos/test_view: apps/wubuos/CMakeFiles/test_view.dir/macro.c.o
+apps/wubuos/test_view: apps/wubuos/CMakeFiles/test_view.dir/gotoline.c.o
 apps/wubuos/test_view: apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/buffer.c.o
 apps/wubuos/test_view: apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/doc.c.o
 apps/wubuos/test_view: apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/search.c.o
@@ -391,27 +551,66 @@ apps/wubuos/test_view: src/wubumath/libwubumath.a
 apps/wubuos/test_view: src/wubuepub/libwubuepub.a
 apps/wubuos/test_view: src/wubua11y/libwubua11y.a
 apps/wubuos/test_view: src/wubusvg/libwubusvg.a
+apps/wubuos/test_view: src/wubusettings/libwubusettings.a
+apps/wubuos/test_view: src/wubushape/libwubushape.a
+apps/wubuos/test_view: src/wubulayout/libwubulayout.a
+apps/wubuos/test_view: src/wubuexp/libwubuexp.a
+apps/wubuos/test_view: src/wubutoc/libwubutoc.a
+apps/wubuos/test_view: src/wubuscript/libwubuscript.a
+apps/wubuos/test_view: src/wubupasteplain/libwubupasteplain.a
+apps/wubuos/test_view: src/wuburtf/libwuburtf.a
+apps/wubuos/test_view: src/wuburedact/libwuburedact.a
+apps/wubuos/test_view: src/wubucol/libwubucol.a
+apps/wubuos/test_view: src/wubucite/libwubucite.a
+apps/wubuos/test_view: src/wubucaption/libwubucaption.a
+apps/wubuos/test_view: src/wubuheading/libwubuheading.a
+apps/wubuos/test_view: src/wubueqnum/libwubueqnum.a
+apps/wubuos/test_view: src/wubuvars/libwubuvars.a
+apps/wubuos/test_view: src/wubuhash/libwubuhash.a
+apps/wubuos/test_view: src/wubusig/libwubusig.a
+apps/wubuos/test_view: src/wubucrdt/libwubucrdt.a
+apps/wubuos/test_view: src/wubucsv/libwubucsv.a
+apps/wubuos/test_view: src/wubufocus/libwubufocus.a
+apps/wubuos/test_view: src/wubuwatermark/libwubuwatermark.a
+apps/wubuos/test_view: src/wubudyslexia/libwubudyslexia.a
+apps/wubuos/test_view: src/wubufmtpaint/libwubufmtpaint.a
+apps/wubuos/test_view: src/wubusandbox/libwubusandbox.a
+apps/wubuos/test_view: src/wubuform/libwubuform.a
+apps/wubuos/test_view: src/wubuhistory/libwubuhistory.a
+apps/wubuos/test_view: src/wubulang/libwubulang.a
+apps/wubuos/test_view: src/wubunesttab/libwubunesttab.a
+apps/wubuos/test_view: src/wubupdfextract/libwubupdfextract.a
+apps/wubuos/test_view: src/wubupdfform/libwubupdfform.a
+apps/wubuos/test_view: src/wubuscope/libwubuscope.a
+apps/wubuos/test_view: src/wubusync/libwubusync.a
+apps/wubuos/test_view: src/wubuxps/libwubuxps.a
+apps/wubuos/test_view: src/wubuaislot/libwubuaislot.a
 apps/wubuos/test_view: /usr/lib/x86_64-linux-gnu/libSDL2.so
 apps/wubuos/test_view: /usr/lib/x86_64-linux-gnu/libfreetype.so
 apps/wubuos/test_view: apps/wubuconv/libwubuconv.a
 apps/wubuos/test_view: src/wubucfb/libwubucfb.a
+apps/wubuos/test_view: src/wubuxml/libwubuxml.a
+apps/wubuos/test_view: src/wububase/libwububase.a
+apps/wubuos/test_view: src/wubulayout/libwubulayout.a
+apps/wubuos/test_view: src/wubushape/libwubushape.a
 apps/wubuos/test_view: src/wubuformula/libwubuformula.a
+apps/wubuos/test_view: src/wubuhash/libwubuhash.a
+apps/wubuos/test_view: src/wubumodel/libwubumodel.a
+apps/wubuos/test_view: src/wubuoxml/libwubuoxml.a
 apps/wubuos/test_view: src/wubuimage/libwubuimage.a
 apps/wubuos/test_view: src/wubuocr/libwubuocr.a
 apps/wubuos/test_view: src/wubuocr/libcrnnocr.a
 apps/wubuos/test_view: src/wubuocr/libwubuocr.a
 apps/wubuos/test_view: src/wubuocr/libcrnnocr.a
+apps/wubuos/test_view: src/wubujson/libwubujson.a
 apps/wubuos/test_view: src/wubupng/libwubupng.a
 apps/wubuos/test_view: /usr/lib/x86_64-linux-gnu/libz.so
 apps/wubuos/test_view: src/wubufont/libwubufont.a
-apps/wubuos/test_view: src/wubujson/libwubujson.a
-apps/wubuos/test_view: src/wubuxml/libwubuxml.a
-apps/wubuos/test_view: src/wububase/libwububase.a
-apps/wubuos/test_view: src/wubumodel/libwubumodel.a
-apps/wubuos/test_view: src/wubuoxml/libwubuoxml.a
 apps/wubuos/test_view: src/wubuzip/libwubuzip.a
+apps/wubuos/test_view: src/wubuform/libwubuform.a
+apps/wubuos/test_view: src/wubucrdt/libwubucrdt.a
 apps/wubuos/test_view: apps/wubuos/CMakeFiles/test_view.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Linking C executable test_view"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_29) "Linking C executable test_view"
 	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuos && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/test_view.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

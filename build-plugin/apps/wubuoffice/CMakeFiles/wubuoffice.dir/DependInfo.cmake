@@ -8,8 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/wubu/WuBuOffice/tools/image2doc.c" "apps/wubuoffice/CMakeFiles/wubuoffice.dir/__/__/tools/image2doc.c.o" "gcc" "apps/wubuoffice/CMakeFiles/wubuoffice.dir/__/__/tools/image2doc.c.o.d"
-  "/home/wubu/WuBuOffice/apps/wubuoffice/main.c" "apps/wubuoffice/CMakeFiles/wubuoffice.dir/main.c.o" "gcc" "apps/wubuoffice/CMakeFiles/wubuoffice.dir/main.c.o.d"
+  "/home/wubu/WuBuOffice/apps/wubuoffice/wubuoffice.c" "apps/wubuoffice/CMakeFiles/wubuoffice.dir/wubuoffice.c.o" "gcc" "apps/wubuoffice/CMakeFiles/wubuoffice.dir/wubuoffice.c.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

@@ -1,1 +1,1 @@
-/usr/bin/cc -O3 -DNDEBUG CMakeFiles/test_plugin_abi.dir/test_plugin_abi.c.o CMakeFiles/test_plugin_abi.dir/plugin.c.o -o test_plugin_abi  -ldl 
+/usr/bin/cc -O3 -DNDEBUG -fopenmp CMakeFiles/test_plugin_abi.dir/test_plugin_abi.c.o CMakeFiles/test_plugin_abi.dir/plugin.c.o -o test_plugin_abi  -ldl 

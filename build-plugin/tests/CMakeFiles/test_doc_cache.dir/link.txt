@@ -1,1 +1,1 @@
-/usr/bin/cc -O3 -DNDEBUG CMakeFiles/test_doc_cache.dir/test_doc_cache.c.o -o test_doc_cache  ../src/wubumodel/libwubumodel.a ../src/wubuoxml/libwubuoxml.a ../src/wubuzip/libwubuzip.a -lpthread 
+/usr/bin/cc -O3 -DNDEBUG -fopenmp CMakeFiles/test_doc_cache.dir/test_doc_cache.c.o -o test_doc_cache  ../src/wubumodel/libwubumodel.a ../src/wubuoxml/libwubuoxml.a ../src/wubuzip/libwubuzip.a -lpthread 

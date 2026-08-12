@@ -1,1 +1,1 @@
-/usr/bin/cc -O3 -DNDEBUG CMakeFiles/test_cold_start.dir/test_cold_start.c.o -o test_cold_start  ../src/wubumodel/libwubumodel.a ../src/wubuoxml/libwubuoxml.a ../src/wubuzip/libwubuzip.a -lpthread 
+/usr/bin/cc -O3 -DNDEBUG -fopenmp CMakeFiles/test_cold_start.dir/test_cold_start.c.o -o test_cold_start  ../src/wubumodel/libwubumodel.a ../src/wubuoxml/libwubuoxml.a ../src/wubuzip/libwubuzip.a -lpthread 

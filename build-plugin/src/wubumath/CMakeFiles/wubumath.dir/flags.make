@@ -6,5 +6,5 @@ C_DEFINES = -D_POSIX_C_SOURCE=200809L
 
 C_INCLUDES = -I/home/wubu/WuBuOffice/src/wubumath -I/home/wubu/WuBuOffice/src/wubusvg -I/home/wubu/WuBuOffice/src/wubuxml -I/home/wubu/WuBuOffice/src/wubujson -I/home/wubu/WuBuOffice/src/wububase
 
-C_FLAGS = -O3 -DNDEBUG -std=c11 -Wall -Wextra -Wpedantic -Wno-unused-parameter
+C_FLAGS = -O3 -DNDEBUG -std=c11 -Wall -Wextra -Wpedantic -Wno-unused-parameter -fopenmp
 

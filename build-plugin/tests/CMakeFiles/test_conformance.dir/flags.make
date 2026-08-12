@@ -6,5 +6,5 @@ C_DEFINES = -DCONFORMANCE_SCRIPT=\"/home/wubu/WuBuOffice/tests/conformance/valid
 
 C_INCLUDES = -I/home/wubu/WuBuOffice/src/wubuoxml -I/home/wubu/WuBuOffice/src/wubuxml -I/home/wubu/WuBuOffice/apps/wubuword -I/home/wubu/WuBuOffice/apps/wubucell -I/home/wubu/WuBuOffice/apps/wubushow -I/home/wubu/WuBuOffice/src/wubuzip
 
-C_FLAGS = -O3 -DNDEBUG -std=c11 -Wall -Wextra -Wpedantic -Wno-unused-parameter
+C_FLAGS = -O3 -DNDEBUG -std=c11 -Wall -Wextra -Wpedantic -Wno-unused-parameter -fopenmp
 

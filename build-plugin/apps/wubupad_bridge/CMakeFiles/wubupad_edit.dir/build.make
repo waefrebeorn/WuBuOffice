@@ -94,6 +94,7 @@ apps/wubupad_bridge/wubupad_edit: apps/wubupad_bridge/CMakeFiles/wubupad_edit.di
 apps/wubupad_bridge/wubupad_edit: apps/wubupad_bridge/CMakeFiles/wubupad_edit.dir/build.make
 apps/wubupad_bridge/wubupad_edit: apps/wubupad_bridge/libwubupad_bridge.a
 apps/wubupad_bridge/wubupad_edit: /home/wubu/WuBuPad/build/libwubupad_ui.a
+apps/wubupad_bridge/wubupad_edit: /home/wubu/WuBuPad/build/libwubupad_atom.a
 apps/wubupad_bridge/wubupad_edit: /home/wubu/WuBuPad/build/libwubupad_core.a
 apps/wubupad_bridge/wubupad_edit: apps/wubupad_bridge/CMakeFiles/wubupad_edit.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking C executable wubupad_edit"

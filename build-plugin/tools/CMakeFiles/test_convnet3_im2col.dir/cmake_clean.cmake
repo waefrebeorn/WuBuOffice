@@ -1,4 +1,6 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/conv_gemm.c.o"
+  "CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/conv_gemm.c.o.d"
   "CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/convnet3.c.o"
   "CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/convnet3.c.o.d"
   "CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/dft.c.o"

@@ -1,1 +1,1 @@
-/usr/bin/cc -O3 -DNDEBUG CMakeFiles/test_wubumath.dir/test_math.c.o -o test_wubumath  ../src/wubumath/libwubumath.a ../src/wubusvg/libwubusvg.a ../src/wubuxml/libwubuxml.a ../src/wubujson/libwubujson.a ../src/wububase/libwububase.a -lm 
+/usr/bin/cc -O3 -DNDEBUG -fopenmp CMakeFiles/test_wubumath.dir/test_math.c.o -o test_wubumath  ../src/wubumath/libwubumath.a ../src/wubusvg/libwubusvg.a ../src/wubuxml/libwubuxml.a ../src/wubujson/libwubujson.a ../src/wububase/libwububase.a -lm 

@@ -111,10 +111,24 @@ tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/mlp.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/mlp.c.s"
 	cd /home/wubu/WuBuOffice/build-plugin/tools && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/wubu/WuBuOffice/src/wubuocr/mlp.c -o CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/mlp.c.s
 
+tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/conv_gemm.c.o: tools/CMakeFiles/emnist_infer_conv.dir/flags.make
+tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/conv_gemm.c.o: /home/wubu/WuBuOffice/src/wubuocr/conv_gemm.c
+tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/conv_gemm.c.o: tools/CMakeFiles/emnist_infer_conv.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/conv_gemm.c.o"
+	cd /home/wubu/WuBuOffice/build-plugin/tools && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/conv_gemm.c.o -MF CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/conv_gemm.c.o.d -o CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/conv_gemm.c.o -c /home/wubu/WuBuOffice/src/wubuocr/conv_gemm.c
+
+tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/conv_gemm.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/conv_gemm.c.i"
+	cd /home/wubu/WuBuOffice/build-plugin/tools && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/wubu/WuBuOffice/src/wubuocr/conv_gemm.c > CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/conv_gemm.c.i
+
+tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/conv_gemm.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/conv_gemm.c.s"
+	cd /home/wubu/WuBuOffice/build-plugin/tools && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/wubu/WuBuOffice/src/wubuocr/conv_gemm.c -o CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/conv_gemm.c.s
+
 tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/dft.c.o: tools/CMakeFiles/emnist_infer_conv.dir/flags.make
 tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/dft.c.o: /home/wubu/WuBuOffice/src/wubuocr/dft.c
 tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/dft.c.o: tools/CMakeFiles/emnist_infer_conv.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/dft.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/dft.c.o"
 	cd /home/wubu/WuBuOffice/build-plugin/tools && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/dft.c.o -MF CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/dft.c.o.d -o CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/dft.c.o -c /home/wubu/WuBuOffice/src/wubuocr/dft.c
 
 tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/dft.c.i: cmake_force
@@ -128,7 +142,7 @@ tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/dft.c.s: cmake_force
 tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/goldplace.c.o: tools/CMakeFiles/emnist_infer_conv.dir/flags.make
 tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/goldplace.c.o: /home/wubu/WuBuOffice/src/wubuocr/goldplace.c
 tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/goldplace.c.o: tools/CMakeFiles/emnist_infer_conv.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/goldplace.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building C object tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/goldplace.c.o"
 	cd /home/wubu/WuBuOffice/build-plugin/tools && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/goldplace.c.o -MF CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/goldplace.c.o.d -o CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/goldplace.c.o -c /home/wubu/WuBuOffice/src/wubuocr/goldplace.c
 
 tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/goldplace.c.i: cmake_force
@@ -142,7 +156,7 @@ tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/goldplace.c.s: cmake_force
 tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/stylebank.c.o: tools/CMakeFiles/emnist_infer_conv.dir/flags.make
 tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/stylebank.c.o: /home/wubu/WuBuOffice/src/wubuocr/stylebank.c
 tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/stylebank.c.o: tools/CMakeFiles/emnist_infer_conv.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building C object tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/stylebank.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building C object tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/stylebank.c.o"
 	cd /home/wubu/WuBuOffice/build-plugin/tools && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/stylebank.c.o -MF CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/stylebank.c.o.d -o CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/stylebank.c.o -c /home/wubu/WuBuOffice/src/wubuocr/stylebank.c
 
 tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/stylebank.c.i: cmake_force
@@ -156,7 +170,7 @@ tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/stylebank.c.s: cmake_force
 tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/zoning.c.o: tools/CMakeFiles/emnist_infer_conv.dir/flags.make
 tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/zoning.c.o: /home/wubu/WuBuOffice/src/wubuocr/zoning.c
 tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/zoning.c.o: tools/CMakeFiles/emnist_infer_conv.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building C object tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/zoning.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building C object tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/zoning.c.o"
 	cd /home/wubu/WuBuOffice/build-plugin/tools && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/zoning.c.o -MF CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/zoning.c.o.d -o CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/zoning.c.o -c /home/wubu/WuBuOffice/src/wubuocr/zoning.c
 
 tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/zoning.c.i: cmake_force
@@ -172,6 +186,7 @@ emnist_infer_conv_OBJECTS = \
 "CMakeFiles/emnist_infer_conv.dir/emnist_infer_conv.c.o" \
 "CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/convnet3.c.o" \
 "CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/mlp.c.o" \
+"CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/conv_gemm.c.o" \
 "CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/dft.c.o" \
 "CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/goldplace.c.o" \
 "CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/stylebank.c.o" \
@@ -183,13 +198,14 @@ emnist_infer_conv_EXTERNAL_OBJECTS =
 tools/emnist_infer_conv: tools/CMakeFiles/emnist_infer_conv.dir/emnist_infer_conv.c.o
 tools/emnist_infer_conv: tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/convnet3.c.o
 tools/emnist_infer_conv: tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/mlp.c.o
+tools/emnist_infer_conv: tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/conv_gemm.c.o
 tools/emnist_infer_conv: tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/dft.c.o
 tools/emnist_infer_conv: tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/goldplace.c.o
 tools/emnist_infer_conv: tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/stylebank.c.o
 tools/emnist_infer_conv: tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/zoning.c.o
 tools/emnist_infer_conv: tools/CMakeFiles/emnist_infer_conv.dir/build.make
 tools/emnist_infer_conv: tools/CMakeFiles/emnist_infer_conv.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Linking C executable emnist_infer_conv"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Linking C executable emnist_infer_conv"
 	cd /home/wubu/WuBuOffice/build-plugin/tools && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/emnist_infer_conv.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

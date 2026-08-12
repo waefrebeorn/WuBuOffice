@@ -83,6 +83,34 @@ src/wubuocr/CMakeFiles/wubuocr.dir/components.c.o: /home/wubu/WuBuOffice/src/wub
   /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h \
   /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h
 
+src/wubuocr/CMakeFiles/wubuocr.dir/conv_gemm.c.o: /home/wubu/WuBuOffice/src/wubuocr/conv_gemm.c \
+  /home/wubu/WuBuOffice/src/wubuocr/conv_gemm.h \
+  /usr/include/features-time64.h \
+  /usr/include/features.h \
+  /usr/include/math.h \
+  /usr/include/stdc-predef.h \
+  /usr/include/x86_64-linux-gnu/bits/floatn-common.h \
+  /usr/include/x86_64-linux-gnu/bits/floatn.h \
+  /usr/include/x86_64-linux-gnu/bits/flt-eval-method.h \
+  /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
+  /usr/include/x86_64-linux-gnu/bits/fp-logb.h \
+  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
+  /usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h \
+  /usr/include/x86_64-linux-gnu/bits/long-double.h \
+  /usr/include/x86_64-linux-gnu/bits/math-vector.h \
+  /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
+  /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
+  /usr/include/x86_64-linux-gnu/bits/time64.h \
+  /usr/include/x86_64-linux-gnu/bits/timesize.h \
+  /usr/include/x86_64-linux-gnu/bits/types.h \
+  /usr/include/x86_64-linux-gnu/bits/typesizes.h \
+  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
+  /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
+  /usr/include/x86_64-linux-gnu/gnu/stubs.h \
+  /usr/include/x86_64-linux-gnu/sys/cdefs.h \
+  /usr/lib/gcc/x86_64-linux-gnu/13/include/omp.h \
+  /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h
+
 src/wubuocr/CMakeFiles/wubuocr.dir/convnet.c.o: /home/wubu/WuBuOffice/src/wubuocr/convnet.c \
   /home/wubu/WuBuOffice/src/wubuocr/convnet.h \
   /usr/include/features-time64.h \
@@ -139,6 +167,7 @@ src/wubuocr/CMakeFiles/wubuocr.dir/convnet.c.o: /home/wubu/WuBuOffice/src/wubuoc
   /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h
 
 src/wubuocr/CMakeFiles/wubuocr.dir/convnet3.c.o: /home/wubu/WuBuOffice/src/wubuocr/convnet3.c \
+  /home/wubu/WuBuOffice/src/wubuocr/conv_gemm.h \
   /home/wubu/WuBuOffice/src/wubuocr/convnet3.h \
   /usr/include/features-time64.h \
   /usr/include/features.h \
@@ -1151,7 +1180,15 @@ src/wubuocr/CMakeFiles/wubuocr.dir/zoning.c.o: /home/wubu/WuBuOffice/src/wubuocr
 
 /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h:
 
+/home/wubu/WuBuOffice/src/wubuocr/wubuocr.c:
+
+/usr/include/x86_64-linux-gnu/bits/dirent.h:
+
 /home/wubu/WuBuOffice/src/wubuocr/latin1.h:
+
+/home/wubu/WuBuOffice/src/wubuocr/unicode.h:
+
+/usr/include/x86_64-linux-gnu/bits/floatn-common.h:
 
 /usr/include/stdc-predef.h:
 
@@ -1162,8 +1199,6 @@ src/wubuocr/CMakeFiles/wubuocr.dir/zoning.c.o: /home/wubu/WuBuOffice/src/wubuocr
 /usr/include/x86_64-linux-gnu/bits/libc-header-start.h:
 
 /home/wubu/WuBuOffice/src/wubuocr/fontbank.h:
-
-/usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h:
 
 /home/wubu/WuBuOffice/src/wubuocr/layout.h:
 
@@ -1180,10 +1215,6 @@ src/wubuocr/CMakeFiles/wubuocr.dir/zoning.c.o: /home/wubu/WuBuOffice/src/wubuocr
 /usr/include/stdlib.h:
 
 /usr/include/features.h:
-
-/usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h:
-
-/usr/include/dirent.h:
 
 /home/wubu/WuBuOffice/src/wubuocr/components.h:
 
@@ -1206,6 +1237,10 @@ src/wubuocr/CMakeFiles/wubuocr.dir/zoning.c.o: /home/wubu/WuBuOffice/src/wubuocr
 /usr/include/x86_64-linux-gnu/gnu/stubs.h:
 
 /usr/include/x86_64-linux-gnu/bits/endian.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/13/include/omp.h:
+
+/usr/include/x86_64-linux-gnu/bits/time64.h:
 
 /usr/include/x86_64-linux-gnu/bits/stdint-least.h:
 
@@ -1245,15 +1280,23 @@ src/wubuocr/CMakeFiles/wubuocr.dir/zoning.c.o: /home/wubu/WuBuOffice/src/wubuocr
 
 /home/wubu/WuBuOffice/src/wubuocr/convnet.h:
 
+/home/wubu/WuBuOffice/src/wubuocr/conv_gemm.h:
+
 /home/wubu/WuBuOffice/src/wubuocr/dft.h:
 
 /usr/include/x86_64-linux-gnu/bits/string_fortified.h:
+
+/home/wubu/WuBuOffice/src/wubuocr/conv_gemm.c:
 
 /home/wubu/WuBuOffice/src/wubuocr/fontdir.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h:
 
-/usr/include/x86_64-linux-gnu/bits/time64.h:
+/usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h:
+
+/usr/include/dirent.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h:
 
 /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h:
 
@@ -1270,6 +1313,10 @@ src/wubuocr/CMakeFiles/wubuocr.dir/zoning.c.o: /home/wubu/WuBuOffice/src/wubuocr
 /home/wubu/WuBuOffice/src/wubuocr/layout.c:
 
 /home/wubu/WuBuOffice/src/wubuocr/docfmt.c:
+
+/home/wubu/WuBuOffice/src/wubuocr/unicode.c:
+
+/home/wubu/WuBuOffice/src/wubuocr/recognize.c:
 
 /home/wubu/WuBuOffice/src/wubujson/json.h:
 
@@ -1341,20 +1388,8 @@ src/wubuocr/CMakeFiles/wubuocr.dir/zoning.c.o: /home/wubu/WuBuOffice/src/wubuocr
 
 /home/wubu/WuBuOffice/src/wubuocr/qr.c:
 
-/usr/include/x86_64-linux-gnu/bits/floatn-common.h:
-
-/home/wubu/WuBuOffice/src/wubuocr/unicode.h:
-
 /usr/include/x86_64-linux-gnu/bits/waitstatus.h:
 
 /home/wubu/WuBuOffice/src/wubuocr/page_compose.c:
 
 /home/wubu/WuBuOffice/src/wubuocr/pdfsearch.c:
-
-/home/wubu/WuBuOffice/src/wubuocr/recognize.c:
-
-/home/wubu/WuBuOffice/src/wubuocr/unicode.c:
-
-/usr/include/x86_64-linux-gnu/bits/dirent.h:
-
-/home/wubu/WuBuOffice/src/wubuocr/wubuocr.c:

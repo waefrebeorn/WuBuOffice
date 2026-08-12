@@ -107,9 +107,10 @@ tools/image2doc: /usr/lib/x86_64-linux-gnu/libz.so
 tools/image2doc: src/wubujson/libwubujson.a
 tools/image2doc: src/wubucfb/libwubucfb.a
 tools/image2doc: src/wubuxml/libwubuxml.a
+tools/image2doc: src/wubuformula/libwubuformula.a
+tools/image2doc: src/wubumodel/libwubumodel.a
 tools/image2doc: src/wubuoxml/libwubuoxml.a
 tools/image2doc: src/wubuzip/libwubuzip.a
-tools/image2doc: src/wubuformula/libwubuformula.a
 tools/image2doc: tools/CMakeFiles/image2doc.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking C executable image2doc"
 	cd /home/wubu/WuBuOffice/build-plugin/tools && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/image2doc.dir/link.txt --verbose=$(VERBOSE)

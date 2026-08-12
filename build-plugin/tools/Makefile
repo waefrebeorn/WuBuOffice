@@ -602,6 +602,54 @@ emnist_train/fast:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tools/CMakeFiles/emnist_train.dir/build.make tools/CMakeFiles/emnist_train.dir/build
 .PHONY : emnist_train/fast
 
+__/src/wubuocr/conv_gemm.o: __/src/wubuocr/conv_gemm.c.o
+.PHONY : __/src/wubuocr/conv_gemm.o
+
+# target to build an object file
+__/src/wubuocr/conv_gemm.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tools/CMakeFiles/gradcheck_conv3.dir/build.make tools/CMakeFiles/gradcheck_conv3.dir/__/src/wubuocr/conv_gemm.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tools/CMakeFiles/test_convnet3.dir/build.make tools/CMakeFiles/test_convnet3.dir/__/src/wubuocr/conv_gemm.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tools/CMakeFiles/test_convnet3_im2col.dir/build.make tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/conv_gemm.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tools/CMakeFiles/gradcheck_inorm.dir/build.make tools/CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/conv_gemm.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tools/CMakeFiles/test_stylebank.dir/build.make tools/CMakeFiles/test_stylebank.dir/__/src/wubuocr/conv_gemm.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tools/CMakeFiles/emnist_infer_conv.dir/build.make tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/conv_gemm.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tools/CMakeFiles/trainer_cli.dir/build.make tools/CMakeFiles/trainer_cli.dir/__/src/wubuocr/conv_gemm.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tools/CMakeFiles/emnist_train_fast.dir/build.make tools/CMakeFiles/emnist_train_fast.dir/__/src/wubuocr/conv_gemm.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tools/CMakeFiles/emnist_train_conv3.dir/build.make tools/CMakeFiles/emnist_train_conv3.dir/__/src/wubuocr/conv_gemm.c.o
+.PHONY : __/src/wubuocr/conv_gemm.c.o
+
+__/src/wubuocr/conv_gemm.i: __/src/wubuocr/conv_gemm.c.i
+.PHONY : __/src/wubuocr/conv_gemm.i
+
+# target to preprocess a source file
+__/src/wubuocr/conv_gemm.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tools/CMakeFiles/gradcheck_conv3.dir/build.make tools/CMakeFiles/gradcheck_conv3.dir/__/src/wubuocr/conv_gemm.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tools/CMakeFiles/test_convnet3.dir/build.make tools/CMakeFiles/test_convnet3.dir/__/src/wubuocr/conv_gemm.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tools/CMakeFiles/test_convnet3_im2col.dir/build.make tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/conv_gemm.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tools/CMakeFiles/gradcheck_inorm.dir/build.make tools/CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/conv_gemm.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tools/CMakeFiles/test_stylebank.dir/build.make tools/CMakeFiles/test_stylebank.dir/__/src/wubuocr/conv_gemm.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tools/CMakeFiles/emnist_infer_conv.dir/build.make tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/conv_gemm.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tools/CMakeFiles/trainer_cli.dir/build.make tools/CMakeFiles/trainer_cli.dir/__/src/wubuocr/conv_gemm.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tools/CMakeFiles/emnist_train_fast.dir/build.make tools/CMakeFiles/emnist_train_fast.dir/__/src/wubuocr/conv_gemm.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tools/CMakeFiles/emnist_train_conv3.dir/build.make tools/CMakeFiles/emnist_train_conv3.dir/__/src/wubuocr/conv_gemm.c.i
+.PHONY : __/src/wubuocr/conv_gemm.c.i
+
+__/src/wubuocr/conv_gemm.s: __/src/wubuocr/conv_gemm.c.s
+.PHONY : __/src/wubuocr/conv_gemm.s
+
+# target to generate assembly for a file
+__/src/wubuocr/conv_gemm.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tools/CMakeFiles/gradcheck_conv3.dir/build.make tools/CMakeFiles/gradcheck_conv3.dir/__/src/wubuocr/conv_gemm.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tools/CMakeFiles/test_convnet3.dir/build.make tools/CMakeFiles/test_convnet3.dir/__/src/wubuocr/conv_gemm.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tools/CMakeFiles/test_convnet3_im2col.dir/build.make tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/conv_gemm.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tools/CMakeFiles/gradcheck_inorm.dir/build.make tools/CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/conv_gemm.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tools/CMakeFiles/test_stylebank.dir/build.make tools/CMakeFiles/test_stylebank.dir/__/src/wubuocr/conv_gemm.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tools/CMakeFiles/emnist_infer_conv.dir/build.make tools/CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/conv_gemm.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tools/CMakeFiles/trainer_cli.dir/build.make tools/CMakeFiles/trainer_cli.dir/__/src/wubuocr/conv_gemm.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tools/CMakeFiles/emnist_train_fast.dir/build.make tools/CMakeFiles/emnist_train_fast.dir/__/src/wubuocr/conv_gemm.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tools/CMakeFiles/emnist_train_conv3.dir/build.make tools/CMakeFiles/emnist_train_conv3.dir/__/src/wubuocr/conv_gemm.c.s
+.PHONY : __/src/wubuocr/conv_gemm.c.s
+
 __/src/wubuocr/convnet.o: __/src/wubuocr/convnet.c.o
 .PHONY : __/src/wubuocr/convnet.o
 
@@ -1881,6 +1929,9 @@ help:
 	@echo "... test_stylebank"
 	@echo "... test_zoning"
 	@echo "... trainer_cli"
+	@echo "... __/src/wubuocr/conv_gemm.o"
+	@echo "... __/src/wubuocr/conv_gemm.i"
+	@echo "... __/src/wubuocr/conv_gemm.s"
 	@echo "... __/src/wubuocr/convnet.o"
 	@echo "... __/src/wubuocr/convnet.i"
 	@echo "... __/src/wubuocr/convnet.s"

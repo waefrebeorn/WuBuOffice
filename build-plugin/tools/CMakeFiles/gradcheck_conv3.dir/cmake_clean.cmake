@@ -1,4 +1,6 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/gradcheck_conv3.dir/__/src/wubuocr/conv_gemm.c.o"
+  "CMakeFiles/gradcheck_conv3.dir/__/src/wubuocr/conv_gemm.c.o.d"
   "CMakeFiles/gradcheck_conv3.dir/__/src/wubuocr/convnet3.c.o"
   "CMakeFiles/gradcheck_conv3.dir/__/src/wubuocr/convnet3.c.o.d"
   "CMakeFiles/gradcheck_conv3.dir/__/src/wubuocr/mlp.c.o"

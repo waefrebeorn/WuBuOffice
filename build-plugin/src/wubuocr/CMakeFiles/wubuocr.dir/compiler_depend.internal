@@ -85,6 +85,35 @@ src/wubuocr/CMakeFiles/wubuocr.dir/components.c.o
  /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h
  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h
 
+src/wubuocr/CMakeFiles/wubuocr.dir/conv_gemm.c.o
+ /home/wubu/WuBuOffice/src/wubuocr/conv_gemm.c
+ /home/wubu/WuBuOffice/src/wubuocr/conv_gemm.h
+ /usr/include/features-time64.h
+ /usr/include/features.h
+ /usr/include/math.h
+ /usr/include/stdc-predef.h
+ /usr/include/x86_64-linux-gnu/bits/floatn-common.h
+ /usr/include/x86_64-linux-gnu/bits/floatn.h
+ /usr/include/x86_64-linux-gnu/bits/flt-eval-method.h
+ /usr/include/x86_64-linux-gnu/bits/fp-fast.h
+ /usr/include/x86_64-linux-gnu/bits/fp-logb.h
+ /usr/include/x86_64-linux-gnu/bits/libc-header-start.h
+ /usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h
+ /usr/include/x86_64-linux-gnu/bits/long-double.h
+ /usr/include/x86_64-linux-gnu/bits/math-vector.h
+ /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h
+ /usr/include/x86_64-linux-gnu/bits/mathcalls.h
+ /usr/include/x86_64-linux-gnu/bits/time64.h
+ /usr/include/x86_64-linux-gnu/bits/timesize.h
+ /usr/include/x86_64-linux-gnu/bits/types.h
+ /usr/include/x86_64-linux-gnu/bits/typesizes.h
+ /usr/include/x86_64-linux-gnu/bits/wordsize.h
+ /usr/include/x86_64-linux-gnu/gnu/stubs-64.h
+ /usr/include/x86_64-linux-gnu/gnu/stubs.h
+ /usr/include/x86_64-linux-gnu/sys/cdefs.h
+ /usr/lib/gcc/x86_64-linux-gnu/13/include/omp.h
+ /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h
+
 src/wubuocr/CMakeFiles/wubuocr.dir/convnet.c.o
  /home/wubu/WuBuOffice/src/wubuocr/convnet.c
  /home/wubu/WuBuOffice/src/wubuocr/convnet.h
@@ -143,6 +172,7 @@ src/wubuocr/CMakeFiles/wubuocr.dir/convnet.c.o
 
 src/wubuocr/CMakeFiles/wubuocr.dir/convnet3.c.o
  /home/wubu/WuBuOffice/src/wubuocr/convnet3.c
+ /home/wubu/WuBuOffice/src/wubuocr/conv_gemm.h
  /home/wubu/WuBuOffice/src/wubuocr/convnet3.h
  /usr/include/features-time64.h
  /usr/include/features.h

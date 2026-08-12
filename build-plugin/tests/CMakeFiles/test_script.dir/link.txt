@@ -1,1 +1,1 @@
-/usr/bin/cc -O3 -DNDEBUG CMakeFiles/test_script.dir/test_script.c.o -o test_script  ../src/wubuscript/libwubuscript.a ../src/wubuformula/libwubuformula.a -lm 
+/usr/bin/cc -O3 -DNDEBUG -fopenmp CMakeFiles/test_script.dir/test_script.c.o -o test_script  ../src/wubuscript/libwubuscript.a ../src/wubuformula/libwubuformula.a -lm 

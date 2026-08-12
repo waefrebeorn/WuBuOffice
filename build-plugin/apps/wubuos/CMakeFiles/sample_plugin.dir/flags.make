@@ -6,5 +6,5 @@ C_DEFINES = -D_POSIX_C_SOURCE=200809L -Dsample_plugin_EXPORTS
 
 C_INCLUDES = -I/home/wubu/WuBuOffice/apps/wubuos
 
-C_FLAGS = -O3 -DNDEBUG -std=c11 -fPIC -Wall -Wextra -Wpedantic -Wno-unused-parameter -fvisibility=hidden
+C_FLAGS = -O3 -DNDEBUG -std=c11 -fPIC -Wall -Wextra -Wpedantic -Wno-unused-parameter -fopenmp -fvisibility=hidden
 

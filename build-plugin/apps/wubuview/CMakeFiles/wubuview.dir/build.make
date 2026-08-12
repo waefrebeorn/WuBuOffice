@@ -147,8 +147,9 @@ apps/wubuview/wubuview: src/wubusvg/libwubusvg.a
 apps/wubuview/wubuview: apps/wubuconv/libwubuconv.a
 apps/wubuview/wubuview: src/wubucfb/libwubucfb.a
 apps/wubuview/wubuview: src/wubuxml/libwubuxml.a
-apps/wubuview/wubuview: src/wubuoxml/libwubuoxml.a
 apps/wubuview/wubuview: src/wubuformula/libwubuformula.a
+apps/wubuview/wubuview: src/wubumodel/libwubumodel.a
+apps/wubuview/wubuview: src/wubuoxml/libwubuoxml.a
 apps/wubuview/wubuview: src/wubuimage/libwubuimage.a
 apps/wubuview/wubuview: src/wubuocr/libwubuocr.a
 apps/wubuview/wubuview: src/wubuocr/libcrnnocr.a

@@ -1,10 +1,8 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/wubuoffice.dir/__/__/tools/image2doc.c.o"
-  "CMakeFiles/wubuoffice.dir/__/__/tools/image2doc.c.o.d"
-  "CMakeFiles/wubuoffice.dir/main.c.o"
-  "CMakeFiles/wubuoffice.dir/main.c.o.d"
-  "wubuoffice"
-  "wubuoffice.pdb"
+  "../wubuos/wubuoffice"
+  "../wubuos/wubuoffice.pdb"
+  "CMakeFiles/wubuoffice.dir/wubuoffice.c.o"
+  "CMakeFiles/wubuoffice.dir/wubuoffice.c.o.d"
 )
 
 # Per-language clean rules from dependency scanning.

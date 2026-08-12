@@ -8,6 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
+  "/home/wubu/WuBuOffice/src/wubuocr/conv_gemm.c" "tools/CMakeFiles/test_convnet3.dir/__/src/wubuocr/conv_gemm.c.o" "gcc" "tools/CMakeFiles/test_convnet3.dir/__/src/wubuocr/conv_gemm.c.o.d"
   "/home/wubu/WuBuOffice/src/wubuocr/convnet3.c" "tools/CMakeFiles/test_convnet3.dir/__/src/wubuocr/convnet3.c.o" "gcc" "tools/CMakeFiles/test_convnet3.dir/__/src/wubuocr/convnet3.c.o.d"
   "/home/wubu/WuBuOffice/src/wubuocr/mlp.c" "tools/CMakeFiles/test_convnet3.dir/__/src/wubuocr/mlp.c.o" "gcc" "tools/CMakeFiles/test_convnet3.dir/__/src/wubuocr/mlp.c.o.d"
   "/home/wubu/WuBuOffice/tests/test_convnet3.c" "tools/CMakeFiles/test_convnet3.dir/__/tests/test_convnet3.c.o" "gcc" "tools/CMakeFiles/test_convnet3.dir/__/tests/test_convnet3.c.o.d"

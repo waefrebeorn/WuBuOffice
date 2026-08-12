@@ -1,1 +1,1 @@
-/usr/bin/cc -O3 -DNDEBUG CMakeFiles/wubusvg_cli.dir/main.c.o -o wubusvg_cli  ../../src/wubusvg/libwubusvg.a ../../src/wubuxml/libwubuxml.a ../../src/wubujson/libwubujson.a 
+/usr/bin/cc -O3 -DNDEBUG -fopenmp CMakeFiles/wubusvg_cli.dir/main.c.o -o wubusvg_cli  ../../src/wubusvg/libwubusvg.a ../../src/wubuxml/libwubuxml.a ../../src/wubujson/libwubujson.a 

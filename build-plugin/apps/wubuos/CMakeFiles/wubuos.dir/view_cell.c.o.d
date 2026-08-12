@@ -18,7 +18,9 @@ apps/wubuos/CMakeFiles/wubuos.dir/view_cell.c.o: \
  /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
+ /home/wubu/WuBuOffice/src/wubumodel/model.h \
  /home/wubu/WuBuOffice/apps/wubuos/wuos_font.h \
+ /home/wubu/WuBuOffice/apps/wubuos/wuos_theme.h \
  /home/wubu/WuBuOffice/apps/wubucell/cell.h \
  /home/wubu/WuBuOffice/src/wubumodel/../wubuoxml/package.h \
  /usr/include/stdio.h /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h \

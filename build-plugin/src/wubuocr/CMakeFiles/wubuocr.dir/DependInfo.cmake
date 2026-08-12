@@ -10,6 +10,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/wubu/WuBuOffice/src/wubuocr/binarize.c" "src/wubuocr/CMakeFiles/wubuocr.dir/binarize.c.o" "gcc" "src/wubuocr/CMakeFiles/wubuocr.dir/binarize.c.o.d"
   "/home/wubu/WuBuOffice/src/wubuocr/components.c" "src/wubuocr/CMakeFiles/wubuocr.dir/components.c.o" "gcc" "src/wubuocr/CMakeFiles/wubuocr.dir/components.c.o.d"
+  "/home/wubu/WuBuOffice/src/wubuocr/conv_gemm.c" "src/wubuocr/CMakeFiles/wubuocr.dir/conv_gemm.c.o" "gcc" "src/wubuocr/CMakeFiles/wubuocr.dir/conv_gemm.c.o.d"
   "/home/wubu/WuBuOffice/src/wubuocr/convnet.c" "src/wubuocr/CMakeFiles/wubuocr.dir/convnet.c.o" "gcc" "src/wubuocr/CMakeFiles/wubuocr.dir/convnet.c.o.d"
   "/home/wubu/WuBuOffice/src/wubuocr/convnet3.c" "src/wubuocr/CMakeFiles/wubuocr.dir/convnet3.c.o" "gcc" "src/wubuocr/CMakeFiles/wubuocr.dir/convnet3.c.o.d"
   "/home/wubu/WuBuOffice/src/wubuocr/crnn_transcribe.c" "src/wubuocr/CMakeFiles/wubuocr.dir/crnn_transcribe.c.o" "gcc" "src/wubuocr/CMakeFiles/wubuocr.dir/crnn_transcribe.c.o.d"

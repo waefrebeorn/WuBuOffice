@@ -8,6 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
+  "/home/wubu/WuBuOffice/src/wubuocr/conv_gemm.c" "tools/CMakeFiles/emnist_train_conv3.dir/__/src/wubuocr/conv_gemm.c.o" "gcc" "tools/CMakeFiles/emnist_train_conv3.dir/__/src/wubuocr/conv_gemm.c.o.d"
   "/home/wubu/WuBuOffice/src/wubuocr/convnet3.c" "tools/CMakeFiles/emnist_train_conv3.dir/__/src/wubuocr/convnet3.c.o" "gcc" "tools/CMakeFiles/emnist_train_conv3.dir/__/src/wubuocr/convnet3.c.o.d"
   "/home/wubu/WuBuOffice/src/wubuocr/mlp.c" "tools/CMakeFiles/emnist_train_conv3.dir/__/src/wubuocr/mlp.c.o" "gcc" "tools/CMakeFiles/emnist_train_conv3.dir/__/src/wubuocr/mlp.c.o.d"
   "/home/wubu/WuBuOffice/tools/emnist_train_conv3.c" "tools/CMakeFiles/emnist_train_conv3.dir/emnist_train_conv3.c.o" "gcc" "tools/CMakeFiles/emnist_train_conv3.dir/emnist_train_conv3.c.o.d"

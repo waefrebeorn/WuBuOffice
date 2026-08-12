@@ -97,8 +97,9 @@ tests/test_wubudoc: src/wubusvg/libwubusvg.a
 tests/test_wubudoc: apps/wubuconv/libwubuconv.a
 tests/test_wubudoc: src/wubucfb/libwubucfb.a
 tests/test_wubudoc: src/wubuxml/libwubuxml.a
-tests/test_wubudoc: src/wubuoxml/libwubuoxml.a
 tests/test_wubudoc: src/wubuformula/libwubuformula.a
+tests/test_wubudoc: src/wubumodel/libwubumodel.a
+tests/test_wubudoc: src/wubuoxml/libwubuoxml.a
 tests/test_wubudoc: src/wubuimage/libwubuimage.a
 tests/test_wubudoc: src/wubuocr/libwubuocr.a
 tests/test_wubudoc: src/wubuocr/libcrnnocr.a

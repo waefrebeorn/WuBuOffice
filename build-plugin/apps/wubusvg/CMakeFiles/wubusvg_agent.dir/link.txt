@@ -1,1 +1,1 @@
-/usr/bin/cc -O3 -DNDEBUG CMakeFiles/wubusvg_agent.dir/agent_main.c.o -o wubusvg_agent  ../../src/wubusvg/libwubusvg.a ../../src/wubuxml/libwubuxml.a ../../src/wubujson/libwubujson.a 
+/usr/bin/cc -O3 -DNDEBUG -fopenmp CMakeFiles/wubusvg_agent.dir/agent_main.c.o -o wubusvg_agent  ../../src/wubusvg/libwubusvg.a ../../src/wubuxml/libwubuxml.a ../../src/wubujson/libwubujson.a 

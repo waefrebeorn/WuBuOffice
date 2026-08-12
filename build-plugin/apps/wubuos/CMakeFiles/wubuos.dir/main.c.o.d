@@ -18,11 +18,20 @@ apps/wubuos/CMakeFiles/wubuos.dir/main.c.o: \
  /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
+ /home/wubu/WuBuOffice/src/wubumodel/model.h \
  /home/wubu/WuBuOffice/apps/wubuos/wuos_font.h \
+ /home/wubu/WuBuOffice/apps/wubuos/wuos_theme.h \
  /home/wubu/WuBuOffice/apps/wubuos/plugin.h \
- /home/wubu/WuBuOffice/apps/wubuos/wuos_plugin.h /usr/include/SDL2/SDL.h \
- /usr/include/SDL2/SDL_main.h /usr/include/SDL2/SDL_stdinc.h \
- /usr/include/SDL2/SDL_config.h \
+ /home/wubu/WuBuOffice/apps/wubuos/wuos_plugin.h \
+ /home/wubu/WuBuOffice/src/wubusettings/settings.h \
+ /home/wubu/WuBuOffice/src/wubushape/shape.h \
+ /home/wubu/WuBuOffice/apps/wubuos/toast.h \
+ /home/wubu/WuBuOffice/apps/wubuos/palette.h \
+ /home/wubu/WuBuOffice/apps/wubuos/macro.h \
+ /home/wubu/WuBuOffice/apps/wubuos/dialog.h \
+ /home/wubu/WuBuOffice/src/wubupasteplain/pasteplain.h \
+ /usr/include/SDL2/SDL.h /usr/include/SDL2/SDL_main.h \
+ /usr/include/SDL2/SDL_stdinc.h /usr/include/SDL2/SDL_config.h \
  /usr/include/x86_64-linux-gnu/SDL2/_real_SDL_config.h \
  /usr/include/SDL2/SDL_platform.h /usr/include/SDL2/begin_code.h \
  /usr/include/SDL2/close_code.h /usr/include/x86_64-linux-gnu/sys/types.h \

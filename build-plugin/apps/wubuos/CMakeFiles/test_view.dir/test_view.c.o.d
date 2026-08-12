@@ -18,10 +18,13 @@ apps/wubuos/CMakeFiles/test_view.dir/test_view.c.o: \
  /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
+ /home/wubu/WuBuOffice/src/wubumodel/model.h \
  /home/wubu/WuBuOffice/apps/wubuos/wuos_font.h \
+ /home/wubu/WuBuOffice/src/wubusettings/settings.h \
+ /home/wubu/WuBuOffice/src/wubutoc/toc.h \
+ /home/wubu/WuBuOffice/apps/wubuos/palette.h \
  /home/wubu/WuBuOffice/apps/wubuos/wuos_file.h \
- /home/wubu/WuBuOffice/src/wubuautosave/autosave.h \
- /home/wubu/WuBuOffice/src/wubumodel/model.h /usr/include/stdio.h \
+ /home/wubu/WuBuOffice/src/wubuautosave/autosave.h /usr/include/stdio.h \
  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h \
  /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \

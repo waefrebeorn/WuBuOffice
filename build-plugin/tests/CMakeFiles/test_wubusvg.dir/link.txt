@@ -1,1 +1,1 @@
-/usr/bin/cc -O3 -DNDEBUG CMakeFiles/test_wubusvg.dir/test_wubusvg.c.o -o test_wubusvg  ../src/wubusvg/libwubusvg.a ../src/wubuxml/libwubuxml.a ../src/wubujson/libwubujson.a 
+/usr/bin/cc -O3 -DNDEBUG -fopenmp CMakeFiles/test_wubusvg.dir/test_wubusvg.c.o -o test_wubusvg  ../src/wubusvg/libwubusvg.a ../src/wubuxml/libwubuxml.a ../src/wubujson/libwubujson.a 

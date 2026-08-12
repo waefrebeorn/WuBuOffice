@@ -69,74 +69,35 @@ include apps/wubuoffice/CMakeFiles/wubuoffice.dir/progress.make
 # Include the compile flags for this target's objects.
 include apps/wubuoffice/CMakeFiles/wubuoffice.dir/flags.make
 
-apps/wubuoffice/CMakeFiles/wubuoffice.dir/main.c.o: apps/wubuoffice/CMakeFiles/wubuoffice.dir/flags.make
-apps/wubuoffice/CMakeFiles/wubuoffice.dir/main.c.o: /home/wubu/WuBuOffice/apps/wubuoffice/main.c
-apps/wubuoffice/CMakeFiles/wubuoffice.dir/main.c.o: apps/wubuoffice/CMakeFiles/wubuoffice.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object apps/wubuoffice/CMakeFiles/wubuoffice.dir/main.c.o"
-	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuoffice && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT apps/wubuoffice/CMakeFiles/wubuoffice.dir/main.c.o -MF CMakeFiles/wubuoffice.dir/main.c.o.d -o CMakeFiles/wubuoffice.dir/main.c.o -c /home/wubu/WuBuOffice/apps/wubuoffice/main.c
+apps/wubuoffice/CMakeFiles/wubuoffice.dir/wubuoffice.c.o: apps/wubuoffice/CMakeFiles/wubuoffice.dir/flags.make
+apps/wubuoffice/CMakeFiles/wubuoffice.dir/wubuoffice.c.o: /home/wubu/WuBuOffice/apps/wubuoffice/wubuoffice.c
+apps/wubuoffice/CMakeFiles/wubuoffice.dir/wubuoffice.c.o: apps/wubuoffice/CMakeFiles/wubuoffice.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object apps/wubuoffice/CMakeFiles/wubuoffice.dir/wubuoffice.c.o"
+	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuoffice && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT apps/wubuoffice/CMakeFiles/wubuoffice.dir/wubuoffice.c.o -MF CMakeFiles/wubuoffice.dir/wubuoffice.c.o.d -o CMakeFiles/wubuoffice.dir/wubuoffice.c.o -c /home/wubu/WuBuOffice/apps/wubuoffice/wubuoffice.c
 
-apps/wubuoffice/CMakeFiles/wubuoffice.dir/main.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/wubuoffice.dir/main.c.i"
-	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuoffice && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/wubu/WuBuOffice/apps/wubuoffice/main.c > CMakeFiles/wubuoffice.dir/main.c.i
+apps/wubuoffice/CMakeFiles/wubuoffice.dir/wubuoffice.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/wubuoffice.dir/wubuoffice.c.i"
+	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuoffice && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/wubu/WuBuOffice/apps/wubuoffice/wubuoffice.c > CMakeFiles/wubuoffice.dir/wubuoffice.c.i
 
-apps/wubuoffice/CMakeFiles/wubuoffice.dir/main.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/wubuoffice.dir/main.c.s"
-	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuoffice && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/wubu/WuBuOffice/apps/wubuoffice/main.c -o CMakeFiles/wubuoffice.dir/main.c.s
-
-apps/wubuoffice/CMakeFiles/wubuoffice.dir/__/__/tools/image2doc.c.o: apps/wubuoffice/CMakeFiles/wubuoffice.dir/flags.make
-apps/wubuoffice/CMakeFiles/wubuoffice.dir/__/__/tools/image2doc.c.o: /home/wubu/WuBuOffice/tools/image2doc.c
-apps/wubuoffice/CMakeFiles/wubuoffice.dir/__/__/tools/image2doc.c.o: apps/wubuoffice/CMakeFiles/wubuoffice.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object apps/wubuoffice/CMakeFiles/wubuoffice.dir/__/__/tools/image2doc.c.o"
-	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuoffice && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT apps/wubuoffice/CMakeFiles/wubuoffice.dir/__/__/tools/image2doc.c.o -MF CMakeFiles/wubuoffice.dir/__/__/tools/image2doc.c.o.d -o CMakeFiles/wubuoffice.dir/__/__/tools/image2doc.c.o -c /home/wubu/WuBuOffice/tools/image2doc.c
-
-apps/wubuoffice/CMakeFiles/wubuoffice.dir/__/__/tools/image2doc.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/wubuoffice.dir/__/__/tools/image2doc.c.i"
-	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuoffice && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/wubu/WuBuOffice/tools/image2doc.c > CMakeFiles/wubuoffice.dir/__/__/tools/image2doc.c.i
-
-apps/wubuoffice/CMakeFiles/wubuoffice.dir/__/__/tools/image2doc.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/wubuoffice.dir/__/__/tools/image2doc.c.s"
-	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuoffice && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/wubu/WuBuOffice/tools/image2doc.c -o CMakeFiles/wubuoffice.dir/__/__/tools/image2doc.c.s
+apps/wubuoffice/CMakeFiles/wubuoffice.dir/wubuoffice.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/wubuoffice.dir/wubuoffice.c.s"
+	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuoffice && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/wubu/WuBuOffice/apps/wubuoffice/wubuoffice.c -o CMakeFiles/wubuoffice.dir/wubuoffice.c.s
 
 # Object files for target wubuoffice
 wubuoffice_OBJECTS = \
-"CMakeFiles/wubuoffice.dir/main.c.o" \
-"CMakeFiles/wubuoffice.dir/__/__/tools/image2doc.c.o"
+"CMakeFiles/wubuoffice.dir/wubuoffice.c.o"
 
 # External object files for target wubuoffice
 wubuoffice_EXTERNAL_OBJECTS =
 
-apps/wubuoffice/wubuoffice: apps/wubuoffice/CMakeFiles/wubuoffice.dir/main.c.o
-apps/wubuoffice/wubuoffice: apps/wubuoffice/CMakeFiles/wubuoffice.dir/__/__/tools/image2doc.c.o
-apps/wubuoffice/wubuoffice: apps/wubuoffice/CMakeFiles/wubuoffice.dir/build.make
-apps/wubuoffice/wubuoffice: src/wubuoxml/libwubuoxml.a
-apps/wubuoffice/wubuoffice: src/wubuxml/libwubuxml.a
-apps/wubuoffice/wubuoffice: src/wubuzip/libwubuzip.a
-apps/wubuoffice/wubuoffice: src/wubuformula/libwubuformula.a
-apps/wubuoffice/wubuoffice: src/wubucfb/libwubucfb.a
-apps/wubuoffice/wubuoffice: src/wubujson/libwubujson.a
-apps/wubuoffice/wubuoffice: apps/wubuconv/libwubuconv.a
-apps/wubuoffice/wubuoffice: src/wubuocr/libcrnnocr.a
-apps/wubuoffice/wubuoffice: src/wubuimage/libwubuimage.a
-apps/wubuoffice/wubuoffice: src/wubufont/libwubufont.a
-apps/wubuoffice/wubuoffice: src/wubucfb/libwubucfb.a
-apps/wubuoffice/wubuoffice: src/wubuxml/libwubuxml.a
-apps/wubuoffice/wubuoffice: src/wubuformula/libwubuformula.a
-apps/wubuoffice/wubuoffice: src/wubuoxml/libwubuoxml.a
-apps/wubuoffice/wubuoffice: src/wubuocr/libcrnnocr.a
-apps/wubuoffice/wubuoffice: src/wubuocr/libwubuocr.a
-apps/wubuoffice/wubuoffice: src/wubuocr/libcrnnocr.a
-apps/wubuoffice/wubuoffice: src/wubuocr/libwubuocr.a
-apps/wubuoffice/wubuoffice: src/wubujson/libwubujson.a
-apps/wubuoffice/wubuoffice: src/wubufont/libwubufont.a
-apps/wubuoffice/wubuoffice: src/wubuzip/libwubuzip.a
-apps/wubuoffice/wubuoffice: src/wubupng/libwubupng.a
-apps/wubuoffice/wubuoffice: /usr/lib/x86_64-linux-gnu/libz.so
-apps/wubuoffice/wubuoffice: apps/wubuoffice/CMakeFiles/wubuoffice.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking C executable wubuoffice"
+apps/wubuos/wubuoffice: apps/wubuoffice/CMakeFiles/wubuoffice.dir/wubuoffice.c.o
+apps/wubuos/wubuoffice: apps/wubuoffice/CMakeFiles/wubuoffice.dir/build.make
+apps/wubuos/wubuoffice: apps/wubuoffice/CMakeFiles/wubuoffice.dir/link.txt
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking C executable ../wubuos/wubuoffice"
 	cd /home/wubu/WuBuOffice/build-plugin/apps/wubuoffice && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/wubuoffice.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
-apps/wubuoffice/CMakeFiles/wubuoffice.dir/build: apps/wubuoffice/wubuoffice
+apps/wubuoffice/CMakeFiles/wubuoffice.dir/build: apps/wubuos/wubuoffice
 .PHONY : apps/wubuoffice/CMakeFiles/wubuoffice.dir/build
 
 apps/wubuoffice/CMakeFiles/wubuoffice.dir/clean:

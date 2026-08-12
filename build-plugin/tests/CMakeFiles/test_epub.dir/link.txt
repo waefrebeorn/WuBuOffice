@@ -1,1 +1,1 @@
-/usr/bin/cc -O3 -DNDEBUG CMakeFiles/test_epub.dir/test_epub.c.o -o test_epub  ../src/wubuepub/libwubuepub.a ../src/wubumodel/libwubumodel.a ../src/wubuoxml/libwubuoxml.a -lpthread ../src/wubuzip/libwubuzip.a ../src/wububase/libwububase.a 
+/usr/bin/cc -O3 -DNDEBUG -fopenmp CMakeFiles/test_epub.dir/test_epub.c.o -o test_epub  ../src/wubuepub/libwubuepub.a ../src/wubumodel/libwubumodel.a ../src/wubuoxml/libwubuoxml.a -lpthread ../src/wubuzip/libwubuzip.a ../src/wububase/libwububase.a 

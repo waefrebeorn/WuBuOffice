@@ -6,5 +6,5 @@ C_DEFINES = -DLEGACY_ORACLE=\"/home/wubu/WuBuOffice/tests/conformance/legacy_ora
 
 C_INCLUDES = -I/home/wubu/WuBuOffice/apps/wubulegacy -I/home/wubu/WuBuOffice/apps/wubupdf -I/home/wubu/WuBuOffice/apps/wubucell -I/home/wubu/WuBuOffice/apps/wubushow -I/home/wubu/WuBuOffice/apps/wubuedit -I/home/wubu/WuBuOffice/src/wubucfb -I/home/wubu/WuBuOffice/src/wubuoxml -I/home/wubu/WuBuOffice/src/wubuxml -I/home/wubu/WuBuOffice/src/wubuzip -I/home/wubu/WuBuOffice/src/wubuformula -I/home/wubu/WuBuOffice/src/wubuformula/functions
 
-C_FLAGS = -O3 -DNDEBUG -std=c11 -Wall -Wextra -Wpedantic -Wno-unused-parameter
+C_FLAGS = -O3 -DNDEBUG -std=c11 -Wall -Wextra -Wpedantic -Wno-unused-parameter -fopenmp
 

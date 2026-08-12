@@ -18,10 +18,11 @@ apps/wubuos/CMakeFiles/test_view.dir/view_doc.c.o: \
  /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
+ /home/wubu/WuBuOffice/src/wubumodel/model.h \
  /home/wubu/WuBuOffice/apps/wubuos/wuos_file.h \
  /home/wubu/WuBuOffice/apps/wubuos/wuos_font.h \
+ /home/wubu/WuBuOffice/apps/wubuos/wuos_theme.h \
  /home/wubu/WuBuOffice/src/wuburender/wuburender.h \
- /home/wubu/WuBuOffice/src/wubumodel/model.h \
  /home/wubu/WuBuOffice/src/wubudoc/wubudoc.h /usr/include/stdio.h \
  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h \
  /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
@@ -39,9 +40,16 @@ apps/wubuos/CMakeFiles/test_view.dir/view_doc.c.o: \
  /home/wubu/WuBuOffice/src/wubuchart/chart.h \
  /home/wubu/WuBuOffice/src/wubudraw/draw.h \
  /home/wubu/WuBuOffice/src/wubumath/math.h \
- /home/wubu/WuBuOffice/src/wubuepub/epub.h \
  /home/wubu/WuBuOffice/src/wubua11y/a11y.h \
- /home/wubu/WuBuOffice/src/wubusvg/rast.h /usr/include/stdlib.h \
+ /home/wubu/WuBuOffice/src/wubusvg/rast.h \
+ /home/wubu/WuBuOffice/src/wubulayout/ublayout.h \
+ /home/wubu/WuBuOffice/src/wubushape/shape.h \
+ /home/wubu/WuBuOffice/src/wubutoc/toc.h \
+ /home/wubu/WuBuOffice/src/wubusettings/settings.h \
+ /home/wubu/WuBuOffice/src/wubuscript/script.h \
+ /home/wubu/WuBuOffice/apps/wubuos/doccmd.h \
+ /home/wubu/WuBuOffice/src/wubumodel/model.h \
+ /home/wubu/WuBuOffice/src/wuburtf/rtf.h /usr/include/stdlib.h \
  /usr/include/x86_64-linux-gnu/bits/waitflags.h \
  /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \

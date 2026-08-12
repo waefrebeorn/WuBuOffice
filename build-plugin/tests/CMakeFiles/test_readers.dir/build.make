@@ -107,6 +107,7 @@ tests/test_readers: src/wubucfb/libwubucfb.a
 tests/test_readers: src/wubujson/libwubujson.a
 tests/test_readers: src/wubuxml/libwubuxml.a
 tests/test_readers: src/wubuformula/libwubuformula.a
+tests/test_readers: src/wubumodel/libwubumodel.a
 tests/test_readers: src/wubuoxml/libwubuoxml.a
 tests/test_readers: src/wubuzip/libwubuzip.a
 tests/test_readers: tests/CMakeFiles/test_readers.dir/link.txt

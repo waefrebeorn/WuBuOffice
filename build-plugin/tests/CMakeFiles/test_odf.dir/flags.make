@@ -4,7 +4,7 @@
 # compile C with /usr/bin/cc
 C_DEFINES = -DODF_ORACLE=\"/home/wubu/WuBuOffice/tests/conformance/odf_oracle.py\" -D_POSIX_C_SOURCE=200809L
 
-C_INCLUDES = -I/home/wubu/WuBuOffice/apps/wubuodf -I/home/wubu/WuBuOffice/apps/wubuedit -I/home/wubu/WuBuOffice/apps/wubucell -I/home/wubu/WuBuOffice/apps/wubushow -I/home/wubu/WuBuOffice/src/wubuoxml -I/home/wubu/WuBuOffice/src/wubuxml -I/home/wubu/WuBuOffice/src/wubuzip -I/home/wubu/WuBuOffice/src/wubuformula -I/home/wubu/WuBuOffice/src/wubuformula/functions -I/home/wubu/WuBuOffice/src/wubucfb -I/home/wubu/WuBuOffice/src/wubujson
+C_INCLUDES = -I/home/wubu/WuBuOffice/apps/wubuodf -I/home/wubu/WuBuOffice/apps/wubuedit -I/home/wubu/WuBuOffice/apps/wubucell -I/home/wubu/WuBuOffice/apps/wubushow -I/home/wubu/WuBuOffice/src/wubuoxml -I/home/wubu/WuBuOffice/src/wubuxml -I/home/wubu/WuBuOffice/src/wubuzip -I/home/wubu/WuBuOffice/src/wubuformula -I/home/wubu/WuBuOffice/src/wubuformula/functions -I/home/wubu/WuBuOffice/src/wubucfb -I/home/wubu/WuBuOffice/src/wubujson -I/home/wubu/WuBuOffice/src/wubumodel
 
-C_FLAGS = -O3 -DNDEBUG -std=c11 -Wall -Wextra -Wpedantic -Wno-unused-parameter
+C_FLAGS = -O3 -DNDEBUG -std=c11 -Wall -Wextra -Wpedantic -Wno-unused-parameter -fopenmp
 

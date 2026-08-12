@@ -1,1 +1,1 @@
-/usr/bin/cc -O3 -DNDEBUG CMakeFiles/emnist_infer.dir/emnist_infer.c.o CMakeFiles/emnist_infer.dir/__/src/wubuocr/zoning.c.o CMakeFiles/emnist_infer.dir/__/src/wubuocr/mlp.c.o -o emnist_infer  -lm 
+/usr/bin/cc -O3 -DNDEBUG -fopenmp CMakeFiles/emnist_infer.dir/emnist_infer.c.o CMakeFiles/emnist_infer.dir/__/src/wubuocr/zoning.c.o CMakeFiles/emnist_infer.dir/__/src/wubuocr/mlp.c.o -o emnist_infer  -lm 

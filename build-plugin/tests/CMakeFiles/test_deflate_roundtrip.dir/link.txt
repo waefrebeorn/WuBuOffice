@@ -1,1 +1,1 @@
-/usr/bin/cc -O3 -DNDEBUG CMakeFiles/test_deflate_roundtrip.dir/test_deflate_roundtrip.c.o -o test_deflate_roundtrip  ../src/wubuzip/libwubuzip.a 
+/usr/bin/cc -O3 -DNDEBUG -fopenmp CMakeFiles/test_deflate_roundtrip.dir/test_deflate_roundtrip.c.o -o test_deflate_roundtrip  ../src/wubuzip/libwubuzip.a 

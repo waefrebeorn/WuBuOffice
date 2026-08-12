@@ -57,6 +57,7 @@ src/wubuocr/CMakeFiles/crnnocr.dir/crnn.c.o: /home/wubu/WuBuOffice/src/wubuocr/c
   /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
   /usr/include/x86_64-linux-gnu/gnu/stubs.h \
   /usr/include/x86_64-linux-gnu/sys/cdefs.h \
+  /usr/lib/gcc/x86_64-linux-gnu/13/include/omp.h \
   /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h \
   /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h \
   /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h
@@ -469,6 +470,8 @@ src/wubuocr/CMakeFiles/crnnocr.dir/rnn.c.o: /home/wubu/WuBuOffice/src/wubuocr/rn
 
 /home/wubu/WuBuOffice/src/wubuocr/gru.c:
 
+/usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h:
+
 /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h:
 
 /usr/include/string.h:
@@ -484,8 +487,6 @@ src/wubuocr/CMakeFiles/crnnocr.dir/rnn.c.o: /home/wubu/WuBuOffice/src/wubuocr/rn
 /usr/include/x86_64-linux-gnu/bits/stdint-intn.h:
 
 /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h:
-
-/usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h:
 
 /usr/include/x86_64-linux-gnu/bits/mathcalls.h:
 
@@ -588,6 +589,8 @@ src/wubuocr/CMakeFiles/crnnocr.dir/rnn.c.o: /home/wubu/WuBuOffice/src/wubuocr/rn
 /usr/include/x86_64-linux-gnu/bits/stdlib.h:
 
 /usr/include/x86_64-linux-gnu/bits/string_fortified.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/13/include/omp.h:
 
 /usr/include/x86_64-linux-gnu/bits/time64.h:
 

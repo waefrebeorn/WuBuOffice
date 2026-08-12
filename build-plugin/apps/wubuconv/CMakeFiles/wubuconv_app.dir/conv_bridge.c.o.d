@@ -36,6 +36,7 @@ apps/wubuconv/CMakeFiles/wubuconv_app.dir/conv_bridge.c.o: \
  /usr/include/x86_64-linux-gnu/bits/stdio.h \
  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
  /home/wubu/WuBuOffice/apps/wubuconv/../wubushow/show.h \
+ /home/wubu/WuBuOffice/src/wubuoxml/../wubumodel/model.h \
  /usr/include/stdlib.h /usr/include/x86_64-linux-gnu/bits/waitflags.h \
  /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \

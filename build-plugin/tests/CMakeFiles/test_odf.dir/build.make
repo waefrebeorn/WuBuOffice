@@ -133,10 +133,11 @@ tests/test_odf: src/wubuformula/libwubuformula.a
 tests/test_odf: apps/wubuconv/libwubuconv.a
 tests/test_odf: src/wubucfb/libwubucfb.a
 tests/test_odf: src/wubuformula/libwubuformula.a
-tests/test_odf: src/wubuoxml/libwubuoxml.a
 tests/test_odf: src/wubuxml/libwubuxml.a
-tests/test_odf: src/wubuzip/libwubuzip.a
 tests/test_odf: src/wubujson/libwubujson.a
+tests/test_odf: src/wubumodel/libwubumodel.a
+tests/test_odf: src/wubuoxml/libwubuoxml.a
+tests/test_odf: src/wubuzip/libwubuzip.a
 tests/test_odf: tests/CMakeFiles/test_odf.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking C executable test_odf"
 	cd /home/wubu/WuBuOffice/build-plugin/tests && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/test_odf.dir/link.txt --verbose=$(VERBOSE)

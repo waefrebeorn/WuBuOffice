@@ -131,8 +131,9 @@ apps/wubunote/wubunote: src/wubusvg/libwubusvg.a
 apps/wubunote/wubunote: apps/wubuconv/libwubuconv.a
 apps/wubunote/wubunote: src/wubucfb/libwubucfb.a
 apps/wubunote/wubunote: src/wubuxml/libwubuxml.a
-apps/wubunote/wubunote: src/wubuoxml/libwubuoxml.a
 apps/wubunote/wubunote: src/wubuformula/libwubuformula.a
+apps/wubunote/wubunote: src/wubumodel/libwubumodel.a
+apps/wubunote/wubunote: src/wubuoxml/libwubuoxml.a
 apps/wubunote/wubunote: src/wubuimage/libwubuimage.a
 apps/wubunote/wubunote: src/wubuocr/libwubuocr.a
 apps/wubunote/wubunote: src/wubuocr/libcrnnocr.a

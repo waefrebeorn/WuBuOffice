@@ -1,1 +1,1 @@
-/usr/bin/cc -O3 -DNDEBUG CMakeFiles/emnist_train_fast.dir/emnist_train_fast.c.o CMakeFiles/emnist_train_fast.dir/__/src/wubuocr/convnet3.c.o CMakeFiles/emnist_train_fast.dir/__/src/wubuocr/mlp.c.o -o emnist_train_fast  -lm -lpthread 
+/usr/bin/cc -O3 -DNDEBUG -fopenmp CMakeFiles/emnist_train_fast.dir/emnist_train_fast.c.o CMakeFiles/emnist_train_fast.dir/__/src/wubuocr/convnet3.c.o CMakeFiles/emnist_train_fast.dir/__/src/wubuocr/mlp.c.o CMakeFiles/emnist_train_fast.dir/__/src/wubuocr/conv_gemm.c.o -o emnist_train_fast  -lm -lpthread 

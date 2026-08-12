@@ -3,6 +3,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/wubuocr.dir/binarize.c.o.d"
   "CMakeFiles/wubuocr.dir/components.c.o"
   "CMakeFiles/wubuocr.dir/components.c.o.d"
+  "CMakeFiles/wubuocr.dir/conv_gemm.c.o"
+  "CMakeFiles/wubuocr.dir/conv_gemm.c.o.d"
   "CMakeFiles/wubuocr.dir/convnet.c.o"
   "CMakeFiles/wubuocr.dir/convnet.c.o.d"
   "CMakeFiles/wubuocr.dir/convnet3.c.o"
