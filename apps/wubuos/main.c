@@ -39,6 +39,8 @@ static WuView *views[8];
 static int     nviews = 0;
 static int     active = 0;
 static int     tab_hover = -1;
+static int     tab_drag_from = -1;  /* index of tab being dragged, -1 none */
+static int     tab_drag_x = 0;      /* pointer x at drag start */
 static float   g_zoom = 1.0f;       /* UI-24: shell-level zoom */
 static int     g_zoom_drag = 0;     /* zoom slider being dragged */
 static int     g_sidebar = 1;       /* docked Navigator panel shown? */
@@ -178,6 +180,24 @@ static int tab_at(int mx){
     int x=0;
     for (int i=0;i<nviews;i++){ int tw = (int)strlen(views[i]->name)*14 + 24; if (mx>=x && mx<x+tw) return i; x+=tw; }
     return -1;
+}
+
+/* Tab width (must stay in sync with the render loop + tab_at). */
+static int tab_width(int i){ return (int)strlen(views[i]->name)*14 + 24; }
+
+/* Reorder the tab at `from` to position `to` (indices into views). Updates
+ * active to follow the dragged tab. Used by drag-to-reorder. */
+static void tab_reorder(int from, int to){
+    if (from < 0 || to < 0 || from >= nviews || to >= nviews || from == to) return;
+    WuView *mv = views[from];
+    if (from < to)
+        for (int i=from; i<to; i++) views[i] = views[i+1];
+    else
+        for (int i=from; i>to; i--) views[i] = views[i-1];
+    views[to] = mv;
+    if (active == from) active = to;
+    else if (from < active && active <= to) active--;
+    else if (to <= active && active < from) active++;
 }
 
 /* Paint UTF-8 `text` at (px,py) directly onto the SDL renderer using the
@@ -401,7 +421,7 @@ int main(int argc, char **argv){
                         g_menu_open = -1; g_menu_hover = -1;
                     }
                 }
-                else if (e.button.y < TAB_H){ int t=tab_at(e.button.x); if(t>=0){ active=t; scroll=0; } }
+                else if (e.button.y < TAB_H){ int t=tab_at(e.button.x); if(t>=0){ active=t; scroll=0; tab_drag_from=t; tab_drag_x=e.button.x; } }
                 else if (e.button.y >= TAB_H+MENU_H && e.button.y < TAB_H+MENU_H+TOOLBAR_H){
                     /* toolbar button click */
                     int ti = wuos_tb_at(e.button.x);
@@ -441,8 +461,18 @@ int main(int argc, char **argv){
                 /* drag the zoom slider thumb along the track */
                 zoom_from_x(e.motion.x);
             }
+            else if (e.type==SDL_MOUSEMOTION && tab_drag_from >= 0){
+                /* drag-to-reorder tabs: move the dragged tab to wherever the
+                 * pointer now sits (center-based), recomputing live. */
+                int target = tab_at(e.motion.x);
+                if (target >= 0 && target != tab_drag_from){
+                    tab_reorder(tab_drag_from, target);
+                    tab_drag_from = target;   /* follow the tab we're dragging */
+                }
+            }
             else if (e.type==SDL_MOUSEBUTTONUP && e.button.button==SDL_BUTTON_LEFT){
                 g_zoom_drag = 0;   /* release zoom drag */
+                tab_drag_from = -1; /* release tab drag */
             }
             else if (e.type==SDL_DROPFILE){   /* UI-28: drag-drop open */
                 char *dropped = e.drop.file;
@@ -773,9 +803,10 @@ int main(int argc, char **argv){
         SDL_SetRenderDrawColor(ren, tbb.r, tbb.g, tbb.b, 255);
         SDL_RenderFillRect(ren,&(SDL_Rect){0,0,WIN_W,TAB_H});
         for (int i=0;i<nviews;i++){
-            int tw = (int)strlen(views[i]->name)*14 + 24;
+            int tw = tab_width(i);
             int on = (i==active);
             int hov = (i==tab_hover);
+            int dragging = (i==tab_drag_from);
             WuosRGB seg = on ? tto : (hov ? tto : ttk);
             SDL_SetRenderDrawColor(ren, seg.r, seg.g, seg.b, 255);
             SDL_RenderFillRect(ren,&(SDL_Rect){x,0,tw,TAB_H});
@@ -786,6 +817,11 @@ int main(int argc, char **argv){
             if (on){
                 SDL_SetRenderDrawColor(ren, ac.r, ac.g, ac.b, 255);
                 SDL_RenderFillRect(ren,&(SDL_Rect){x,TAB_H-2,tw,2});
+            }
+            /* dragged tab: 2px accent overline so the user sees it's in motion */
+            if (dragging){
+                SDL_SetRenderDrawColor(ren, ac.r, ac.g, ac.b, 255);
+                SDL_RenderFillRect(ren,&(SDL_Rect){x,0,tw,2});
             }
             sdl_text(ren, x+12, (TAB_H-wuos_font_height())/2 + 2,
                      on?ttxo.r:ttx.r, on?ttxo.g:ttx.g, on?ttxo.b:ttx.b,
