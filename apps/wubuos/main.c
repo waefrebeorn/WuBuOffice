@@ -57,6 +57,18 @@ static int      g_dlg_action = 0;   /* 0 none,1 link,2 qr,3 image-alt,10 open,11
  * Small opaque model; selecting an item runs a command id (same space the
  * command palette uses). Pure chrome state here; views stay GUI-free. */
 static const char *g_menu_names[4] = { "File", "Edit", "View", "Help" };
+/* Accelerator (shortcut) hints per menu item, indexed identically to g_menus.
+ * "" = none. Discoverability per NN/g: shortcuts must be surfaced where the
+ * user performs the action. (Research synthesis, 2026-08-12.) */
+static const char *g_menu_acc[4][16] = {
+  { "Ctrl+O", "Ctrl+S", "Ctrl+Shift+S", "Ctrl+T", "Ctrl+W",
+    "", "", "", "", "", "",
+    "", "" },
+  { "Ctrl+Z", "Ctrl+Y", "Ctrl+F", "Ctrl+H", "Ctrl+G", "", 
+    "Ctrl+X", "Ctrl+C", "Ctrl+V", "Ctrl+Shift+V", "Ctrl+A", "", "" },
+  { "Ctrl+=", "Ctrl+-", "Ctrl+0", "", "", "", "" },
+  { "", "", "" },
+};
 /* each menu: list of {label, cmd} pairs, cmd 0 = separator */
 static const struct { const char *label; int cmd; } g_menus[4][16] = {
   { {"Open...",         1000}, {"Save",            1001}, {"Save As...",  1002},
@@ -759,6 +771,17 @@ int main(int argc, char **argv){
             }
         }
 
+        /* WUOS_DUMP_VIEW: switch to the named view BEFORE the first render so
+         * the dump captures that view (not the default Document). */
+        {
+            static int view_switched = 0;
+            if (!view_switched && getenv("WUOS_DUMP_VIEW")){
+                const char *dv = getenv("WUOS_DUMP_VIEW");
+                for (int i=0;i<nviews;i++)
+                    if (views[i]->name && !strcmp(views[i]->name, dv)){ active=i; scroll=0; break; }
+                view_switched = 1;
+            }
+        }
         /* render active view (placed below the tab strip, menu bar AND toolbar) */
         int view_top = TAB_H + MENU_H + TOOLBAR_H;
         int sb_w = (g_sidebar && views[active]->sidebar) ? SIDEBAR_W : 0;  /* dock sidebar */
@@ -848,14 +871,22 @@ int main(int argc, char **argv){
                          (on||hovered)?ttxo.r:ttx.r, (on||hovered)?ttxo.g:ttx.g, (on||hovered)?ttxo.b:ttx.b,
                          g_menu_names[mi]);
                 if (on){
+                    /* dropdown: widen to fit the longest item + accelerator */
+                    int dw = mw;
+                    for (int k=0; g_menus[mi][k].label; k++){
+                        int w = (int)strlen(g_menus[mi][k].label)*7 + 12;
+                        const char *a = g_menu_acc[mi][k];
+                        if (a && *a) w += (int)strlen(a)*7 + 14;
+                        if (w > dw) dw = w;
+                    }
                     /* dropdown */
                     int n=0; while (g_menus[mi][n].label) n++;
                     int dy = my + MENU_H;
                     int dh = n*22 + 6;
                     SDL_SetRenderDrawColor(ren, tto.r, tto.g, tto.b, 255);
-                    SDL_RenderFillRect(ren, &(SDL_Rect){mx, dy, mw, dh});
+                    SDL_RenderFillRect(ren, &(SDL_Rect){mx, dy, dw, dh});
                     SDL_SetRenderDrawColor(ren, bd.r, bd.g, bd.b, 255);
-                    SDL_RenderDrawRect(ren, &(SDL_Rect){mx, dy, mw, dh});
+                    SDL_RenderDrawRect(ren, &(SDL_Rect){mx, dy, dw, dh});
                     for (int i=0;i<n;i++){
                         int iy = dy + 3 + i*22;
                         int item_hover = (g_menu_hover==mi*100+i);
@@ -868,6 +899,14 @@ int main(int argc, char **argv){
                                  item_hover?ttxo.g:ttx.g,
                                  item_hover?ttxo.b:ttx.b,
                                  g_menus[mi][i].label);
+                        /* right-aligned accelerator hint (discoverability) */
+                        const char *acc = g_menu_acc[mi][i];
+                        if (acc && *acc){
+                            int alen = (int)strlen(acc)*7;
+                            sdl_text(ren, mx + mw - 10 - alen,
+                                     iy + (20-wuos_font_height())/2 + 1,
+                                     ttxo.r*0.7, ttxo.g*0.7, ttxo.b*0.7, acc);
+                        }
                     }
                 }
                 mx += mw;
@@ -1155,12 +1194,17 @@ int main(int argc, char **argv){
             for (int i=0;i<11;i++)
                 sdl_text(ren, px+WUOS_SPACE_8*2, py+WUOS_SPACE_8*6+i*WUOS_SPACE_26, sp_txt.r,sp_txt.g,sp_txt.b, tips[i]);
         }
-        /* WUOS_DUMP=path: write a PPM screenshot on the first frame (used by
-         * headless visual verification of shell chrome incl. the toolbar). */
+        /* WUOS_DUMP: PPM on first frame. WUOS_DUMP_VIEW switches the active
+         * view first; WUOS_DUMP_MENU=<0..3> opens that dropdown so headless
+         * captures show accelerators. */
         {
             static const char *dump = NULL;
             static int dumped = 0, frames = 0;
-            if (!dump) dump = getenv("WUOS_DUMP");
+            if (!dump){
+                dump = getenv("WUOS_DUMP");
+                const char *dm = getenv("WUOS_DUMP_MENU");
+                if (dm && *dm){ int mi = atoi(dm); if (mi>=0 && mi<4){ g_menu_open=mi; g_menu_hover=mi; } }
+            }
             frames++;
             if (dump && !dumped && frames >= 12){   /* wait for view+font render */
                 void *pix = malloc((size_t)WIN_W*WIN_H*4);
