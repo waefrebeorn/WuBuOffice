@@ -391,6 +391,17 @@ int main(int argc, char **argv){
                     if (ti>=0 && wuos_tb_buttons[ti].cmd) run_tb_cmd(wuos_tb_buttons[ti].cmd);
                     g_menu_open=-1; g_menu_hover=-1;
                 }
+                else if (e.button.y >= WIN_H-STATUS_H){ /* status bar: zoom slider */
+                    /* zoom track region (mirror of the render block) */
+                    int zmin=50, zmax=300, ztrack_x=WIN_W-150, ztrack_w=90;
+                    if (e.button.x >= ztrack_x && e.button.x <= ztrack_x+ztrack_w){
+                        double frac = (e.button.x - ztrack_x) / (double)ztrack_w;
+                        g_zoom = (float)(zmin/100.0 + frac*(zmax/100.0 - zmin/100.0));
+                        if (g_zoom < 0.5f) g_zoom = 0.5f;
+                        if (g_zoom > 3.0f) g_zoom = 3.0f;
+                        WubuSettings *sh=wubusettings_shared(); if(sh) wubusettings_set_zoom(sh, g_zoom);
+                    }
+                }
                 else if (g_ctx){  /* UI-27: select context-menu item */
                     /* items: 0 Open File, 1 New Document, 2 Toggle Theme */
                     if (g_ctx_item==2){
@@ -855,6 +866,33 @@ int main(int argc, char **argv){
                      120,220,140, g_plugin_msg);
         }
 
+        /* zoom indicator + slider (right of the status bar). Reference office
+         * apps (LibreOffice/OnlyOffice/MS Office/Notepad++) all show zoom in the
+         * status bar; the shell previously exposed zoom only via keyboard/menu.
+         * Slider: a thin track [MIN..MAX]; thumb at current g_zoom. Clicking the
+         * track re-positions zoom (handled in the mouse handler). */
+        {
+            int zmin = 50, zmax = 300;
+            int ztxt_x = WIN_W - 210, ztrack_x = WIN_W - 150, ztrack_w = 90;
+            int zy = WIN_H - STATUS_H;
+            char zlabel[16];
+            snprintf(zlabel, sizeof zlabel, "%d%%", (int)(g_zoom*100));
+            sdl_text(ren, ztxt_x, zy + (STATUS_H-wuos_font_height())/2 + 1,
+                     stx.r, stx.g, stx.b, zlabel);
+            /* track */
+            SDL_SetRenderDrawColor(ren, bd.r, bd.g, bd.b, 255);
+            SDL_RenderFillRect(ren, &(SDL_Rect){ztrack_x, zy+STATUS_H/2-1, ztrack_w, 2});
+            /* fill to current */
+            SDL_SetRenderDrawColor(ren, ac.r, ac.g, ac.b, 255);
+            int fill = (int)((g_zoom - zmin/100.0) / (zmax/100.0 - zmin/100.0) * ztrack_w);
+            if (fill > ztrack_w) fill = ztrack_w;
+            if (fill < 0) fill = 0;
+            SDL_RenderFillRect(ren, &(SDL_Rect){ztrack_x, zy+STATUS_H/2-1, fill, 2});
+            /* thumb */
+            SDL_SetRenderDrawColor(ren, stx.r, stx.g, stx.b, 255);
+            SDL_RenderFillRect(ren, &(SDL_Rect){ztrack_x+fill-2, zy+STATUS_H/2-4, 5, 8});
+        }
+
         /* UI-27: right-click context menu overlay */
         if (g_ctx){
             const char *items[3] = { "Open File…", "New Document", "Toggle Theme" };
@@ -1023,9 +1061,10 @@ int main(int argc, char **argv){
          * headless visual verification of shell chrome incl. the toolbar). */
         {
             static const char *dump = NULL;
-            static int dumped = 0;
+            static int dumped = 0, frames = 0;
             if (!dump) dump = getenv("WUOS_DUMP");
-            if (dump && !dumped){
+            frames++;
+            if (dump && !dumped && frames >= 12){   /* wait for view+font render */
                 void *pix = malloc((size_t)WIN_W*WIN_H*4);
                 if (pix && SDL_RenderReadPixels(ren, NULL, SDL_PIXELFORMAT_ABGR8888,
                                                 pix, WIN_W*4) == 0){
@@ -1033,11 +1072,10 @@ int main(int argc, char **argv){
                     if (f){
                         fprintf(f, "P6\n%d %d\n255\n", WIN_W, WIN_H);
                         unsigned char *p = pix;
-                        for (int r=0;r<WIN_H;r++)
-                            for (int c=0;c<WIN_W;c++){
-                                unsigned char *px = p + (r*WIN_W+c)*4;
-                                fputc(px[2], f); fputc(px[1], f); fputc(px[0], f); /* A->PPM RGB */
-                            }
+                        for (int i=0;i<WIN_W*WIN_H;i++){
+                            unsigned char *px = p + (size_t)i*4;
+                            fputc(px[2], f); /* R */ fputc(px[1], f); /* G */ fputc(px[0], f); /* B */
+                        }
                         fclose(f);
                     }
                     dumped = 1;
