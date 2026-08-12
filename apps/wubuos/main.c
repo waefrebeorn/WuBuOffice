@@ -74,7 +74,7 @@ static const char *g_menu_acc[4][16] = {
 /* each menu: list of {label, cmd} pairs, cmd 0 = separator */
 static const struct { const char *label; int cmd; } g_menus[4][16] = {
   { {"Open...",         1000}, {"Save",            1001}, {"Save As...",  1002},
-    {"New Document",     1003}, {"Close Tab",       1014},
+    {"New Document",     1003}, {"Close Tab",       1027},
     {"Export EPUB",      1004}, {"Export PDF",       1030}, {"Export HTML",   1031},
     {"Export Markdown",  1032}, {"Export LaTeX",     1033}, {"Export RTF",    1034},
     {NULL,0} },  { {"Undo",            1005}, {"Redo",            1006}, {"Find...",      1007},
@@ -168,6 +168,18 @@ static void run_menu_cmd(int cmd){
     case 1012: g_zoom -= 0.1f; apply_zoom(); toast_push(g_toasts, "Zoom out", 60); return;
     case 1013: g_zoom = 1.0f; apply_zoom(); toast_push(g_toasts, "Zoom reset", 60); return;
     case 1014: { WubuSettings *sh=wubusettings_shared(); if (sh){ wubusettings_set_word_wrap(sh, !wubusettings_word_wrap(sh)); wubusettings_save(sh,NULL);} toast_push(g_toasts, "Word wrap toggled", 90); } return;
+    case 1027: /* Close Tab: destroy the active view, fall back to a doc view */
+               { WuView *rm = views[active];
+                 if (rm && rm->destroy) rm->destroy(rm);
+                 if (nviews > 1) { /* shift the rest down */
+                   for (int i=active; i+1<nviews; i++) views[i]=views[i+1];
+                   nviews--;
+                   if (active >= nviews) active = nviews-1;
+                 } else { /* last tab: nothing to close but a doc view */
+                   toast_push(g_toasts, "No tab to close", 90); return;
+                 }
+                 toast_push(g_toasts, "Tab closed", 90); }
+               return;
     case 1015: { WubuSettings *sh=wubusettings_shared(); if (sh) wubusettings_set_high_contrast(sh, !wubusettings_high_contrast(sh));
                   toast_push(g_toasts, "High contrast toggled", 90); } return;
     case 1016: g_cheat = !g_cheat; toast_push(g_toasts, "Shortcuts", 90); return;
