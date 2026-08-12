@@ -35,6 +35,12 @@ struct WuView {
     void      (*on_click)(WuView *, int x, int y);
     /* Optional status string builder (caller frees). May be NULL. */
     char     *(*status)(WuView *);
+    /* Optional Navigator/sidebar content: returns a malloc'd, NUL-terminated
+     * multi-line string of real structure entries for the docked right-side
+     * panel (e.g. doc TOC headings, editor functions). NULL = no panel. The
+     * shell owns the panel chrome; the view only supplies content. Caller
+     * frees the returned string. */
+    char     *(*sidebar)(WuView *);
     /* Optional: save the current buffer to its loaded path (Ctrl+S). May be NULL. */
     void      (*save)(WuView *);
     /* Optional: return the loaded file path (for the title/status), or NULL. */
@@ -65,6 +71,7 @@ enum { WUOS_KEY_UP=2000, WUOS_KEY_DOWN, WUOS_KEY_LEFT, WUOS_KEY_RIGHT,
  WUOS_KEY_EXPORT_MARKDOWN, WUOS_KEY_EXPORT_LATEX, WUOS_KEY_EXPORT_RTF,
  WUOS_KEY_ZOOM_IN, WUOS_KEY_ZOOM_OUT, WUOS_KEY_ZOOM_RESET,
  WUOS_KEY_SETTINGS,
+ WUOS_KEY_SIDEBAR,
  WUOS_KEY_TOC1, WUOS_KEY_TOC2, WUOS_KEY_TOC3,
  WUOS_KEY_TOC4, WUOS_KEY_TOC5, WUOS_KEY_TOC6,
  WUOS_KEY_CHEAT,

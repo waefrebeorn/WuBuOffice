@@ -72,14 +72,41 @@ static int para_page(wubulayout_doc *L, wubumodel_node *para){
 }
 
 /* heading level of a paragraph via style prop "heading" = "1".."6"; 0 = not
- * a heading. */
+ * a heading. Also recognizes common heading style NAMES ("Heading1", "Heading
+ * 1", "Title") so markdown/sample docs (which set the style name) produce a
+ * navigator/TOC outline. */
+static int ci_eq(const char *a, const char *b, size_t n){
+    for (size_t i=0;i<n;i++){
+        if (!a[i]) return 0;
+        unsigned char x=a[i], y=b[i];
+        if (x>='A'&&x<='Z') x=(unsigned char)(x-'A'+'a');
+        if (y>='A'&&y<='Z') y=(unsigned char)(y-'A'+'a');
+        if (x!=y) return 0;
+    }
+    return 1;
+}
 static int heading_level(wubumodel_node *para){
     wubumodel_style *st = wubumodel_node_style(para);
     if (!st) return 0;
     const char *h = wubumodel_style_get_prop(st, "heading");
-    if (!h || !*h) return 0;
-    int lv = atoi(h);
-    return (lv >= 1 && lv <= 6) ? lv : 0;
+    if (h && *h){
+        int lv = atoi(h);
+        if (lv >= 1 && lv <= 6) return lv;
+    }
+    const char *nm = wubumodel_style_get_prop(st, "name");
+    if (nm){
+        if (ci_eq(nm, "Title", 5) && !nm[5]) return 1;
+        const char *p = nm;
+        while (*p && (p - nm) < 20){
+            if (ci_eq(p, "Heading", 7)){
+                const char *q = p + 7;
+                while (*q == ' ') q++;
+                if (*q >= '1' && *q <= '6') return *q - '0';
+            }
+            p++;
+        }
+    }
+    return 0;
 }
 
 static void walk(Toc *t, wubulayout_doc *L, wubumodel_node *n){

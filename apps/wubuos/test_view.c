@@ -49,6 +49,13 @@ int main(void){
         WuView *v = tbl[i].mk(NULL);
         if (!v){ fprintf(stderr,"[%s] create FAILED\n", tbl[i].name); bad++; continue; }
         bad += render_check(v, tbl[i].name);
+        /* Navigator sidebar content callback must be safe to call for every
+         * view (may return NULL when the view has no structure). */
+        if (v->sidebar){
+            char *sb = v->sidebar(v);
+            if (sb && !sb[0]){ fprintf(stderr,"[%s] sidebar empty string\n", tbl[i].name); bad++; }
+            free(sb);
+        }
         v->destroy(v);
     }
 
@@ -74,6 +81,14 @@ int main(void){
 
     WuView *dv = wuos_doc_create(mdp);
     if (dv){ bad += render_check(dv, "doc(file)");
+             /* Navigator sidebar: a markdown file with "# Title" must yield a
+              * TOC heading in the docked sidebar content. */
+             if (dv->sidebar){
+                 char *sb = dv->sidebar(dv);
+                 if (!sb || !strstr(sb, "Title")){ fprintf(stderr,"[doc] sidebar missing TOC heading\n"); bad++; }
+                 else fprintf(stderr,"[doc] sidebar ok (TOC heading present)\n");
+                 free(sb);
+             }
              if (dv->get_path && strcmp(dv->get_path(dv), mdp)!=0){ fprintf(stderr,"doc get_path mismatch\n"); bad++; }
              /* INT-1/3: chart/draw/math engines are now wired into the Document
               * tab (rasterized via the new wubusvg rasterizer). Assert the
@@ -598,6 +613,13 @@ int main(void){
         if (!cv){ fprintf(stderr,"[cell] create FAILED\n"); bad++; }
         else {
             bad += render_check(cv, "cell");
+            /* Navigator sidebar: active cell + row values must be present. */
+            if (cv->sidebar){
+                char *sb = cv->sidebar(cv);
+                if (!sb || !strstr(sb, "Active:")){ fprintf(stderr,"[cell] sidebar missing active cell\n"); bad++; }
+                else fprintf(stderr,"[cell] sidebar ok (active cell present)\n");
+                free(sb);
+            }
             /* active cell starts at A1 (1,1) showing 10 */
             int c=0,r=0; wuos_cell_active(cv,&c,&r);
             char v[64]; wuos_cell_value(cv,v,sizeof v);

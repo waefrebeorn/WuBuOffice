@@ -31,6 +31,8 @@
                         * office apps + Notepad++ all expose a clickable button
                         * strip; the shell previously reached these commands only
                         * via keyboard / menu / palette). */
+#define SIDEBAR_W 220  /* docked right-side Navigator panel (reference office
+                        * apps: LibreOffice/OnlyOffice/MS Office sidebar). */
 #define STATUS_H 26
 
 static WuView *views[8];
@@ -38,6 +40,7 @@ static int     nviews = 0;
 static int     active = 0;
 static int     tab_hover = -1;
 static float   g_zoom = 1.0f;       /* UI-24: shell-level zoom */
+static int     g_sidebar = 1;       /* docked Navigator panel shown? */
 static int     g_ctx = 0;           /* UI-27: context menu open? */
 static int     g_ctx_item = 0;      /* highlighted item */
 static int     g_ctx_x = 0, g_ctx_y = 0;
@@ -595,6 +598,7 @@ int main(int argc, char **argv){
                 else if (k==SDLK_p && (mod & KMOD_CTRL) && (mod & KMOD_SHIFT)) code=WUOS_KEY_PLAY;
                 else if (k==SDLK_SPACE && (mod & KMOD_CTRL)) code=WUOS_KEY_AC;
                 else if (k==SDLK_s && (mod & KMOD_CTRL) && (mod & KMOD_SHIFT)) code=WUOS_KEY_SESSION;
+                else if (k==SDLK_b && (mod & KMOD_CTRL)) code=WUOS_KEY_SIDEBAR;   /* Ctrl+B: toggle Navigator sidebar */
                 else if (k==SDLK_o && (mod & KMOD_CTRL)){   /* Ctrl+O: Open file dialog */
                     g_dlg_action = 10;
                     const char *cur = (views[active] && views[active]->get_path) ? views[active]->get_path(views[active]) : NULL;
@@ -699,6 +703,8 @@ int main(int argc, char **argv){
                     WubuSettings *sh = wubusettings_shared(); if (sh) wubusettings_set_zoom(sh, g_zoom);
                 } else if (code == WUOS_KEY_SETTINGS){
                     for (int i=0;i<nviews;i++) if (!strcmp(views[i]->name,"Settings")){ active=i; scroll=0; break; }
+                } else if (code == WUOS_KEY_SIDEBAR){
+                    g_sidebar = !g_sidebar;   /* toggle Navigator sidebar */
                 } else if (code == WUOS_KEY_CHEAT){
                     g_cheat = !g_cheat;   /* UI-36 toggle */
                 }
@@ -707,8 +713,9 @@ int main(int argc, char **argv){
 
         /* render active view (placed below the tab strip, menu bar AND toolbar) */
         int view_top = TAB_H + MENU_H + TOOLBAR_H;
+        int sb_w = (g_sidebar && views[active]->sidebar) ? SIDEBAR_W : 0;  /* dock sidebar */
         unsigned char *rgba=NULL; int rw=0, rh=0;
-        if (views[active]->render(views[active], WIN_W, WIN_H - view_top - STATUS_H, scroll, &rgba, &rw, &rh)!=0)
+        if (views[active]->render(views[active], WIN_W - sb_w, WIN_H - view_top - STATUS_H, scroll, &rgba, &rw, &rh)!=0)
             rgba=NULL;
 
         SDL_SetRenderDrawColor(ren, 235,237,240,255);
@@ -728,8 +735,8 @@ int main(int argc, char **argv){
                 else { src.h=(WIN_H-view_top-STATUS_H); dst.h=(WIN_H-view_top-STATUS_H); }
                 SDL_RenderCopy(ren, tex, &src, &dst);
                 SDL_DestroyTexture(tex);
-            }
-            free(rgba);
+                free(rgba);
+            } else free(rgba);
         }
 
         /* tab bar */
@@ -844,6 +851,43 @@ int main(int argc, char **argv){
             /* bottom divider */
             SDL_SetRenderDrawColor(ren, bd.r, bd.g, bd.b, 255);
             SDL_RenderFillRect(ren, &(SDL_Rect){0, ty+TOOLBAR_H-1, WIN_W, 1});
+        }
+        /* docked Navigator sidebar (right). Reference office apps have a
+         * collapsible sidebar (LibreOffice/OnlyOffice/MS Office); the shell
+         * docks a right panel whose content is the active view's real
+         * structure (doc TOC / editor functions / cell values). */
+        if (g_sidebar && views[active]->sidebar){
+            char *sb = views[active]->sidebar(views[active]);
+            if (sb){
+                int sx = WIN_W - SIDEBAR_W, sy = view_top;
+                int sh = WIN_H - view_top - STATUS_H;
+                WuosRGB sbbg = dark ? WUOS_DARK(OVERLAY_SURFACE) : WUOS_LIGHT(OVERLAY_SURFACE);
+                WuosRGB sbbd = dark ? WUOS_DARK(OVERLAY_BD)     : WUOS_LIGHT(OVERLAY_BD);
+                WuosRGB sbtx = dark ? WUOS_DARK(OVERLAY_TEXT)   : WUOS_LIGHT(OVERLAY_TEXT);
+                SDL_SetRenderDrawColor(ren, sbbg.r, sbbg.g, sbbg.b, 255);
+                SDL_RenderFillRect(ren, &(SDL_Rect){sx, sy, SIDEBAR_W, sh});
+                SDL_SetRenderDrawColor(ren, sbbd.r, sbbd.g, sbbd.b, 255);
+                SDL_RenderFillRect(ren, &(SDL_Rect){sx, sy, 1, sh});
+                /* header */
+                sdl_text(ren, sx+10, sy+6, sbtx.r, sbtx.g, sbtx.b, "Navigator");
+                SDL_SetRenderDrawColor(ren, sbbd.r, sbbd.g, sbbd.b, 255);
+                SDL_RenderFillRect(ren, &(SDL_Rect){sx, sy+24, SIDEBAR_W, 1});
+                /* entries (split lines) */
+                int iy = sy + 32, lh = 16;
+                char *line = sb, *nl;
+                while (line && *line && iy < sy+sh-4){
+                    nl = strchr(line, '\n');
+                    int L = nl ? (int)(nl - line) : (int)strlen(line);
+                    if (L > 0){
+                        char buf[96]; if (L>95) L=95;
+                        memcpy(buf, line, L); buf[L]=0;
+                        sdl_text(ren, sx+8, iy, sbtx.r, sbtx.g, sbtx.b, buf);
+                        iy += lh;
+                    }
+                    line = nl ? nl+1 : NULL;
+                }
+                free(sb);
+            }
         }
         /* status bar */
         char *st = views[active]->status? views[active]->status(views[active]) : NULL;

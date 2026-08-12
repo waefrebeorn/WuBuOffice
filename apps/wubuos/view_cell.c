@@ -141,6 +141,32 @@ static char *status(WuView *v){
     return s;
 }
 
+/* Navigator sidebar content: the active cell + populated cells in its row.
+ * Real values via wubucell_get; NULL if no book. Caller frees. */
+static char *sidebar(WuView *v){
+    CellV *e = v->priv;
+    if (!e->b) return NULL;
+    size_t cap = 64, len = 0;
+    char *out = malloc(cap);
+    if (!out) return NULL;
+    out[0] = 0;
+    char hdr[48]; snprintf(hdr, sizeof hdr, "Active: %c%d\n", 'A'+(e->curc-1), e->curr);
+    size_t add = strlen(hdr); memcpy(out+len, hdr, add); len+=add; out[len]=0;
+    /* list populated cells in the current row (cols 1..40) */
+    for (int c=1;c<=40;c++){
+        wubucell_ckind k; const char *txt=NULL; double num=0, cached=0;
+        if (wubucell_get(e->b, 1, c, e->curr, &k, &txt, &num, &cached) == 0){
+            char line[96];
+            snprintf(line, sizeof line, "%c%d: %s%s\n", 'A'+(c-1), e->curr,
+                     k==WUBUCELL_FORM ? "=" : "", txt?txt:"");
+            add = strlen(line);
+            if (len+add+1 > cap){ cap=(len+add+1)*2; char *nb=realloc(out,cap); if(!nb){ free(out); return NULL; } out=nb; }
+            memcpy(out+len, line, add); len+=add; out[len]=0;
+        }
+    }
+    return out;
+}
+
 static void on_key(WuView *v, int key, int down){
     CellV *e = v->priv;
     if (!down) return;
@@ -211,6 +237,7 @@ WuView *wuos_cell_create(const char *path){
     v->destroy = destroy;
     v->render  = render;
     v->status  = status;
+    v->sidebar = sidebar;
     v->on_key  = on_key;
     v->get_path = get_path;
     return v;

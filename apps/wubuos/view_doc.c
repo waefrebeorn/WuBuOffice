@@ -440,6 +440,31 @@ static int render(WuView *v, int w, int h, int scroll,
     return 0;
 }
 
+/* Navigator sidebar content: the document outline (TOC) as indented entries.
+ * Real structure from the TOC engine; NULL if no model/TOC. Caller frees. */
+static char *sidebar(WuView *v){
+    DocV *e = v->priv;
+    if (!e->doc) return NULL;
+    if (!e->toc) e->toc = toc_build(e->doc, NULL, NULL);
+    int n = toc_count(e->toc);
+    if (n <= 0) return NULL;
+    size_t cap = 64, len = 0;
+    char *out = malloc(cap);
+    if (!out) return NULL;
+    out[0] = 0;
+    for (int i=0;i<n;i++){
+        const char *t = toc_title(e->toc, i);
+        int lvl = toc_level(e->toc, i);
+        if (!t) continue;
+        char line[256];
+        snprintf(line, sizeof line, "%*s%s\n", (lvl-1)*2, "", t);
+        size_t add = strlen(line);
+        if (len + add + 1 > cap){ cap = (len+add+1)*2; char *nb = realloc(out, cap); if(!nb){ free(out); return NULL; } out=nb; }
+        memcpy(out+len, line, add); len += add; out[len]=0;
+    }
+    return out;
+}
+
 static char *status(WuView *v){
     DocV *e = v->priv;
     /* UI-35: breadcrumb / location bar over the loaded path */
@@ -644,6 +669,7 @@ WuView *wuos_doc_create(const char *path){
     v->destroy  = destroy;
     v->render   = render;
     v->status   = status;
+    v->sidebar  = sidebar;
     v->on_key   = on_key;
     v->on_click = on_click;
     v->get_path = get_path;

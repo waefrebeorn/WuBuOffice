@@ -920,6 +920,34 @@ static void on_key(WuView *v, int key, int down){
 
 static void on_wheel(WuView *v, int dy){ (void)v; (void)dy; /* line scroll handled in render via caret */ }
 
+/* Navigator sidebar content: the source function/symbol list from the lexer.
+ * Real structure; NULL if the editor has no symbols. Caller frees. */
+static char *sidebar(WuView *v){
+    Editor *e = v->priv;
+    if (!e->doc || !e->cf) return NULL;
+    char *st = doc_text(e->doc);
+    if (!st) return NULL;
+    size_t sl = doc_length(e->doc);
+    LexSym syms[256];
+    size_t ns = lex_symbols(st, sl, syms, 256);
+    free(st);
+    if (ns == 0) return NULL;
+    size_t cap = 64, len = 0;
+    char *out = malloc(cap);
+    if (!out) return NULL;
+    out[0] = 0;
+    for (size_t k=0; k<ns; k++){
+        char nm[64]; size_t L = syms[k].name_len; if (L>63) L=63;
+        char *dt = doc_text(e->doc); memcpy(nm, dt+syms[k].name_off, L); nm[L]=0; free(dt);
+        char line[96];
+        snprintf(line, sizeof line, "%s : L%zu\n", nm, syms[k].line+1);
+        size_t add = strlen(line);
+        if (len+add+1 > cap){ cap=(len+add+1)*2; char *nb=realloc(out,cap); if(!nb){ free(out); return NULL; } out=nb; }
+        memcpy(out+len, line, add); len+=add; out[len]=0;
+    }
+    return out;
+}
+
 static char *status(WuView *v){
     Editor *e = v->priv;
     char *t = doc_text(e->doc);
@@ -1226,6 +1254,7 @@ WuView *wuos_editor_create(const char *path){
     v->on_key   = on_key;
     v->on_wheel = on_wheel;
     v->status   = status;
+    v->sidebar  = sidebar;
     v->save     = save;
     v->get_path = get_path;
     v->set_path = set_path;
