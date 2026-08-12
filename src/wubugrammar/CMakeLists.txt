@@ -1,0 +1,8 @@
+add_library(wubugrammar STATIC wubugrammar.c)
+target_include_directories(wubugrammar PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_options(wubugrammar PRIVATE -Wall -Wextra -Wpedantic)
+add_executable(test_wubugrammar test_wubugrammar.c)
+target_link_libraries(test_wubugrammar PRIVATE wubugrammar)
+target_compile_options(test_wubugrammar PRIVATE -Wall -Wextra -Wpedantic)
+add_test(NAME wubugrammar COMMAND test_wubugrammar)
+set_tests_properties(wubugrammar PROPERTIES LABELS "wubugrammar;libs")

@@ -1,0 +1,8 @@
+add_library(wubusidebar STATIC wubusidebar.c)
+target_include_directories(wubusidebar PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_options(wubusidebar PRIVATE -Wall -Wextra -Wpedantic)
+add_executable(test_wubusidebar test_wubusidebar.c)
+target_link_libraries(test_wubusidebar PRIVATE wubusidebar)
+target_compile_options(test_wubusidebar PRIVATE -Wall -Wextra -Wpedantic)
+add_test(NAME wubusidebar COMMAND test_wubusidebar)
+set_tests_properties(wubusidebar PROPERTIES LABELS "wubusidebar;libs")

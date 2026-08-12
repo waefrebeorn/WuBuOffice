@@ -1,0 +1,8 @@
+add_library(wubugallery STATIC wubugallery.c)
+target_include_directories(wubugallery PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_options(wubugallery PRIVATE -Wall -Wextra -Wpedantic)
+add_executable(test_wubugallery test_wubugallery.c)
+target_link_libraries(test_wubugallery PRIVATE wubugallery)
+target_compile_options(test_wubugallery PRIVATE -Wall -Wextra -Wpedantic)
+add_test(NAME wubugallery COMMAND test_wubugallery)
+set_tests_properties(wubugallery PROPERTIES LABELS "wubugallery;libs")

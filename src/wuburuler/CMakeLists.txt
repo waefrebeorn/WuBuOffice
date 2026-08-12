@@ -1,0 +1,8 @@
+add_library(wuburuler STATIC wuburuler.c)
+target_include_directories(wuburuler PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_options(wuburuler PRIVATE -Wall -Wextra -Wpedantic)
+add_executable(test_wuburuler test_wuburuler.c)
+target_link_libraries(test_wuburuler PRIVATE wuburuler)
+target_compile_options(test_wuburuler PRIVATE -Wall -Wextra -Wpedantic)
+add_test(NAME wuburuler COMMAND test_wuburuler)
+set_tests_properties(wuburuler PROPERTIES LABELS "wuburuler;libs")

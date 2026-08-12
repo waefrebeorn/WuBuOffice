@@ -1,0 +1,8 @@
+add_library(wubuscenario STATIC wubuscenario.c)
+target_include_directories(wubuscenario PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_options(wubuscenario PRIVATE -Wall -Wextra -Wpedantic)
+add_executable(test_wubuscenario test_wubuscenario.c)
+target_link_libraries(test_wubuscenario PRIVATE wubuscenario)
+target_compile_options(test_wubuscenario PRIVATE -Wall -Wextra -Wpedantic)
+add_test(NAME wubuscenario COMMAND test_wubuscenario)
+set_tests_properties(wubuscenario PROPERTIES LABELS "wubuscenario;libs")

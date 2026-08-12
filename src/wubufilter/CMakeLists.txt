@@ -1,0 +1,8 @@
+add_library(wubufilter STATIC wubufilter.c)
+target_include_directories(wubufilter PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_options(wubufilter PRIVATE -Wall -Wextra -Wpedantic)
+add_executable(test_wubufilter test_wubufilter.c)
+target_link_libraries(test_wubufilter PRIVATE wubufilter)
+target_compile_options(test_wubufilter PRIVATE -Wall -Wextra -Wpedantic)
+add_test(NAME wubufilter COMMAND test_wubufilter)
+set_tests_properties(wubufilter PROPERTIES LABELS "wubufilter;libs")

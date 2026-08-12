@@ -79,6 +79,27 @@ target_include_directories(wubuos PRIVATE
     ${CMAKE_SOURCE_DIR}/src/wuburtf
     ${CMAKE_SOURCE_DIR}/src/wuburedact
     ${CMAKE_SOURCE_DIR}/src/wubucol
+    ${CMAKE_SOURCE_DIR}/src/wubusort
+    ${CMAKE_SOURCE_DIR}/src/wubufilter
+    ${CMAKE_SOURCE_DIR}/src/wubusubtotal
+    ${CMAKE_SOURCE_DIR}/src/wubugoalseek
+    ${CMAKE_SOURCE_DIR}/src/wubusolver
+    ${CMAKE_SOURCE_DIR}/src/wubupivot
+    ${CMAKE_SOURCE_DIR}/src/wubuscenario
+    ${CMAKE_SOURCE_DIR}/src/wubufreeze
+    ${CMAKE_SOURCE_DIR}/src/wubuhyperlink
+    ${CMAKE_SOURCE_DIR}/src/wubuthesaurus
+    ${CMAKE_SOURCE_DIR}/src/wubugrammar
+    ${CMAKE_SOURCE_DIR}/src/wubuindex
+    ${CMAKE_SOURCE_DIR}/src/wubumailmerge
+    ${CMAKE_SOURCE_DIR}/src/wubudiff
+    ${CMAKE_SOURCE_DIR}/src/wubumasterdoc
+    ${CMAKE_SOURCE_DIR}/src/wubudropcap
+    ${CMAKE_SOURCE_DIR}/src/wuburuler
+    ${CMAKE_SOURCE_DIR}/src/wubugridline
+    ${CMAKE_SOURCE_DIR}/src/wubuicon
+    ${CMAKE_SOURCE_DIR}/src/wubugallery
+    ${CMAKE_SOURCE_DIR}/src/wubusidebar
     ${CMAKE_SOURCE_DIR}/apps/wubupdf
     ${CMAKE_SOURCE_DIR}/apps/wubuconv
     ${WUBUPAD_SRC})
@@ -106,6 +127,10 @@ target_link_libraries(wubuos PRIVATE
     wubucsv wubufocus wubuwatermark wubudyslexia wubufmtpaint wubusandbox
     wubuform wubuhistory wubulang wubunesttab wubupdfextract wubupdfform wubuscope wubusync wubuxps wubuaislot
     wubupdf_app wubuconv_app
+    wubusort wubufilter wubusubtotal wubugoalseek wubusolver
+    wubupivot wubuscenario wubufreeze wubuhyperlink wubuthesaurus
+    wubugrammar wubuindex wubumailmerge wubudiff wubumasterdoc
+    wubudropcap wuburuler wubugridline wubuicon wubugallery wubusidebar
     ${SDL2_LIBRARIES} ${FREETYPE_LIBRARIES} m dl)
 target_compile_options(wubuos PRIVATE -Wall -Wextra -Wpedantic)
 
@@ -163,6 +188,27 @@ target_include_directories(test_view PRIVATE
     ${CMAKE_SOURCE_DIR}/src/wuburtf
     ${CMAKE_SOURCE_DIR}/src/wuburedact
     ${CMAKE_SOURCE_DIR}/src/wubucol
+    ${CMAKE_SOURCE_DIR}/src/wubusort
+    ${CMAKE_SOURCE_DIR}/src/wubufilter
+    ${CMAKE_SOURCE_DIR}/src/wubusubtotal
+    ${CMAKE_SOURCE_DIR}/src/wubugoalseek
+    ${CMAKE_SOURCE_DIR}/src/wubusolver
+    ${CMAKE_SOURCE_DIR}/src/wubupivot
+    ${CMAKE_SOURCE_DIR}/src/wubuscenario
+    ${CMAKE_SOURCE_DIR}/src/wubufreeze
+    ${CMAKE_SOURCE_DIR}/src/wubuhyperlink
+    ${CMAKE_SOURCE_DIR}/src/wubuthesaurus
+    ${CMAKE_SOURCE_DIR}/src/wubugrammar
+    ${CMAKE_SOURCE_DIR}/src/wubuindex
+    ${CMAKE_SOURCE_DIR}/src/wubumailmerge
+    ${CMAKE_SOURCE_DIR}/src/wubudiff
+    ${CMAKE_SOURCE_DIR}/src/wubumasterdoc
+    ${CMAKE_SOURCE_DIR}/src/wubudropcap
+    ${CMAKE_SOURCE_DIR}/src/wuburuler
+    ${CMAKE_SOURCE_DIR}/src/wubugridline
+    ${CMAKE_SOURCE_DIR}/src/wubuicon
+    ${CMAKE_SOURCE_DIR}/src/wubugallery
+    ${CMAKE_SOURCE_DIR}/src/wubusidebar
     ${WUBUPAD_SRC})
 target_sources(test_view PRIVATE
     ${WUBUPAD_SRC}/buffer.c ${WUBUPAD_SRC}/doc.c ${WUBUPAD_SRC}/search.c
@@ -177,6 +223,10 @@ target_link_libraries(test_view PRIVATE
     wubucite wubucaption wubuheading wubueqnum wubuvars wubuhash wubusig wubucrdt
     wubucsv wubufocus wubuwatermark wubudyslexia wubufmtpaint wubusandbox
     wubuform wubuhistory wubulang wubunesttab wubupdfextract wubupdfform wubuscope wubusync wubuxps wubuaislot
+    wubusort wubufilter wubusubtotal wubugoalseek wubusolver
+    wubupivot wubuscenario wubufreeze wubuhyperlink wubuthesaurus
+    wubugrammar wubuindex wubumailmerge wubudiff wubumasterdoc
+    wubudropcap wuburuler wubugridline wubuicon wubugallery wubusidebar
     ${SDL2_LIBRARIES} ${FREETYPE_LIBRARIES} m dl)
 target_compile_options(test_view PRIVATE -Wall -Wextra -Wpedantic)
 add_test(NAME view COMMAND test_view)
@@ -307,6 +357,27 @@ target_include_directories(test_doccmd PRIVATE
     ${CMAKE_SOURCE_DIR}/src/wuburtf
     ${CMAKE_SOURCE_DIR}/src/wuburedact
     ${CMAKE_SOURCE_DIR}/src/wubucol
+    ${CMAKE_SOURCE_DIR}/src/wubusort
+    ${CMAKE_SOURCE_DIR}/src/wubufilter
+    ${CMAKE_SOURCE_DIR}/src/wubusubtotal
+    ${CMAKE_SOURCE_DIR}/src/wubugoalseek
+    ${CMAKE_SOURCE_DIR}/src/wubusolver
+    ${CMAKE_SOURCE_DIR}/src/wubupivot
+    ${CMAKE_SOURCE_DIR}/src/wubuscenario
+    ${CMAKE_SOURCE_DIR}/src/wubufreeze
+    ${CMAKE_SOURCE_DIR}/src/wubuhyperlink
+    ${CMAKE_SOURCE_DIR}/src/wubuthesaurus
+    ${CMAKE_SOURCE_DIR}/src/wubugrammar
+    ${CMAKE_SOURCE_DIR}/src/wubuindex
+    ${CMAKE_SOURCE_DIR}/src/wubumailmerge
+    ${CMAKE_SOURCE_DIR}/src/wubudiff
+    ${CMAKE_SOURCE_DIR}/src/wubumasterdoc
+    ${CMAKE_SOURCE_DIR}/src/wubudropcap
+    ${CMAKE_SOURCE_DIR}/src/wuburuler
+    ${CMAKE_SOURCE_DIR}/src/wubugridline
+    ${CMAKE_SOURCE_DIR}/src/wubuicon
+    ${CMAKE_SOURCE_DIR}/src/wubugallery
+    ${CMAKE_SOURCE_DIR}/src/wubusidebar
     ${CMAKE_SOURCE_DIR}/src/wubuocr
     ${CMAKE_SOURCE_DIR}/apps/wubupdf
     ${CMAKE_SOURCE_DIR}/apps/wubuedit)
@@ -316,6 +387,10 @@ target_link_libraries(test_doccmd PRIVATE
     wubucite wubucaption wubuheading wubueqnum wubuvars wubuhash wubusig wubucrdt
     wubucsv wubufocus wubuwatermark wubudyslexia wubufmtpaint wubusandbox
     wubuform wubuhistory wubulang wubunesttab wubupdfextract wubupdfform wubuscope wubusync wubuxps wubuaislot
+    wubusort wubufilter wubusubtotal wubugoalseek wubusolver
+    wubupivot wubuscenario wubufreeze wubuhyperlink wubuthesaurus
+    wubugrammar wubuindex wubumailmerge wubudiff wubumasterdoc
+    wubudropcap wuburuler wubugridline wubuicon wubugallery wubusidebar
     wubupdf_app wubuedit_app wubucell_app wubushow_app wubuword_app)
 target_compile_options(test_doccmd PRIVATE -Wall -Wextra -Wpedantic)
 add_test(NAME doccmd COMMAND test_doccmd)

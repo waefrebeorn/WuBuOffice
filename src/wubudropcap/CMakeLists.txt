@@ -1,0 +1,8 @@
+add_library(wubudropcap STATIC wubudropcap.c)
+target_include_directories(wubudropcap PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_options(wubudropcap PRIVATE -Wall -Wextra -Wpedantic)
+add_executable(test_wubudropcap test_wubudropcap.c)
+target_link_libraries(test_wubudropcap PRIVATE wubudropcap)
+target_compile_options(test_wubudropcap PRIVATE -Wall -Wextra -Wpedantic)
+add_test(NAME wubudropcap COMMAND test_wubudropcap)
+set_tests_properties(wubudropcap PROPERTIES LABELS "wubudropcap;libs")

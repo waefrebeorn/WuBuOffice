@@ -155,6 +155,29 @@ char *doccmd_xps_demo(void);
 /* doccmd_aislot_demo -- exercise src/wubuaislot (SCR-99). */
 char *doccmd_aislot_demo(void);
 
+/* ---- Spreadsheet & document analysis modules (2026-08-11 wave) ---- */
+char *doccmd_sort_demo(void);
+char *doccmd_filter_demo(void);
+char *doccmd_subtotal_demo(void);
+char *doccmd_goalseek_demo(void);
+char *doccmd_solver_demo(void);
+char *doccmd_pivot_demo(void);
+char *doccmd_scenario_demo(void);
+char *doccmd_freeze_demo(void);
+char *doccmd_hyperlink_demo(void);
+char *doccmd_thesaurus_demo(void);
+char *doccmd_grammar_demo(void);
+char *doccmd_index_demo(void);
+char *doccmd_mailmerge_demo(void);
+char *doccmd_diff_demo(void);
+char *doccmd_masterdoc_demo(void);
+char *doccmd_dropcap_demo(void);
+char *doccmd_ruler_demo(void);
+char *doccmd_gridline_demo(void);
+char *doccmd_icon_demo(void);
+char *doccmd_gallery_demo(void);
+char *doccmd_sidebar_demo(void);
+
 /* Save the doc back to DOCX/ODT (round-trip). `path` is the current file (may
  * be NULL) used to pick the output name/format. Returns a malloc'd status
  * string (caller frees) or NULL on OOM. */

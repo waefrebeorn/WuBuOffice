@@ -1,0 +1,8 @@
+add_library(wubuhyperlink STATIC wubuhyperlink.c)
+target_include_directories(wubuhyperlink PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_options(wubuhyperlink PRIVATE -Wall -Wextra -Wpedantic)
+add_executable(test_wubuhyperlink test_wubuhyperlink.c)
+target_link_libraries(test_wubuhyperlink PRIVATE wubuhyperlink)
+target_compile_options(test_wubuhyperlink PRIVATE -Wall -Wextra -Wpedantic)
+add_test(NAME wubuhyperlink COMMAND test_wubuhyperlink)
+set_tests_properties(wubuhyperlink PROPERTIES LABELS "wubuhyperlink;libs")

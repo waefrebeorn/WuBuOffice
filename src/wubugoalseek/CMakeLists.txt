@@ -1,0 +1,8 @@
+add_library(wubugoalseek STATIC wubugoalseek.c)
+target_include_directories(wubugoalseek PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_options(wubugoalseek PRIVATE -Wall -Wextra -Wpedantic)
+add_executable(test_wubugoalseek test_wubugoalseek.c)
+target_link_libraries(test_wubugoalseek PRIVATE wubugoalseek)
+target_compile_options(test_wubugoalseek PRIVATE -Wall -Wextra -Wpedantic)
+add_test(NAME wubugoalseek COMMAND test_wubugoalseek)
+set_tests_properties(wubugoalseek PROPERTIES LABELS "wubugoalseek;libs")

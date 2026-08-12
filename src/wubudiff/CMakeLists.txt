@@ -1,0 +1,8 @@
+add_library(wubudiff STATIC wubudiff.c)
+target_include_directories(wubudiff PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_options(wubudiff PRIVATE -Wall -Wextra -Wpedantic)
+add_executable(test_wubudiff test_wubudiff.c)
+target_link_libraries(test_wubudiff PRIVATE wubudiff)
+target_compile_options(test_wubudiff PRIVATE -Wall -Wextra -Wpedantic)
+add_test(NAME wubudiff COMMAND test_wubudiff)
+set_tests_properties(wubudiff PROPERTIES LABELS "wubudiff;libs")

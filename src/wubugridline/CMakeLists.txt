@@ -1,0 +1,8 @@
+add_library(wubugridline STATIC wubugridline.c)
+target_include_directories(wubugridline PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_options(wubugridline PRIVATE -Wall -Wextra -Wpedantic)
+add_executable(test_wubugridline test_wubugridline.c)
+target_link_libraries(test_wubugridline PRIVATE wubugridline)
+target_compile_options(test_wubugridline PRIVATE -Wall -Wextra -Wpedantic)
+add_test(NAME wubugridline COMMAND test_wubugridline)
+set_tests_properties(wubugridline PROPERTIES LABELS "wubugridline;libs")

@@ -1,0 +1,8 @@
+add_library(wubupivot STATIC wubupivot.c)
+target_include_directories(wubupivot PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_options(wubupivot PRIVATE -Wall -Wextra -Wpedantic)
+add_executable(test_wubupivot test_wubupivot.c)
+target_link_libraries(test_wubupivot PRIVATE wubupivot)
+target_compile_options(test_wubupivot PRIVATE -Wall -Wextra -Wpedantic)
+add_test(NAME wubupivot COMMAND test_wubupivot)
+set_tests_properties(wubupivot PROPERTIES LABELS "wubupivot;libs")

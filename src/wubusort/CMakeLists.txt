@@ -1,0 +1,8 @@
+add_library(wubusort STATIC wubusort.c)
+target_include_directories(wubusort PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_options(wubusort PRIVATE -Wall -Wextra -Wpedantic)
+add_executable(test_wubusort test_wubusort.c)
+target_link_libraries(test_wubusort PRIVATE wubusort)
+target_compile_options(test_wubusort PRIVATE -Wall -Wextra -Wpedantic)
+add_test(NAME wubusort COMMAND test_wubusort)
+set_tests_properties(wubusort PROPERTIES LABELS "wubusort;libs")

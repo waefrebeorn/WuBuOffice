@@ -1,0 +1,8 @@
+add_library(wubumasterdoc STATIC wubumasterdoc.c)
+target_include_directories(wubumasterdoc PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_options(wubumasterdoc PRIVATE -Wall -Wextra -Wpedantic)
+add_executable(test_wubumasterdoc test_wubumasterdoc.c)
+target_link_libraries(test_wubumasterdoc PRIVATE wubumasterdoc)
+target_compile_options(test_wubumasterdoc PRIVATE -Wall -Wextra -Wpedantic)
+add_test(NAME wubumasterdoc COMMAND test_wubumasterdoc)
+set_tests_properties(wubumasterdoc PROPERTIES LABELS "wubumasterdoc;libs")

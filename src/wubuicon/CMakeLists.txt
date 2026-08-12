@@ -1,0 +1,8 @@
+add_library(wubuicon STATIC wubuicon.c)
+target_include_directories(wubuicon PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_options(wubuicon PRIVATE -Wall -Wextra -Wpedantic)
+add_executable(test_wubuicon test_wubuicon.c)
+target_link_libraries(test_wubuicon PRIVATE wubuicon)
+target_compile_options(test_wubuicon PRIVATE -Wall -Wextra -Wpedantic)
+add_test(NAME wubuicon COMMAND test_wubuicon)
+set_tests_properties(wubuicon PROPERTIES LABELS "wubuicon;libs")

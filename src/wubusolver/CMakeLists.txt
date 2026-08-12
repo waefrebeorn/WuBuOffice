@@ -1,0 +1,8 @@
+add_library(wubusolver STATIC wubusolver.c)
+target_include_directories(wubusolver PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_options(wubusolver PRIVATE -Wall -Wextra -Wpedantic)
+add_executable(test_wubusolver test_wubusolver.c)
+target_link_libraries(test_wubusolver PRIVATE wubusolver)
+target_compile_options(test_wubusolver PRIVATE -Wall -Wextra -Wpedantic)
+add_test(NAME wubusolver COMMAND test_wubusolver)
+set_tests_properties(wubusolver PROPERTIES LABELS "wubusolver;libs")

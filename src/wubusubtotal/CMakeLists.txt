@@ -1,0 +1,8 @@
+add_library(wubusubtotal STATIC wubusubtotal.c)
+target_include_directories(wubusubtotal PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_options(wubusubtotal PRIVATE -Wall -Wextra -Wpedantic)
+add_executable(test_wubusubtotal test_wubusubtotal.c)
+target_link_libraries(test_wubusubtotal PRIVATE wubusubtotal)
+target_compile_options(test_wubusubtotal PRIVATE -Wall -Wextra -Wpedantic)
+add_test(NAME wubusubtotal COMMAND test_wubusubtotal)
+set_tests_properties(wubusubtotal PROPERTIES LABELS "wubusubtotal;libs")

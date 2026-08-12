@@ -1,0 +1,8 @@
+add_library(wubuindex STATIC wubuindex.c)
+target_include_directories(wubuindex PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_options(wubuindex PRIVATE -Wall -Wextra -Wpedantic)
+add_executable(test_wubuindex test_wubuindex.c)
+target_link_libraries(test_wubuindex PRIVATE wubuindex)
+target_compile_options(test_wubuindex PRIVATE -Wall -Wextra -Wpedantic)
+add_test(NAME wubuindex COMMAND test_wubuindex)
+set_tests_properties(wubuindex PROPERTIES LABELS "wubuindex;libs")

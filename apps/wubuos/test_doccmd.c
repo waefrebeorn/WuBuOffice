@@ -370,6 +370,32 @@ int main(void){
         else { printf("  aislot: %s\n", msg); free(msg); }
     }
 
+    /* spreadsheet & document analysis wave (2026-08-11): sort/filter/subtotal/
+     * goalseek/solver/pivot/scenario/freeze/hyperlink/thesaurus/grammar/
+     * index/mailmerge/diff/masterdoc. */
+    {
+        const char *names[] = {
+            "sort","filter","subtotal","goalseek","solver","pivot","scenario",
+            "freeze","hyperlink","thesaurus","grammar","index","mailmerge",
+            "diff","masterdoc","dropcap","ruler","gridline","icon","gallery",
+            "sidebar"
+        };
+        char *(*fns[])(void) = {
+            doccmd_sort_demo, doccmd_filter_demo, doccmd_subtotal_demo,
+            doccmd_goalseek_demo, doccmd_solver_demo, doccmd_pivot_demo,
+            doccmd_scenario_demo, doccmd_freeze_demo, doccmd_hyperlink_demo,
+            doccmd_thesaurus_demo, doccmd_grammar_demo, doccmd_index_demo,
+            doccmd_mailmerge_demo, doccmd_diff_demo, doccmd_masterdoc_demo,
+            doccmd_dropcap_demo, doccmd_ruler_demo, doccmd_gridline_demo,
+            doccmd_icon_demo, doccmd_gallery_demo, doccmd_sidebar_demo
+        };
+        for (size_t i = 0; i < sizeof names / sizeof names[0]; i++) {
+            char *msg = fns[i]();
+            if (!msg){ fprintf(stderr, "[%s] null status\n", names[i]); fails++; }
+            else { printf("  %s: %s\n", names[i], msg); free(msg); }
+        }
+    }
+
     wubumodel_doc_destroy(d);
 
     if (fails){ printf("FAILED (%d)\n", fails); return 1; }

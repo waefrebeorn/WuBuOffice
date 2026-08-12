@@ -1,0 +1,8 @@
+add_library(wubumailmerge STATIC wubumailmerge.c)
+target_include_directories(wubumailmerge PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_options(wubumailmerge PRIVATE -Wall -Wextra -Wpedantic)
+add_executable(test_wubumailmerge test_wubumailmerge.c)
+target_link_libraries(test_wubumailmerge PRIVATE wubumailmerge)
+target_compile_options(test_wubumailmerge PRIVATE -Wall -Wextra -Wpedantic)
+add_test(NAME wubumailmerge COMMAND test_wubumailmerge)
+set_tests_properties(wubumailmerge PROPERTIES LABELS "wubumailmerge;libs")

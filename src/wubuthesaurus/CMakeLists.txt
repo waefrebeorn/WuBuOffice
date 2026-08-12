@@ -1,0 +1,8 @@
+add_library(wubuthesaurus STATIC wubuthesaurus.c)
+target_include_directories(wubuthesaurus PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_options(wubuthesaurus PRIVATE -Wall -Wextra -Wpedantic)
+add_executable(test_wubuthesaurus test_wubuthesaurus.c)
+target_link_libraries(test_wubuthesaurus PRIVATE wubuthesaurus)
+target_compile_options(test_wubuthesaurus PRIVATE -Wall -Wextra -Wpedantic)
+add_test(NAME wubuthesaurus COMMAND test_wubuthesaurus)
+set_tests_properties(wubuthesaurus PROPERTIES LABELS "wubuthesaurus;libs")

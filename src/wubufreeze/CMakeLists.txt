@@ -1,0 +1,8 @@
+add_library(wubufreeze STATIC wubufreeze.c)
+target_include_directories(wubufreeze PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_options(wubufreeze PRIVATE -Wall -Wextra -Wpedantic)
+add_executable(test_wubufreeze test_wubufreeze.c)
+target_link_libraries(test_wubufreeze PRIVATE wubufreeze)
+target_compile_options(test_wubufreeze PRIVATE -Wall -Wextra -Wpedantic)
+add_test(NAME wubufreeze COMMAND test_wubufreeze)
+set_tests_properties(wubufreeze PROPERTIES LABELS "wubufreeze;libs")
