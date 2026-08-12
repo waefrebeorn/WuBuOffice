@@ -127,7 +127,8 @@ target_sources(wubuos PRIVATE
     ${WUBUPAD_SRC}/diff.c
     ${WUBUPAD_SRC}/docs.c
     ${WUBUPAD_SRC}/json.c
-    ${WUBUPAD_SRC}/lex.c)
+    ${WUBUPAD_SRC}/lex.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/wuos_toolbar.c)
 target_compile_definitions(wubuos PRIVATE lex_free=wubupad_lex_free doc_create=wubupad_doc_create doc_text=wubupad_doc_text)
 target_link_libraries(wubuos PRIVATE
     wubumodel wuburender wubuocr wubufont wubucell_app wubudoc wubuautosave
@@ -266,6 +267,16 @@ target_include_directories(test_shell_ui PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_compile_options(test_shell_ui PRIVATE -Wall -Wextra -Wpedantic)
 add_test(NAME shell_ui COMMAND test_shell_ui)
 set_tests_properties(shell_ui PROPERTIES LABELS "view;apps")
+
+# Headless test for the formatting/quick-access toolbar (UI gap: reference
+# office apps + Notepad++ all have a clickable toolbar; the shell adds one).
+add_executable(test_wuos_toolbar test_wuos_toolbar.c wuos_toolbar.c)
+target_include_directories(test_wuos_toolbar PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_SOURCE_DIR}/src/wubumodel)
+target_compile_options(test_wuos_toolbar PRIVATE -Wall -Wextra -Wpedantic)
+add_test(NAME toolbar COMMAND test_wuos_toolbar)
+set_tests_properties(toolbar PROPERTIES LABELS "view;apps")
 
 # Reference plugin: builds to a loadable .so demonstrating the C ABI.
 add_library(sample_plugin MODULE plugins/sample/sample_plugin.c)

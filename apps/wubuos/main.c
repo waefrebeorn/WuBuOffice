@@ -14,6 +14,7 @@
 #include "macro.h"      /* SCR-98: macro record/playback + persistence */
 #include "dialog.h"     /* modal text-input dialog (DOC-66/EXP-89/UXA-47/UI-39) */
 #include "pasteplain.h" /* EXP-88: paste-plain strips formatting */
+#include "wuos_toolbar.h" /* quick-access + formatting toolbar (UI gap) */
 
 #include <SDL2/SDL.h>
 
@@ -25,6 +26,11 @@
 #define WIN_W 960
 #define WIN_H 720
 #define TAB_H 30
+#define MENU_H 24
+#define TOOLBAR_H 26   /* formatting / quick-access toolbar row (UI gap: reference
+                        * office apps + Notepad++ all expose a clickable button
+                        * strip; the shell previously reached these commands only
+                        * via keyboard / menu / palette). */
 #define STATUS_H 26
 
 static WuView *views[8];
@@ -44,7 +50,6 @@ static int      g_dlg_action = 0;   /* 0 none,1 link,2 qr,3 image-alt,10 open,11
 /* Menu bar (UI-43): top-level menus File/Edit/View/Help with dropdowns.
  * Small opaque model; selecting an item runs a command id (same space the
  * command palette uses). Pure chrome state here; views stay GUI-free. */
-#define MENU_H 24
 static const char *g_menu_names[4] = { "File", "Edit", "View", "Help" };
 /* each menu: list of {label, cmd} pairs, cmd 0 = separator */
 static const struct { const char *label; int cmd; } g_menus[4][16] = {
@@ -62,6 +67,19 @@ static const struct { const char *label; int cmd; } g_menus[4][16] = {
 };
 static int g_menu_open = -1;       /* which top menu is dropped, -1 none */
 static int g_menu_hover = -1;      /* hovered dropdown item */
+
+static int g_tb_hover = -1;        /* hovered toolbar button index (model in
+                                    * wuos_toolbar.{h,c}) */
+
+static void run_menu_cmd(int cmd);   /* defined below; used by toolbar buttons */
+
+/* Run a toolbar button: menu-space commands via run_menu_cmd, formatting/
+ * insert buttons forwarded to the active view's on_key. */
+static void run_tb_cmd(int cmd){
+    int k = wuos_tb_cmd_to_key(cmd);
+    if (k){ if (views[active]->on_key) views[active]->on_key(views[active], k, 1); return; }
+    run_menu_cmd(cmd);
+}
 
 /* Plugin manager: loaded once at startup from ~/.wubuos/plugins. */
 static WuOSPluginMgr *g_plugins = NULL;
@@ -316,6 +334,10 @@ int main(int argc, char **argv){
             else if (e.type==SDL_MOUSEMOTION){
                 tab_hover = tab_at(e.motion.x);
                 if (e.motion.y < TAB_H){ /* over tab bar: let click switch */ }
+                /* toolbar hover (row under the menu bar) */
+                g_tb_hover = -1;
+                if (e.motion.y >= TAB_H+MENU_H && e.motion.y < TAB_H+MENU_H+TOOLBAR_H)
+                    g_tb_hover = wuos_tb_at(e.motion.x);
                 /* UI-43: menu-bar hover (top row under the tab strip) */
                 g_menu_hover = -1;
                 if (e.motion.y >= TAB_H && e.motion.y < TAB_H+MENU_H){
@@ -363,6 +385,12 @@ int main(int argc, char **argv){
                     }
                 }
                 else if (e.button.y < TAB_H){ int t=tab_at(e.button.x); if(t>=0){ active=t; scroll=0; } }
+                else if (e.button.y >= TAB_H+MENU_H && e.button.y < TAB_H+MENU_H+TOOLBAR_H){
+                    /* toolbar button click */
+                    int ti = wuos_tb_at(e.button.x);
+                    if (ti>=0 && wuos_tb_buttons[ti].cmd) run_tb_cmd(wuos_tb_buttons[ti].cmd);
+                    g_menu_open=-1; g_menu_hover=-1;
+                }
                 else if (g_ctx){  /* UI-27: select context-menu item */
                     /* items: 0 Open File, 1 New Document, 2 Toggle Theme */
                     if (g_ctx_item==2){
@@ -372,7 +400,7 @@ int main(int argc, char **argv){
                 }
                 else if (views[active]->on_click){  /* clickable links/objects */
                     int lx = e.button.x;
-                    int ly = e.button.y - TAB_H - MENU_H;
+                    int ly = e.button.y - TAB_H - MENU_H - TOOLBAR_H;
                     if (ly >= 0) views[active]->on_click(views[active], lx, ly);
                 }
             }
@@ -666,8 +694,8 @@ int main(int argc, char **argv){
             }
         }
 
-        /* render active view (placed below the tab strip AND the menu bar) */
-        int view_top = TAB_H + MENU_H;
+        /* render active view (placed below the tab strip, menu bar AND toolbar) */
+        int view_top = TAB_H + MENU_H + TOOLBAR_H;
         unsigned char *rgba=NULL; int rw=0, rh=0;
         if (views[active]->render(views[active], WIN_W, WIN_H - view_top - STATUS_H, scroll, &rgba, &rw, &rh)!=0)
             rgba=NULL;
@@ -772,6 +800,39 @@ int main(int argc, char **argv){
                 }
                 mx += mw;
             }
+        }
+        /* toolbar row (below the menu bar): quick-access + formatting buttons.
+         * Neutral surface, quiet buttons; hovered/clicked rise to the accent
+         * tint; separators are thin vertical rules. Same token language as the
+         * tab + menu chrome. */
+        {
+            int ty = TAB_H + MENU_H;
+            SDL_SetRenderDrawColor(ren, tbb.r, tbb.g, tbb.b, 255);
+            SDL_RenderFillRect(ren, &(SDL_Rect){0, ty, WIN_W, TOOLBAR_H});
+            int tx = 0;
+            for (size_t i=0;i<wuos_tb_count;i++){
+                const WuosTbBtn *b = &wuos_tb_buttons[i];
+                if (!b->label){ /* separator rule */
+                    SDL_SetRenderDrawColor(ren, bd.r, bd.g, bd.b, 255);
+                    SDL_RenderFillRect(ren, &(SDL_Rect){tx, ty+5, 1, TOOLBAR_H-10});
+                    tx += 10;
+                    continue;
+                }
+                int bw = (int)strlen(b->label)*7 + 14;
+                int hov = (g_tb_hover==(int)i);
+                if (hov){
+                    SDL_SetRenderDrawColor(ren, ac.r, ac.g, ac.b, 235);
+                    SDL_RenderFillRect(ren, &(SDL_Rect){tx, ty+3, bw, TOOLBAR_H-6});
+                }
+                sdl_text(ren, tx + (bw - (int)strlen(b->label)*7)/2,
+                         ty + (TOOLBAR_H-wuos_font_height())/2 + 1,
+                         hov ? ttxo.r : ttx.r, hov ? ttxo.g : ttx.g, hov ? ttxo.b : ttx.b,
+                         b->label);
+                tx += bw + 1;
+            }
+            /* bottom divider */
+            SDL_SetRenderDrawColor(ren, bd.r, bd.g, bd.b, 255);
+            SDL_RenderFillRect(ren, &(SDL_Rect){0, ty+TOOLBAR_H-1, WIN_W, 1});
         }
         /* status bar */
         char *st = views[active]->status? views[active]->status(views[active]) : NULL;
@@ -957,6 +1018,32 @@ int main(int argc, char **argv){
             };
             for (int i=0;i<11;i++)
                 sdl_text(ren, px+WUOS_SPACE_8*2, py+WUOS_SPACE_8*6+i*WUOS_SPACE_26, sp_txt.r,sp_txt.g,sp_txt.b, tips[i]);
+        }
+        /* WUOS_DUMP=path: write a PPM screenshot on the first frame (used by
+         * headless visual verification of shell chrome incl. the toolbar). */
+        {
+            static const char *dump = NULL;
+            static int dumped = 0;
+            if (!dump) dump = getenv("WUOS_DUMP");
+            if (dump && !dumped){
+                void *pix = malloc((size_t)WIN_W*WIN_H*4);
+                if (pix && SDL_RenderReadPixels(ren, NULL, SDL_PIXELFORMAT_ABGR8888,
+                                                pix, WIN_W*4) == 0){
+                    FILE *f = fopen(dump, "wb");
+                    if (f){
+                        fprintf(f, "P6\n%d %d\n255\n", WIN_W, WIN_H);
+                        unsigned char *p = pix;
+                        for (int r=0;r<WIN_H;r++)
+                            for (int c=0;c<WIN_W;c++){
+                                unsigned char *px = p + (r*WIN_W+c)*4;
+                                fputc(px[2], f); fputc(px[1], f); fputc(px[0], f); /* A->PPM RGB */
+                            }
+                        fclose(f);
+                    }
+                    dumped = 1;
+                }
+                free(pix);
+            }
         }
         SDL_Delay(16);
     }
