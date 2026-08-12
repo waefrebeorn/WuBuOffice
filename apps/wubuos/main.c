@@ -618,12 +618,12 @@ int main(int argc, char **argv){
                                    snprintf(buf,sizeof buf,"%s/wubuos_macro.mac", mp? mp : "/tmp");
                                    macro_set_name(macro_create(), "default");
                                    if (macro_save(buf)==0) toast_push(g_toasts, "Macro saved", 90);
-                                   else toast_push(g_toasts, "Macro save failed", 120); } break;
+                                   else toast_push(g_toasts, "Macro save failed: check WUBUOS_MACRO_DIR is writable", 180); } break;
                         case 33: { const char *mp = getenv("WUBUOS_MACRO_DIR");
                                    char buf[512];
                                    snprintf(buf,sizeof buf,"%s/wubuos_macro.mac", mp? mp : "/tmp");
                                    if (macro_load(buf)==0) toast_push(g_toasts, "Macro loaded", 90);
-                                   else toast_push(g_toasts, "Macro load failed", 120); } break;
+                                   else toast_push(g_toasts, "Macro load failed: no macro at that path yet", 180); } break;
                         /* DOC-66 / EXP-89 / UXA-47: open the modal dialog. */
                         case 50: g_dlg_action = 1; dialog_open(g_dlg, "Insert Hyperlink", "URL:", "https://"); toast_push(g_toasts, "Hyperlink: type URL, Enter", 120); break;
                         case 51: g_dlg_action = 2; dialog_open(g_dlg, "Insert QR Code", "Text:", ""); toast_push(g_toasts, "QR: type text, Enter", 120); break;
@@ -646,7 +646,7 @@ int main(int argc, char **argv){
                                         if (sh){ wubusettings_set_font_family(sh, wuos_font_family_name(fi));
                                                  wubusettings_save(sh, NULL); }
                                         toast_push(g_toasts, wuos_font_family_name(fi), 90);
-                                    } else toast_push(g_toasts, "Font switch failed", 120);
+                                    } else toast_push(g_toasts, "Font switch failed: glyphs unavailable for that family", 180);
                                 }
                             }
                             }
