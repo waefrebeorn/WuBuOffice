@@ -40,6 +40,7 @@ static int     nviews = 0;
 static int     active = 0;
 static int     tab_hover = -1;
 static float   g_zoom = 1.0f;       /* UI-24: shell-level zoom */
+static int     g_zoom_drag = 0;     /* zoom slider being dragged */
 static int     g_sidebar = 1;       /* docked Navigator panel shown? */
 static int     g_ctx = 0;           /* UI-27: context menu open? */
 static int     g_ctx_item = 0;      /* highlighted item */
@@ -73,6 +74,19 @@ static int g_menu_hover = -1;      /* hovered dropdown item */
 
 static int g_tb_hover = -1;        /* hovered toolbar button index (model in
                                     * wuos_toolbar.{h,c}) */
+
+/* Set zoom from a status-bar x position over the zoom slider track. Shared by
+ * the click and drag paths so they behave identically. */
+static void zoom_from_x(int x){
+    int zmin=50, zmax=300, ztrack_x=WIN_W-150, ztrack_w=90;
+    double frac = (x - ztrack_x) / (double)ztrack_w;
+    if (frac < 0) frac = 0;
+    if (frac > 1) frac = 1;
+    g_zoom = (float)(zmin/100.0 + frac*(zmax/100.0 - zmin/100.0));
+    if (g_zoom < 0.5f) g_zoom = 0.5f;
+    if (g_zoom > 3.0f) g_zoom = 3.0f;
+    WubuSettings *sh=wubusettings_shared(); if(sh) wubusettings_set_zoom(sh, g_zoom);
+}
 
 static void run_menu_cmd(int cmd);   /* defined below; used by toolbar buttons */
 
@@ -395,14 +409,11 @@ int main(int argc, char **argv){
                     g_menu_open=-1; g_menu_hover=-1;
                 }
                 else if (e.button.y >= WIN_H-STATUS_H){ /* status bar: zoom slider */
-                    /* zoom track region (mirror of the render block) */
-                    int zmin=50, zmax=300, ztrack_x=WIN_W-150, ztrack_w=90;
+                    /* click-to-set + begin drag on the track (mirror of render) */
+                    int ztrack_x=WIN_W-150, ztrack_w=90;
                     if (e.button.x >= ztrack_x && e.button.x <= ztrack_x+ztrack_w){
-                        double frac = (e.button.x - ztrack_x) / (double)ztrack_w;
-                        g_zoom = (float)(zmin/100.0 + frac*(zmax/100.0 - zmin/100.0));
-                        if (g_zoom < 0.5f) g_zoom = 0.5f;
-                        if (g_zoom > 3.0f) g_zoom = 3.0f;
-                        WubuSettings *sh=wubusettings_shared(); if(sh) wubusettings_set_zoom(sh, g_zoom);
+                        zoom_from_x(e.button.x);
+                        g_zoom_drag = 1;   /* continue adjusting on motion */
                     }
                 }
                 else if (g_ctx){  /* UI-27: select context-menu item */
@@ -425,6 +436,13 @@ int main(int argc, char **argv){
                 /* highlight the item under the cursor (3 items, 26px tall) */
                 int rel = e.motion.y - g_ctx_y - 4;
                 g_ctx_item = (rel>=0)? rel/26 : 0; if (g_ctx_item>2) g_ctx_item=2;
+            }
+            else if (e.type==SDL_MOUSEMOTION && g_zoom_drag){
+                /* drag the zoom slider thumb along the track */
+                zoom_from_x(e.motion.x);
+            }
+            else if (e.type==SDL_MOUSEBUTTONUP && e.button.button==SDL_BUTTON_LEFT){
+                g_zoom_drag = 0;   /* release zoom drag */
             }
             else if (e.type==SDL_DROPFILE){   /* UI-28: drag-drop open */
                 char *dropped = e.drop.file;
