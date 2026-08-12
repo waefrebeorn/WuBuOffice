@@ -285,6 +285,11 @@ add_test(NAME gui_parity COMMAND bash ${CMAKE_SOURCE_DIR}/../tooling/gui_audit_t
 set_tests_properties(gui_parity PROPERTIES LABELS "view;apps"
     RUN_SERIAL TRUE TIMEOUT 60)
 
+# Designer-ratio gate: type scale, vertical rhythm, 8pt spacing grid, golden
+# layout, WCAG hit-targets (research 2026-08-12). Beyond WCAG contrast.
+add_test(NAME design_ratios COMMAND python3 ${CMAKE_SOURCE_DIR}/../tooling/design_ratios.py wubuoffice)
+set_tests_properties(design_ratios PROPERTIES LABELS "design;gui")
+
 # Reference plugin: builds to a loadable .so demonstrating the C ABI.
 add_library(sample_plugin MODULE plugins/sample/sample_plugin.c)
 set_target_properties(sample_plugin PROPERTIES
