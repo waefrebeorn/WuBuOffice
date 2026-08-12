@@ -207,7 +207,7 @@ static void sdl_text(SDL_Renderer *ren, int px, int py,
                      const char *text){
     if (!text || !*text) return;
     int fh = wuos_font_height();
-    int wpx = wuos_font_draw(text, 0, 0, 0, 0,0,0, NULL, 0, 0);
+    int wpx = wuos_font_text_width(text, fh);   /* measure (draw needs a real fb) */
     if (wpx <= 0) return;
     int W = wpx + 4, H = fh + 6;
     unsigned char *buf = calloc((size_t)W*H*4, 1);
