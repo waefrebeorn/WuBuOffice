@@ -1,0 +1,8 @@
+add_library(wubuqr STATIC wubuqr.c ${CMAKE_SOURCE_DIR}/src/wubuocr/qr.c)
+target_include_directories(wubuqr PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/src/wubuocr)
+target_compile_options(wubuqr PRIVATE -Wall -Wextra -Wno-pedantic)
+add_executable(test_wubuqr test_wubuqr.c)
+target_link_libraries(test_wubuqr PRIVATE wubuqr m)
+target_compile_options(test_wubuqr PRIVATE -Wall -Wextra -Wpedantic)
+add_test(NAME wubuqr COMMAND test_wubuqr)
+set_tests_properties(wubuqr PROPERTIES LABELS "wubuqr;libs")

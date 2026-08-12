@@ -378,7 +378,9 @@ int main(void){
             "sort","filter","subtotal","goalseek","solver","pivot","scenario",
             "freeze","hyperlink","thesaurus","grammar","index","mailmerge",
             "diff","masterdoc","dropcap","ruler","gridline","icon","gallery",
-            "sidebar"
+            "sidebar","transition","animation","masterslide","connector",
+            "encrypt","mailexport","notebookbar","qr","smartart",
+            "basic","3d"
         };
         char *(*fns[])(void) = {
             doccmd_sort_demo, doccmd_filter_demo, doccmd_subtotal_demo,
@@ -387,7 +389,11 @@ int main(void){
             doccmd_thesaurus_demo, doccmd_grammar_demo, doccmd_index_demo,
             doccmd_mailmerge_demo, doccmd_diff_demo, doccmd_masterdoc_demo,
             doccmd_dropcap_demo, doccmd_ruler_demo, doccmd_gridline_demo,
-            doccmd_icon_demo, doccmd_gallery_demo, doccmd_sidebar_demo
+            doccmd_icon_demo, doccmd_gallery_demo, doccmd_sidebar_demo,
+            doccmd_transition_demo, doccmd_animation_demo, doccmd_masterslide_demo,
+            doccmd_connector_demo, doccmd_encrypt_demo, doccmd_mailexport_demo,
+            doccmd_notebookbar_demo, doccmd_qr_demo, doccmd_smartart_demo,
+            doccmd_basic_demo, doccmd_3d_demo
         };
         for (size_t i = 0; i < sizeof names / sizeof names[0]; i++) {
             char *msg = fns[i]();

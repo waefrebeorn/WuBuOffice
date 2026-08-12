@@ -177,6 +177,17 @@ char *doccmd_gridline_demo(void);
 char *doccmd_icon_demo(void);
 char *doccmd_gallery_demo(void);
 char *doccmd_sidebar_demo(void);
+char *doccmd_transition_demo(void);
+char *doccmd_animation_demo(void);
+char *doccmd_masterslide_demo(void);
+char *doccmd_connector_demo(void);
+char *doccmd_encrypt_demo(void);
+char *doccmd_mailexport_demo(void);
+char *doccmd_notebookbar_demo(void);
+char *doccmd_qr_demo(void);
+char *doccmd_smartart_demo(void);
+char *doccmd_basic_demo(void);
+char *doccmd_3d_demo(void);
 
 /* Save the doc back to DOCX/ODT (round-trip). `path` is the current file (may
  * be NULL) used to pick the output name/format. Returns a malloc'd status

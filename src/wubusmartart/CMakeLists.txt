@@ -1,0 +1,8 @@
+add_library(wubusmartart STATIC wubusmartart.c)
+target_include_directories(wubusmartart PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_options(wubusmartart PRIVATE -Wall -Wextra -Wpedantic)
+add_executable(test_wubusmartart test_wubusmartart.c)
+target_link_libraries(test_wubusmartart PRIVATE wubusmartart)
+target_compile_options(test_wubusmartart PRIVATE -Wall -Wextra -Wpedantic)
+add_test(NAME wubusmartart COMMAND test_wubusmartart)
+set_tests_properties(wubusmartart PROPERTIES LABELS "wubusmartart;libs")

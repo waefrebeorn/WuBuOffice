@@ -1,0 +1,8 @@
+add_library(wubu3d STATIC wubu3d.c)
+target_include_directories(wubu3d PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_options(wubu3d PRIVATE -Wall -Wextra -Wpedantic)
+add_executable(test_wubu3d test_wubu3d.c)
+target_link_libraries(test_wubu3d PRIVATE wubu3d)
+target_compile_options(test_wubu3d PRIVATE -Wall -Wextra -Wpedantic)
+add_test(NAME wubu3d COMMAND test_wubu3d)
+set_tests_properties(wubu3d PROPERTIES LABELS "wubu3d;libs")

@@ -1,0 +1,8 @@
+add_library(wububasic STATIC wububasic.c)
+target_include_directories(wububasic PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_options(wububasic PRIVATE -Wall -Wextra)
+add_executable(test_wububasic test_wububasic.c)
+target_link_libraries(test_wububasic PRIVATE wububasic)
+target_compile_options(test_wububasic PRIVATE -Wall -Wextra)
+add_test(NAME wububasic COMMAND test_wububasic)
+set_tests_properties(wububasic PROPERTIES LABELS "wububasic;libs")

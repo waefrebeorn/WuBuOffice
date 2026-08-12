@@ -1,0 +1,8 @@
+add_library(wubumailexport STATIC wubumailexport.c)
+target_include_directories(wubumailexport PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_options(wubumailexport PRIVATE -Wall -Wextra -Wpedantic)
+add_executable(test_wubumailexport test_wubumailexport.c)
+target_link_libraries(test_wubumailexport PRIVATE wubumailexport)
+target_compile_options(test_wubumailexport PRIVATE -Wall -Wextra -Wpedantic)
+add_test(NAME wubumailexport COMMAND test_wubumailexport)
+set_tests_properties(wubumailexport PROPERTIES LABELS "wubumailexport;libs")

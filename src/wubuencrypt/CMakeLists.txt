@@ -1,0 +1,8 @@
+add_library(wubuencrypt STATIC wubuencrypt.c)
+target_include_directories(wubuencrypt PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_options(wubuencrypt PRIVATE -Wall -Wextra -Wpedantic)
+add_executable(test_wubuencrypt test_wubuencrypt.c)
+target_link_libraries(test_wubuencrypt PRIVATE wubuencrypt)
+target_compile_options(test_wubuencrypt PRIVATE -Wall -Wextra -Wpedantic)
+add_test(NAME wubuencrypt COMMAND test_wubuencrypt)
+set_tests_properties(wubuencrypt PROPERTIES LABELS "wubuencrypt;libs")

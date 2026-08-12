@@ -1,0 +1,8 @@
+add_library(wubunotebookbar STATIC wubunotebookbar.c)
+target_include_directories(wubunotebookbar PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_options(wubunotebookbar PRIVATE -Wall -Wextra -Wpedantic)
+add_executable(test_wubunotebookbar test_wubunotebookbar.c)
+target_link_libraries(test_wubunotebookbar PRIVATE wubunotebookbar)
+target_compile_options(test_wubunotebookbar PRIVATE -Wall -Wextra -Wpedantic)
+add_test(NAME wubunotebookbar COMMAND test_wubunotebookbar)
+set_tests_properties(wubunotebookbar PROPERTIES LABELS "wubunotebookbar;libs")

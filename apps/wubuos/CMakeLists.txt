@@ -100,6 +100,17 @@ target_include_directories(wubuos PRIVATE
     ${CMAKE_SOURCE_DIR}/src/wubuicon
     ${CMAKE_SOURCE_DIR}/src/wubugallery
     ${CMAKE_SOURCE_DIR}/src/wubusidebar
+    ${CMAKE_SOURCE_DIR}/src/wubutransition
+    ${CMAKE_SOURCE_DIR}/src/wubuanimation
+    ${CMAKE_SOURCE_DIR}/src/wubumasterslide
+    ${CMAKE_SOURCE_DIR}/src/wubuconnector
+    ${CMAKE_SOURCE_DIR}/src/wubuencrypt
+    ${CMAKE_SOURCE_DIR}/src/wubumailexport
+    ${CMAKE_SOURCE_DIR}/src/wubunotebookbar
+    ${CMAKE_SOURCE_DIR}/src/wubuqr
+    ${CMAKE_SOURCE_DIR}/src/wubusmartart
+    ${CMAKE_SOURCE_DIR}/src/wububasic
+    ${CMAKE_SOURCE_DIR}/src/wubu3d
     ${CMAKE_SOURCE_DIR}/apps/wubupdf
     ${CMAKE_SOURCE_DIR}/apps/wubuconv
     ${WUBUPAD_SRC})
@@ -131,6 +142,9 @@ target_link_libraries(wubuos PRIVATE
     wubupivot wubuscenario wubufreeze wubuhyperlink wubuthesaurus
     wubugrammar wubuindex wubumailmerge wubudiff wubumasterdoc
     wubudropcap wuburuler wubugridline wubuicon wubugallery wubusidebar
+    wubutransition wubuanimation wubumasterslide wubuconnector wubuencrypt
+    wubumailexport wubunotebookbar wubuqr wubusmartart
+    wububasic wubu3d
     ${SDL2_LIBRARIES} ${FREETYPE_LIBRARIES} m dl)
 target_compile_options(wubuos PRIVATE -Wall -Wextra -Wpedantic)
 
@@ -209,6 +223,17 @@ target_include_directories(test_view PRIVATE
     ${CMAKE_SOURCE_DIR}/src/wubuicon
     ${CMAKE_SOURCE_DIR}/src/wubugallery
     ${CMAKE_SOURCE_DIR}/src/wubusidebar
+    ${CMAKE_SOURCE_DIR}/src/wubutransition
+    ${CMAKE_SOURCE_DIR}/src/wubuanimation
+    ${CMAKE_SOURCE_DIR}/src/wubumasterslide
+    ${CMAKE_SOURCE_DIR}/src/wubuconnector
+    ${CMAKE_SOURCE_DIR}/src/wubuencrypt
+    ${CMAKE_SOURCE_DIR}/src/wubumailexport
+    ${CMAKE_SOURCE_DIR}/src/wubunotebookbar
+    ${CMAKE_SOURCE_DIR}/src/wubuqr
+    ${CMAKE_SOURCE_DIR}/src/wubusmartart
+    ${CMAKE_SOURCE_DIR}/src/wububasic
+    ${CMAKE_SOURCE_DIR}/src/wubu3d
     ${WUBUPAD_SRC})
 target_sources(test_view PRIVATE
     ${WUBUPAD_SRC}/buffer.c ${WUBUPAD_SRC}/doc.c ${WUBUPAD_SRC}/search.c
@@ -227,6 +252,9 @@ target_link_libraries(test_view PRIVATE
     wubupivot wubuscenario wubufreeze wubuhyperlink wubuthesaurus
     wubugrammar wubuindex wubumailmerge wubudiff wubumasterdoc
     wubudropcap wuburuler wubugridline wubuicon wubugallery wubusidebar
+    wubutransition wubuanimation wubumasterslide wubuconnector wubuencrypt
+    wubumailexport wubunotebookbar wubuqr wubusmartart
+    wububasic wubu3d
     ${SDL2_LIBRARIES} ${FREETYPE_LIBRARIES} m dl)
 target_compile_options(test_view PRIVATE -Wall -Wextra -Wpedantic)
 add_test(NAME view COMMAND test_view)
@@ -378,6 +406,17 @@ target_include_directories(test_doccmd PRIVATE
     ${CMAKE_SOURCE_DIR}/src/wubuicon
     ${CMAKE_SOURCE_DIR}/src/wubugallery
     ${CMAKE_SOURCE_DIR}/src/wubusidebar
+    ${CMAKE_SOURCE_DIR}/src/wubutransition
+    ${CMAKE_SOURCE_DIR}/src/wubuanimation
+    ${CMAKE_SOURCE_DIR}/src/wubumasterslide
+    ${CMAKE_SOURCE_DIR}/src/wubuconnector
+    ${CMAKE_SOURCE_DIR}/src/wubuencrypt
+    ${CMAKE_SOURCE_DIR}/src/wubumailexport
+    ${CMAKE_SOURCE_DIR}/src/wubunotebookbar
+    ${CMAKE_SOURCE_DIR}/src/wubuqr
+    ${CMAKE_SOURCE_DIR}/src/wubusmartart
+    ${CMAKE_SOURCE_DIR}/src/wububasic
+    ${CMAKE_SOURCE_DIR}/src/wubu3d
     ${CMAKE_SOURCE_DIR}/src/wubuocr
     ${CMAKE_SOURCE_DIR}/apps/wubupdf
     ${CMAKE_SOURCE_DIR}/apps/wubuedit)
@@ -391,6 +430,9 @@ target_link_libraries(test_doccmd PRIVATE
     wubupivot wubuscenario wubufreeze wubuhyperlink wubuthesaurus
     wubugrammar wubuindex wubumailmerge wubudiff wubumasterdoc
     wubudropcap wuburuler wubugridline wubuicon wubugallery wubusidebar
+    wubutransition wubuanimation wubumasterslide wubuconnector wubuencrypt
+    wubumailexport wubunotebookbar wubuqr wubusmartart
+    wububasic wubu3d
     wubupdf_app wubuedit_app wubucell_app wubushow_app wubuword_app)
 target_compile_options(test_doccmd PRIVATE -Wall -Wextra -Wpedantic)
 add_test(NAME doccmd COMMAND test_doccmd)

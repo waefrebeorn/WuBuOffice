@@ -67,6 +67,17 @@
 #include "wubuicon.h"
 #include "wubugallery.h"
 #include "wubusidebar.h"
+#include "wubutransition.h"
+#include "wubuanimation.h"
+#include "wubumasterslide.h"
+#include "wubuconnector.h"
+#include "wubuencrypt.h"
+#include "wubumailexport.h"
+#include "wubunotebookbar.h"
+#include "wubuqr.h"
+#include "wubusmartart.h"
+#include "wububasic.h"
+#include "wubu3d.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -1238,6 +1249,135 @@ char *doccmd_sidebar_demo(void){
     wubusidebar_destroy(s);
     char bf[96];
     snprintf(bf, sizeof bf, "sidebar ok: rc=%d panels=%zu", rc, n);
+    return strdup(bf);
+}
+
+/* doccmd_transition_demo -- slide transition. src/wubutransition */
+char *doccmd_transition_demo(void){
+    wubutransition t;
+    int rc = wubutransition_set(&t, WUBU_TR_FADE, 0.5, 1, 2.0);
+    char bf[96];
+    snprintf(bf, sizeof bf, "transition ok: rc=%d type=%d", rc, (int)t.type);
+    return strdup(bf);
+}
+
+/* doccmd_animation_demo -- keyframe animation. src/wubuanimation */
+char *doccmd_animation_demo(void){
+    wubuanimation *a = wubuanimation_create();
+    int rc = wubuanimation_add(a,"title",WUBU_AN_FADE,1.0,0.0,0);
+    size_t n = wubuanimation_count(a);
+    wubuanimation_destroy(a);
+    char bf[96];
+    snprintf(bf, sizeof bf, "animation ok: rc=%d keys=%zu", rc, n);
+    return strdup(bf);
+}
+
+/* doccmd_masterslide_demo -- master slide theme. src/wubumasterslide */
+char *doccmd_masterslide_demo(void){
+    wubumasterslide *m = wubumasterslide_create();
+    int rc = wubumasterslide_set_theme(m,"1F3B8C",24.0);
+    double fs = wubumasterslide_fontsize(m);
+    wubumasterslide_destroy(m);
+    char bf[96];
+    snprintf(bf, sizeof bf, "masterslide ok: rc=%d font=%.0f", rc, fs);
+    return strdup(bf);
+}
+
+/* doccmd_connector_demo -- diagram connector. src/wubuconnector */
+char *doccmd_connector_demo(void){
+    wubuconnector *c = wubuconnector_create();
+    int rc = wubuconnector_add(c,"A","out","B","in");
+    size_t n = wubuconnector_count(c);
+    wubuconnector_destroy(c);
+    char bf[96];
+    snprintf(bf, sizeof bf, "connector ok: rc=%d edges=%zu", rc, n);
+    return strdup(bf);
+}
+
+/* doccmd_encrypt_demo -- password document encryption. src/wubuencrypt */
+char *doccmd_encrypt_demo(void){
+    const char *msg = "Classified WuBuOffice doc";
+    size_t elen=0, dlen=0;
+    unsigned char *enc = wubuencrypt_document("secret", (const unsigned char*)msg, strlen(msg), &elen);
+    unsigned char *dec = enc ? wubuencrypt_open("secret", enc, elen, &dlen) : NULL;
+    int ok = (dec && dlen == strlen(msg) && memcmp(dec, msg, dlen)==0) ? 1 : 0;
+    free(enc); free(dec);
+    char bf[96];
+    snprintf(bf, sizeof bf, "encrypt ok: rc=%d roundtrip=%d", ok, ok);
+    return strdup(bf);
+}
+
+/* doccmd_mailexport_demo -- RFC-5322 mail render. src/wubumailexport */
+char *doccmd_mailexport_demo(void){
+    wubumailexport m = {0};
+    int rc = wubumailexport_build(&m,"b@x.com","a@y.com","Re","body");
+    char *rendered = wubumailexport_render(&m);
+    size_t rlen = rendered ? strlen(rendered) : 0;
+    free(rendered);
+    wubumailexport_free(&m);
+    char bf[96];
+    snprintf(bf, sizeof bf, "mailexport ok: rc=%d len=%zu", rc, rlen);
+    return strdup(bf);
+}
+
+/* doccmd_notebookbar_demo -- sheet tab strip. src/wubunotebookbar */
+char *doccmd_notebookbar_demo(void){
+    wubunotebookbar *n = wubunotebookbar_create();
+    int rc = wubunotebookbar_add(n,"Sheet1");
+    wubunotebookbar_add(n,"Sheet2");
+    size_t c = wubunotebookbar_count(n);
+    wubunotebookbar_destroy(n);
+    char bf[96];
+    snprintf(bf, sizeof bf, "notebookbar ok: rc=%d tabs=%zu", rc, c);
+    return strdup(bf);
+}
+
+/* doccmd_qr_demo -- QR render. src/wubuqr */
+char *doccmd_qr_demo(void){
+    int size = 0;
+    char *qr = wubuqr_render_ascii("WUBU", &size);
+    int ok = qr ? 1 : 0;
+    free(qr);
+    char bf[96];
+    snprintf(bf, sizeof bf, "qr ok: ok=%d size=%d", ok, size);
+    return strdup(bf);
+}
+
+/* doccmd_smartart_demo -- diagram layout. src/wubusmartart */
+char *doccmd_smartart_demo(void){
+    wubusmartart *s = wubusmartart_create();
+    int rc = wubusmartart_set_layout(s, WUBU_SA_CYCLE);
+    wubusmartart_add_node(s,"Plan");
+    size_t n = wubusmartart_count(s);
+    wubusmartart_destroy(s);
+    char bf[96];
+    snprintf(bf, sizeof bf, "smartart ok: rc=%d nodes=%zu", rc, n);
+    return strdup(bf);
+}
+
+/* doccmd_basic_demo -- minimal BASIC macro engine. src/wububasic */
+char *doccmd_basic_demo(void){
+    wububasic *b = wububasic_create();
+    static char out[256]; out[0]=0;
+    wububasic_set_output(b, NULL, NULL); /* stdout default; use a capture fn below */
+    (void)out;
+    int rc = wububasic_load(b, "s = 0\nFOR i = 1 TO 4\n s = s + i\nNEXT\nPRINT s\nEND\n");
+    if (rc == 0) rc = wububasic_run(b);
+    const char *val = wububasic_get_var(b, "s");
+    char bf[96];
+    snprintf(bf, sizeof bf, "basic ok: rc=%d s=%s", rc, val ? val : "?");
+    wububasic_destroy(b);
+    return strdup(bf);
+}
+
+/* doccmd_3d_demo -- 3D mesh model. src/wubu3d */
+char *doccmd_3d_demo(void){
+    wubu3d *m = wubu3d_create();
+    int rc = wubu3d_make_cube(m);
+    size_t v = wubu3d_vertex_count(m), f = wubu3d_face_count(m);
+    wubu3d_destroy(m);
+    char bf[96];
+    snprintf(bf, sizeof bf, "3d ok: rc=%d verts=%zu faces=%zu", rc, v, f);
     return strdup(bf);
 }
 
