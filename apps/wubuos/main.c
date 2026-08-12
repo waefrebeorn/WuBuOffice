@@ -987,6 +987,14 @@ int main(int argc, char **argv){
                 SDL_RenderFillRect(ren, &(SDL_Rect){sx, sy+24, SIDEBAR_W, 1});
                 /* entries (split lines) */
                 int iy = sy + 32, lh = 16;
+                if (!*sb){   /* guided empty state (GUI_EXCELLENCE paradigm 8):
+                             * an empty panel must guide, not be blank. */
+                    sdl_text(ren, sx+8, iy, sbtx.r, sbtx.g, sbtx.b,
+                             "No structure yet");
+                    iy += lh;
+                    sdl_text(ren, sx+8, iy, sbtx.r, sbtx.g, sbtx.b,
+                             "Type content to populate");
+                }
                 char *line = sb, *nl;
                 while (line && *line && iy < sy+sh-4){
                     nl = strchr(line, '\n');
