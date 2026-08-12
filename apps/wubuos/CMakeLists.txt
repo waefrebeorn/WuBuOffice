@@ -278,6 +278,13 @@ target_compile_options(test_wuos_toolbar PRIVATE -Wall -Wextra -Wpedantic)
 add_test(NAME toolbar COMMAND test_wuos_toolbar)
 set_tests_properties(toolbar PROPERTIES LABELS "view;apps")
 
+# GUI human-parity: capture a real frame and pixel-audit the chrome bands
+# (gui_audit.py). Fails if any expected chrome feature is illegible. Catches
+# the class of "module exists but text never renders" bug vision misses.
+add_test(NAME gui_parity COMMAND bash ${CMAKE_SOURCE_DIR}/../tooling/gui_audit_test.sh)
+set_tests_properties(gui_parity PROPERTIES LABELS "view;apps"
+    RUN_SERIAL TRUE TIMEOUT 60)
+
 # Reference plugin: builds to a loadable .so demonstrating the C ABI.
 add_library(sample_plugin MODULE plugins/sample/sample_plugin.c)
 set_target_properties(sample_plugin PROPERTIES
