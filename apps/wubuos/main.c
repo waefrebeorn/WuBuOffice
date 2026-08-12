@@ -969,9 +969,13 @@ int main(int argc, char **argv){
          * collapsible sidebar (LibreOffice/OnlyOffice/MS Office); the shell
          * docks a right panel whose content is the active view's real
          * structure (doc TOC / editor functions / cell values). */
-        if (g_sidebar && views[active]->sidebar){
-            char *sb = views[active]->sidebar(views[active]);
-            if (sb){
+        if (g_sidebar){
+            char *sb = (views[active]->sidebar) ? views[active]->sidebar(views[active]) : NULL;
+            /* A NULL or empty result still renders a GUIDED panel (an empty
+             * pane must not be a blank surface — GUI_EXCELLENCE paradigm 8). */
+            char *empty = NULL;
+            if (!sb){ empty = ""; sb = empty; }
+            {
                 int sx = WIN_W - SIDEBAR_W, sy = view_top;
                 int sh = WIN_H - view_top - STATUS_H;
                 WuosRGB sbbg = dark ? WUOS_DARK(OVERLAY_SURFACE) : WUOS_LIGHT(OVERLAY_SURFACE);
@@ -993,7 +997,7 @@ int main(int argc, char **argv){
                              "No structure yet");
                     iy += lh;
                     sdl_text(ren, sx+8, iy, sbtx.r, sbtx.g, sbtx.b,
-                             "Type content to populate");
+                             "This view has no outline");
                 }
                 char *line = sb, *nl;
                 while (line && *line && iy < sy+sh-4){
@@ -1007,7 +1011,8 @@ int main(int argc, char **argv){
                     }
                     line = nl ? nl+1 : NULL;
                 }
-                free(sb);
+                if (empty) sb = NULL; /* don't free the literal "" */
+                if (sb) free(sb);
             }
         }
         /* status bar */
