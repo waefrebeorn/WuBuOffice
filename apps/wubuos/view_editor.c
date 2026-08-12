@@ -953,6 +953,12 @@ static char *status(WuView *v){
     char *t = doc_text(e->doc);
     size_t cur = doc_cursor(e->doc);
     size_t line=1,col=1; for (size_t q=0;q<cur && t && t[q];q++){ if(t[q]=='\n'){line++;col=1;}else col++; }
+    /* live word + character counts (Notepad++ / LibreOffice status parity) */
+    size_t words=0, chars=0, inword=0;
+    if (t) for (const char *p=t; *p; p++){
+        if (*p != ' ' && *p != '\n' && *p != '\t'){ chars++; if(!inword){ inword=1; words++; } }
+        else inword = 0;
+    }
     free(t);
     const char *lang = e->lex? lex_lang(e->lex) : "none";
     const char *fn = e->path? e->path : "(unsaved)";
@@ -962,8 +968,9 @@ static char *status(WuView *v){
     if (e->docs && docs_count(e->docs) > 1)
         snprintf(docn,sizeof docn,"[doc %zu/%zu] ", docs_active(e->docs)+1, docs_count(e->docs));
     char buf[256];
-    snprintf(buf,sizeof buf,"%s%s  Ln %zu  Col %zu  %s  %s  %s  %s  [%s]",
-             docn, fn, line, col, doc_has_selection(e->doc)?"SEL":"   ",
+    snprintf(buf,sizeof buf,"%s%s  Ln %zu  Col %zu  words %zu  chars %zu  %s  %s  %s  %s  [%s]",
+             docn, fn, line, col, words, chars,
+             doc_has_selection(e->doc)?"SEL":"   ",
              doc_can_undo(e->doc)?"*":" ", eol, enc, lang);
     return strdup(buf);
 }

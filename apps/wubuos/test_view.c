@@ -175,6 +175,13 @@ int main(void){
 
     WuView *ev = wuos_editor_create(codep);
     if (ev){ bad += render_check(ev, "editor(file)");
+             /* status must report live word/char counts (Notepad++ parity) */
+             if (ev->status){
+                 char *st = ev->status(ev);
+                 if (!st || !strstr(st, "words ")){ fprintf(stderr,"[editor] status missing word count\n"); bad++; }
+                 else fprintf(stderr,"[editor] status ok (has word count)\n");
+                 free(st);
+             }
              /* type + save */
              ev->on_key(ev, 'X', 1);
              ev->save(ev);

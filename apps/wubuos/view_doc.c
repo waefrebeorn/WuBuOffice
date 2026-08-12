@@ -465,21 +465,64 @@ static char *sidebar(WuView *v){
     return out;
 }
 
+/* Walk the doc model collecting run text into a malloc'd string (for the
+ * status word/char count). Caller frees. Recurses through sections. */
+static void doc_walk_text(wubumodel_node *n, char **out, size_t *len, size_t *cap){
+    for (; n; n = wubumodel_node_next_sibling(n)){
+        if (wubumodel_node_kind(n)==WUBUMODEL_PARAGRAPH){
+            for (wubumodel_node *r = wubumodel_node_first_child(n);
+                 r; r = wubumodel_node_next_sibling(r)){
+                const char *t = wubumodel_node_text(r);
+                if (t && *t){
+                    size_t add = strlen(t);
+                    if (*len+add+1 > *cap){ *cap=(*len+add+1)*2; char *nb=realloc(*out,*cap); if(!nb) return; *out=nb; }
+                    memcpy(*out+*len, t, add); *len+=add; (*out)[*len]=0;
+                }
+            }
+            if (*len+1 > *cap){ *cap*=2; char *nb=realloc(*out,*cap); if(!nb) return; *out=nb; }
+            (*out)[(*len)++]='\n'; (*out)[*len]=0;
+        } else {
+            wubumodel_node *c = wubumodel_node_first_child(n);
+            if (c) doc_walk_text(c, out, len, cap);
+        }
+    }
+}
+static char *doc_model_text(wubumodel_doc *d){
+    size_t cap = 256, len = 0;
+    char *out = malloc(cap);
+    if (!out) return NULL;
+    out[0] = 0;
+    wubumodel_node *root = wubumodel_doc_root(d);
+    if (root) doc_walk_text(wubumodel_node_first_child(root), &out, &len, &cap);
+    return out;
+}
+
 static char *status(WuView *v){
     DocV *e = v->priv;
     /* UI-35: breadcrumb / location bar over the loaded path */
     const char *src = e->path ? e->path : "sample";
-    char *s = malloc(160); if(!s) return NULL;
+    char *s = malloc(200); if(!s) return NULL;
     const char *base = strrchr(src, '/');
     base = base ? base+1 : src;
     int notes = wuos_doc_footnote_count(v);
+    /* live word + character counts from the text model (LibreOffice parity) */
+    size_t words=0, chars=0, inword=0;
+    const char *txt = NULL;
+    char *tm = NULL;
+    if (e->text) txt = e->text;
+    else if (e->doc){ tm = doc_model_text(e->doc); txt = tm; }
+    if (txt) for (const char *p=txt; *p; p++){
+        if (*p!=' ' && *p!='\n' && *p!='\t'){ chars++; if(!inword){ inword=1; words++; } }
+        else inword = 0;
+    }
+    free(tm);
     if (e->doc){
         if (notes > 0)
-            snprintf(s,160,"Document ▸ %s ▸ rendered page ▸ %d note(s)", base, notes);
+            snprintf(s,200,"Document ▸ %s ▸ rendered page ▸ %d note(s) ▸ %zu words", base, notes, words);
         else
-            snprintf(s,160,"Document ▸ %s ▸ rendered page", base);
+            snprintf(s,200,"Document ▸ %s ▸ rendered page ▸ %zu words", base, words);
     }
-    else snprintf(s,160,"Document ▸ %s ▸ %s text", base, e->text?"recognized":"no");
+    else snprintf(s,200,"Document ▸ %s ▸ %s text", base, e->text?"recognized":"no");
     return s;
 }
 
