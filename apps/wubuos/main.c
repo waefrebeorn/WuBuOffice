@@ -1000,11 +1000,13 @@ int main(int argc, char **argv){
             SDL_RenderFillRect(ren, &(SDL_Rect){0, ty, WIN_W, TOOLBAR_H});
             /* resting button surface: slightly raised from the bar bg so each
              * button reads as a distinct clickable target (affordance).
-             * Derived from the theme bar color (same hue, ~14% lighter) so it
-             * matches light/dark/sepia themes instead of clashing. */
-            WuosRGB tbo = { (unsigned char)(tbb.r + (255-tbb.r)*14/100),
-                            (unsigned char)(tbb.g + (255-tbb.g)*14/100),
-                            (unsigned char)(tbb.b + (255-tbb.b)*14/100) };
+             * Derived from the theme bar color. ~5% lift (not 14%): brightening
+             * too much dropped the toolbar TEXT contrast below WCAG AA 4.5:1
+             * (measured 3.70:1 @14%); 5% keeps the affordance while text stays
+             * >=4.5:1. */
+            WuosRGB tbo = { (unsigned char)(tbb.r + (255-tbb.r)*5/100),
+                            (unsigned char)(tbb.g + (255-tbb.g)*5/100),
+                            (unsigned char)(tbb.b + (255-tbb.b)*5/100) };
             int tx = 0;
             for (size_t i=0;i<wuos_tb_count;i++){
                 const WuosTbBtn *b = &wuos_tb_buttons[i];
