@@ -381,7 +381,18 @@ static int render(WuView *v, int w, int h, int scroll,
                 int fy = h-26;
                 for (int xx=0; xx<w; xx++) for(int yy=fy; yy<h; yy++)
                     if(xx>=0&&yy>=0&&xx<w&&yy<h){ size_t i=((size_t)yy*w+xx)*4; fb[i]=30;fb[i+1]=33;fb[i+2]=40; }
-                char line[256]; snprintf(line,sizeof line,"find '%s': %s", e->find_q, e->find_hit?"1 match highlighted in text":"no match");
+                /* count ALL occurrences (VS Code/Word highlight every match,
+                 * not just the first — research 2026-08-12). Accurate count,
+                 * not a boolean. */
+                int nfound = 0;
+                if (e->text && e->find_q[0]){
+                    const char *hay = e->text;
+                    while ((hay = strstr(hay, e->find_q))){
+                        nfound++; hay += strlen(e->find_q);
+                    }
+                }
+                char line[256];
+                snprintf(line,sizeof line,"find '%s': %d match%s", e->find_q, nfound, nfound==1?"":"es");
                 wuos_font_draw(line, WUOS_SPACE_8, fy+5, 0, doc_body.r,doc_body.g,doc_body.b, fb,w,h);
             }
         } else {
