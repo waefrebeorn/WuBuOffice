@@ -112,3 +112,109 @@ cd /home/wubu/tooling
 ./oracle_v2 /tmp/office.json --repo office --target msoffice
 ```
 
+## ⚠️ Triple-DA correction (2026-08-13) — the "fake-correct" audit
+
+A previous edit wave over-stated parity. Three classes of rot were found and
+fixed; see `GAPS_REAL_TRIPLE_DA.md` for the full 3-pass report.
+
+1. **The repo did not compile.** `apps/wubuos/CMakeLists.txt` left the
+   `viewshot` target (the GUI-screenshot binary that `gui_parity` depends on)
+   without the 32 wave-module include + link lists, and without `hive.c`.
+   `doccmd.c`/`view_slide.c` failed to build → `viewshot` never existed →
+   "100% parity" was physically impossible. FIXED: added the module
+   include/link lists and `hive.c` to `viewshot` (now matches `wubuos`/`test_view`).
+2. **5 of the "REAL" modules were hollow data-models, not engines.** The parity
+   scanner marks a module REAL on *linked + called once*; it does not check the
+   module does anything. These were pure struct stores with no real output:
+   - `wubu3d` — had no projection/transform/renderer. NOW: real perspective
+     project + Y/X rotation (`wubu3d_rotate`/`wubu3d_project`), tested against
+     distinct projected screen positions and positive depth.
+   - `wubutransition` — was a 13-line struct setter. NOW: computes the per-frame
+     blend factor `wubutransition_progress` (fade/slide/wipe/blink/morph/random),
+     tested 0→1 over the duration.
+   - `wubuanimation` — stored keyframes but never interpolated. NOW:
+     `wubuanimation_progress` eases per object over its timeline, tested.
+   - `wubusmartart` — stored text nodes but never laid them out. NOW:
+     `wubusmartart_layout_boxes` returns real box rects for process/list/cycle/
+     hierarchy, tested inside-frame.
+   - `wubuconnector` — stored from/to strings but never routed. NOW:
+     `wubuconnector_route` returns a real orthogonal L-elbow polyline, tested.
+3. **Parity "100%" is a linkage count, not a functional proof.** The oracle
+   number should be read as "every reference feature maps to a linked module,"
+   NOT "every feature is implemented correctly." The hollow modules above
+   inflated the count. After this pass, the 32 wave modules are at minimum
+   functional primitives (data + a real computed output), not stubs.
+
+**Status after this pass:** `viewshot` builds; `gui_parity` pixel-audit is
+wired and runs; the 5 upgraded modules have behavioral tests (not just
+"didn't crash"). The headline parity number is unchanged in the scanner, but
+it is now backed by real engine code + assertions rather than empty calls.
+
+## Sweep + aesthetics pass (2026-08-13, follow-up)
+
+After the build fixes, a second sweep checked the remaining ~27 wave modules for
+more hollow stubs, plus a research-backed aesthetics audit (a 100-principle design
+corpus exists in `GUI_EXCELLENCE.md` / `GUI_MATHEMATICS.md`).
+
+**Aesthetics verdict: NOT blind.** The design system is real and gated:
+- `apps/wubuos/wuos_theme.h` defines a harmonized semantic token palette
+  (`WUOS_DARK_ACCENT={94,135,255}` blue, a 4px spacing scale, dark/light
+  variants) used by both `main.c` (live) and `viewshot.c` (headless).
+- Tooling `design_ratios.py` + `wcag_palette.py` read that header and PASS: 18
+  WCAG tokens ≥4.5:1, 60-30-10 split, worst-state ΔE=83.7.
+- Research-flagged render features ARE implemented: sliding active-tab underline
+  tween `g_tab_ul` (focus/active), guided empty-state panel (`main.c:1064`),
+  error toasts (`toast.c`), micro-interaction press feedback (`wuos_motion.h`).
+- The earlier "muddy brown/rusty palette" I extracted from a frame was a
+  misread: those pixels are **syntax-highlight colors inside a doc view**, not
+  chrome. The chrome uses the brand-blue token. Verified by re-running the
+  aesthetic gates (still PASS).
+
+**Remaining hollow modules found + fixed (model-only → real engine):**
+- `wubumasterslide` (26 lines): only stored `bg[8]`+`fontsize`. NOW:
+  `wubumasterslide_resolve()` derives a harmonized surface/text/accent palette
+  (luminance-correct text, one brand accent) — drawable output for a slide.
+- `wuburuler` (22 lines): only points math. NOW: `wuburuler_content_rect()`
+  resolves the content box to PIXELS at a given DPI for a ruler renderer.
+- `wubunotebookbar` (26 lines): tab list only. NOW: `wubunotebookbar_tab_rect()`
+  computes per-tab draw + hit-test rects.
+- (Earlier in this session: `wubu3d`, `wubutransition`, `wubuanimation`,
+  `wubusmartart`, `wubuconnector` also upgraded from stub→real engine.)
+- `wubudropcap`, `wubugridline`, `wubumailexport` remain model-only; they are
+  plausible work-in-progress (no advertised engine claim) — left as-is, noted
+  honestly rather than faked.
+
+**Final verification (this pass):** Office full `ctest` 170/170 PASS; aesthetic
+gates PASS; the 8 upgraded modules each have a behavioral test asserting real
+output. WuBuPad unchanged (already honest, GUI pixel-audit PASS).
+
+## "Kinda right but wrong" craft pass (2026-08-13, follow-up)
+
+The compliance gates (WCAG, 60-30-10, hit-targets, tokens) all PASSED, yet a
+human opening the app saw "muddy basement, naked-text buttons, ghost header,
+empty Navigator" — the deepest fake-correct: *compliant but not crafted*.
+Verified the felt experience by capturing real frames and inspecting raw pixels
+(vision at 960px missed a 1px border; pixel-math + a 2x crop are the truth).
+
+**Fixes applied:**
+- **Toolbar affordance** (`main.c` toolbar render): buttons were bare text. Now
+  each has a visible 1px outline box (affordance via outline, not a light fill
+  that would crush text contrast). Resting text contrast on the bar = **6.06:1**
+  (was failing at 2.93:1 under the earlier light-fill attempt). Hover/press =
+  solid brand-accent fill + white text (≥4.5:1 on the accent).
+- **Ghost "Contents" header** (`view_doc.c`): was drawn in the page's dark FG
+  over the DARK app chrome → invisible. Now uses a light token (visible).
+- **Guided empty states** (both `view_doc.c` DocV and `view_editor.c` Editor
+  `sidebar()`): instead of returning NULL (→ blank/truncated panel), they return
+  a helpful multi-line guide ("No headings yet — apply Heading 1/2/3…",
+  "No symbols detected — functions/structs appear here…").
+- **Refined dark surface** (`wuos_theme.h`): nudged the slate dark variant to a
+  slightly bluer, less "muddy" neutral (still passes all WCAG tokens).
+
+**Verification:** full ctest 170/170; `wcag_palette.py` + `design_ratios.py` PASS;
+raw-pixel audit of the toolbar band shows 34 button-border edge clusters and
+6.06:1 text contrast; 2x-magnified vision crop confirms visible outline boxes.
+The remaining "kinda right" item a critic noted is the demo document content
+itself (developer changelog text, not a formatted user doc) — that's sample data,
+not a UI defect, and is user-replaceable.
+
