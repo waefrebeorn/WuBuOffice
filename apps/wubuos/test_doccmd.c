@@ -402,6 +402,57 @@ int main(void){
         }
     }
 
+    /* ---- DEPTH CHECK: round-trip load -> save -> reload for every format
+     * the doc view can open. A missing writer (or a save that silently becomes
+     * a different format) breaks editing usability. Use a FRESH simple doc so
+     * the reloaded text is unambiguous (the main test doc is heavily mutated). */
+    {
+        const char *formats[] = { "docx", "odt", "rtf", "epub" };
+        for (size_t i = 0; i < sizeof formats / sizeof formats[0]; i++){
+            wubumodel_doc *src = wubumodel_doc_create();
+            wubumodel_node *sec  = wubumodel_node_create(src, WUBUMODEL_SECTION);
+            wubumodel_node *para = wubumodel_node_create(src, WUBUMODEL_PARAGRAPH);
+            wubumodel_node *run  = wubumodel_node_create(src, WUBUMODEL_RUN);
+            wubumodel_run_set_text(run, "RoundTripCheck");
+            wubumodel_node_append(src, para, run);
+            wubumodel_node_append(src, sec, para);
+            char path[128];
+            snprintf(path, sizeof path, "/tmp/wubuos_roundtrip.%s", formats[i]);
+            char *sv = doccmd_save(src, path);
+            if (!sv || !strstr(sv, "saved")){
+                fprintf(stderr, "[roundtrip %s] save failed: %s\n", formats[i], sv?sv:"null");
+                if(sv) free(sv); wubumodel_doc_destroy(src); fails++; continue;
+            }
+            printf("  roundtrip %s save: OK\n", formats[i]); free(sv);
+            wubumodel_doc_destroy(src);
+            /* reload and confirm text survived (recursive walk) */
+            wubumodel_doc *rt = NULL;
+            int lrc = -1;
+            if (!strcmp(formats[i],"docx")) lrc = wubumodel_load_docx(path, &rt);
+            else if (!strcmp(formats[i],"odt")) lrc = wubumodel_load_odt(path, &rt);
+            else if (!strcmp(formats[i],"rtf")) lrc = wubumodel_load_rtf(path, &rt);
+            else if (!strcmp(formats[i],"epub")) lrc = wubumodel_load_epub(path, &rt);
+            if (lrc != 0 || !rt){ fprintf(stderr, "[roundtrip %s] reload failed (rc=%d)\n", formats[i], lrc); fails++; continue; }
+            int found = 0;
+            /* recursive DFS over the whole tree */
+            wubumodel_node *st[512]; int sp=0;
+            for (wubumodel_node *s = wubumodel_doc_root(rt); s; s = wubumodel_node_next_sibling(s)){
+                if (sp < 512) st[sp++] = s;
+            }
+            while (sp){
+                wubumodel_node *n = st[--sp];
+                if (wubumodel_node_kind(n)==WUBUMODEL_RUN &&
+                    wubumodel_run_text(n) && strstr(wubumodel_run_text(n),"RoundTripCheck"))
+                    found = 1;
+                for (wubumodel_node *c = wubumodel_node_first_child(n); c; c = wubumodel_node_next_sibling(c))
+                    if (sp < 512) st[sp++] = c;
+            }
+            if (!found){ fprintf(stderr, "[roundtrip %s] text lost\n", formats[i]); fails++; }
+            else printf("  roundtrip %s: text survived reload OK\n", formats[i]);
+            wubumodel_doc_destroy(rt);
+        }
+    }
+
     wubumodel_doc_destroy(d);
 
     if (fails){ printf("FAILED (%d)\n", fails); return 1; }

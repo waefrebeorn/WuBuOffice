@@ -358,6 +358,8 @@ char *doccmd_export_epub(wubumodel_doc *doc, const char *out){
     return strdup("EPUB export failed");
 }
 
+static wubulayout_doc *doccmd_layout(wubumodel_doc *doc); /* fwd (def below) */
+
 char *doccmd_save(wubumodel_doc *doc, const char *path){
     if (!doc) return strdup("no model doc to save");
     char out[512];
@@ -365,19 +367,35 @@ char *doccmd_save(wubumodel_doc *doc, const char *path){
         snprintf(out,sizeof out,"%s", path);
     else if (path && (strstr(path,".odt")||strstr(path,".fodt")))
         snprintf(out,sizeof out,"%s", path);
+    else if (path && strstr(path,".rtf"))
+        snprintf(out,sizeof out,"%s", path);
+    else if (path && (strstr(path,".epub")||strstr(path,".epub3")))
+        snprintf(out,sizeof out,"%s", path);
     else if (path)
         snprintf(out,sizeof out,"%s.docx", path);
     else
         snprintf(out,sizeof out,"/tmp/wubuos_document.docx");
     int rc;
-    if (strstr(out,".odt")||strstr(out,".fodt")) rc = wubumodel_write_odt(doc, out);
-    else rc = wubumodel_write_docx(doc, out);
+    const char *lab;
+    if (strstr(out,".odt")||strstr(out,".fodt")){
+        rc = wubumodel_write_odt(doc, out); lab = "ODT";
+    } else if (strstr(out,".rtf")){
+        /* save back to the loaded RTF format (round-trip, not a .docx sidecar) */
+        wubulayout_doc *L = doccmd_layout(doc);
+        rc = L ? wubuexp_rtf(L, out) : -1;
+        if (L) wubulayout_destroy(L);
+        lab = "RTF";
+    } else if (strstr(out,".epub")||strstr(out,".epub3")){
+        rc = epub_write(doc, out, "WuBuOffice Document", "en"); lab = "EPUB";
+    } else {
+        rc = wubumodel_write_docx(doc, out); lab = "DOCX";
+    }
     if (rc==0){
-        char b[768]; const char *lab = (strstr(out,".odt")||strstr(out,".fodt"))?"ODT":"DOCX";
+        char b[768];
         snprintf(b,sizeof b,"%s saved: %s", lab, out);
         return strdup(b);
     }
-    return strdup("DOCX/ODT save failed");
+    return strdup("save failed for that format");
 }
 
 void doccmd_a11y_check(wubumodel_doc *doc, a11y_report *out){
