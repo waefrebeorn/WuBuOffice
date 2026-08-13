@@ -14,12 +14,44 @@
 #include <string.h>
 #include <strings.h>
 #include <stdio.h>
+#include <ctype.h>
 
 typedef struct { wubucell_book *b; int maxc, maxr;
                  int curc, curr;            /* active cell (1-based) */
                  char fbuf[256];            /* formula-bar edit buffer */
                  int editing;
                  char *path;                /* loaded path (NULL = untitled) */ } CellV;
+
+/* Parse A1-style cell references out of the active cell's formula (Excel's
+ * referenced-cell highlight: colored boxes on the cells a formula reads).
+ * Fills refcol[]/refrow[] (1-based), returns the count. Handles "A1", "B12",
+ * "AB3", and comma/plus/minus/star/slash/paren-separated refs. */
+static int cell_refs(const CellV *e, int refcol[], int refrow[], int cap){
+    int n = 0;
+    if (!e || !e->b) return 0;
+    wubucell_ckind k; const char *t = NULL; double num=0, c=0;
+    if (wubucell_get(e->b, 1, e->curc, e->curr, &k, &t, &num, &c) != 0) return 0;
+    if (k != WUBUCELL_FORM || !t) return 0;
+    /* scan for [A-Z]+[0-9]+ tokens */
+    size_t L = strlen(t);
+    for (size_t i = 0; i < L; ){
+        if (isalpha((unsigned char)t[i])){
+            size_t j = i;
+            while (j < L && isalpha((unsigned char)t[j])) j++;
+            /* collect digits that directly follow the letters */
+            size_t d = j;
+            while (d < L && isdigit((unsigned char)t[d])) d++;
+            if (d > j){   /* a cell ref: letters then digits */
+                int col = 0;
+                for (size_t x = i; x < j; x++) col = col*26 + (tolower((unsigned char)t[x])-'a'+1);
+                int row = atoi(t+j);
+                if (col >= 1 && row >= 1 && n < cap){ refcol[n]=col; refrow[n]=row; n++; }
+            }
+            i = (d > j) ? d : j;
+        } else i++;
+    }
+    return n;
+}
 
 static int render(WuView *v, int w, int h, int scroll,
                   unsigned char **rgba, int *rw, int *rh){
@@ -71,14 +103,21 @@ static int render(WuView *v, int w, int h, int scroll,
     char lbl[16]; snprintf(lbl,sizeof lbl,"%s%d",ab,e->curr);
     wuos_font_draw(lbl, fx_x0 + WUOS_SPACE_4, fx_y0 + WUOS_SPACE_4 + fh, 0, cel_fx_text.r,cel_fx_text.g,cel_fx_text.b, fb,w,h);
 
-    /* cell content in formula bar */
+    /* cell content in formula bar: show the FORMULA string for a formula cell
+     * (Excel parity), else the text/value. The computed result stays in the
+     * grid. */
     const char *shown = e->editing ? e->fbuf : "";
     if (!e->editing){
         wubucell_ckind k; const char *t=NULL; double num=0,c=0;
         if (wubucell_get(e->b,1,e->curc,e->curr,&k,&t,&num,&c)==0){
             static char disp[80];
-            if (k==WUBUCELL_NUM||k==WUBUCELL_FORM) snprintf(disp,sizeof disp,"%g",(k==WUBUCELL_FORM&&c)?c:num);
-            else snprintf(disp,sizeof disp,"%s",t?t:"");
+            if (k==WUBUCELL_FORM && t){
+                snprintf(disp,sizeof disp,"=%s",t);   /* show the formula */
+            } else if (k==WUBUCELL_FORM){
+                snprintf(disp,sizeof disp,"%g",c);
+            } else if (k==WUBUCELL_NUM){
+                snprintf(disp,sizeof disp,"%g",num);
+            } else snprintf(disp,sizeof disp,"%s",t?t:"");
             shown = disp;
         }
     }
@@ -93,6 +132,11 @@ static int render(WuView *v, int w, int h, int scroll,
     }
 
     /* row headers + cells */
+    /* Excel referenced-cell highlight: colored boxes on cells the active
+     * formula reads (distinct from the active-cell fill). */
+    int refcol[32], refrow[32];
+    int nref = cell_refs(e, refcol, refrow, 32);
+    WuosRGB cel_ref = dark ? (WuosRGB){120,190,255} : (WuosRGB){0,110,215};
     for (int r=1; r<=e->maxr; r++){
         char rn[16]; snprintf(rn,sizeof rn,"%d",r);
         int on=(r==e->curr);
@@ -104,6 +148,8 @@ static int render(WuView *v, int w, int h, int scroll,
             int x = margin_x + c*cw;
             int y = margin_y + r*rh2;
             int active = (c==e->curc && r==e->curr);
+            int referenced = 0;
+            for (int ri=0; ri<nref; ri++) if (refcol[ri]==c && refrow[ri]==r){ referenced=1; break; }
             for (int yy=y; yy<y+rh2; yy++) {
                 for (int xx=x; xx<x+cw; xx++) {
                     if (xx>=w||yy>=h) continue;
@@ -114,6 +160,11 @@ static int render(WuView *v, int w, int h, int scroll,
                     } else {
                         WuosRGB cell_bg = edge ? cel_edge : cel_bg;
                         fb[i]=cell_bg.r; fb[i+1]=cell_bg.g; fb[i+2]=cell_bg.b;
+                    }
+                    /* overlay a 2px referenced-cell ring */
+                    if (referenced && (xx==x||xx==x+1||yy==y||yy==y+1||
+                                       xx==x+cw-2||xx==x+cw-1||yy==y+rh2-2||yy==y+rh2-1)){
+                        fb[i]=cel_ref.r; fb[i+1]=cel_ref.g; fb[i+2]=cel_ref.b;
                     }
                 }
             }
