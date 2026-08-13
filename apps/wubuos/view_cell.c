@@ -22,15 +22,25 @@ typedef struct { wubucell_book *b; int maxc, maxr;
                  int editing;
                  char *path;                /* loaded path (NULL = untitled) */ } CellV;
 
+/* Expose referenced-cell refs for testing (test_view.c). */
+int wuos_cell_test_refs(const wubucell_book *b, int curc, int curr,
+                        int refcol[], int refrow[], int cap);
+
 /* Parse A1-style cell references out of the active cell's formula (Excel's
  * referenced-cell highlight: colored boxes on the cells a formula reads).
  * Fills refcol[]/refrow[] (1-based), returns the count. Handles "A1", "B12",
  * "AB3", and comma/plus/minus/star/slash/paren-separated refs. */
 static int cell_refs(const CellV *e, int refcol[], int refrow[], int cap){
-    int n = 0;
     if (!e || !e->b) return 0;
+    return wuos_cell_test_refs(e->b, e->curc, e->curr, refcol, refrow, cap);
+}
+
+int wuos_cell_test_refs(const wubucell_book *b, int curc, int curr,
+                        int refcol[], int refrow[], int cap){
+    int n = 0;
+    if (!b) return 0;
     wubucell_ckind k; const char *t = NULL; double num=0, c=0;
-    if (wubucell_get(e->b, 1, e->curc, e->curr, &k, &t, &num, &c) != 0) return 0;
+    if (wubucell_get(b, 1, curc, curr, &k, &t, &num, &c) != 0) return 0;
     if (k != WUBUCELL_FORM || !t) return 0;
     /* scan for [A-Z]+[0-9]+ tokens */
     size_t L = strlen(t);

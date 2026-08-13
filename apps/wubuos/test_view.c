@@ -747,6 +747,36 @@ int main(void){
                 }
             }
         }
+
+        /* ---- CELL referenced-cell highlight: formula 'A1+B2' must yield refs
+         * (A1) and (B2) for the active cell. Guard against the Excel parity
+         * feature regressing (research: colored boxes on referenced cells). */
+        {
+            wubucell_book *b = wubucell_create();
+            int s = wubucell_sheet(b, "Sheet1");
+            wubucell_cell_f(b, s, 3, 4, "A1+B2", 3);   /* C4 = A1+B2 */
+            wubucell_cell_f(b, s, 1, 1, "1+1", 2);
+            wubucell_cell_f(b, s, 2, 2, "2+2", 4);
+            int rc[8], rr[8];
+            int n = wuos_cell_test_refs(b, 3, 4, rc, rr, 8);
+            int ok = (n == 2);
+            if (ok){
+                /* expect (1,1) and (2,2) in some order */
+                int have11=0, have22=0;
+                for (int i=0;i<n;i++){
+                    if (rc[i]==1 && rr[i]==1) have11=1;
+                    if (rc[i]==2 && rr[i]==2) have22=1;
+                }
+                ok = have11 && have22;
+            }
+            if (ok) fprintf(stderr,"[cell ref] highlight refs OK (A1+B2)\n");
+            else { fprintf(stderr,"[cell ref] FAILED (n=%d)\n", n); bad++; }
+            /* a non-formula active cell yields no refs */
+            int n0 = wuos_cell_test_refs(b, 1, 1, rc, rr, 8);
+            if (n0 != 0){ fprintf(stderr,"[cell ref] non-formula gave %d refs\n", n0); bad++; }
+            else fprintf(stderr,"[cell ref] non-formula no-refs OK\n");
+            wubucell_free(b);
+        }
     }
 
     /* ---- OCR interactive: real recognized text + selection navigation ---- */
