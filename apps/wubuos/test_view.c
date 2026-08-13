@@ -240,26 +240,33 @@ int main(void){
             int rc = al->render(al, 960, 664, 0, &rgba, &w, &h);
             if (rc!=0 || !rgba){ fprintf(stderr,"[active-line] render FAILED\n"); bad++; }
             else {
-                /* find a contiguous band of rows (in the text area x>60) whose
-                 * average brightness sits between pure-bg and pure-white (i.e.
-                 * the tinted active line), excluding status/tab chrome. */
+                /* Find a contiguous band of rows (in the text area x>60) whose
+                 * brightness is subtly offset from the background (the active-line
+                 * tint). Theme-independent: compute the dominant bg first, then
+                 * look for a run of ~one line height that deviates from it by a
+                 * small, consistent delta. */
+                /* dominant bg color in the text area (skip gutter) */
+                long br=0,bg_=0,bb=0,bn=0;
+                for (int y=40; y<h-26; y+=4)
+                    for (int x=200; x<700; x+=4){ int i=(y*w+x)*4; br+=rgba[i];bg_+=rgba[i+1];bb+=rgba[i+2];bn++; }
+                int mbr=(int)(br/bn), mbg=(int)(bg_/bn), mbb=(int)(bb/bn);
                 int band=0;
-                for (int y=30; y<h-26 && !band; y++){
+                for (int y=40; y<h-26 && !band; y++){
                     long sr=0,sg=0,sb=0,n=0;
-                    for (int x=60; x<400; x+=5){ int i=(y*w+x)*4; sr+=rgba[i];sg+=rgba[i+1];sb+=rgba[i+2]; n++; }
+                    for (int x=200; x<700; x+=5){ int i=(y*w+x)*4; sr+=rgba[i];sg+=rgba[i+1];sb+=rgba[i+2]; n++; }
                     int mr=sr/n, mg=sg/n, mb=sb/n;
-                    if (mr>=236 && mr<=252 && mg>=236 && mg<=252 && mb>=236 && mb<=252
-                        && (mr-mg)<18 && (mg-mb)<18){
-                        /* measure run length */
+                    /* a tinted row: within ~40 brightness of bg but clearly distinct */
+                    int d = abs(mr-mbr)+abs(mg-mbg)+abs(mb-mbb);
+                    if (d>=12 && d<=120){
                         int run=0;
                         for (int yy=y; yy<h-26; yy++){
                             long r2=0,g2=0,b2=0,n2=0;
-                            for (int x=60; x<400; x+=5){ int j=(yy*w+x)*4; r2+=rgba[j];g2+=rgba[j+1];b2+=rgba[j+2]; n2++; }
+                            for (int x=200; x<700; x+=5){ int j=(yy*w+x)*4; r2+=rgba[j];g2+=rgba[j+1];b2+=rgba[j+2]; n2++; }
                             int m2r=r2/n2,m2g=g2/n2,m2b=b2/n2;
-                            if (m2r>=236&&m2r<=252&&m2g>=236&&m2g<=252&&m2b>=236&&m2b<=252&&(m2r-m2g)<18&&(m2g-m2b)<18) run++;
-                            else break;
+                            int dd=abs(m2r-mbr)+abs(m2g-mbg)+abs(m2b-mbb);
+                            if (dd>=12 && dd<=120) run++; else break;
                         }
-                        if (run>=10) band=1;   /* a real line band is ~24px */
+                        if (run>=6) band=1;   /* a line band is ~18-24px */
                     }
                 }
                 if (!band){ fprintf(stderr,"[active-line] no highlight band found\n"); bad++; }
@@ -421,9 +428,13 @@ int main(void){
         WuView *tv = wuos_editor_create(NULL);
         if (!tv){ fprintf(stderr,"[theme] create FAILED\n"); bad++; }
         else {
-            if (wuos_editor_dark(tv) != 0){ fprintf(stderr,"[theme] default not light\n"); bad++; }
+            /* editor now follows the global shell theme (may be light or dark),
+             * so assert the TOGGLE flips state, then force DARK for the render
+             * pixel check (independent of the starting theme). */
+            int start = wuos_editor_dark(tv);
             tv->on_key(tv, WUOS_KEY_THEME, 1);
-            if (wuos_editor_dark(tv) != 1){ fprintf(stderr,"[theme] toggle failed\n"); bad++; }
+            if (wuos_editor_dark(tv) == start){ fprintf(stderr,"[theme] toggle failed\n"); bad++; }
+            if (!wuos_editor_dark(tv)) tv->on_key(tv, WUOS_KEY_THEME, 1);  /* ensure dark */
             unsigned char *rgba=NULL; int w=0,h=0;
             int rc = tv->render(tv, 960, 664, 0, &rgba, &w, &h);
             if (rc!=0 || !rgba){ fprintf(stderr,"[theme] render FAILED\n"); bad++; }

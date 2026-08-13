@@ -1164,6 +1164,10 @@ static char *editor_model_text(const wubumodel_doc *m){
 WuView *wuos_editor_create(const char *path){
     Editor *e = calloc(1, sizeof *e);
     if (!e) return NULL;
+    /* follow the shell's theme so a dark app doesn't show a light editor
+     * (was hardcoded light; the syntax palette IS theme-aware, only the bg
+     * flag was wrong) */
+    e->dark = wubusettings_dark(wubusettings_shared());
 
     const char *seed =
         "/* WuBuPad -- Notepad++ parity, embedded in WuBuOffice */\n"
