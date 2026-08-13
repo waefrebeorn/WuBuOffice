@@ -1,23 +1,34 @@
 #include "wuos_toolbar.h"
 #include "wuos.h"   /* WUOS_KEY_STYLE_* / WUOS_KEY_INSERT_* sentinels */
+#include "hive.h"   /* data-driven toolbar template */
+#include <stdlib.h>
 #include <string.h>
 
-/* Toolbar buttons. cmd >=1000 = menu/palette command (run via run_menu_cmd);
- * cmd 11..20 = formatting/insert forwarded to the active view's on_key. */
-const WuosTbBtn wuos_tb_buttons[] = {
-  { "New", 1003 }, { "Open", 1000 }, { "Save", 1001 }, { "Save As", 1002 },
-  { NULL, 0 },
-  { "Undo", 1005 }, { "Redo", 1006 },
-  { NULL, 0 },
-  { "Find", 1007 }, { "Replace", 1008 },
-  { NULL, 0 },
-  { "H1", 11 }, { "H2", 12 }, { "H3", 13 }, { "Body", 14 }, { "Quote", 15 }, { "Code", 16 },
-  { NULL, 0 },
-  { "Link", 17 }, { "List", 18 }, { "Table", 19 }, { "Image", 20 },
-  { NULL, 0 },
-  { "PDF", 1030 }, { "EPUB", 1004 },
-};
-const size_t wuos_tb_count = sizeof wuos_tb_buttons / sizeof wuos_tb_buttons[0];
+/* Toolbar buttons. Data-driven from the hive template (wuos_tb_init) — NOT a
+ * hardcoded static array. cmd >=1000 = menu/palette command; 11..20 =
+ * formatting/insert forwarded to the active view's on_key. */
+WuosTbBtn *wuos_tb_buttons = NULL;
+size_t     wuos_tb_count = 0;
+
+void wuos_tb_init(const HiveToolbar *tb){
+    /* free any previous table */
+    if (wuos_tb_buttons){ free(wuos_tb_buttons); wuos_tb_buttons = NULL; }
+    wuos_tb_count = 0;
+    if (!tb) return;
+    size_t n = tb->n;
+    if (n == 0) return;
+    wuos_tb_buttons = calloc(n, sizeof *wuos_tb_buttons);
+    if (!wuos_tb_buttons) return;
+    for (size_t i = 0; i < n; i++){
+        wuos_tb_buttons[i].label = tb->items[i].label;  /* points into hive */
+        wuos_tb_buttons[i].cmd   = tb->items[i].cmd;
+    }
+    wuos_tb_count = n;
+}
+
+void wuos_tb_shutdown(void){
+    free(wuos_tb_buttons); wuos_tb_buttons = NULL; wuos_tb_count = 0;
+}
 
 int wuos_tb_label_count(void){
     int n=0;

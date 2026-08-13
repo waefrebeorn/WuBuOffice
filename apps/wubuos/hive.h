@@ -37,7 +37,7 @@ typedef struct {
     size_t      n;
 } HiveMenu;
 
-typedef struct {
+typedef struct HiveToolbar {
     HiveItem *items;     /* toolbar buttons (label NULL = separator) */
     size_t    n;
 } HiveToolbar;

@@ -338,6 +338,7 @@ int main(int argc, char **argv){
      * slide content (no hardcoded UI data). */
     g_hive = hive_load();
     g_menus = hive_menus(g_hive, &g_nmenus);
+    wuos_tb_init(hive_toolbar(g_hive));   /* build toolbar from the template */
 
     add_view(wuos_doc_create(file_for_doc));
     add_view(wuos_cell_create(file_for_cell));
@@ -1340,6 +1341,7 @@ int main(int argc, char **argv){
     toast_destroy(g_toasts);
     palette_destroy(g_palette);
     hive_free(g_hive);   /* data-driven menu/toolbar/slide template */
+    wuos_tb_shutdown();  /* free the hive-built toolbar table */
     wuos_plugins_free(g_plugins);
     wuos_font_quit();
     SDL_DestroyRenderer(ren);

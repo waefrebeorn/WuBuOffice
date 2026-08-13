@@ -1,7 +1,10 @@
 /* test_wuos_toolbar.c -- headless checks for the shell's formatting toolbar
  * (wuos_toolbar). Verifies the button table, hit-testing round-trips, command
- * mapping, and that the strip fits the shell window width. */
+ * mapping, and that the strip fits the shell window width. The toolbar is now
+ * data-driven (built from the hive template), so the test builds it from the
+ * hive first. */
 #include "wuos_toolbar.h"
+#include "hive.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -56,10 +59,18 @@ static void test_command_mapping(void){
 }
 
 int main(void){
+    /* the toolbar is data-driven: build it from the hive template */
+    Hive *h = hive_load();
+    CK(h, "hive_load");
+    wuos_tb_init(hive_toolbar(h));
+
     test_table();
     test_hit_testing();
     test_fits_window();
     test_command_mapping();
+
+    wuos_tb_shutdown();
+    hive_free(h);
     if (fails == 0) printf("TOOLBAR TESTS PASSED\n");
     else printf("TOOLBAR TESTS FAILED (%d)\n", fails);
     return fails ? 1 : 0;
