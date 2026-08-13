@@ -684,6 +684,31 @@ int main(void){
                     } else { fprintf(stderr,"[cell rt] reload FAILED\n"); bad++; }
                 }
             }
+
+            /* ---- CELL XLSX round-trip: assemble (write .xlsx) then read back
+             * and verify data + formula survive (Excel interchange format). */
+            {
+                wubucell_book *b = wubucell_create();
+                int s = wubucell_sheet(b, "Sheet1");
+                wubucell_cell_n(b, s, 1, 1, 10);
+                wubucell_cell_n(b, s, 2, 1, 24);
+                wubucell_cell_s(b, s, 1, 2, "Total");
+                wubucell_cell_f(b, s, 3, 1, "A1+B1", 34);
+                const char *xlsx = "/tmp/wubuos_cell_rt.xlsx";
+                if (wubucell_assemble(b, xlsx) != 0){ fprintf(stderr,"[cell xlsx] assemble failed\n"); bad++; }
+                wubucell_free(b);
+                wubucell_book *rb = NULL;
+                if (wubucell_read(xlsx, &rb) != 0 || !rb){ fprintf(stderr,"[cell xlsx] read failed\n"); bad++; }
+                else {
+                    wubucell_ckind k; const char *txt=NULL; double n=0,c=0;
+                    int ok = (wubucell_get(rb,1,1,1,&k,&txt,&n,&c)==0 && k==WUBUCELL_NUM && n==10.0);
+                    if (!ok){ fprintf(stderr,"[cell xlsx] A1 lost\n"); bad++; }
+                    ok = ok && (wubucell_get(rb,1,3,1,&k,&txt,&n,&c)==0 && k==WUBUCELL_FORM && txt && strstr(txt,"A1+B1"));
+                    if (!ok){ fprintf(stderr,"[cell xlsx] formula lost\n"); bad++; }
+                    else fprintf(stderr,"[cell xlsx] round-trip OK (A1=10, formula='%s')\n", txt);
+                    wubucell_free(rb);
+                }
+            }
         }
     }
 
