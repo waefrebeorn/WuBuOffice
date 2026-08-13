@@ -155,7 +155,12 @@ static int render(WuView *v, int w, int h, int scroll,
         if (!fb) return -1;
         for (int i=0;i<w*h;i++){ size_t k=(size_t)i*4; fb[k]=doc_bg.r;fb[k+1]=doc_bg.g;fb[k+2]=doc_bg.b;fb[k+3]=255; }
         wubulayout_doc *L = wubulayout_create(e->doc, NULL,
-            doc_layout_measure, doc_layout_style, NULL, w, h, 56,56,56,56);
+            doc_layout_measure, doc_layout_style, NULL, w, h, 56,
+            /* DOC-62: reserve a right gutter for inserted objects (chart/draw/
+             * math) so they don't cover the text column. Without this the 320px
+             * chart overlay at W-340 collides with full-width paragraph text. */
+            (e->nobj > 0) ? (56 + 340) : 56,
+            56, 56);
         if (L){
             int pages = wubulayout_page_count(L);
             int pg = e->jump_page; e->jump_page = -1;
