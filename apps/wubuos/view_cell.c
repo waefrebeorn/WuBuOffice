@@ -226,13 +226,21 @@ static char *sidebar(WuView *v){
     out[0] = 0;
     char hdr[48]; snprintf(hdr, sizeof hdr, "Active: %c%d\n", 'A'+(e->curc-1), e->curr);
     size_t add = strlen(hdr); memcpy(out+len, hdr, add); len+=add; out[len]=0;
-    /* list populated cells in the current row (cols 1..40) */
+    /* list populated cells in the current row (cols 1..40) with their values */
     for (int c=1;c<=40;c++){
         wubucell_ckind k; const char *txt=NULL; double num=0, cached=0;
         if (wubucell_get(e->b, 1, c, e->curr, &k, &txt, &num, &cached) == 0){
-            char line[96];
-            snprintf(line, sizeof line, "%c%d: %s%s\n", 'A'+(c-1), e->curr,
-                     k==WUBUCELL_FORM ? "=" : "", txt?txt:"");
+            char vbuf[64];
+            /* Numeric cells keep their value in num, formulas in cached (the
+             * computed result); text is empty for both, so show the real value
+             * instead of a bare "A1:" (that made the Navigator look useless). */
+            if (k == WUBUCELL_NUM) snprintf(vbuf,sizeof vbuf,"%.6g",num);
+            else if (k == WUBUCELL_FORM)
+                snprintf(vbuf,sizeof vbuf,"=%s  \xe2\x86\x92  %.6g",
+                         txt ? txt : "", cached);
+            else snprintf(vbuf,sizeof vbuf,"%s", txt ? txt : "");
+            char line[128];
+            snprintf(line, sizeof line, "%c%d: %s\n", 'A'+(c-1), e->curr, vbuf);
             add = strlen(line);
             if (len+add+1 > cap){ cap=(len+add+1)*2; char *nb=realloc(out,cap); if(!nb){ free(out); return NULL; } out=nb; }
             memcpy(out+len, line, add); len+=add; out[len]=0;
