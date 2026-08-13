@@ -13,6 +13,7 @@ add_executable(wubuos
     wuos_file.c
     plugin.c
     toast.c
+    wuos_motion.c
     palette.c
     view_doc.c
     view_cell.c
@@ -267,6 +268,14 @@ target_include_directories(test_shell_ui PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_compile_options(test_shell_ui PRIVATE -Wall -Wextra -Wpedantic)
 add_test(NAME shell_ui COMMAND test_shell_ui)
 set_tests_properties(shell_ui PROPERTIES LABELS "view;apps")
+
+# Headless test for the easing/tween micro-interaction engine (GUI_EXCELLENCE
+# emotional design: tab slide, button press, caret blink).
+add_executable(test_motion test_motion.c wuos_motion.c)
+target_include_directories(test_motion PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_options(test_motion PRIVATE -Wall -Wextra -Wpedantic)
+add_test(NAME motion COMMAND test_motion)
+set_tests_properties(motion PROPERTIES LABELS "view;apps")
 
 # Headless test for the formatting/quick-access toolbar (UI gap: reference
 # office apps + Notepad++ all have a clickable toolbar; the shell adds one).

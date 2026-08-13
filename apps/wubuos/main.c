@@ -15,6 +15,7 @@
 #include "dialog.h"     /* modal text-input dialog (DOC-66/EXP-89/UXA-47/UI-39) */
 #include "pasteplain.h" /* EXP-88: paste-plain strips formatting */
 #include "wuos_toolbar.h" /* quick-access + formatting toolbar (UI gap) */
+#include "wuos_motion.h"  /* easing/tween engine for micro-interactions */
 
 #include <SDL2/SDL.h>
 
@@ -51,6 +52,14 @@ static int     g_ctx_item = 0;      /* highlighted item */
 static int     g_ctx_x = 0, g_ctx_y = 0;
 static Toasts  *g_toasts = NULL;    /* UI-33: toast queue */
 static Palette *g_palette = NULL;   /* UI-29: command palette (Ctrl+K) */
+
+/* ---- micro-interaction / animation state (GUI_EXCELLENCE emotional design,
+ * GUI_MATHEMATICS timing & motion). All honored by prefers-reduced-motion. --- */
+static WuosTween g_tab_ul;      /* sliding active-tab underline (x0 -> x1) */
+static int       g_tab_ul_from = 0, g_tab_ul_to = 0; /* underline span (px) */
+static float     g_tb_press_t = 0; /* toolbar button press timestamp (ms) */
+static int       g_tb_press_i = -1;/* toolbar button index being pressed */
+static Uint32    g_caret_phase = 0;/* caret blink phase (ms) */
 static int      g_cheat = 0;       /* UI-36: shortcut cheat-sheet overlay */
 static int      g_first_run = 0;    /* UI-30: first-run onboarding splash */
 static Dialog  *g_dlg = NULL;       /* modal text-input dialog */
@@ -456,11 +465,26 @@ int main(int argc, char **argv){
                         g_menu_open = -1; g_menu_hover = -1;
                     }
                 }
-                else if (e.button.y < TAB_H){ int t=tab_at(e.button.x); if(t>=0){ active=t; scroll=0; tab_drag_from=t; tab_drag_x=e.button.x; } }
+                else if (e.button.y < TAB_H){ int t=tab_at(e.button.x); if(t>=0){ 
+                    if (t != active){  /* tab switch: slide the underline (ease-out ~200ms) */
+                        int x=0; for (int i=0;i<active;i++) x += tab_width(i);
+                        g_tab_ul_from = x; g_tab_ul_to = x + tab_width(active);
+                        x=0; for (int i=0;i<t;i++) x += tab_width(i);
+                        WubuSettings *msh = wubusettings_shared();
+                        int mreduce = msh ? wubusettings_reduced_motion(msh) : 0;
+                        wuos_tween_start(&g_tab_ul, (float)g_tab_ul_from, (float)x, 
+                                         mreduce ? 0.0f : 0.22f, 1); /* out_quad */
+                        g_tab_ul_to = x + tab_width(t);
+                    }
+                    active=t; scroll=0; tab_drag_from=t; tab_drag_x=e.button.x; } }
                 else if (e.button.y >= TAB_H+MENU_H && e.button.y < TAB_H+MENU_H+TOOLBAR_H){
-                    /* toolbar button click */
+                    /* toolbar button click + press feedback micro-interaction
+                     * (research: button active scale 0.98 for ~100ms ease-out). */
                     int ti = wuos_tb_at(e.button.x);
-                    if (ti>=0 && wuos_tb_buttons[ti].cmd) run_tb_cmd(wuos_tb_buttons[ti].cmd);
+                    if (ti>=0 && wuos_tb_buttons[ti].cmd){
+                        g_tb_press_i = ti; g_tb_press_t = (float)SDL_GetTicks();
+                        run_tb_cmd(wuos_tb_buttons[ti].cmd);
+                    }
                     g_menu_open=-1; g_menu_hover=-1;
                 }
                 else if (e.button.y >= WIN_H-STATUS_H){ /* status bar: zoom slider */
@@ -856,11 +880,6 @@ int main(int argc, char **argv){
             /* 1px right divider */
             SDL_SetRenderDrawColor(ren, bd.r, bd.g, bd.b, 255);
             SDL_RenderFillRect(ren,&(SDL_Rect){x+tw-1,0,1,TAB_H});
-            /* active tab: 2px accent underline */
-            if (on){
-                SDL_SetRenderDrawColor(ren, ac.r, ac.g, ac.b, 255);
-                SDL_RenderFillRect(ren,&(SDL_Rect){x,TAB_H-2,tw,2});
-            }
             /* dragged tab: 2px accent overline so the user sees it's in motion */
             if (dragging){
                 SDL_SetRenderDrawColor(ren, ac.r, ac.g, ac.b, 255);
@@ -870,6 +889,26 @@ int main(int argc, char **argv){
                      on?ttxo.r:ttx.r, on?ttxo.g:ttx.g, on?ttxo.b:ttx.b,
                      views[i]->name);
             x+=tw;
+        }
+        /* Active-tab underline SLIDES to the new active tab (research:
+         * motion.dev/ui-layouts smooth-tabs: a sliding indicator). Drawn once,
+         * after the loop. When idle it sits on the active tab; during a tab
+         * switch the tween eases the left edge across (out_quad ~200ms).
+         * prefers-reduced-motion -> tween done instantly (dur 0). */
+        {
+            WubuSettings *ash = wubusettings_shared();
+            int areduce = ash ? wubusettings_reduced_motion(ash) : 0;
+            float ul_x, ul_w;
+            if (areduce || wuos_tween_done(&g_tab_ul)){
+                int xa = 0; for (int i=0;i<active;i++) xa += tab_width(i);
+                ul_x = (float)xa; ul_w = (float)tab_width(active);
+            } else {
+                ul_x = wuos_tween_value(&g_tab_ul);
+                ul_w = (float)g_tab_ul_to - ul_x;
+                if (ul_w < 2.0f) ul_w = 2.0f;
+            }
+            SDL_SetRenderDrawColor(ren, ac.r, ac.g, ac.b, 255);
+            SDL_RenderFillRect(ren,&(SDL_Rect){(int)ul_x, TAB_H-2, (int)ul_w, 2});
         }
         /* menu bar (UI-43): second chrome row below the tab strip. Top-level
          * items; the open one drops a command list. Neutral surface, accent
@@ -951,13 +990,22 @@ int main(int argc, char **argv){
                 }
                 int bw = (int)strlen(b->label)*7 + 14;
                 int hov = (g_tb_hover==(int)i);
-                if (hov){
-                    SDL_SetRenderDrawColor(ren, ac.r, ac.g, ac.b, 235);
+                /* press micro-interaction: button briefly deepens for ~100ms
+                 * (research: active state scale/color feedback, ease-out). */
+                int press = 0;
+                if (g_tb_press_i == (int)i){
+                    float age = (float)SDL_GetTicks() - g_tb_press_t;
+                    if (age < 100.0f) press = 1;
+                    else g_tb_press_i = -1;
+                }
+                if (hov || press){
+                    /* pressed = slightly deeper/more opaque than hover */
+                    SDL_SetRenderDrawColor(ren, ac.r, ac.g, ac.b, press ? 255 : 235);
                     SDL_RenderFillRect(ren, &(SDL_Rect){tx, ty+3, bw, TOOLBAR_H-6});
                 }
                 sdl_text(ren, tx + (bw - (int)strlen(b->label)*7)/2,
                          ty + (TOOLBAR_H-wuos_font_height())/2 + 1,
-                         hov ? ttxo.r : ttx.r, hov ? ttxo.g : ttx.g, hov ? ttxo.b : ttx.b,
+                         (hov||press) ? ttxo.r : ttx.r, (hov||press) ? ttxo.g : ttx.g, (hov||press) ? ttxo.b : ttx.b,
                          b->label);
                 tx += bw + 1;
             }
@@ -1097,10 +1145,15 @@ int main(int argc, char **argv){
             sdl_text(ren, bx+WUOS_SPACE_8, by+WUOS_SPACE_4, dlg_ttl.r,dlg_ttl.g,dlg_ttl.b, dialog_title(g_dlg));
             sdl_text(ren, bx+WUOS_SPACE_8, by+WUOS_SPACE_16, dlg_pmt.r,dlg_pmt.g,dlg_pmt.b, dialog_prompt(g_dlg));
             sdl_text(ren, bx+WUOS_SPACE_8, by+WUOS_SPACE_24, dlg_txt.r,dlg_txt.g,dlg_txt.b, dialog_text(g_dlg));
-            /* caret */
+            /* caret (blinks ~530ms, the standard rate; honor reduced-motion) */
+            WubuSettings *crsh = wubusettings_shared();
+            int crreduce = crsh ? wubusettings_reduced_motion(crsh) : 0;
+            int blink_on = crreduce || ((g_caret_phase / 530) % 2 == 0);
             int cw = wuos_font_text_width(dialog_text(g_dlg), 20);
-            SDL_SetRenderDrawColor(ren, dlg_crt.r, dlg_crt.g, dlg_crt.b, 255);
-            SDL_RenderFillRect(ren,&(SDL_Rect){bx+WUOS_SPACE_8+cw, by+WUOS_SPACE_20, 2, WUOS_SPACE_20});
+            if (blink_on){
+                SDL_SetRenderDrawColor(ren, dlg_crt.r, dlg_crt.g, dlg_crt.b, 255);
+                SDL_RenderFillRect(ren,&(SDL_Rect){bx+WUOS_SPACE_8+cw, by+WUOS_SPACE_20, 2, WUOS_SPACE_20});
+            }
             sdl_text(ren, bx+WUOS_SPACE_8, by+bh-WUOS_SPACE_4, dlg_hnt.r,dlg_hnt.g,dlg_hnt.b, "Enter to confirm \xe2\x80\xa2 Esc to cancel");
         }
 
@@ -1261,6 +1314,18 @@ int main(int argc, char **argv){
             }
         }
         SDL_Delay(16);
+
+        /* advance micro-interaction tweens (dt from real time; 16ms target).
+         * prefers-reduced-motion is honored by leaving the tweens at their
+         * targets in the render (see reduce checks). */
+        {   Uint32 now = SDL_GetTicks();
+            static Uint32 last = 0;
+            float dt = (last ? (float)(now - last) : 16.0f) / 1000.0f;
+            if (dt > 0.1f) dt = 0.1f;   /* clamp on stalls */
+            last = now;
+            wuos_tween_advance(&g_tab_ul, dt);
+            g_caret_phase = now;
+        }
     }
 
     for (int i=0;i<nviews;i++) views[i]->destroy(views[i]);
