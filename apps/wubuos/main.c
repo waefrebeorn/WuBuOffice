@@ -973,13 +973,17 @@ int main(int argc, char **argv){
                                  item_hover?ttxo.g:ttx.g,
                                  item_hover?ttxo.b:ttx.b,
                                  g_menus[mi].items[i].label);
-                        /* right-aligned accelerator hint (discoverability) */
+                        /* right-aligned accelerator hint (discoverability).
+                         * Right-align within the DROPDOWN width (dw), not the
+                         * top menu width (mw) — mw is narrower so the hint
+                         * drifted off into the middle. Full brightness: the
+                         * old *0.7 dim was unreadable in dark mode. */
                         const char *acc = g_menus[mi].items[i].accel;
                         if (acc && *acc){
                             int alen = wu_text_w(acc);
-                            sdl_text(ren, mx + mw - 10 - alen,
+                            sdl_text(ren, mx + dw - 10 - alen,
                                      iy + (20-wuos_font_height())/2 + 1,
-                                     ttxo.r*0.7, ttxo.g*0.7, ttxo.b*0.7, acc);
+                                     ttxo.r, ttxo.g, ttxo.b, acc);
                         }
                     }
                 }
