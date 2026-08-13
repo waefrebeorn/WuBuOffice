@@ -987,6 +987,13 @@ int main(int argc, char **argv){
             int ty = TAB_H + MENU_H;
             SDL_SetRenderDrawColor(ren, tbb.r, tbb.g, tbb.b, 255);
             SDL_RenderFillRect(ren, &(SDL_Rect){0, ty, WIN_W, TOOLBAR_H});
+            /* resting button surface: slightly raised from the bar bg so each
+             * button reads as a distinct clickable target (affordance).
+             * Derived from the theme bar color (same hue, ~14% lighter) so it
+             * matches light/dark/sepia themes instead of clashing. */
+            WuosRGB tbo = { (unsigned char)(tbb.r + (255-tbb.r)*14/100),
+                            (unsigned char)(tbb.g + (255-tbb.g)*14/100),
+                            (unsigned char)(tbb.b + (255-tbb.b)*14/100) };
             int tx = 0;
             for (size_t i=0;i<wuos_tb_count;i++){
                 const WuosTbBtn *b = &wuos_tb_buttons[i];
@@ -1010,6 +1017,12 @@ int main(int argc, char **argv){
                     /* pressed = slightly deeper/more opaque than hover */
                     SDL_SetRenderDrawColor(ren, ac.r, ac.g, ac.b, press ? 255 : 235);
                     SDL_RenderFillRect(ren, &(SDL_Rect){tx, ty+3, bw, TOOLBAR_H-6});
+                } else {
+                    /* resting-state button affordance: a subtle raised surface so
+                     * buttons read as distinct targets, not one merged string
+                     * (research: button = visible container, not bare text). */
+                    SDL_SetRenderDrawColor(ren, tbo.r, tbo.g, tbo.b, 255);
+                    SDL_RenderFillRect(ren, &(SDL_Rect){tx+1, ty+5, bw-2, TOOLBAR_H-10});
                 }
                 sdl_text(ren, tx + (bw - (int)strlen(b->label)*7)/2,
                          ty + (TOOLBAR_H-wuos_font_height())/2 + 1,
