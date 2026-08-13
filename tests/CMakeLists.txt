@@ -119,6 +119,16 @@ target_link_libraries(test_cell_read PRIVATE wubucell_app wubuoxml wubuxml wubuf
 target_include_directories(test_cell_read PRIVATE ${CMAKE_SOURCE_DIR}/apps/wubucell ${CMAKE_SOURCE_DIR}/src/wubuoxml ${CMAKE_SOURCE_DIR}/src/wubuxml ${CMAKE_SOURCE_DIR}/src/wubuformula ${CMAKE_SOURCE_DIR}/src/wubuformula/functions)
 add_test(NAME cell_read COMMAND test_cell_read)
 
+add_executable(test_xlsample test_xlsample.c)
+target_link_libraries(test_xlsample PRIVATE wubucell_app wubuoxml wubuxml wubuformula)
+target_include_directories(test_xlsample PRIVATE ${CMAKE_SOURCE_DIR}/apps/wubucell ${CMAKE_SOURCE_DIR}/src/wubuoxml ${CMAKE_SOURCE_DIR}/src/wubuxml ${CMAKE_SOURCE_DIR}/src/wubuformula ${CMAKE_SOURCE_DIR}/src/wubuformula/functions)
+add_test(NAME cell_xlsample COMMAND test_xlsample)
+
+add_executable(test_cell_edit test_cell_edit.c)
+target_link_libraries(test_cell_edit PRIVATE wubucell_app wubuformula)
+target_include_directories(test_cell_edit PRIVATE ${CMAKE_SOURCE_DIR}/apps/wubucell ${CMAKE_SOURCE_DIR}/src/wubuformula ${CMAKE_SOURCE_DIR}/src/wubuformula/functions)
+add_test(NAME cell_edit COMMAND test_cell_edit)
+
 add_executable(test_cell_cycle test_cell_cycle.c)
 target_link_libraries(test_cell_cycle PRIVATE wubucell_app wubuformula)
 target_include_directories(test_cell_cycle PRIVATE ${CMAKE_SOURCE_DIR}/apps/wubucell ${CMAKE_SOURCE_DIR}/src/wubuformula ${CMAKE_SOURCE_DIR}/src/wubuformula/functions)

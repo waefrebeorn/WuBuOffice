@@ -9,6 +9,7 @@
 #include "cell.h"          /* apps/wubucell */
 #include "cell_csv.h"      /* wubucell_read_csv */
 #include "cell_read.h"     /* wubucell_read */
+#include "cell_internal.h" /* cell_eval_all (recompute formulas after edit) */
 
 #include <stdlib.h>
 #include <string.h>
@@ -254,6 +255,11 @@ static void on_key(WuView *v, int key, int down){
                 wubucell_cell_s(e->b, 1, e->curc, e->curr, e->fbuf);
             }
             e->editing = 0; e->fbuf[0]=0;
+            /* Recompute ALL formulas after an edit so dependents update
+             * immediately (Excel: =A1+1 then change A1 -> shows new result,
+             * not the stale cached value). Without this a formula cell edited
+             * in the app shows 0/old until reload. */
+            cell_eval_all(e->b);
             if (key==WUOS_KEY_TAB){ if(e->curc<e->maxc) e->curc++; }
             return;
         }
