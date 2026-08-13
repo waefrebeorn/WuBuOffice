@@ -1,0 +1,66 @@
+{
+  "toolbar": [
+    { "label": "New", "cmd": 1003 }, { "label": "Open", "cmd": 1000 },
+    { "label": "Save", "cmd": 1001 }, { "label": "Save As", "cmd": 1002 },
+    { "sep": true },
+    { "label": "Undo", "cmd": 1005 }, { "label": "Redo", "cmd": 1006 },
+    { "sep": true },
+    { "label": "Find", "cmd": 1007 }, { "label": "Replace", "cmd": 1008 },
+    { "sep": true },
+    { "label": "H1", "cmd": 11 }, { "label": "H2", "cmd": 12 }, { "label": "H3", "cmd": 13 },
+    { "label": "Body", "cmd": 14 }, { "label": "Quote", "cmd": 15 }, { "label": "Code", "cmd": 16 },
+    { "sep": true },
+    { "label": "Link", "cmd": 17 }, { "label": "List", "cmd": 18 },
+    { "label": "Table", "cmd": 19 }, { "label": "Image", "cmd": 20 },
+    { "sep": true },
+    { "label": "PDF", "cmd": 1030 }, { "label": "EPUB", "cmd": 1004 }
+  ],
+  "menus": [
+    { "label": "File", "items": [
+      { "label": "Open...", "cmd": 1000, "accel": "Ctrl+O" },
+      { "label": "Save", "cmd": 1001, "accel": "Ctrl+S" },
+      { "label": "Save As...", "cmd": 1002, "accel": "Ctrl+Shift+S" },
+      { "label": "New Document", "cmd": 1003, "accel": "Ctrl+T" },
+      { "label": "Close Tab", "cmd": 1027, "accel": "Ctrl+W" },
+      { "sep": true },
+      { "label": "Export EPUB", "cmd": 1004 }, { "label": "Export PDF", "cmd": 1030 },
+      { "label": "Export HTML", "cmd": 1031 }, { "label": "Export Markdown", "cmd": 1032 },
+      { "label": "Export LaTeX", "cmd": 1033 }, { "label": "Export RTF", "cmd": 1034 }
+    ] },
+    { "label": "Edit", "items": [
+      { "label": "Undo", "cmd": 1005, "accel": "Ctrl+Z" },
+      { "label": "Redo", "cmd": 1006, "accel": "Ctrl+Y" },
+      { "label": "Find...", "cmd": 1007, "accel": "Ctrl+F" },
+      { "label": "Replace...", "cmd": 1008, "accel": "Ctrl+H" },
+      { "label": "Go to Line...", "cmd": 1009, "accel": "Ctrl+G" },
+      { "label": "Toggle Theme", "cmd": 1010 },
+      { "sep": true },
+      { "label": "Cut", "cmd": 1018, "accel": "Ctrl+X" },
+      { "label": "Copy", "cmd": 1019, "accel": "Ctrl+C" },
+      { "label": "Paste", "cmd": 1020, "accel": "Ctrl+V" },
+      { "label": "Paste Plain", "cmd": 1021, "accel": "Ctrl+Shift+V" },
+      { "label": "Select All", "cmd": 1022, "accel": "Ctrl+A" }
+    ] },
+    { "label": "View", "items": [
+      { "label": "Zoom In", "cmd": 1011, "accel": "Ctrl+=" },
+      { "label": "Zoom Out", "cmd": 1012, "accel": "Ctrl+-" },
+      { "label": "Zoom Reset", "cmd": 1013, "accel": "Ctrl+0" },
+      { "label": "Word Wrap", "cmd": 1014 }, { "label": "High Contrast", "cmd": 1015 },
+      { "label": "Presentation", "cmd": 1024 }
+    ] },
+    { "label": "Help", "items": [
+      { "label": "Shortcuts", "cmd": 1016 }, { "label": "First-run Tour", "cmd": 1017 },
+      { "label": "About", "cmd": 1025 }
+    ] }
+  ],
+  "slide": {
+    "title": "WuBuOffice — Slide Deck",
+    "bullets": [
+      "One engine, every format: docx / xlsx / pptx / odt / pdf",
+      "Real OCR with a from-scratch recognizer",
+      "Notepad++-class editor embedded in the shell",
+      "All rendered through one shared surface"
+    ],
+    "chart": [ 40, 65, 50, 80, 55 ]
+  }
+}
