@@ -14,6 +14,7 @@ add_executable(wubuos
     plugin.c
     toast.c
     wuos_motion.c
+    hive.c
     palette.c
     view_doc.c
     view_cell.c
@@ -134,7 +135,7 @@ target_compile_definitions(wubuos PRIVATE lex_free=wubupad_lex_free doc_create=w
 target_link_libraries(wubuos PRIVATE
     wubumodel wuburender wubuocr wubufont wubucell_app wubudoc wubuautosave
     wubuspell wubuchart wubudraw wubumath wubuepub wubua11y wubusvg
-    wubusettings wubushape wubulayout wubuexp wubutoc wubuscript wubupasteplain
+    wubusettings wubujson wubushape wubulayout wubuexp wubutoc wubuscript wubupasteplain
     wuburtf wuburedact wubucol
     wubucite wubucaption wubuheading wubueqnum wubuvars wubuhash wubusig wubucrdt
     wubucsv wubufocus wubuwatermark wubudyslexia wubufmtpaint wubusandbox
@@ -153,7 +154,7 @@ target_compile_options(wubuos PRIVATE -Wall -Wextra -Wpedantic)
 # Headless smoke test: create + render every view (real engines, no GUI).
 # Verifies each WuView adapter renders without crashing and returns a buffer.
 add_executable(test_view test_view.c wuos_font.c wuos_file.c plugin.c toast.c palette.c view_doc.c view_cell.c
-    view_slide.c view_ocr.c view_editor.c view_compare.c view_settings.c findbar.c autocomp.c bkmk.c codefold.c doccmd.c macro.c gotoline.c)
+    view_slide.c view_ocr.c view_editor.c view_compare.c view_settings.c findbar.c autocomp.c bkmk.c codefold.c doccmd.c macro.c gotoline.c hive.c)
 target_include_directories(test_view PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}/src/wubumodel
@@ -245,7 +246,7 @@ target_compile_definitions(test_view PRIVATE lex_free=wubupad_lex_free doc_creat
 target_link_libraries(test_view PRIVATE
     wubumodel wuburender wubuocr wubufont wubucell_app wubudoc wubuautosave
     wubuspell wubuchart wubudraw wubumath wubuepub wubua11y wubusvg
-    wubusettings wubushape wubulayout wubuexp wubutoc wubuscript wubupasteplain
+    wubusettings wubujson wubushape wubulayout wubuexp wubutoc wubuscript wubupasteplain
     wuburtf wuburedact wubucol
     wubucite wubucaption wubuheading wubueqnum wubuvars wubuhash wubusig wubucrdt
     wubucsv wubufocus wubuwatermark wubudyslexia wubufmtpaint wubusandbox
@@ -276,6 +277,14 @@ target_include_directories(test_motion PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_compile_options(test_motion PRIVATE -Wall -Wextra -Wpedantic)
 add_test(NAME motion COMMAND test_motion)
 set_tests_properties(motion PROPERTIES LABELS "view;apps")
+
+# Headless test for the data-driven hive template (no-hardcoding guard).
+add_executable(test_hive test_hive.c hive.c)
+target_include_directories(test_hive PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_options(test_hive PRIVATE -Wall -Wextra -Wpedantic)
+target_link_libraries(test_hive PRIVATE wubujson)
+add_test(NAME hive COMMAND test_hive)
+set_tests_properties(hive PROPERTIES LABELS "view;apps")
 
 # Headless test for the formatting/quick-access toolbar (UI gap: reference
 # office apps + Notepad++ all have a clickable toolbar; the shell adds one).

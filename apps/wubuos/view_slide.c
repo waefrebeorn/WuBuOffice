@@ -15,6 +15,7 @@
 #include "wuos.h"
 #include "wuos_font.h"
 #include "wuos_theme.h"
+#include "hive.h"        /* data-driven slide template (no hardcoded content) */
 
 #include <stdlib.h>
 #include <string.h>
@@ -28,6 +29,8 @@ typedef struct {
     char title[SLIDE_MAX_TITLE];
     char bullets[SLIDE_MAX_BULLETS][96];
     int  nbullets;
+    double chart[SLIDE_MAX_CHART];
+    int  nchart;
     int  sel;              /* 0 = title, 1..n = bullet being edited */
     int  caret;
     int  editing;
@@ -77,18 +80,18 @@ static int render(WuView *v, int w, int h, int scroll,
         wuos_font_draw("- (no bullets — press Enter on a line to add one)", margin_x + WUOS_SPACE_8, y, 0, sld_body.r*0.7,sld_body.g*0.7,sld_body.b*0.7, fb,w,h);
     }
 
-    /* bar chart (kept from the original stub; labels/values editable in format) */
+    /* bar chart (data from the hive template — no hardcoded values) */
     int chart_margin = WUOS_SPACE_8 * 6;
     int cx0 = chart_margin;
     int cy0 = y + WUOS_SPACE_8 * 4;
     int cw = w - chart_margin * 2;
     int chh = WUOS_SPACE_8 * 20;
-    double vals[] = {40, 65, 50, 80, 55};
-    int n = 5; double maxv = 80;
-    int bw = cw / n - WUOS_SPACE_8 * 2;
+    int n = e->nchart; double maxv = 1;
+    for (int i = 0; i < n; i++) if (e->chart[i] > maxv) maxv = e->chart[i];
+    int bw = n ? (cw / n - WUOS_SPACE_8 * 2) : 0;
     for (int i=0; i<n && i<SLIDE_MAX_CHART; i++){
         int bx = cx0 + WUOS_SPACE_8 + i * (cw / n);
-        int bh = (int)(chh * (vals[i] / maxv));
+        int bh = (int)(chh * (e->chart[i] / maxv));
         for (int yy = cy0 + chh - bh; yy < cy0 + chh; yy++)
             for (int xx = bx; xx < bx + bw; xx++)
                 if (xx >= 0 && yy >= 0 && xx < w && yy < h){
@@ -145,7 +148,8 @@ static void save(WuView *v){
     fprintf(f, "WuBuSlide 1\n");
     fprintf(f, "T: %s\n", e->title);
     for (int i=0; i<e->nbullets; i++) fprintf(f, "B: %s\n", e->bullets[i]);
-    fprintf(f, "# chart\nD: Q1:40\nD: Q2:65\nD: Q3:50\nD: Q4:80\nD: Q5:55\n");
+    fprintf(f, "# chart\n");
+    for (int i=0; i<e->nchart; i++) fprintf(f, "D: V%d:%g\n", i+1, e->chart[i]);
     fclose(f);
 }
 
@@ -162,6 +166,11 @@ static void load_slide(SlideV *e, const char *path){
                      (int)sizeof e->bullets[0] - 1, line+3);
             e->nbullets++;
         }
+        else if (!strncmp(line, "D: ", 3) && e->nchart < SLIDE_MAX_CHART){
+            /* chart datum "D: V1:40" -> value after the last ':' */
+            char *colon = strrchr(line+3, ':');
+            if (colon) e->chart[e->nchart++] = atof(colon+1);
+        }
     }
     fclose(f);
 }
@@ -172,9 +181,20 @@ WuView *wuos_slide_create(const char *path){
     SlideV *e = calloc(1, sizeof *e);
     WuView *v = calloc(1, sizeof *v);
     e->sel = 0;
+    /* seed from the data-driven hive template (title/bullets/chart) */
+    Hive *hive = hive_load();
+    const HiveSlide *hs = hive ? hive_slide(hive) : NULL;
+    if (hs){
+        if (hs->title) snprintf(e->title, sizeof e->title, "%s", hs->title);
+        for (size_t i = 0; i < hs->nbullets && i < SLIDE_MAX_BULLETS; i++)
+            snprintf(e->bullets[e->nbullets++], sizeof e->bullets[0], "%s", hs->bullets[i]);
+        for (size_t i = 0; i < hs->nchart && i < SLIDE_MAX_CHART; i++)
+            e->chart[e->nchart++] = hs->chart[i];
+    }
+    if (hive) hive_free(hive);
     if (path){
         e->path = strdup(path);
-        load_slide(e, path);
+        load_slide(e, path);   /* a saved slide file overrides the template */
     }
     v->name = "Slide";
     v->priv = e;
