@@ -18,7 +18,8 @@
 typedef struct { wubucell_book *b; int maxc, maxr;
                  int curc, curr;            /* active cell (1-based) */
                  char fbuf[256];            /* formula-bar edit buffer */
-                 int editing; } CellV;
+                 int editing;
+                 char *path;                /* loaded path (NULL = untitled) */ } CellV;
 
 static int render(WuView *v, int w, int h, int scroll,
                   unsigned char **rgba, int *rw, int *rh){
@@ -201,14 +202,27 @@ static void on_key(WuView *v, int key, int down){
     if (key>=32 && key<128){ e->editing=1; e->fbuf[0]=(char)key; e->fbuf[1]=0; return; }
 }
 
-static void destroy(WuView *v){ CellV *e = v->priv; wubucell_free(e->b); free(e); free(v); }
+static void destroy(WuView *v){ CellV *e = v->priv; wubucell_free(e->b); free(e->path); free(e); free(v); }
 
-static const char *get_path(WuView *v){ (void)v; return NULL; }
+static const char *get_path(WuView *v){ CellV *e = v->priv; return e->path; }
+
+/* Save the spreadsheet back to its loaded path (round-trip). CSV writes sheet
+ * 1 as RFC-4180 text; XLSX re-assembles. */
+static void save(WuView *v){
+    CellV *e = v->priv;
+    if (!e || !e->path) return;
+    size_t L = strlen(e->path);
+    if (L > 4 && !strcasecmp(e->path + L - 4, ".csv"))
+        wubucell_write_csv(e->b, 1, ',', e->path);
+    else
+        wubucell_assemble(e->b, e->path);   /* .xlsx/.ods (or default) */
+}
 
 WuView *wuos_cell_create(const char *path){
     CellV *e = calloc(1, sizeof *e);
     e->curc = 1; e->curr = 1; e->editing = 0; e->fbuf[0]=0;
     if (path){
+        e->path = strdup(path);
         const char *dot = strrchr(path, '.');
         if (dot && !strcasecmp(dot, ".csv")) wubucell_read_csv(path, ',', &e->b);
         else if (dot && (!strcasecmp(dot, ".xlsx")||!strcasecmp(dot, ".ods")))
@@ -240,6 +254,7 @@ WuView *wuos_cell_create(const char *path){
     v->sidebar = sidebar;
     v->on_key  = on_key;
     v->get_path = get_path;
+    v->save    = save;   /* round-trip: Ctrl+S writes back to the loaded format */
     return v;
 }
 

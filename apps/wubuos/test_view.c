@@ -8,6 +8,7 @@
 #include "wuos_file.h"
 #include "autosave.h"   /* wubuautosave: editor crash-recovery test */
 #include "model.h"      /* wubumodel_doc: build snapshot in autosave test */
+#include "cell.h"       /* wubucell: spreadsheet round-trip save check */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -657,6 +658,32 @@ int main(void){
                 else fprintf(stderr,"[cell] ok (live edit at %c%d formula='%s')\n", 'A'+c-1, r, f);
             }
             cv->destroy(cv);
+
+            /* ---- CELL round-trip: save the edited book to CSV and reload it
+             * to confirm the spreadsheet can persist (was: no save hook). */
+            {
+                WuView *cv2 = wuos_cell_create("/tmp/wubuos_cell_rt.csv");
+                if (!cv2){ fprintf(stderr,"[cell rt] create FAILED\n"); bad++; }
+                else {
+                    /* EDIT A1 then save+reload: set_cell must REPLACE so the
+                     * edited value is what comes back (round-trip correctness). */
+                    cv2->on_key(cv2,'h',1);            /* start editing */
+                    for (const char*p="i";*p;p++) cv2->on_key(cv2,(unsigned char)*p,1);
+                    cv2->on_key(cv2,WUOS_KEY_RETURN,1);/* commit A1="hi" */
+                    if (cv2->save) cv2->save(cv2);
+                    else { fprintf(stderr,"[cell rt] NO save hook\n"); bad++; }
+                    cv2->destroy(cv2);
+                    /* reload and confirm "hi" survived (edit replaced A1) */
+                    wubucell_book *rb=NULL;
+                    if (wubucell_read_csv("/tmp/wubuos_cell_rt.csv", ',', &rb)==0 && rb){
+                        wubucell_ckind k; const char *txt=NULL; double n=0,c=0;
+                        if (wubucell_get(rb,1,1,1,&k,&txt,&n,&c)==0 && k==WUBUCELL_STR && txt && strstr(txt,"hi"))
+                            fprintf(stderr,"[cell rt] CSV edit round-trip OK (A1='%s')\n",txt);
+                        else { fprintf(stderr,"[cell rt] edit A1 lost\n"); bad++; }
+                        wubucell_free(rb);
+                    } else { fprintf(stderr,"[cell rt] reload FAILED\n"); bad++; }
+                }
+            }
         }
     }
 

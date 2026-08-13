@@ -35,6 +35,19 @@ void wubucell_use_shared_strings(wubucell_book *b, int enable) { b->use_sst = en
 static void set_cell(wubucell_book *b, int sheet, int col, int row, cell_kind kind,
                      double num, const char *text, const char *formula, double cached, int style) {
     sheet_t *s = book_sheet(b, sheet); if (!s) return;
+    /* REPLACE an existing cell at (col,row) so re-editing takes effect on read
+     * (the get() reads the first match; appending duplicates made edits
+     * invisible). Fixes spreadsheet edit round-trip correctness. */
+    for (size_t i = 0; i < s->n; i++) {
+        cell_t *c = &s->cells[i];
+        if (c->col == col && c->row == row) {
+            c->kind = kind; c->num = num; c->cached = cached;
+            free(c->text);    c->text    = text ? strdup(text) : NULL;
+            free(c->formula); c->formula = formula ? strdup(formula) : NULL;
+            c->style = (style < 0) ? 0 : style;
+            return;
+        }
+    }
     if (s->n == s->cap) { s->cap = s->cap ? s->cap*2 : 16; s->cells = realloc(s->cells, s->cap*sizeof(*s->cells)); }
     cell_t *c = &s->cells[s->n++];
     c->col = col; c->row = row; c->kind = kind; c->num = num;
