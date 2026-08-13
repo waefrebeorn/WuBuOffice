@@ -16,6 +16,7 @@
 #include "pasteplain.h" /* EXP-88: paste-plain strips formatting */
 #include "wuos_toolbar.h" /* quick-access + formatting toolbar (UI gap) */
 #include "wuos_motion.h"  /* easing/tween engine for micro-interactions */
+#include "hive.h"         /* data-driven menu/toolbar/slide template */
 
 #include <SDL2/SDL.h>
 
@@ -64,36 +65,12 @@ static int      g_cheat = 0;       /* UI-36: shortcut cheat-sheet overlay */
 static int      g_first_run = 0;    /* UI-30: first-run onboarding splash */
 static Dialog  *g_dlg = NULL;       /* modal text-input dialog */
 static int      g_dlg_action = 0;   /* 0 none,1 link,2 qr,3 image-alt,10 open,11 save-as */
-/* Menu bar (UI-43): top-level menus File/Edit/View/Help with dropdowns.
- * Small opaque model; selecting an item runs a command id (same space the
+/* Menu bar + toolbar (UI-43): data-driven from the hive template (hive.json),
+ * NOT hardcoded arrays. Selecting an item runs a command id (same space the
  * command palette uses). Pure chrome state here; views stay GUI-free. */
-static const char *g_menu_names[4] = { "File", "Edit", "View", "Help" };
-/* Accelerator (shortcut) hints per menu item, indexed identically to g_menus.
- * "" = none. Discoverability per NN/g: shortcuts must be surfaced where the
- * user performs the action. (Research synthesis, 2026-08-12.) */
-static const char *g_menu_acc[4][16] = {
-  { "Ctrl+O", "Ctrl+S", "Ctrl+Shift+S", "Ctrl+T", "Ctrl+W",
-    "", "", "", "", "", "",
-    "", "" },
-  { "Ctrl+Z", "Ctrl+Y", "Ctrl+F", "Ctrl+H", "Ctrl+G", "", 
-    "Ctrl+X", "Ctrl+C", "Ctrl+V", "Ctrl+Shift+V", "Ctrl+A", "", "" },
-  { "Ctrl+=", "Ctrl+-", "Ctrl+0", "", "", "", "" },
-  { "", "", "" },
-};
-/* each menu: list of {label, cmd} pairs, cmd 0 = separator */
-static const struct { const char *label; int cmd; } g_menus[4][16] = {
-  { {"Open...",         1000}, {"Save",            1001}, {"Save As...",  1002},
-    {"New Document",     1003}, {"Close Tab",       1027},
-    {"Export EPUB",      1004}, {"Export PDF",       1030}, {"Export HTML",   1031},
-    {"Export Markdown",  1032}, {"Export LaTeX",     1033}, {"Export RTF",    1034},
-    {NULL,0} },  { {"Undo",            1005}, {"Redo",            1006}, {"Find...",      1007},
-    {"Replace...",       1008}, {"Go to Line...",   1009}, {"Toggle Theme",1010},
-    {"Cut",             1018}, {"Copy",            1019}, {"Paste",        1020},
-    {"Paste Plain",     1021}, {"Select All",      1022}, {NULL,0} },
-  { {"Zoom In",         1011}, {"Zoom Out",        1012}, {"Zoom Reset",   1013},
-    {"Word Wrap",       1014}, {"High Contrast",   1015}, {"Presentation",    1024}, {NULL,0} },
-  { {"Shortcuts",       1016}, {"First-run Tour",  1017}, {"About",          1025}, {NULL,0} },
-};
+static Hive *g_hive = NULL;         /* loaded at startup (no-hardcoding) */
+static const HiveMenu *g_menus = NULL;  /* shorthand for hive_menus() */
+static size_t g_nmenus = 0;
 static int g_menu_open = -1;       /* which top menu is dropped, -1 none */
 static int g_menu_hover = -1;      /* hovered dropdown item */
 
@@ -357,6 +334,11 @@ int main(int argc, char **argv){
     if (g_plugins && wuos_plugins_count(g_plugins)==0)
         fprintf(stderr, "[plugin] no modules in ~/.wubuos/plugins (ok)\n");
 
+    /* load the data-driven hive template: drives the menu bar + toolbar +
+     * slide content (no hardcoded UI data). */
+    g_hive = hive_load();
+    g_menus = hive_menus(g_hive, &g_nmenus);
+
     add_view(wuos_doc_create(file_for_doc));
     add_view(wuos_cell_create(file_for_cell));
     add_view(wuos_slide_create(NULL));
@@ -443,14 +425,14 @@ int main(int argc, char **argv){
                 g_menu_hover = -1;
                 if (e.motion.y >= TAB_H && e.motion.y < TAB_H+MENU_H){
                     int mx=0;
-                    for (int mi=0; mi<4; mi++){
-                        int mw = (int)strlen(g_menu_names[mi])*14 + 22;
-                        if (e.motion.x>=mx && e.motion.x<mx+mw){ g_menu_hover=mi; break; }
+                    for (size_t mi=0; mi<g_nmenus; mi++){
+                        int mw = (int)strlen(g_menus[mi].label)*14 + 22;
+                        if (e.motion.x>=mx && e.motion.x<mx+mw){ g_menu_hover=(int)mi; break; }
                         mx+=mw;
                     }
                     /* dropdown item hover when a menu is open */
                     if (g_menu_open>=0 && g_menu_hover==g_menu_open){
-                        int n=0; while (g_menus[g_menu_open][n].label) n++;
+                        int n = (int)g_menus[g_menu_open].n;
                         int dy = TAB_H + MENU_H, dy0 = e.motion.y - dy - 3;
                         int ii = dy0/24;
                         g_menu_hover = (ii>=0 && ii<n)? (g_menu_open*100+ii) : g_menu_open;
@@ -461,19 +443,19 @@ int main(int argc, char **argv){
                 /* UI-43: menu bar (row between TAB_H and TAB_H+MENU_H) */
                 if (e.button.y >= TAB_H && e.button.y < TAB_H+MENU_H){
                     int mx=0, hit=-1;
-                    for (int mi=0; mi<4; mi++){
-                        int mw = (int)strlen(g_menu_names[mi])*14 + 22;
-                        if (e.button.x>=mx && e.button.x<mx+mw){ hit=mi; break; }
+                    for (size_t mi=0; mi<g_nmenus; mi++){
+                        int mw = (int)strlen(g_menus[mi].label)*14 + 22;
+                        if (e.button.x>=mx && e.button.x<mx+mw){ hit=(int)mi; break; }
                         mx+=mw;
                     }
                     if (hit>=0){
                         /* if a dropdown is open and the click lands on an item, run it */
                         if (g_menu_open>=0 && hit==g_menu_open){
-                            int n=0; while (g_menus[hit][n].label) n++;
+                            int n = (int)g_menus[hit].n;
                             int dy = TAB_H + MENU_H, dy0 = e.button.y - dy - 3;
                             int ii = dy0/24;
-                            if (ii>=0 && ii<n && g_menus[hit][ii].cmd){
-                                int c = g_menus[hit][ii].cmd;
+                            if (ii>=0 && ii<n && g_menus[hit].items[ii].cmd){
+                                int c = g_menus[hit].items[ii].cmd;
                                 g_menu_open = -1; g_menu_hover = -1;
                                 run_menu_cmd(c);
                                 continue;
@@ -941,28 +923,29 @@ int main(int argc, char **argv){
             SDL_SetRenderDrawColor(ren, tbb.r, tbb.g, tbb.b, 255);
             SDL_RenderFillRect(ren, &(SDL_Rect){0, my, WIN_W, MENU_H});
             int mx = 0;
-            for (int mi=0; mi<4; mi++){
-                int mw = (int)strlen(g_menu_names[mi])*14 + 22;
-                int on = (mi==g_menu_open);
-                int hovered = (g_menu_hover==mi || (g_menu_open==mi && g_menu_hover>=mi*100 && g_menu_hover<mi*100+100));
+            for (size_t mi=0; mi<g_nmenus; mi++){
+                int mw = (int)strlen(g_menus[mi].label)*14 + 22;
+                int on = ((int)mi==g_menu_open);
+                int hovered = (g_menu_hover==(int)mi || (g_menu_open==(int)mi && g_menu_hover>=(int)mi*100 && g_menu_hover<(int)mi*100+100));
                 if (on || hovered){
                     SDL_SetRenderDrawColor(ren, tto.r, tto.g, tto.b, 255);
                     SDL_RenderFillRect(ren, &(SDL_Rect){mx, my, mw, MENU_H});
                 }
                 sdl_text(ren, mx+11, my + (MENU_H-wuos_font_height())/2 + 1,
                          (on||hovered)?ttxo.r:ttx.r, (on||hovered)?ttxo.g:ttx.g, (on||hovered)?ttxo.b:ttx.b,
-                         g_menu_names[mi]);
+                         g_menus[mi].label);
                 if (on){
                     /* dropdown: widen to fit the longest item + accelerator */
+                    int n = (int)g_menus[mi].n;
                     int dw = mw;
-                    for (int k=0; g_menus[mi][k].label; k++){
-                        int w = (int)strlen(g_menus[mi][k].label)*7 + 12;
-                        const char *a = g_menu_acc[mi][k];
+                    for (int k=0; k<n; k++){
+                        if (!g_menus[mi].items[k].label) continue;
+                        int w = (int)strlen(g_menus[mi].items[k].label)*7 + 12;
+                        const char *a = g_menus[mi].items[k].accel;
                         if (a && *a) w += (int)strlen(a)*7 + 14;
                         if (w > dw) dw = w;
                     }
                     /* dropdown */
-                    int n=0; while (g_menus[mi][n].label) n++;
                     int dy = my + MENU_H;
                     int dh = n*24 + 6;
                     SDL_SetRenderDrawColor(ren, tto.r, tto.g, tto.b, 255);
@@ -971,7 +954,8 @@ int main(int argc, char **argv){
                     SDL_RenderDrawRect(ren, &(SDL_Rect){mx, dy, dw, dh});
                     for (int i=0;i<n;i++){
                         int iy = dy + 3 + i*24;
-                        int item_hover = (g_menu_hover==mi*100+i);
+                        int item_hover = (g_menu_hover==(int)mi*100+i);
+                        if (!g_menus[mi].items[i].label) continue;  /* separator */
                         if (item_hover){
                             SDL_SetRenderDrawColor(ren, ac.r, ac.g, ac.b, 255);
                             SDL_RenderFillRect(ren, &(SDL_Rect){mx+1, iy, mw-2, 20});
@@ -980,9 +964,9 @@ int main(int argc, char **argv){
                                  item_hover?ttxo.r:ttx.r,
                                  item_hover?ttxo.g:ttx.g,
                                  item_hover?ttxo.b:ttx.b,
-                                 g_menus[mi][i].label);
+                                 g_menus[mi].items[i].label);
                         /* right-aligned accelerator hint (discoverability) */
-                        const char *acc = g_menu_acc[mi][i];
+                        const char *acc = g_menus[mi].items[i].accel;
                         if (acc && *acc){
                             int alen = (int)strlen(acc)*7;
                             sdl_text(ren, mx + mw - 10 - alen,
@@ -1312,7 +1296,7 @@ int main(int argc, char **argv){
             if (!dump){
                 dump = getenv("WUOS_DUMP");
                 const char *dm = getenv("WUOS_DUMP_MENU");
-                if (dm && *dm){ int mi = atoi(dm); if (mi>=0 && mi<4){ g_menu_open=mi; g_menu_hover=mi; } }
+                if (dm && *dm){ int mi = atoi(dm); if (mi>=0 && (size_t)mi<g_nmenus){ g_menu_open=mi; g_menu_hover=mi; } }
                 const char *dz = getenv("WUOS_DUMP_ZOOM");
                 if (dz && *dz){ g_zoom = (float)atof(dz); apply_zoom(); }
             }
@@ -1355,6 +1339,7 @@ int main(int argc, char **argv){
     free(g_plugin_msg);
     toast_destroy(g_toasts);
     palette_destroy(g_palette);
+    hive_free(g_hive);   /* data-driven menu/toolbar/slide template */
     wuos_plugins_free(g_plugins);
     wuos_font_quit();
     SDL_DestroyRenderer(ren);
