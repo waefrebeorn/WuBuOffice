@@ -1,13 +1,19 @@
 #include "wubu3d.h"
 #include <stdlib.h>
+#include <math.h>
+#include <string.h>
 
 struct wubu3d {
     wubu3d_vec *verts; size_t nv, vcap;
     wubu3d_face *faces; size_t nf, fcap;
+    wubu3d_vec *rot;    /* rotated snapshot, size == nv */
 };
 
 wubu3d *wubu3d_create(void){ return (wubu3d*)calloc(1,sizeof(wubu3d)); }
-void wubu3d_destroy(wubu3d *m){ if(!m) return; free(m->verts); free(m->faces); free(m); }
+void wubu3d_destroy(wubu3d *m){
+    if(!m) return;
+    free(m->verts); free(m->faces); free(m->rot); free(m);
+}
 
 int wubu3d_add_vertex(wubu3d *m, float x, float y, float z){
     if (!m) return -1;
@@ -16,9 +22,13 @@ int wubu3d_add_vertex(wubu3d *m, float x, float y, float z){
         wubu3d_vec *nv = (wubu3d_vec*)realloc(m->verts, nc*sizeof(wubu3d_vec));
         if (!nv) return -1;
         m->verts = nv; m->vcap = nc;
+        wubu3d_vec *nr = (wubu3d_vec*)realloc(m->rot, nc*sizeof(wubu3d_vec));
+        if (!nr) return -1;
+        m->rot = nr;
     }
     m->verts[m->nv].x=x; m->verts[m->nv].y=y; m->verts[m->nv].z=z;
-    return (int)(m->nv++);
+    m->nv++;
+    return (int)(m->nv-1);
 }
 
 int wubu3d_add_face(wubu3d *m, unsigned a, unsigned b, unsigned c){
@@ -50,5 +60,38 @@ int wubu3d_make_cube(wubu3d *m){
         {0,1,2},{0,2,3},{4,6,5},{4,7,6},{0,4,5},{0,5,1},
         {1,5,6},{1,6,2},{2,6,7},{2,7,3},{3,7,4},{3,4,0}};
     for (int i=0;i<12;i++) if (wubu3d_add_face(m, f[i][0],f[i][1],f[i][2])<0) return -1;
+    return 0;
+}
+
+int wubu3d_rotate(wubu3d *m, float ax, float ay){
+    if (!m || m->nv==0) return -1;
+    float cy = cosf(ay), sy = sinf(ay);
+    float cx = cosf(ax), sx = sinf(ax);
+    for (size_t i=0;i<m->nv;i++){
+        float x = m->verts[i].x, y = m->verts[i].y, z = m->verts[i].z;
+        /* rotate about Y */
+        float x1 = x*cy + z*sy;
+        float z1 = -x*sy + z*cy;
+        /* rotate about X */
+        float y2 = y*cx - z1*sx;
+        float z2 = y*sx + z1*cx;
+        m->rot[i].x = x1; m->rot[i].y = y2; m->rot[i].z = z2;
+    }
+    return 0;
+}
+
+int wubu3d_project(const wubu3d *m, int cx, int cy, float focal,
+                   wubu3d_proj *out, size_t outn){
+    if (!m || !out) return -1;
+    if (outn < m->nv) return -1;
+    const float cam_z = 3.0f;
+    for (size_t i=0;i<m->nv;i++){
+        float z = m->rot[i].z + cam_z;
+        if (z <= 0.05f) z = 0.05f;     /* behind/clipping camera */
+        float s = focal / z;
+        out[i].x = cx + m->rot[i].x * s;
+        out[i].y = cy - m->rot[i].y * s; /* screen y is down */
+        out[i].z = z;
+    }
     return 0;
 }

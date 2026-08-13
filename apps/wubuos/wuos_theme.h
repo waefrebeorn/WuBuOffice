@@ -36,20 +36,20 @@ typedef struct { unsigned char r, g, b; } WuosRGB;
 #define WUOS_SPACE_32  32
 #define WUOS_SPACE_48  48
 
-/* ---- Dark variant (default) ---- */
-#define WUOS_DARK_TAB_BAR     {32, 36, 43}    /* SURFACE_2 */
-#define WUOS_DARK_TAB         {42, 47, 56}    /* inactive   */
-#define WUOS_DARK_TAB_ON      {54, 60, 71}    /* active     */
+/* ---- Dark variant (default) — refined slate, not muddy grey ---- */
+#define WUOS_DARK_TAB_BAR     {34, 38, 46}    /* SURFACE_2  */
+#define WUOS_DARK_TAB         {44, 49, 59}    /* inactive   */
+#define WUOS_DARK_TAB_ON      {56, 62, 74}    /* active     */
 #define WUOS_DARK_CONTENT     {235, 237, 240} /* canvas     */
-#define WUOS_DARK_TABTEXT     {150, 156, 168} /* dim        */
-#define WUOS_DARK_TABTEXT_ON  {232, 235, 240} /* primary    */
-#define WUOS_DARK_STATUS      {28, 31, 38}    /* SURFACE_2  */
-#define WUOS_DARK_STATUSTX    {178, 183, 192} /* dim text   */
-#define WUOS_DARK_BORDER      {60, 66, 78}    /* 1px dividers */
-#define WUOS_DARK_ACCENT      {94, 135, 255}  /* brand      */
+#define WUOS_DARK_TABTEXT     {158, 164, 176} /* dim        */
+#define WUOS_DARK_TABTEXT_ON  {234, 237, 242} /* primary    */
+#define WUOS_DARK_STATUS      {30, 34, 41}    /* SURFACE_2  */
+#define WUOS_DARK_STATUSTX    {182, 187, 196} /* dim text   */
+#define WUOS_DARK_BORDER      {62, 68, 80}    /* 1px dividers */
+#define WUOS_DARK_ACCENT      {96, 140, 255}  /* brand      */
 #define WUOS_DARK_ACCENT_ON   {255, 255, 255}
-#define WUOS_DARK_OVERLAY     {26, 29, 36}    /* dialog bg  (SURFACE_3) */
-#define WUOS_DARK_OVERLAY_BD  {70, 76, 90}    /* dialog border            */
+#define WUOS_DARK_OVERLAY     {28, 31, 39}    /* dialog bg  (SURFACE_3) */
+#define WUOS_DARK_OVERLAY_BD  {72, 78, 92}    /* dialog border            */
 #define WUOS_DARK_SCRIM       {0, 0, 0}
 
 /* Overlay-specific tokens (dark) */

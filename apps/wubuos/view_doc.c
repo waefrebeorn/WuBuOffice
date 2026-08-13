@@ -141,25 +141,42 @@ static int render(WuView *v, int w, int h, int scroll,
     (void)scroll;
     DocV *e = v->priv;
     int dark = wubusettings_dark(wubusettings_shared());
-    WuosRGB doc_bg = dark ? WUOS_DARK(TAB_BAR) : WUOS_LIGHT(TAB_BAR);
-    WuosRGB doc_body = dark ? WUOS_DARK(TABTEXT_ON) : WUOS_LIGHT(TABTEXT_ON);
-    WuosRGB doc_hint = dark ? WUOS_DARK(TABTEXT)   : WUOS_LIGHT(TABTEXT);
+    /* The DOCUMENT PAGE is a paper surface — NOT the app chrome color. Office
+     * renders a distinct page sheet (white in light mode, light-slate in dark)
+     * with margins, so text is always high-contrast ink on paper. */
+    WuosRGB paper   = dark ? (WuosRGB){250,251,253} : (WuosRGB){255,255,255};
+    WuosRGB ink     = dark ? (WuosRGB){ 28, 30, 34}  : (WuosRGB){ 32, 33, 37};
+    WuosRGB sheet_edge = dark ? (WuosRGB){210,214,220} : (WuosRGB){210,214,220};
+    WuosRGB app_bg  = dark ? WUOS_DARK(TAB_BAR) : WUOS_LIGHT(TAB_BAR);
     unsigned char *fb = NULL; int W=w, H=h;
     e->nlink = 0;
     if (e->doc){
         /* Central pipeline: lay the model out into pages, then paint. This is
-         * the single source of truth for text placement — the Document tab no
-         * longer re-implements wrapping. Headers/footers/line-numbers are drawn
-         * from the laid-out geometry. */
+         * the single source of truth for text placement. */
         fb = malloc((size_t)w*h*4);
         if (!fb) return -1;
-        for (int i=0;i<w*h;i++){ size_t k=(size_t)i*4; fb[k]=doc_bg.r;fb[k+1]=doc_bg.g;fb[k+2]=doc_bg.b;fb[k+3]=255; }
+        /* app chrome backdrop behind the page sheet */
+        for (int i=0;i<w*h;i++){ size_t k=(size_t)i*4; fb[k]=app_bg.r;fb[k+1]=app_bg.g;fb[k+2]=app_bg.b;fb[k+3]=255; }
+        /* page sheet: margins + subtle edge so it reads as a document, not chrome */
+        int pg_x = 72, pg_y = 84, pg_w = w - 72 - 220, pg_h = h - 84 - 28;
+        if (pg_w < 200) pg_w = 200;
+        for (int y=pg_y-3; y<pg_y+pg_h+3; y++)
+            for (int x=pg_x-3; x<pg_x+pg_w+3; x++)
+                if (x>=0&&y>=0&&x<w&&y<h){ size_t di=((size_t)y*w+x)*4;
+                    int edge = (x<pg_x||x>=pg_x+pg_w||y<pg_y||y>=pg_y+pg_h);
+                    fb[di]=edge?sheet_edge.r:sheet_edge.g; fb[di+1]=sheet_edge.g; fb[di+2]=sheet_edge.b; }
+        for (int y=pg_y; y<pg_y+pg_h; y++)
+            for (int x=pg_x; x<pg_x+pg_w; x++)
+                if (x>=0&&y>=0&&x<w&&y<h){ size_t di=((size_t)y*w+x)*4;
+                    fb[di]=paper.r; fb[di+1]=paper.g; fb[di+2]=paper.b; }
+        /* DOC-54: TOC pane lives in the reserved right margin band (x: pg_x+pg_w..w-8),
+         * fully outside the page sheet, so it never overlaps page text. */
+        int toc_x = pg_x + pg_w + 12;
         wubulayout_doc *L = wubulayout_create(e->doc, NULL,
-            doc_layout_measure, doc_layout_style, NULL, w, h, 56,
-            /* DOC-62: reserve a right gutter for inserted objects (chart/draw/
-             * math) so they don't cover the text column. Without this the 320px
-             * chart overlay at W-340 collides with full-width paragraph text. */
-            (e->nobj > 0) ? (56 + 340) : 56,
+            doc_layout_measure, doc_layout_style, NULL, w, h, pg_x,
+            /* margin_r: keep text within the sheet (pg_x+pg_w), reserving a
+             * 340px inserted-objects gutter only when objects exist. */
+            (e->nobj > 0) ? (w - (pg_x+pg_w) + 340) : (w - (pg_x+pg_w)),
             56, 56);
         if (L){
             int pages = wubulayout_page_count(L);
@@ -170,7 +187,6 @@ static int render(WuView *v, int w, int h, int scroll,
             /* UXA-41: high-contrast swaps to maximal-distinction palette */
             int hc = wubusettings_high_contrast(wubusettings_shared());
             unsigned char BG[3] = { hc?255:252, hc?255:252, hc?255:250 };
-            unsigned char FG[3] = { hc?0:28,   hc?0:30,   hc?0:34 };
             unsigned char MU[3] = { hc?0:120, hc?0:124, hc?0:132 };
             (void)BG;  /* page background override; retained for future use */
             unsigned char LN[3] = { hc?127:150, hc?127:154, hc?127:162 };
@@ -248,9 +264,11 @@ static int render(WuView *v, int w, int h, int scroll,
                     l = strlen(vis);
                 }
                 memcpy(seg, draw_text, l); seg[l]=0;
-                /* DOC-60: links are blue + underlined; record box for clicks */
+                /* DOC-60: links are blue + underlined; record box for clicks.
+                 * Default text color is INK (dark on the paper sheet), not blue —
+                 * previously the default was blue, painting every body word blue. */
                 int is_link = 0; unsigned char lk[3];
-                lk[0]=hc?0:24; lk[1]=hc?80:64; lk[2]=hc?220:200;
+                lk[0]=ink.r; lk[1]=ink.g; lk[2]=ink.b;
                 const char *tgt = NULL;
                 if (r->user){
                     wubumodel_node *rn = (wubumodel_node*)r->user;
@@ -299,13 +317,20 @@ static int render(WuView *v, int w, int h, int scroll,
                     }
                 }
             }
-            /* line numbers in the left margin (DOC-72) */
+            /* line numbers in the left margin (DOC-72), inside the app-chrome
+             * band to the left of the page sheet (sheet starts at pg_x=72). */
             int nl = wubulayout_line_count(L, pg);
+            int gut = 60;   /* rule sits just left of the sheet */
+            for (int y=0; y<h; y++){
+                size_t di=((size_t)y*w+(gut-1))*4;
+                fb[di]=LN[0]; fb[di+1]=LN[1]; fb[di+2]=LN[2];
+            }
             for (int li=0; li<nl; li++){
                 const wubulayout_line *ln = wubulayout_line_at(L, pg, li);
                 if (!ln) continue;
                 char ln2[16]; snprintf(ln2,sizeof ln2,"%d", li+1);
-                wuos_font_draw(ln2, 8, ln->y, 0, LN[0],LN[1],LN[2], fb, w, h);
+                int tw = wuos_font_text_width(ln2, wuos_font_height());
+                wuos_font_draw(ln2, gut - 4 - tw, ln->y, 0, LN[0],LN[1],LN[2], fb, w, h);
             }
             /* page footer (DOC-56: use model FOOTER if present) */
             char ftr[128];
@@ -333,28 +358,45 @@ static int render(WuView *v, int w, int h, int scroll,
                     fb[((size_t)my*w+mmx)*4+2] = MU[2];
                 }
             }
-            /* DOC-54: TOC side pane (left, below line numbers) */
+            /* DOC-54: TOC side pane — drawn in the reserved left column
+             * (x: 56 .. toc_x). The page text margin already clears this band,
+             * so there is NO overlap with document text. A 1px separator marks
+             * the column edge; entry text is clamped to the column width. */
             if (e->toc_dirty || !e->toc){
                 toc_free(e->toc); e->toc = toc_build(e->doc, NULL, L);
                 e->toc_dirty = 0;
             }
-            int tcount = toc_count(e->toc);
-            if (tcount){
-                int tx = 60, ty = 56;
-                wuos_font_draw("Contents", tx, ty-20, 1, FG[0],FG[1],FG[2], fb, w, h);
+            /* separator rule at the right edge of the TOC column */
+            for (int y=0; y<h; y++){
+                size_t di=((size_t)y*w+(toc_x-1))*4;
+                fb[di]=LN[0]; fb[di+1]=LN[1]; fb[di+2]=LN[2];
+            }
+            {
+                int tx = toc_x, ty = 56;
+                /* header sits over the DARK app chrome — use a light token. */
+                wuos_font_draw("Contents", tx, ty-20, 1, 214, 218, 226, fb, w, h);
+                int tcount = toc_count(e->toc);
+                int col_w = (w - 8) - tx - 8;          /* usable width inside column */
                 for (int i=0;i<tcount;i++){
                     const char *tt = toc_title(e->toc, i);
                     if (!tt) continue;
                     int lvl = toc_level(e->toc, i);
-                    int pgno = toc_page(e->toc, i);
+                    /* clamp the entry so it never overflows the TOC column */
                     char te[128];
-                    snprintf(te,sizeof te,"%*s%s%s", (lvl-1)*2, "", tt,
-                             pgno>0? "":"");
+                    int avail = col_w - (lvl-1)*10;
+                    if (avail < 8) avail = 8;
+                    int L_ = (int)strlen(tt);
+                    if (L_ > avail) L_ = avail;
+                    memcpy(te, tt, L_); te[L_]=0;
                     unsigned char r=TT[0],g=TT[1],b=TT[2];
                     if (lvl==1){ r=hc?0:40; g=hc?90:120; b=hc?200:60; }
                     wuos_font_draw(te, tx + (lvl-1)*10, ty, 0, r,g,b, fb, w, h);
                     ty += 18;
                     if (ty > h-40) break;
+                }
+                if (tcount == 0){
+                    wuos_font_draw("(no headings)", tx, ty, 0,
+                                   TT[0], TT[1], TT[2], fb, w, h);
                 }
             }
             wubulayout_destroy(L);
@@ -363,8 +405,8 @@ static int render(WuView *v, int w, int h, int scroll,
         /* non-renderable format: show the text projection */
         fb = malloc((size_t)w*h*4);
         if (!fb) return -1;
-        for (int i=0;i<w*h;i++){ size_t k=(size_t)i*4; fb[k]=doc_bg.r;fb[k+1]=doc_bg.g;fb[k+2]=doc_bg.b;fb[k+3]=255; }
-        wuos_font_draw("Document text (recognized):", WUOS_SPACE_8*2, WUOS_SPACE_8*2, 1, doc_body.r,doc_body.g,doc_body.b, fb,w,h);
+        for (int i=0;i<w*h;i++){ size_t k=(size_t)i*4; fb[k]=app_bg.r;fb[k+1]=app_bg.g;fb[k+2]=app_bg.b;fb[k+3]=255; }
+        wuos_font_draw("Document text (recognized):", WUOS_SPACE_8*2, WUOS_SPACE_8*2, 1, ink.r,ink.g,ink.b, fb,w,h);
         int y = WUOS_SPACE_8*6;
         const char *p = e->text;
         if (p && *p){
@@ -377,7 +419,7 @@ static int render(WuView *v, int w, int h, int scroll,
                 if (x + (int)wl*8 > w-16){ x=16; y += fh+4; }
                 char tmp[256]; if(wl>=sizeof tmp) wl=sizeof tmp-1;
                 memcpy(tmp,wstart,wl); tmp[wl]=0;
-                wuos_font_draw(tmp, x, y, 0, doc_body.r,doc_body.g,doc_body.b, fb,w,h);
+                wuos_font_draw(tmp, x, y, 0, ink.r,ink.g,ink.b, fb,w,h);
                 x += (int)wl*8 + 8;
                 wstart = sp ? sp+1 : wstart+wl;
                 if (y > h-30) break;
@@ -398,10 +440,10 @@ static int render(WuView *v, int w, int h, int scroll,
                 }
                 char line[256];
                 snprintf(line,sizeof line,"find '%s': %d match%s", e->find_q, nfound, nfound==1?"":"es");
-                wuos_font_draw(line, WUOS_SPACE_8, fy+5, 0, doc_body.r,doc_body.g,doc_body.b, fb,w,h);
+                wuos_font_draw(line, WUOS_SPACE_8, fy+5, 0, ink.r,ink.g,ink.b, fb,w,h);
             }
         } else {
-            wuos_font_draw("(nothing to display)", WUOS_SPACE_8*2, WUOS_SPACE_8*6, 0, doc_hint.r,doc_hint.g,doc_hint.b, fb,w,h);
+            wuos_font_draw("(nothing to display)", WUOS_SPACE_8*2, WUOS_SPACE_8*6, 0, ink.r,ink.g,ink.b, fb,w,h);
         }
     }
     /* ---- inserted objects overlay (chart/draw/math) on the right gutter ---- */
@@ -463,7 +505,18 @@ static char *sidebar(WuView *v){
     if (!e->doc) return NULL;
     if (!e->toc) e->toc = toc_build(e->doc, NULL, NULL);
     int n = toc_count(e->toc);
-    if (n <= 0) return NULL;
+    if (n <= 0){
+        /* Guided empty state (research: empty panes must be useful, not blank).
+         * Tells the user exactly what populates this outline. */
+        const char *guide =
+            "Navigator — Document outline\n"
+            "\n"
+            "No headings yet.\n"
+            "Apply Heading 1/2/3 (toolbar or\n"
+            "Ctrl+1/2/3) and they appear\n"
+            "here as a clickable outline.";
+        return strdup(guide);
+    }
     size_t cap = 64, len = 0;
     char *out = malloc(cap);
     if (!out) return NULL;

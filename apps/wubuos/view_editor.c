@@ -931,7 +931,16 @@ static char *sidebar(WuView *v){
     LexSym syms[256];
     size_t ns = lex_symbols(st, sl, syms, 256);
     free(st);
-    if (ns == 0) return NULL;
+    if (ns == 0){
+        /* Guided empty state — a code editor with no detected symbols still
+         * tells the user what this panel is for. */
+        return strdup(
+            "Navigator — Symbols\n"
+            "\n"
+            "No symbols detected.\n"
+            "Functions/structs you define\n"
+            "appear here as a jump list.");
+    }
     size_t cap = 64, len = 0;
     char *out = malloc(cap);
     if (!out) return NULL;

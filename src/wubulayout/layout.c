@@ -234,6 +234,11 @@ static int lay_paragraph(wubulayout_doc *L, void *para, int *pen_y){
         for (int k=line_start; k<=last_fit && no<4096; k++) order[no++]=k;
         if (para_rtl) for (int a=0,b=no-1;a<b;a++,b--){ int tmp=order[a]; order[a]=order[b]; order[b]=tmp; }
         int line_idx = 0;
+        /* One visual line = one wrapped line: every word on this line shares the
+         * SAME visual-line index, so the gutter can number true document lines
+         * (1,2,3,...) instead of per-word segments (was producing 8,9,10,20,35…).
+         * Increment the page's visual-line counter ONCE per visual line. */
+        int cur_vline = pg->line_seq++;
         for (int oi=0; oi<no; oi++){
             Word *wd = &words[order[oi]];
             (void)line_idx;
@@ -246,7 +251,7 @@ static int lay_paragraph(wubulayout_doc *L, void *para, int *pen_y){
             R->font_size=g_font_size; R->bold=g_bold; R->italic=g_italic;
             R->dir = para_rtl? WUBULAYOUT_RTL:WUBULAYOUT_LTR; R->rtl=para_rtl;
             R->user = segs[wd->seg].run;
-            R->h=h; R->w=ww; R->page=L->npages-1; R->line=pg->line_seq++;
+            R->h=h; R->w=ww; R->page=L->npages-1; R->line=cur_vline;
             if (para_rtl) R->x = pen - ww; else R->x = pen;
             R->y = line_y + h - 4;
             pen += ww;

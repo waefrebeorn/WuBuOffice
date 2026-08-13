@@ -1,4 +1,7 @@
-/* wubuanimation.h — keyframe animation model for slide objects. */
+/* wubuanimation.h — keyframe animation engine for slide objects. Stores
+ * keyframes and, given a timeline position, computes an eased progress in
+ * [0,1] for a target's animation (the renderer uses it to interpolate opacity
+ * or transform). Supports appear/fade/fly-in/bounce/spin. */
 #ifndef WUBUANIMATION_H
 #define WUBUANIMATION_H
 #include <stddef.h>
@@ -24,5 +27,12 @@ void wubuanimation_destroy(wubuanimation *a);
 int wubuanimation_add(wubuanimation *a, const char *target, wubuan_type type, double dur, double delay, int repeat);
 size_t wubuanimation_count(const wubuanimation *a);
 const wubuan_key *wubuanimation_get(const wubuanimation *a, size_t i);
+
+/* Eased progress of `target`'s animation at timeline `t` (s). Returns:
+ *   0.0  before its delay,
+ *   eased value in (0,1) during the animation,
+ *   1.0  after it completes (or 0.0 if it does not repeat, else cycles).
+ * Returns -1 on bad input. `progress==1` means fully on-screen. */
+double wubuanimation_progress(const wubuanimation *a, const char *target, double t);
 
 #endif

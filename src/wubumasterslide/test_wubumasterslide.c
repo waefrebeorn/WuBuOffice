@@ -15,8 +15,27 @@ int main(void) {
     CK(wubumasterslide_set_theme(m,"XYZ",24.0) == -1, "reject bad color");
     CK(wubumasterslide_set_theme(m,"FFFFFF",0) == -1, "reject 0 size");
 
+    /* REAL engine: resolve a harmonized, drawable palette from the bg. */
+    wubums_palette p;
+    CK(wubumasterslide_resolve(m, &p) == 0, "resolve palette");
+    /* surface must equal the bg we set */
+    CK(p.surface[0]==0x1F && p.surface[1]==0x3B && p.surface[2]==0x8C, "surface == bg");
+    /* dark bg => light text */
+    CK(p.text[0] > 200, "dark bg => light text");
+    /* accent is the fixed brand blue, distinct from bg */
+    CK(!(p.accent[0]==p.surface[0] && p.accent[1]==p.surface[1] && p.accent[2]==p.surface[2]),
+       "accent distinct from surface");
+
+    /* white bg => dark text */
+    wubumasterslide_set_theme(m,"FFFFFF",28.0);
+    wubums_palette pw;
+    wubumasterslide_resolve(m, &pw);
+    CK(pw.text[0] < 80, "light bg => dark text");
+
+    CK(wubumasterslide_resolve(NULL, &p) == -1, "null guard");
+
     wubumasterslide_destroy(m);
     if (fails) { printf("FAILED (%d)\n", fails); return 1; }
-    printf("PASS: wubumasterslide (master slide theme: bg color + default font)\n");
+    printf("PASS: wubumasterslide (master theme + resolved harmonized palette)\n");
     return 0;
 }

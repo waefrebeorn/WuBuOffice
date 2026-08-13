@@ -20,3 +20,14 @@ int wuburuler_content(wuburuler *r, double *w, double *h) {
     *h = r->page_height - r->top - r->bottom;
     return 0;
 }
+
+int wuburuler_content_rect(const wuburuler *r, double dpi,
+                           double *x, double *y, double *w, double *h) {
+    if (!r || dpi <= 0 || !x || !y || !w || !h) return -1;
+    double pt2px = dpi / 72.0;
+    *x = r->left * pt2px;
+    *y = r->top  * pt2px;
+    *w = (r->page_width  - r->left - r->right) * pt2px;
+    *h = (r->page_height - r->top  - r->bottom) * pt2px;
+    return 0;
+}

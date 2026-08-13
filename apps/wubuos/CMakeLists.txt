@@ -515,7 +515,7 @@ set_tests_properties(font PROPERTIES LABELS "font;apps")
 # view + status bar) into an in-memory RGBA buffer and writes a pixel-faithful
 # PNG. Used to produce documentation images without a display. Mirrors the
 # live shell's exact composite code (main.c) but draws into a buffer.
-add_executable(viewshot viewshot.c wuos_font.c wuos_file.c plugin.c toast.c palette.c
+add_executable(viewshot viewshot.c wuos_font.c wuos_file.c plugin.c toast.c palette.c hive.c
     view_doc.c view_cell.c view_slide.c view_ocr.c view_editor.c view_compare.c
     view_settings.c findbar.c autocomp.c bkmk.c codefold.c doccmd.c macro.c gotoline.c)
 target_include_directories(viewshot PRIVATE
@@ -567,6 +567,38 @@ target_include_directories(viewshot PRIVATE
     ${CMAKE_SOURCE_DIR}/src/wubuaislot
     ${CMAKE_SOURCE_DIR}/src/wubupng
     ${CMAKE_SOURCE_DIR}/src/wuburtf
+    ${CMAKE_SOURCE_DIR}/src/wubusort
+    ${CMAKE_SOURCE_DIR}/src/wubufilter
+    ${CMAKE_SOURCE_DIR}/src/wubusubtotal
+    ${CMAKE_SOURCE_DIR}/src/wubugoalseek
+    ${CMAKE_SOURCE_DIR}/src/wubusolver
+    ${CMAKE_SOURCE_DIR}/src/wubupivot
+    ${CMAKE_SOURCE_DIR}/src/wubuscenario
+    ${CMAKE_SOURCE_DIR}/src/wubufreeze
+    ${CMAKE_SOURCE_DIR}/src/wubuhyperlink
+    ${CMAKE_SOURCE_DIR}/src/wubuthesaurus
+    ${CMAKE_SOURCE_DIR}/src/wubugrammar
+    ${CMAKE_SOURCE_DIR}/src/wubuindex
+    ${CMAKE_SOURCE_DIR}/src/wubumailmerge
+    ${CMAKE_SOURCE_DIR}/src/wubudiff
+    ${CMAKE_SOURCE_DIR}/src/wubumasterdoc
+    ${CMAKE_SOURCE_DIR}/src/wubudropcap
+    ${CMAKE_SOURCE_DIR}/src/wuburuler
+    ${CMAKE_SOURCE_DIR}/src/wubugridline
+    ${CMAKE_SOURCE_DIR}/src/wubuicon
+    ${CMAKE_SOURCE_DIR}/src/wubugallery
+    ${CMAKE_SOURCE_DIR}/src/wubusidebar
+    ${CMAKE_SOURCE_DIR}/src/wubutransition
+    ${CMAKE_SOURCE_DIR}/src/wubuanimation
+    ${CMAKE_SOURCE_DIR}/src/wubumasterslide
+    ${CMAKE_SOURCE_DIR}/src/wubuconnector
+    ${CMAKE_SOURCE_DIR}/src/wubuencrypt
+    ${CMAKE_SOURCE_DIR}/src/wubumailexport
+    ${CMAKE_SOURCE_DIR}/src/wubunotebookbar
+    ${CMAKE_SOURCE_DIR}/src/wubuqr
+    ${CMAKE_SOURCE_DIR}/src/wubusmartart
+    ${CMAKE_SOURCE_DIR}/src/wububasic
+    ${CMAKE_SOURCE_DIR}/src/wubu3d
     ${WUBUPAD_SRC})
 target_sources(viewshot PRIVATE
     ${WUBUPAD_SRC}/buffer.c ${WUBUPAD_SRC}/doc.c ${WUBUPAD_SRC}/search.c
@@ -581,5 +613,12 @@ target_link_libraries(viewshot PRIVATE
     wubucite wubucaption wubuheading wubueqnum wubuvars wubuhash wubusig wubucrdt
     wubucsv wubufocus wubuwatermark wubudyslexia wubufmtpaint wubusandbox
     wubuform wubuhistory wubulang wubunesttab wubupdfextract wubupdfform wubuscope wubusync wubuxps wubuaislot
+    wubusort wubufilter wubusubtotal wubugoalseek wubusolver
+    wubupivot wubuscenario wubufreeze wubuhyperlink wubuthesaurus
+    wubugrammar wubuindex wubumailmerge wubudiff wubumasterdoc
+    wubudropcap wuburuler wubugridline wubuicon wubugallery wubusidebar
+    wubutransition wubuanimation wubumasterslide wubuconnector wubuencrypt
+    wubumailexport wubunotebookbar wubuqr wubusmartart
+    wububasic wubu3d
     ${SDL2_LIBRARIES} ${FREETYPE_LIBRARIES} m dl)
 target_compile_options(viewshot PRIVATE -Wall -Wextra -Wpedantic)

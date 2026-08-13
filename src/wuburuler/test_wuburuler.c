@@ -16,10 +16,18 @@ int main(void) {
     wuburuler_content(&r, &w, &h);
     CK(w == 540 && h == 720, "540x720");
 
-    /* margins too big rejected */
+    /* REAL engine: resolve to PIXELS at 96 dpi so a ruler can draw it. */
+    double x, y, pw, ph;
+    CK(wuburuler_content_rect(&r, 96.0, &x, &y, &pw, &ph) == 0, "pixel rect");
+    /* 36pt * (96/72) = 48px origin; 540pt * (96/72) = 720px width */
+    CK(x == 48.0 && y == 48.0, "pixel origin 48,48");
+    CK(pw == 720.0 && ph == 960.0, "pixel size 720x960");
+    /* bad dpi rejected */
+    CK(wuburuler_content_rect(&r, 0, &x, &y, &pw, &ph) == -1, "reject 0 dpi");
+
     CK(wuburuler_set_margins(&r, 400, 400, 0, 0) == -1, "reject oversize margins");
 
     if (fails) { printf("FAILED (%d)\n", fails); return 1; }
-    printf("PASS: wuburuler (page size + margins -> content box)\n");
+    printf("PASS: wuburuler (page margins -> content box + pixel geometry @dpi)\n");
     return 0;
 }

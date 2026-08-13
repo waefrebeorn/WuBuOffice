@@ -37,3 +37,21 @@ int wubuconnector_add(wubuconnector *c, const char *from, const char *fromport,
 size_t wubuconnector_count(const wubuconnector *c) { return c ? c->n : 0; }
 const char *wubuconnector_from(const wubuconnector *c, size_t i) { return (c && i < c->n) ? c->items[i].from : NULL; }
 const char *wubuconnector_to(const wubuconnector *c, size_t i) { return (c && i < c->n) ? c->items[i].to : NULL; }
+
+int wubuconnector_route(const wubuconnector *c, size_t i,
+                        const wubuc_rect *a, const wubuc_rect *b,
+                        float p[6]) {
+    if (!c || i >= c->n || !a || !b || !p) return -1;
+    /* exit source right-center */
+    float sx = a->x + a->w;
+    float sy = a->y + a->h * 0.5f;
+    /* enter target left-center */
+    float tx = b->x;
+    float ty = b->y + b->h * 0.5f;
+    /* clean orthogonal L: horizontal run to the target's x, then vertical drop
+       to the target's mid-height. elbow = (tx, sy). */
+    p[0] = sx; p[1] = sy;     /* start (source right edge) */
+    p[2] = tx; p[3] = sy;     /* elbow (horizontal run) */
+    p[4] = tx; p[5] = ty;     /* end (vertical drop to target) */
+    return 0;
+}

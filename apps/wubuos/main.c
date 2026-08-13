@@ -1012,9 +1012,6 @@ int main(int argc, char **argv){
              * too much dropped the toolbar TEXT contrast below WCAG AA 4.5:1
              * (measured 3.70:1 @14%); 5% keeps the affordance while text stays
              * >=4.5:1. */
-            WuosRGB tbo = { (unsigned char)(tbb.r + (255-tbb.r)*5/100),
-                            (unsigned char)(tbb.g + (255-tbb.g)*5/100),
-                            (unsigned char)(tbb.b + (255-tbb.b)*5/100) };
             int tx = 0;
             for (size_t i=0;i<wuos_tb_count;i++){
                 const WuosTbBtn *b = &wuos_tb_buttons[i];
@@ -1024,7 +1021,7 @@ int main(int argc, char **argv){
                     tx += 10;
                     continue;
                 }
-                int bw = wu_text_w(b->label) + 10;   /* REAL text width + pad */
+                int bw = wu_text_w(b->label) + 16;   /* REAL text width + comfy pad */
                 int hov = (g_tb_hover==(int)i);
                 /* press micro-interaction: button briefly deepens for ~100ms
                  * (research: active state scale/color feedback, ease-out). */
@@ -1035,21 +1032,27 @@ int main(int argc, char **argv){
                     else g_tb_press_i = -1;
                 }
                 if (hov || press){
-                    /* pressed = slightly deeper/more opaque than hover */
+                    /* hover/press: solid accent fill + 1px white border; text
+                     * flips to white (contrast on accent {96,140,255} >= 4.5:1). */
                     SDL_SetRenderDrawColor(ren, ac.r, ac.g, ac.b, press ? 255 : 235);
                     SDL_RenderFillRect(ren, &(SDL_Rect){tx, ty+3, bw, TOOLBAR_H-6});
+                    SDL_SetRenderDrawColor(ren, 255, 255, 255, 130);
+                    SDL_RenderDrawRect(ren, &(SDL_Rect){tx, ty+3, bw, TOOLBAR_H-6});
+                    sdl_text(ren, tx + (bw - wu_text_w(b->label))/2,
+                             ty + center_text_y(TOOLBAR_H), 255, 255, 255, b->label);
                 } else {
-                    /* resting-state button affordance: a subtle raised surface so
-                     * buttons read as distinct targets, not one merged string
-                     * (research: button = visible container, not bare text). */
-                    SDL_SetRenderDrawColor(ren, tbo.r, tbo.g, tbo.b, 255);
-                    SDL_RenderFillRect(ren, &(SDL_Rect){tx+1, ty+5, bw-2, TOOLBAR_H-10});
+                    /* resting: KEEP the bar surface (text stays high-contrast on
+                     * the dark bar), but draw a clearly visible 1px border so the
+                     * target unmistakably reads as a button (affordance via
+                     * outline, not a light fill that would crush text contrast). */
+                    SDL_SetRenderDrawColor(ren, bd.r+40, bd.g+40, bd.b+44, 230);
+                    SDL_RenderDrawRect(ren, &(SDL_Rect){tx+1, ty+4, bw-2, TOOLBAR_H-8});
                 }
-                sdl_text(ren, tx + (bw - wu_text_w(b->label))/2,
-                         ty + center_text_y(TOOLBAR_H),
-                         (hov||press) ? ttxo.r : ttx.r, (hov||press) ? ttxo.g : ttx.g, (hov||press) ? ttxo.b : ttx.b,
-                         b->label);
-                tx += bw + 1;
+                if (!(hov||press))
+                    sdl_text(ren, tx + (bw - wu_text_w(b->label))/2,
+                             ty + center_text_y(TOOLBAR_H),
+                             ttx.r, ttx.g, ttx.b, b->label);
+                tx += bw + 4;
             }
             /* bottom divider */
             SDL_SetRenderDrawColor(ren, bd.r, bd.g, bd.b, 255);
@@ -1094,8 +1097,19 @@ int main(int argc, char **argv){
                     nl = strchr(line, '\n');
                     int L = nl ? (int)(nl - line) : (int)strlen(line);
                     if (L > 0){
+                        /* clamp the entry to the panel width: truncate + ellipsis
+                         * so long titles never run off the right edge (UX: a
+                         * sidebar row must stay inside its panel). */
+                        int maxw = SIDEBAR_W - 16;
                         char buf[96]; if (L>95) L=95;
                         memcpy(buf, line, L); buf[L]=0;
+                        if (wu_text_w(buf) > maxw && L > 1){
+                            int cut = L;
+                            while (cut > 1 && wu_text_w(buf) > maxw) buf[--cut]=0;
+                            int el = cut<3?cut:cut-3;
+                            buf[el]='.'; buf[el+1]='.'; buf[el+2]='.';
+                            buf[el+3]=0;
+                        }
                         sdl_text(ren, sx+8, iy, sbtx.r, sbtx.g, sbtx.b, buf);
                         iy += lh;
                     }
