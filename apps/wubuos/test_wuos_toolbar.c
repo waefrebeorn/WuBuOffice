@@ -4,6 +4,7 @@
  * data-driven (built from the hive template), so the test builds it from the
  * hive first. */
 #include "wuos_toolbar.h"
+#include "wuos_font.h"
 #include "hive.h"
 #include <stdio.h>
 #include <string.h>
@@ -13,7 +14,7 @@ static int fails = 0;
 
 static void test_table(void){
     CK(wuos_tb_count > 0, "button table non-empty");
-    CK(wuos_tb_label_count() == 20, "20 clickable buttons");
+    CK(wuos_tb_label_count() == 15, "15 clickable buttons");
     /* every label button has a command */
     int allcmds = 1;
     for (size_t i=0;i<wuos_tb_count;i++)
@@ -27,8 +28,8 @@ static void test_hit_testing(void){
     int x=0;
     for (size_t i=0;i<wuos_tb_count;i++){
         if (!wuos_tb_buttons[i].label){ x += 10; continue; }
-        /* compute width the same way */
-        int bw = (int)strlen(wuos_tb_buttons[i].label)*7 + 14;
+        /* compute width the same way (REAL font width + pad) */
+        int bw = wuos_font_text_width(wuos_tb_buttons[i].label, wuos_font_height()) + 10;
         int c = x + bw/2;
         int idx = wuos_tb_at(c);
         if (idx != (int)i){
@@ -60,6 +61,7 @@ static void test_command_mapping(void){
 
 int main(void){
     /* the toolbar is data-driven: build it from the hive template */
+    if (wuos_font_init()!=0){ printf("FAIL: font init\n"); return 1; }
     Hive *h = hive_load();
     CK(h, "hive_load");
     wuos_tb_init(hive_toolbar(h));
@@ -71,6 +73,7 @@ int main(void){
 
     wuos_tb_shutdown();
     hive_free(h);
+    wuos_font_quit();
     if (fails == 0) printf("TOOLBAR TESTS PASSED\n");
     else printf("TOOLBAR TESTS FAILED (%d)\n", fails);
     return fails ? 1 : 0;

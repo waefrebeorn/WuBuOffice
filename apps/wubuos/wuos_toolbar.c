@@ -36,17 +36,17 @@ int wuos_tb_label_count(void){
     return n;
 }
 
-/* Must stay in sync with the shell's render loop (main.c toolbar block). */
-#define TB_SEP_GAP  10
-#define TB_CHAR_W   7
-#define TB_PAD      14
+/* Toolbar hit-testing + width must match the render in main.c. Widths use the
+ * REAL font advance (wuos_font_text_width) + pad, so buttons don't overlap. */
+#include "wuos_font.h"
+#define TB_PAD      10
 #define TB_GAP      1
 
 int wuos_tb_at(int x){
     int cur=0;
     for (size_t i=0;i<wuos_tb_count;i++){
-        if (!wuos_tb_buttons[i].label){ cur += TB_SEP_GAP; continue; }
-        int bw = (int)strlen(wuos_tb_buttons[i].label)*TB_CHAR_W + TB_PAD;
+        if (!wuos_tb_buttons[i].label){ cur += 10; continue; }
+        int bw = wuos_font_text_width(wuos_tb_buttons[i].label, wuos_font_height()) + TB_PAD;
         if (x>=cur && x<cur+bw) return (int)i;
         cur += bw + TB_GAP;
     }
@@ -56,8 +56,8 @@ int wuos_tb_at(int x){
 int wuos_tb_width(void){
     int cur=0;
     for (size_t i=0;i<wuos_tb_count;i++){
-        if (!wuos_tb_buttons[i].label){ cur += TB_SEP_GAP; continue; }
-        cur += (int)strlen(wuos_tb_buttons[i].label)*TB_CHAR_W + TB_PAD + TB_GAP;
+        if (!wuos_tb_buttons[i].label){ cur += 10; continue; }
+        cur += wuos_font_text_width(wuos_tb_buttons[i].label, wuos_font_height()) + TB_PAD + TB_GAP;
     }
     return cur;
 }

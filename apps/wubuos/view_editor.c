@@ -338,7 +338,7 @@ static int render(WuView *v, int w, int h, int scroll,
             const char *nm = (dp && *dp)? dp : "untitled";
             const char *bn = strrchr(nm, '/'); if (bn) nm = bn+1;
             char lab[64]; snprintf(lab,sizeof lab," %s ", nm);
-            int tw = (int)strlen(lab)*9 + 12;
+            int tw = wuos_font_text_width(lab, wuos_font_height()) + 12;   /* real font width (no overlap) */
             int on = (di==act);
             for (int yy=0; yy<dofst; yy++) for (int xx=dx; xx<dx+tw && xx<w; xx++){
                 size_t i=((size_t)yy*w+xx)*4;

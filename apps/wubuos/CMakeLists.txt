@@ -288,12 +288,14 @@ set_tests_properties(hive PROPERTIES LABELS "view;apps")
 
 # Headless test for the formatting/quick-access toolbar (UI gap: reference
 # office apps + Notepad++ all have a clickable toolbar; the shell adds one).
-add_executable(test_wuos_toolbar test_wuos_toolbar.c wuos_toolbar.c hive.c)
+add_executable(test_wuos_toolbar test_wuos_toolbar.c wuos_toolbar.c hive.c wuos_font.c)
 target_include_directories(test_wuos_toolbar PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_SOURCE_DIR}/src/wubumodel)
+    ${CMAKE_SOURCE_DIR}/src/wubumodel
+    ${CMAKE_SOURCE_DIR}/src/wububase
+    ${FREETYPE_INCLUDE_DIRS})
 target_compile_options(test_wuos_toolbar PRIVATE -Wall -Wextra -Wpedantic)
-target_link_libraries(test_wuos_toolbar PRIVATE wubujson)
+target_link_libraries(test_wuos_toolbar PRIVATE wubujson wububase freetype)
 add_test(NAME toolbar COMMAND test_wuos_toolbar)
 set_tests_properties(toolbar PROPERTIES LABELS "view;apps")
 

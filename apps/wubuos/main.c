@@ -217,14 +217,21 @@ static void open_doc_path(const char *path){
     if (sh){ wubusettings_add_recent(sh, path); wubusettings_save(sh, NULL); }
 }
 
+static int tab_width(int i);   /* fwd (defined below; uses real font width) */
+
 static int tab_at(int mx){
     int x=0;
-    for (int i=0;i<nviews;i++){ int tw = (int)strlen(views[i]->name)*14 + 24; if (mx>=x && mx<x+tw) return i; x+=tw; }
+    for (int i=0;i<nviews;i++){ int tw = tab_width(i); if (mx>=x && mx<x+tw) return i; x+=tw; }
     return -1;
 }
 
-/* Tab width (must stay in sync with the render loop + tab_at). */
-static int tab_width(int i){ return (int)strlen(views[i]->name)*14 + 24; }
+/* Tab width (must stay in sync with the render loop + tab_at). Uses the REAL
+ * font advance (11px/char @20, not a hardcoded 14) so tabs don't overlap. */
+static int tab_width(int i){ return wuos_font_text_width(views[i]->name, wuos_font_height()) + 24; }
+
+/* Real text width of a label at the current font size (fixed the hardcoded
+ * 7px/char estimate that under-sized buttons and made them overlap). */
+static int wu_text_w(const char *s){ return wuos_font_text_width(s, wuos_font_height()); }
 
 /* Reorder the tab at `from` to position `to` (indices into views). Updates
  * active to follow the dragged tab. Used by drag-to-reorder. */
@@ -427,7 +434,7 @@ int main(int argc, char **argv){
                 if (e.motion.y >= TAB_H && e.motion.y < TAB_H+MENU_H){
                     int mx=0;
                     for (size_t mi=0; mi<g_nmenus; mi++){
-                        int mw = (int)strlen(g_menus[mi].label)*14 + 22;
+                        int mw = wu_text_w(g_menus[mi].label) + 22;
                         if (e.motion.x>=mx && e.motion.x<mx+mw){ g_menu_hover=(int)mi; break; }
                         mx+=mw;
                     }
@@ -445,7 +452,7 @@ int main(int argc, char **argv){
                 if (e.button.y >= TAB_H && e.button.y < TAB_H+MENU_H){
                     int mx=0, hit=-1;
                     for (size_t mi=0; mi<g_nmenus; mi++){
-                        int mw = (int)strlen(g_menus[mi].label)*14 + 22;
+                        int mw = wu_text_w(g_menus[mi].label) + 22;
                         if (e.button.x>=mx && e.button.x<mx+mw){ hit=(int)mi; break; }
                         mx+=mw;
                     }
@@ -925,7 +932,7 @@ int main(int argc, char **argv){
             SDL_RenderFillRect(ren, &(SDL_Rect){0, my, WIN_W, MENU_H});
             int mx = 0;
             for (size_t mi=0; mi<g_nmenus; mi++){
-                int mw = (int)strlen(g_menus[mi].label)*14 + 22;
+                int mw = wu_text_w(g_menus[mi].label) + 22;
                 int on = ((int)mi==g_menu_open);
                 int hovered = (g_menu_hover==(int)mi || (g_menu_open==(int)mi && g_menu_hover>=(int)mi*100 && g_menu_hover<(int)mi*100+100));
                 if (on || hovered){
@@ -941,9 +948,9 @@ int main(int argc, char **argv){
                     int dw = mw;
                     for (int k=0; k<n; k++){
                         if (!g_menus[mi].items[k].label) continue;
-                        int w = (int)strlen(g_menus[mi].items[k].label)*7 + 12;
+                        int w = wu_text_w(g_menus[mi].items[k].label) + 12;
                         const char *a = g_menus[mi].items[k].accel;
-                        if (a && *a) w += (int)strlen(a)*7 + 14;
+                        if (a && *a) w += wu_text_w(a) + 14;
                         if (w > dw) dw = w;
                     }
                     /* dropdown */
@@ -969,7 +976,7 @@ int main(int argc, char **argv){
                         /* right-aligned accelerator hint (discoverability) */
                         const char *acc = g_menus[mi].items[i].accel;
                         if (acc && *acc){
-                            int alen = (int)strlen(acc)*7;
+                            int alen = wu_text_w(acc);
                             sdl_text(ren, mx + mw - 10 - alen,
                                      iy + (20-wuos_font_height())/2 + 1,
                                      ttxo.r*0.7, ttxo.g*0.7, ttxo.b*0.7, acc);
@@ -1003,7 +1010,7 @@ int main(int argc, char **argv){
                     tx += 10;
                     continue;
                 }
-                int bw = (int)strlen(b->label)*7 + 14;
+                int bw = wu_text_w(b->label) + 10;   /* REAL text width + pad */
                 int hov = (g_tb_hover==(int)i);
                 /* press micro-interaction: button briefly deepens for ~100ms
                  * (research: active state scale/color feedback, ease-out). */
@@ -1024,7 +1031,7 @@ int main(int argc, char **argv){
                     SDL_SetRenderDrawColor(ren, tbo.r, tbo.g, tbo.b, 255);
                     SDL_RenderFillRect(ren, &(SDL_Rect){tx+1, ty+5, bw-2, TOOLBAR_H-10});
                 }
-                sdl_text(ren, tx + (bw - (int)strlen(b->label)*7)/2,
+                sdl_text(ren, tx + (bw - wu_text_w(b->label))/2,
                          ty + (TOOLBAR_H-wuos_font_height())/2 + 1,
                          (hov||press) ? ttxo.r : ttx.r, (hov||press) ? ttxo.g : ttx.g, (hov||press) ? ttxo.b : ttx.b,
                          b->label);

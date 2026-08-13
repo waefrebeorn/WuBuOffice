@@ -84,8 +84,19 @@ static int render(WuView *v, int w, int h, int scroll,
     int lh = fh + WUOS_SPACE_8;
     int margin_x = WUOS_SPACE_8 * 5;    /* 40px */
     int margin_y = WUOS_SPACE_8 * 7;    /* 56px */
-    int cw = WUOS_SPACE_8 * 12;         /* 96px cell width */
+    int cw = WUOS_SPACE_8 * 11;         /* 88px cell width */
     int rh2 = lh;
+
+    /* Render a grid that FILLS the visible area (Excel-like), not just the
+     * data extent: at least enough columns/rows to cover the viewport so a
+     * 5x4 sheet isn't a tiny island in a huge window. */
+    int gmaxc = e->maxc, gmaxr = e->maxr;
+    int fillc = (w - margin_x - 2) / (cw ? cw : 1) - 1;
+    int fillr = (h - margin_y - 2) / (rh2 ? rh2 : 1) - 1;
+    if (fillc > gmaxc) gmaxc = fillc;
+    if (fillr > gmaxr) gmaxr = fillr;
+    if (gmaxc < 8) gmaxc = 8;
+    if (gmaxr < 12) gmaxr = 12;
 
     /* formula bar area: WUOS_SPACE_8*3 (24px) high, starts at margin_y - lh - WUOS_SPACE_8 */
     int fx_y0 = margin_y - lh - WUOS_SPACE_8;
@@ -134,7 +145,7 @@ static int render(WuView *v, int w, int h, int scroll,
     wuos_font_draw(shown, fx_x0 + WUOS_SPACE_8 * 6, fx_y0 + WUOS_SPACE_4 + fh, 0, cel_fx_text.r,cel_fx_text.g,cel_fx_text.b, fb,w,h);
 
     /* column headers (A, B, C...) */
-    for (int c=1; c<=e->maxc; c++){
+    for (int c=1; c<=gmaxc; c++){
         char lab[8]; int cc=c-1; lab[0]=(cc<26)?'A'+cc:(('A'+(cc/26)-1)); if(cc>=26) lab[1]='A'+(cc%26); else lab[1]=0;
         int on=(c==e->curc);
         WuosRGB hdr_col = on ? cel_active : cel_hdr;
@@ -147,12 +158,12 @@ static int render(WuView *v, int w, int h, int scroll,
     int refcol[32], refrow[32];
     int nref = cell_refs(e, refcol, refrow, 32);
     WuosRGB cel_ref = dark ? (WuosRGB){120,190,255} : (WuosRGB){0,110,215};
-    for (int r=1; r<=e->maxr; r++){
+    for (int r=1; r<=gmaxr; r++){
         char rn[16]; snprintf(rn,sizeof rn,"%d",r);
         int on=(r==e->curr);
         WuosRGB hdr_col = on ? cel_active : cel_hdr;
         wuos_font_draw(rn, margin_x - WUOS_SPACE_8 * 4, margin_y + r*rh2 + fh, 0, hdr_col.r,hdr_col.g,hdr_col.b, fb,w,h);
-        for (int c=1; c<=e->maxc; c++){
+        for (int c=1; c<=gmaxc; c++){
             wubucell_ckind k; const char *t=NULL; double num=0, cached=0;
             int has = wubucell_get(e->b, 1, c, r, &k, &t, &num, &cached);
             int x = margin_x + c*cw;
