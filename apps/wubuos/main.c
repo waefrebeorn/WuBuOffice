@@ -212,7 +212,18 @@ static void open_doc_path(const char *path){
     size_t L = strlen(path);
     int is_text = (L>3 && (!strcmp(path+L-3,".md")||!strcmp(path+L-3,".c")||
                   !strcmp(path+L-2,".h")||!strcmp(path+L-3,".py")||
-                  !strcmp(path+L-4,".txt")));
+                  !strcmp(path+L-4,".txt")||
+                  /* extend editor routing to every plain-text/code format
+                   * (depth check: .json/.js/.css/.sql/.cpp/.hpp/.tex/.html
+                   *  should open as editable text, not a blank doc view) */
+                  !strcmp(path+L-4,".json")||!strcmp(path+L-3,".js")||
+                  !strcmp(path+L-4,".css")||!strcmp(path+L-4,".sql")||
+                  !strcmp(path+L-4,".cpp")||!strcmp(path+L-4,".hpp")||
+                  !strcmp(path+L-4,".tex")||!strcmp(path+L-5,".html")||
+                  !strcmp(path+L-4,".xml")||!strcmp(path+L-3,".yml")||
+                  !strcmp(path+L-4,".yaml")||!strcmp(path+L-4,".ini")||
+                  !strcmp(path+L-4,".csv")||!strcmp(path+L-3,".sh")||
+                  !strcmp(path+L-4,".toml")));
     WuView *nv = is_text ? wuos_editor_create(path) : wuos_doc_create(path);
     if (!nv) return;
     if (nviews < 8){ add_view(nv); active = nviews-1; }
