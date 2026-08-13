@@ -210,6 +210,9 @@ static void run_menu_cmd(int cmd){
 static void open_doc_path(const char *path){
     if (!path || !*path) return;
     size_t L = strlen(path);
+    int is_cell  = (L>4 && (!strcmp(path+L-4,".csv")||!strcmp(path+L-5,".xlsx")||
+                    !strcmp(path+L-4,".ods")||!strcmp(path+L-5,".xlsm")||
+                    !strcmp(path+L-4,".tsv")));
     int is_text = (L>3 && (!strcmp(path+L-3,".md")||!strcmp(path+L-3,".c")||
                   !strcmp(path+L-2,".h")||!strcmp(path+L-3,".py")||
                   !strcmp(path+L-4,".txt")||
@@ -222,9 +225,12 @@ static void open_doc_path(const char *path){
                   !strcmp(path+L-4,".tex")||!strcmp(path+L-5,".html")||
                   !strcmp(path+L-4,".xml")||!strcmp(path+L-3,".yml")||
                   !strcmp(path+L-4,".yaml")||!strcmp(path+L-4,".ini")||
-                  !strcmp(path+L-4,".csv")||!strcmp(path+L-3,".sh")||
+                  !strcmp(path+L-3,".sh")||
                   !strcmp(path+L-4,".toml")));
-    WuView *nv = is_text ? wuos_editor_create(path) : wuos_doc_create(path);
+    WuView *nv;
+    if (is_cell)      nv = wuos_cell_create(path);    /* spreadsheet view */
+    else if (is_text) nv = wuos_editor_create(path);
+    else              nv = wuos_doc_create(path);
     if (!nv) return;
     if (nviews < 8){ add_view(nv); active = nviews-1; }
     WubuSettings *sh = wubusettings_shared();
@@ -520,7 +526,10 @@ int main(int argc, char **argv){
                 }
             }
             else if (e.type==SDL_MOUSEBUTTONDOWN && e.button.button==SDL_BUTTON_RIGHT){
-                g_ctx = 1; g_ctx_item = 0; g_ctx_x = e.button.x; g_ctx_y = e.button.y;  /* UI-27 */
+                /* a modal dialog owns input; don't stack a context menu over it */
+                if (!dialog_active(g_dlg)){
+                    g_ctx = 1; g_ctx_item = 0; g_ctx_x = e.button.x; g_ctx_y = e.button.y;  /* UI-27 */
+                }
             }
             else if (e.type==SDL_MOUSEMOTION && g_ctx){
                 /* highlight the item under the cursor (3 items, 26px tall) */
