@@ -250,6 +250,14 @@ static void tab_reorder(int from, int to){
 
 /* Paint UTF-8 `text` at (px,py) directly onto the SDL renderer using the
  * shared FreeType helper (draws into a 1-line RGBA strip, uploads as texture). */
+/* Vertical offset to center chrome text within a band of height `band_h`.
+ * sdl_text renders into a surface of height fh+6 (text baseline at fh), so the
+ * surface — not just the font height — must be centered in the band. This was
+ * the classic "text sits a few px low" misalignment in every chrome row. */
+static int center_text_y(int band_h){
+    return (band_h - (wuos_font_height() + 6)) / 2;
+}
+
 static void sdl_text(SDL_Renderer *ren, int px, int py,
                      unsigned char r, unsigned char g, unsigned char b,
                      const char *text){
@@ -898,7 +906,7 @@ int main(int argc, char **argv){
                 SDL_SetRenderDrawColor(ren, ac.r, ac.g, ac.b, 255);
                 SDL_RenderFillRect(ren,&(SDL_Rect){x,0,tw,2});
             }
-            sdl_text(ren, x+12, (TAB_H-wuos_font_height())/2 + 2,
+            sdl_text(ren, x+12, center_text_y(TAB_H),
                      on?ttxo.r:ttx.r, on?ttxo.g:ttx.g, on?ttxo.b:ttx.b,
                      views[i]->name);
             x+=tw;
@@ -939,7 +947,7 @@ int main(int argc, char **argv){
                     SDL_SetRenderDrawColor(ren, tto.r, tto.g, tto.b, 255);
                     SDL_RenderFillRect(ren, &(SDL_Rect){mx, my, mw, MENU_H});
                 }
-                sdl_text(ren, mx+11, my + (MENU_H-wuos_font_height())/2 + 1,
+                sdl_text(ren, mx+11, my + center_text_y(MENU_H),
                          (on||hovered)?ttxo.r:ttx.r, (on||hovered)?ttxo.g:ttx.g, (on||hovered)?ttxo.b:ttx.b,
                          g_menus[mi].label);
                 if (on){
@@ -968,7 +976,7 @@ int main(int argc, char **argv){
                             SDL_SetRenderDrawColor(ren, ac.r, ac.g, ac.b, 255);
                             SDL_RenderFillRect(ren, &(SDL_Rect){mx+1, iy, mw-2, 20});
                         }
-                        sdl_text(ren, mx+8, iy + (20-wuos_font_height())/2 + 1,
+                        sdl_text(ren, mx+8, iy + center_text_y(24),
                                  item_hover?ttxo.r:ttx.r,
                                  item_hover?ttxo.g:ttx.g,
                                  item_hover?ttxo.b:ttx.b,
@@ -982,7 +990,7 @@ int main(int argc, char **argv){
                         if (acc && *acc){
                             int alen = wu_text_w(acc);
                             sdl_text(ren, mx + dw - 10 - alen,
-                                     iy + (20-wuos_font_height())/2 + 1,
+                                     iy + center_text_y(24),
                                      ttxo.r, ttxo.g, ttxo.b, acc);
                         }
                     }
@@ -1038,7 +1046,7 @@ int main(int argc, char **argv){
                     SDL_RenderFillRect(ren, &(SDL_Rect){tx+1, ty+5, bw-2, TOOLBAR_H-10});
                 }
                 sdl_text(ren, tx + (bw - wu_text_w(b->label))/2,
-                         ty + (TOOLBAR_H-wuos_font_height())/2 + 1,
+                         ty + center_text_y(TOOLBAR_H),
                          (hov||press) ? ttxo.r : ttx.r, (hov||press) ? ttxo.g : ttx.g, (hov||press) ? ttxo.b : ttx.b,
                          b->label);
                 tx += bw + 1;
@@ -1107,14 +1115,14 @@ int main(int argc, char **argv){
         SDL_SetRenderDrawColor(ren, bd.r, bd.g, bd.b, 255);
         SDL_RenderFillRect(ren,&(SDL_Rect){0,WIN_H-STATUS_H,WIN_W,1});
         if (st){
-            sdl_text(ren, 12, WIN_H-STATUS_H + (STATUS_H-wuos_font_height())/2 + 1,
+            sdl_text(ren, 12, WIN_H-STATUS_H + center_text_y(STATUS_H),
                      stx.r, stx.g, stx.b, st);
             free(st);
         }
 
         /* plugin toast (Ctrl+Shift+K result) */
         if (g_plugin_msg){
-            sdl_text(ren, WIN_W-360, WIN_H-STATUS_H + (STATUS_H-wuos_font_height())/2 + 1,
+            sdl_text(ren, WIN_W-360, WIN_H-STATUS_H + center_text_y(STATUS_H),
                      120,220,140, g_plugin_msg);
         }
 
@@ -1129,7 +1137,7 @@ int main(int argc, char **argv){
             int zy = WIN_H - STATUS_H;
             char zlabel[16];
             snprintf(zlabel, sizeof zlabel, "%d%%", (int)(g_zoom*100));
-            sdl_text(ren, ztxt_x, zy + (STATUS_H-wuos_font_height())/2 + 1,
+            sdl_text(ren, ztxt_x, zy + center_text_y(STATUS_H),
                      stx.r, stx.g, stx.b, zlabel);
             /* track */
             SDL_SetRenderDrawColor(ren, bd.r, bd.g, bd.b, 255);
