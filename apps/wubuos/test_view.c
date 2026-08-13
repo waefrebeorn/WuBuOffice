@@ -60,6 +60,43 @@ int main(void){
         v->destroy(v);
     }
 
+    /* ---- SLIDE round-trip: create an editable slide, edit title/bullets via
+     * on_key, save, reload, verify content survives (was a static stub). */
+    {
+        WuView *sv = wuos_slide_create(NULL);
+        if (!sv){ fprintf(stderr,"[slide rt] create FAILED\n"); bad++; }
+        else {
+            if (!sv->save || !sv->on_key){ fprintf(stderr,"[slide rt] missing save/on_key hook\n"); bad++; }
+            else {
+                /* edit the title (Enter starts editing sel=0 title) */
+                sv->on_key(sv, WUOS_KEY_RETURN, 1);
+                for (const char*p="MyDeck";*p;p++) sv->on_key(sv,(unsigned char)*p,1);
+                sv->on_key(sv, WUOS_KEY_ESC, 1);
+                /* Enter adds+edits a bullet */
+                sv->on_key(sv, WUOS_KEY_RETURN, 1);
+                for (const char*p="Hello";*p;p++) sv->on_key(sv,(unsigned char)*p,1);
+                sv->on_key(sv, WUOS_KEY_ESC, 1);
+                sv->save(sv);   /* writes /tmp/wubuos_slide.txt */
+                /* verify the saved file contains both edits */
+                FILE *f = fopen("/tmp/wubuos_slide.txt","r");
+                if (!f){ fprintf(stderr,"[slide rt] save produced no file\n"); bad++; }
+                else {
+                    char buf[512] = {0};
+                    size_t r = fread(buf,1,sizeof buf-1,f); buf[r]=0; fclose(f);
+                    if (strstr(buf,"MyDeck") && strstr(buf,"Hello"))
+                        fprintf(stderr,"[slide rt] edit->save OK (title+bullet persisted)\n");
+                    else { fprintf(stderr,"[slide rt] edits not in saved file\n"); bad++; }
+                }
+                /* reload via create(path) */
+                WuView *sv2 = wuos_slide_create("/tmp/wubuos_slide.txt");
+                if (!sv2){ fprintf(stderr,"[slide rt] reload create FAILED\n"); bad++; }
+                else { fprintf(stderr,"[slide rt] reload OK (path=%s)\n",
+                               sv2->get_path? sv2->get_path(sv2):"?"); sv2->destroy(sv2); }
+            }
+            sv->destroy(sv);
+        }
+    }
+
     /* file open: markdown -> Document, code -> Editor */
     const char *md = "# Title\n\nHello **world** paragraph.\n\n## Section\n\nAnother line.\n";
     const char *code = "int main(){\n  return 0; // done\n}\n";

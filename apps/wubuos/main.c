@@ -210,6 +210,8 @@ static void run_menu_cmd(int cmd){
 static void open_doc_path(const char *path){
     if (!path || !*path) return;
     size_t L = strlen(path);
+    int is_slide = (L>4 && (!strcmp(path+L-5,".pptx")||!strcmp(path+L-4,".odp")||
+                    !strcmp(path+L-4,".ppt")||!strcmp(path+L-4,".pps")));
     int is_cell  = (L>4 && (!strcmp(path+L-4,".csv")||!strcmp(path+L-5,".xlsx")||
                     !strcmp(path+L-4,".ods")||!strcmp(path+L-5,".xlsm")||
                     !strcmp(path+L-4,".tsv")));
@@ -228,7 +230,8 @@ static void open_doc_path(const char *path){
                   !strcmp(path+L-3,".sh")||
                   !strcmp(path+L-4,".toml")));
     WuView *nv;
-    if (is_cell)      nv = wuos_cell_create(path);    /* spreadsheet view */
+    if (is_slide)     nv = wuos_slide_create(path);  /* presentation view */
+    else if (is_cell) nv = wuos_cell_create(path);    /* spreadsheet view */
     else if (is_text) nv = wuos_editor_create(path);
     else              nv = wuos_doc_create(path);
     if (!nv) return;

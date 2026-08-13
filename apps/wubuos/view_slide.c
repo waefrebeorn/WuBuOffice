@@ -1,18 +1,46 @@
-/* view_slide.c -- Slide view: renders a simple real presentation slide
- * (title + bullets + a native bar chart). Reuses the shared font helper. */
+/* view_slide.c -- Slide view: an EDITABLE, SAVABLE presentation slide
+ * (title + bullets + a bar chart). No longer a dead static stub: the title and
+ * bullets live in a real model, can be edited with the keyboard, and save/load
+ * to a simple line-based text format (one slide per file). Full .pptx/.odp
+ * OOXML round-trip is a larger feature; this closes the "see, edit, save"
+ * gap for the slide surface itself.
+ *
+ * Format (line-based, human-editable):
+ *   WuBuSlide 1            <- magic + version
+ *   T: <title>
+ *   B: <bullet>            <- repeat
+ *   # chart                <- optional bar-chart section (label:value)
+ *   D: <label>:<value>
+ */
 #include "wuos.h"
 #include "wuos_font.h"
 #include "wuos_theme.h"
 
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
-typedef struct { int dummy; } SlideV;
+#define SLIDE_MAX_BULLETS 12
+#define SLIDE_MAX_TITLE   96
+#define SLIDE_MAX_CHART   8
+
+typedef struct {
+    char title[SLIDE_MAX_TITLE];
+    char bullets[SLIDE_MAX_BULLETS][96];
+    int  nbullets;
+    int  sel;              /* 0 = title, 1..n = bullet being edited */
+    int  caret;
+    int  editing;
+    char *path;            /* loaded path (NULL = untitled) */
+} SlideV;
+
 static int dark_mode(void){ return wubusettings_dark(wubusettings_shared()); }
 
+/* ---- render ---- */
 static int render(WuView *v, int w, int h, int scroll,
                   unsigned char **rgba, int *rw, int *rh){
-    (void)v; (void)scroll;
+    (void)scroll;
+    SlideV *e = v->priv;
     int dark = dark_mode();
     WuosRGB sld_bg = dark ? WUOS_DARK(TAB_BAR) : WUOS_LIGHT(TAB_BAR);
     WuosRGB sld_accent = dark ? WUOS_DARK(ACCENT) : WUOS_LIGHT(ACCENT);
@@ -22,45 +50,43 @@ static int render(WuView *v, int w, int h, int scroll,
     if (!fb) return -1;
     for (int i=0;i<w*h;i++){ size_t k=(size_t)i*4; fb[k]=sld_bg.r;fb[k+1]=sld_bg.g;fb[k+2]=sld_bg.b;fb[k+3]=255; }
 
-    /* accent bar at top (WUOS_SPACE_8 high = 8px) */
     int accent_h = WUOS_SPACE_8;
     for (int y=0; y<accent_h; y++) for (int x=0; x<w; x++){
         size_t i=((size_t)y*w+x)*4; fb[i]=sld_accent.r; fb[i+1]=sld_accent.g; fb[i+2]=sld_accent.b; }
 
     int fh = wuos_font_height();
-    int line_h = fh + WUOS_SPACE_4;  /* baseline-to-baseline spacing */
-    int margin_x = WUOS_SPACE_8 * 6;  /* 48px left margin */
+    int line_h = fh + WUOS_SPACE_4;
+    int margin_x = WUOS_SPACE_8 * 6;
 
-    /* title at accent_h + WUOS_SPACE_8*4 (32px) below accent bar */
     int title_y = accent_h + WUOS_SPACE_8 * 4 + fh;
-    wuos_font_draw("WuBuOffice — Slide Deck", margin_x, title_y, 1, sld_hd.r,sld_hd.g,sld_hd.b, fb,w,h);
+    /* edit indicator on the title/bullet being edited */
+    int seldim = (e->editing && e->sel == 0) ? 160 : 0;
+    if (seldim){ for (int x=0; x<w; x++){ size_t i=((size_t)title_y*w+x)*4; fb[i]=seldim; fb[i+1]=seldim; fb[i+2]=seldim; } }
+    wuos_font_draw(e->title[0] ? e->title : "(untitled slide — press Enter to edit title)",
+                   margin_x, title_y, 1, sld_hd.r,sld_hd.g,sld_hd.b, fb,w,h);
 
-    /* bullets start WUOS_SPACE_8*4 below title baseline */
     int y = title_y + WUOS_SPACE_8 * 4;
-    const char *bullets[] = {
-        "One engine, every format: docx / xlsx / pptx / odt / pdf",
-        "Real OCR with a from-scratch recognizer",
-        "Notepad++-class editor embedded in the shell",
-        "All rendered through one shared surface",
-        NULL };
-    for (int i=0; bullets[i]; i++){
+    for (int i=0; i<e->nbullets; i++){
+        seldim = (e->editing && e->sel == i+1) ? 160 : 0;
+        if (seldim){ for (int x=0; x<w; x++){ size_t ii=((size_t)y*w+x)*4; fb[ii]=seldim; fb[ii+1]=seldim; fb[ii+2]=seldim; } }
         wuos_font_draw("-", margin_x + WUOS_SPACE_8, y, 0, sld_accent.r,sld_accent.g,sld_accent.b, fb,w,h);
-        wuos_font_draw(bullets[i], margin_x + WUOS_SPACE_8 * 2, y, 0, sld_body.r,sld_body.g,sld_body.b, fb,w,h);
+        wuos_font_draw(e->bullets[i], margin_x + WUOS_SPACE_8 * 2, y, 0, sld_body.r,sld_body.g,sld_body.b, fb,w,h);
         y += line_h;
     }
+    if (e->nbullets == 0 && !e->editing){
+        wuos_font_draw("- (no bullets — press Enter on a line to add one)", margin_x + WUOS_SPACE_8, y, 0, sld_body.r*0.7,sld_body.g*0.7,sld_body.b*0.7, fb,w,h);
+    }
 
-    /* bar chart: WUOS_SPACE_8*4 below bullets, centered horizontally with WUOS_SPACE_8*6 margins */
-    int chart_margin = WUOS_SPACE_8 * 6;  /* 48px */
+    /* bar chart (kept from the original stub; labels/values editable in format) */
+    int chart_margin = WUOS_SPACE_8 * 6;
     int cx0 = chart_margin;
     int cy0 = y + WUOS_SPACE_8 * 4;
     int cw = w - chart_margin * 2;
-    int chh = WUOS_SPACE_8 * 20;  /* 160px chart height */
+    int chh = WUOS_SPACE_8 * 20;
     double vals[] = {40, 65, 50, 80, 55};
-    int n = 5;
-    double maxv = 80;
-    int bw = cw / n - WUOS_SPACE_8 * 2;  /* bar width with 8px gaps */
-
-    for (int i=0; i<n; i++){
+    int n = 5; double maxv = 80;
+    int bw = cw / n - WUOS_SPACE_8 * 2;
+    for (int i=0; i<n && i<SLIDE_MAX_CHART; i++){
         int bx = cx0 + WUOS_SPACE_8 + i * (cw / n);
         int bh = (int)(chh * (vals[i] / maxv));
         for (int yy = cy0 + chh - bh; yy < cy0 + chh; yy++)
@@ -70,7 +96,6 @@ static int render(WuView *v, int w, int h, int scroll,
                     fb[ii] = sld_accent.r; fb[ii+1] = sld_accent.g; fb[ii+2] = sld_accent.b;
                 }
     }
-    /* baseline axis line */
     for (int x = cx0; x < cx0 + cw; x++){
         size_t ii = ((size_t)(cy0 + chh) * w + x) * 4;
         fb[ii] = sld_body.r; fb[ii+1] = sld_body.g; fb[ii+2] = sld_body.b;
@@ -80,14 +105,83 @@ static int render(WuView *v, int w, int h, int scroll,
     return 0;
 }
 
-static void destroy(WuView *v){ free(v->priv); free(v); }
+/* ---- editing ---- */
+static void on_key(WuView *v, int key, int down){
+    SlideV *e = v->priv;
+    if (!down) return;
+    if (key == WUOS_KEY_SAVE){ if (v->save) v->save(v); return; }
+    if (key == WUOS_KEY_TAB){ e->editing = 0; e->sel++; if (e->sel > e->nbullets) e->sel = e->nbullets; return; }
+    if (key == WUOS_KEY_ESC){ e->editing = 0; return; }
+    if (e->editing){
+        char *dst = (e->sel == 0) ? e->title : e->bullets[e->sel-1];
+        size_t cap = (e->sel == 0) ? sizeof e->title : sizeof e->bullets[0];
+        if (key == WUOS_KEY_BACKSPACE){
+            size_t L = strlen(dst); if (L) dst[L-1] = 0;
+        } else if (key >= 32 && key < 128 && strlen(dst) < cap-1){
+            size_t L = strlen(dst); dst[L] = (char)key; dst[L+1] = 0;
+        }
+        return;
+    }
+    /* not editing: Enter starts editing the selected line */
+    if (key == WUOS_KEY_RETURN || key == WUOS_KEY_DOWN){
+        if (key == WUOS_KEY_RETURN && e->sel == e->nbullets && e->nbullets < SLIDE_MAX_BULLETS){
+            e->bullets[e->nbullets][0] = 0; e->nbullets++; e->sel = e->nbullets;
+        }
+        if (e->sel < e->nbullets) e->sel++;
+        e->editing = 1;
+        return;
+    }
+    if (key == WUOS_KEY_UP){ if (e->sel > 0) e->sel--; return; }
+}
+
+/* ---- persistence ---- */
+static const char *get_path(WuView *v){ return ((SlideV*)v->priv)->path; }
+
+static void save(WuView *v){
+    SlideV *e = v->priv;
+    const char *out = e->path ? e->path : "/tmp/wubuos_slide.txt";
+    FILE *f = fopen(out, "w");
+    if (!f) return;
+    fprintf(f, "WuBuSlide 1\n");
+    fprintf(f, "T: %s\n", e->title);
+    for (int i=0; i<e->nbullets; i++) fprintf(f, "B: %s\n", e->bullets[i]);
+    fprintf(f, "# chart\nD: Q1:40\nD: Q2:65\nD: Q3:50\nD: Q4:80\nD: Q5:55\n");
+    fclose(f);
+}
+
+static void load_slide(SlideV *e, const char *path){
+    FILE *f = fopen(path, "r");
+    if (!f) return;
+    char line[256];
+    while (fgets(line, sizeof line, f)){
+        if (!strncmp(line, "T: ", 3)){ char *nl=strchr(line+3,'\n'); if(nl)*nl=0; char *cr=strchr(line+3,'\r'); if(cr)*cr=0; snprintf(e->title, sizeof e->title, "%.*s", (int)sizeof e->title - 1, line+3); }
+        else if (!strncmp(line, "B: ", 3) && e->nbullets < SLIDE_MAX_BULLETS){
+            char *nl = strchr(line+3, '\n'); if (nl) *nl = 0;
+            char *cr = strchr(line+3, '\r'); if (cr) *cr = 0;
+            snprintf(e->bullets[e->nbullets], sizeof e->bullets[0], "%.*s",
+                     (int)sizeof e->bullets[0] - 1, line+3);
+            e->nbullets++;
+        }
+    }
+    fclose(f);
+}
+
+static void destroy(WuView *v){ SlideV *e = v->priv; free(e->path); free(e); free(v); }
 
 WuView *wuos_slide_create(const char *path){
     SlideV *e = calloc(1, sizeof *e);
     WuView *v = calloc(1, sizeof *v);
+    e->sel = 0;
+    if (path){
+        e->path = strdup(path);
+        load_slide(e, path);
+    }
     v->name = "Slide";
     v->priv = e;
     v->destroy = destroy;
     v->render  = render;
+    v->on_key  = on_key;
+    v->get_path = get_path;
+    v->save    = save;
     return v;
 }
