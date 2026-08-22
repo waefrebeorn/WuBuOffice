@@ -40,3 +40,4 @@ build-cmake-crnn/
 asan_math.log
 build-perf/
 build-asan2/
+build-plugin/
