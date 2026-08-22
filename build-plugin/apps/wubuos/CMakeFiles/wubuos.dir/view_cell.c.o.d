@@ -22,7 +22,7 @@ apps/wubuos/CMakeFiles/wubuos.dir/view_cell.c.o: \
  /home/wubu/WuBuOffice/apps/wubuos/wuos_font.h \
  /home/wubu/WuBuOffice/apps/wubuos/wuos_theme.h \
  /home/wubu/WuBuOffice/apps/wubucell/cell.h \
- /home/wubu/WuBuOffice/src/wubumodel/../wubuoxml/package.h \
+ /home/wubu/WuBuOffice/apps/wubucell/../wubuoxml/package.h \
  /usr/include/stdio.h /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h \
  /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \

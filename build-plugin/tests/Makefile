@@ -1176,6 +1176,20 @@ test_agent_verbs/fast:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_agent_verbs.dir/build.make tests/CMakeFiles/test_agent_verbs.dir/build
 .PHONY : test_agent_verbs/fast
 
+# Convenience name for target.
+tests/CMakeFiles/test_grabbag.dir/rule:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_grabbag.dir/rule
+.PHONY : tests/CMakeFiles/test_grabbag.dir/rule
+
+# Convenience name for target.
+test_grabbag: tests/CMakeFiles/test_grabbag.dir/rule
+.PHONY : test_grabbag
+
+# fast build rule for target.
+test_grabbag/fast:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_grabbag.dir/build.make tests/CMakeFiles/test_grabbag.dir/build
+.PHONY : test_grabbag/fast
+
 __/apps/wubunote/note_controller.o: __/apps/wubunote/note_controller.c.o
 .PHONY : __/apps/wubunote/note_controller.o
 
@@ -2165,6 +2179,30 @@ test_gpu_blas.s: test_gpu_blas.c.s
 test_gpu_blas.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_gpu_blas.dir/build.make tests/CMakeFiles/test_gpu_blas.dir/test_gpu_blas.c.s
 .PHONY : test_gpu_blas.c.s
+
+test_grabbag.o: test_grabbag.c.o
+.PHONY : test_grabbag.o
+
+# target to build an object file
+test_grabbag.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_grabbag.dir/build.make tests/CMakeFiles/test_grabbag.dir/test_grabbag.c.o
+.PHONY : test_grabbag.c.o
+
+test_grabbag.i: test_grabbag.c.i
+.PHONY : test_grabbag.i
+
+# target to preprocess a source file
+test_grabbag.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_grabbag.dir/build.make tests/CMakeFiles/test_grabbag.dir/test_grabbag.c.i
+.PHONY : test_grabbag.c.i
+
+test_grabbag.s: test_grabbag.c.s
+.PHONY : test_grabbag.s
+
+# target to generate assembly for a file
+test_grabbag.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_grabbag.dir/build.make tests/CMakeFiles/test_grabbag.dir/test_grabbag.c.s
+.PHONY : test_grabbag.c.s
 
 test_gru_cmp.o: test_gru_cmp.c.o
 .PHONY : test_gru_cmp.o
@@ -3170,6 +3208,7 @@ help:
 	@echo "... test_gauntlet"
 	@echo "... test_gemm_nt"
 	@echo "... test_gpu_blas"
+	@echo "... test_grabbag"
 	@echo "... test_gru_cmp"
 	@echo "... test_gru_gpu"
 	@echo "... test_imageops"
@@ -3333,6 +3372,9 @@ help:
 	@echo "... test_gpu_blas.o"
 	@echo "... test_gpu_blas.i"
 	@echo "... test_gpu_blas.s"
+	@echo "... test_grabbag.o"
+	@echo "... test_grabbag.i"
+	@echo "... test_grabbag.s"
 	@echo "... test_gru_cmp.o"
 	@echo "... test_gru_cmp.i"
 	@echo "... test_gru_cmp.s"

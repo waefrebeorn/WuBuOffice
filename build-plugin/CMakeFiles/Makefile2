@@ -2440,6 +2440,7 @@ tests/all: tests/CMakeFiles/test_exp.dir/all
 tests/all: tests/CMakeFiles/test_settings.dir/all
 tests/all: tests/CMakeFiles/test_toc.dir/all
 tests/all: tests/CMakeFiles/test_agent_verbs.dir/all
+tests/all: tests/CMakeFiles/test_grabbag.dir/all
 .PHONY : tests/all
 
 # Recursive "preinstall" directory target.
@@ -2522,6 +2523,7 @@ tests/clean: tests/CMakeFiles/test_exp.dir/clean
 tests/clean: tests/CMakeFiles/test_settings.dir/clean
 tests/clean: tests/CMakeFiles/test_toc.dir/clean
 tests/clean: tests/CMakeFiles/test_agent_verbs.dir/clean
+tests/clean: tests/CMakeFiles/test_grabbag.dir/clean
 .PHONY : tests/clean
 
 #=============================================================================
@@ -2913,12 +2915,12 @@ src/wubuautosave/CMakeFiles/wubuautosave.dir/all: src/wubumodel/CMakeFiles/wubum
 src/wubuautosave/CMakeFiles/wubuautosave.dir/all: src/wubuoxml/CMakeFiles/wubuoxml.dir/all
 	$(MAKE) $(MAKESILENT) -f src/wubuautosave/CMakeFiles/wubuautosave.dir/build.make src/wubuautosave/CMakeFiles/wubuautosave.dir/depend
 	$(MAKE) $(MAKESILENT) -f src/wubuautosave/CMakeFiles/wubuautosave.dir/build.make src/wubuautosave/CMakeFiles/wubuautosave.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=61 "Built target wubuautosave"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num= "Built target wubuautosave"
 .PHONY : src/wubuautosave/CMakeFiles/wubuautosave.dir/all
 
 # Build rule for subdir invocation for target.
 src/wubuautosave/CMakeFiles/wubuautosave.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 4
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 3
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/wubuautosave/CMakeFiles/wubuautosave.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : src/wubuautosave/CMakeFiles/wubuautosave.dir/rule
@@ -2942,12 +2944,12 @@ src/wubudraw/CMakeFiles/wubudraw.dir/all: src/wubujson/CMakeFiles/wubujson.dir/a
 src/wubudraw/CMakeFiles/wubudraw.dir/all: src/wubusvg/CMakeFiles/wubusvg.dir/all
 	$(MAKE) $(MAKESILENT) -f src/wubudraw/CMakeFiles/wubudraw.dir/build.make src/wubudraw/CMakeFiles/wubudraw.dir/depend
 	$(MAKE) $(MAKESILENT) -f src/wubudraw/CMakeFiles/wubudraw.dir/build.make src/wubudraw/CMakeFiles/wubudraw.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num= "Built target wubudraw"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=66 "Built target wubudraw"
 .PHONY : src/wubudraw/CMakeFiles/wubudraw.dir/all
 
 # Build rule for subdir invocation for target.
 src/wubudraw/CMakeFiles/wubudraw.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 1
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 2
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/wubudraw/CMakeFiles/wubudraw.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : src/wubudraw/CMakeFiles/wubudraw.dir/rule
@@ -3028,12 +3030,12 @@ src/wubua11y/CMakeFiles/wubua11y.dir/all: src/wubumodel/CMakeFiles/wubumodel.dir
 src/wubua11y/CMakeFiles/wubua11y.dir/all: src/wubuoxml/CMakeFiles/wubuoxml.dir/all
 	$(MAKE) $(MAKESILENT) -f src/wubua11y/CMakeFiles/wubua11y.dir/build.make src/wubua11y/CMakeFiles/wubua11y.dir/depend
 	$(MAKE) $(MAKESILENT) -f src/wubua11y/CMakeFiles/wubua11y.dir/build.make src/wubua11y/CMakeFiles/wubua11y.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=60 "Built target wubua11y"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num= "Built target wubua11y"
 .PHONY : src/wubua11y/CMakeFiles/wubua11y.dir/all
 
 # Build rule for subdir invocation for target.
 src/wubua11y/CMakeFiles/wubua11y.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 4
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 3
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/wubua11y/CMakeFiles/wubua11y.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : src/wubua11y/CMakeFiles/wubua11y.dir/rule
@@ -3366,12 +3368,12 @@ src/wubudoc/CMakeFiles/wubudoc.dir/all: apps/wubuedit/CMakeFiles/wubuedit_app.di
 src/wubudoc/CMakeFiles/wubudoc.dir/all: apps/wubuconv/CMakeFiles/wubuconv.dir/all
 	$(MAKE) $(MAKESILENT) -f src/wubudoc/CMakeFiles/wubudoc.dir/build.make src/wubudoc/CMakeFiles/wubudoc.dir/depend
 	$(MAKE) $(MAKESILENT) -f src/wubudoc/CMakeFiles/wubudoc.dir/build.make src/wubudoc/CMakeFiles/wubudoc.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=65 "Built target wubudoc"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num= "Built target wubudoc"
 .PHONY : src/wubudoc/CMakeFiles/wubudoc.dir/all
 
 # Build rule for subdir invocation for target.
 src/wubudoc/CMakeFiles/wubudoc.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 14
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 13
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/wubudoc/CMakeFiles/wubudoc.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : src/wubudoc/CMakeFiles/wubudoc.dir/rule
@@ -3846,12 +3848,12 @@ src/wubulang/CMakeFiles/wubulang.dir/clean:
 src/wubulang/CMakeFiles/test_lang.dir/all: src/wubulang/CMakeFiles/wubulang.dir/all
 	$(MAKE) $(MAKESILENT) -f src/wubulang/CMakeFiles/test_lang.dir/build.make src/wubulang/CMakeFiles/test_lang.dir/depend
 	$(MAKE) $(MAKESILENT) -f src/wubulang/CMakeFiles/test_lang.dir/build.make src/wubulang/CMakeFiles/test_lang.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=30 "Built target test_lang"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num= "Built target test_lang"
 .PHONY : src/wubulang/CMakeFiles/test_lang.dir/all
 
 # Build rule for subdir invocation for target.
 src/wubulang/CMakeFiles/test_lang.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 2
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 1
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/wubulang/CMakeFiles/test_lang.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : src/wubulang/CMakeFiles/test_lang.dir/rule
@@ -4636,12 +4638,12 @@ src/wuburtf/CMakeFiles/wuburtf.dir/clean:
 src/wuburtf/CMakeFiles/test_rtf.dir/all: src/wuburtf/CMakeFiles/wuburtf.dir/all
 	$(MAKE) $(MAKESILENT) -f src/wuburtf/CMakeFiles/test_rtf.dir/build.make src/wuburtf/CMakeFiles/test_rtf.dir/depend
 	$(MAKE) $(MAKESILENT) -f src/wuburtf/CMakeFiles/test_rtf.dir/build.make src/wuburtf/CMakeFiles/test_rtf.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num= "Built target test_rtf"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=36 "Built target test_rtf"
 .PHONY : src/wuburtf/CMakeFiles/test_rtf.dir/all
 
 # Build rule for subdir invocation for target.
 src/wuburtf/CMakeFiles/test_rtf.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 1
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 2
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/wuburtf/CMakeFiles/test_rtf.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : src/wuburtf/CMakeFiles/test_rtf.dir/rule
@@ -4714,12 +4716,12 @@ src/wubua11yannounce/CMakeFiles/test_a11yannounce.dir/clean:
 src/wubuform/CMakeFiles/wubuform.dir/all:
 	$(MAKE) $(MAKESILENT) -f src/wubuform/CMakeFiles/wubuform.dir/build.make src/wubuform/CMakeFiles/wubuform.dir/depend
 	$(MAKE) $(MAKESILENT) -f src/wubuform/CMakeFiles/wubuform.dir/build.make src/wubuform/CMakeFiles/wubuform.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=69 "Built target wubuform"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num= "Built target wubuform"
 .PHONY : src/wubuform/CMakeFiles/wubuform.dir/all
 
 # Build rule for subdir invocation for target.
 src/wubuform/CMakeFiles/wubuform.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 1
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/wubuform/CMakeFiles/wubuform.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : src/wubuform/CMakeFiles/wubuform.dir/rule
@@ -4745,7 +4747,7 @@ src/wubuform/CMakeFiles/test_form.dir/all: src/wubuform/CMakeFiles/wubuform.dir/
 
 # Build rule for subdir invocation for target.
 src/wubuform/CMakeFiles/test_form.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 1
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/wubuform/CMakeFiles/test_form.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : src/wubuform/CMakeFiles/test_form.dir/rule
@@ -4908,12 +4910,12 @@ src/wubuxps/CMakeFiles/wubuxps.dir/clean:
 src/wubuxps/CMakeFiles/test_xps.dir/all: src/wubuxps/CMakeFiles/wubuxps.dir/all
 	$(MAKE) $(MAKESILENT) -f src/wubuxps/CMakeFiles/test_xps.dir/build.make src/wubuxps/CMakeFiles/test_xps.dir/depend
 	$(MAKE) $(MAKESILENT) -f src/wubuxps/CMakeFiles/test_xps.dir/build.make src/wubuxps/CMakeFiles/test_xps.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num= "Built target test_xps"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=55 "Built target test_xps"
 .PHONY : src/wubuxps/CMakeFiles/test_xps.dir/all
 
 # Build rule for subdir invocation for target.
 src/wubuxps/CMakeFiles/test_xps.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 1
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/wubuxps/CMakeFiles/test_xps.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : src/wubuxps/CMakeFiles/test_xps.dir/rule
@@ -5069,12 +5071,12 @@ src/wubufmtpaint/CMakeFiles/test_fmtpaint.dir/all: src/wubuoxml/CMakeFiles/wubuo
 src/wubufmtpaint/CMakeFiles/test_fmtpaint.dir/all: src/wubufmtpaint/CMakeFiles/wubufmtpaint.dir/all
 	$(MAKE) $(MAKESILENT) -f src/wubufmtpaint/CMakeFiles/test_fmtpaint.dir/build.make src/wubufmtpaint/CMakeFiles/test_fmtpaint.dir/depend
 	$(MAKE) $(MAKESILENT) -f src/wubufmtpaint/CMakeFiles/test_fmtpaint.dir/build.make src/wubufmtpaint/CMakeFiles/test_fmtpaint.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num= "Built target test_fmtpaint"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=25 "Built target test_fmtpaint"
 .PHONY : src/wubufmtpaint/CMakeFiles/test_fmtpaint.dir/all
 
 # Build rule for subdir invocation for target.
 src/wubufmtpaint/CMakeFiles/test_fmtpaint.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 3
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 4
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/wubufmtpaint/CMakeFiles/test_fmtpaint.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : src/wubufmtpaint/CMakeFiles/test_fmtpaint.dir/rule
@@ -5225,12 +5227,12 @@ src/wubusubtotal/CMakeFiles/wubusubtotal.dir/clean:
 src/wubusubtotal/CMakeFiles/test_wubusubtotal.dir/all: src/wubusubtotal/CMakeFiles/wubusubtotal.dir/all
 	$(MAKE) $(MAKESILENT) -f src/wubusubtotal/CMakeFiles/test_wubusubtotal.dir/build.make src/wubusubtotal/CMakeFiles/test_wubusubtotal.dir/depend
 	$(MAKE) $(MAKESILENT) -f src/wubusubtotal/CMakeFiles/test_wubusubtotal.dir/build.make src/wubusubtotal/CMakeFiles/test_wubusubtotal.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num= "Built target test_wubusubtotal"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=52 "Built target test_wubusubtotal"
 .PHONY : src/wubusubtotal/CMakeFiles/test_wubusubtotal.dir/all
 
 # Build rule for subdir invocation for target.
 src/wubusubtotal/CMakeFiles/test_wubusubtotal.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 1
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/wubusubtotal/CMakeFiles/test_wubusubtotal.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : src/wubusubtotal/CMakeFiles/test_wubusubtotal.dir/rule
@@ -5433,12 +5435,12 @@ src/wubuscenario/CMakeFiles/wubuscenario.dir/clean:
 src/wubuscenario/CMakeFiles/test_wubuscenario.dir/all: src/wubuscenario/CMakeFiles/wubuscenario.dir/all
 	$(MAKE) $(MAKESILENT) -f src/wubuscenario/CMakeFiles/test_wubuscenario.dir/build.make src/wubuscenario/CMakeFiles/test_wubuscenario.dir/depend
 	$(MAKE) $(MAKESILENT) -f src/wubuscenario/CMakeFiles/test_wubuscenario.dir/build.make src/wubuscenario/CMakeFiles/test_wubuscenario.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num= "Built target test_wubuscenario"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=51 "Built target test_wubuscenario"
 .PHONY : src/wubuscenario/CMakeFiles/test_wubuscenario.dir/all
 
 # Build rule for subdir invocation for target.
 src/wubuscenario/CMakeFiles/test_wubuscenario.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 1
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/wubuscenario/CMakeFiles/test_wubuscenario.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : src/wubuscenario/CMakeFiles/test_wubuscenario.dir/rule
@@ -5513,12 +5515,12 @@ src/wubunesttab/CMakeFiles/wubunesttab.dir/all: src/wubumodel/CMakeFiles/wubumod
 src/wubunesttab/CMakeFiles/wubunesttab.dir/all: src/wubuoxml/CMakeFiles/wubuoxml.dir/all
 	$(MAKE) $(MAKESILENT) -f src/wubunesttab/CMakeFiles/wubunesttab.dir/build.make src/wubunesttab/CMakeFiles/wubunesttab.dir/depend
 	$(MAKE) $(MAKESILENT) -f src/wubunesttab/CMakeFiles/wubunesttab.dir/build.make src/wubunesttab/CMakeFiles/wubunesttab.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num= "Built target wubunesttab"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=77 "Built target wubunesttab"
 .PHONY : src/wubunesttab/CMakeFiles/wubunesttab.dir/all
 
 # Build rule for subdir invocation for target.
 src/wubunesttab/CMakeFiles/wubunesttab.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 3
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 4
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/wubunesttab/CMakeFiles/wubunesttab.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : src/wubunesttab/CMakeFiles/wubunesttab.dir/rule
@@ -5542,12 +5544,12 @@ src/wubunesttab/CMakeFiles/test_nesttab.dir/all: src/wubuoxml/CMakeFiles/wubuoxm
 src/wubunesttab/CMakeFiles/test_nesttab.dir/all: src/wubunesttab/CMakeFiles/wubunesttab.dir/all
 	$(MAKE) $(MAKESILENT) -f src/wubunesttab/CMakeFiles/test_nesttab.dir/build.make src/wubunesttab/CMakeFiles/test_nesttab.dir/depend
 	$(MAKE) $(MAKESILENT) -f src/wubunesttab/CMakeFiles/test_nesttab.dir/build.make src/wubunesttab/CMakeFiles/test_nesttab.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num= "Built target test_nesttab"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=33 "Built target test_nesttab"
 .PHONY : src/wubunesttab/CMakeFiles/test_nesttab.dir/all
 
 # Build rule for subdir invocation for target.
 src/wubunesttab/CMakeFiles/test_nesttab.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 3
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 5
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/wubunesttab/CMakeFiles/test_nesttab.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : src/wubunesttab/CMakeFiles/test_nesttab.dir/rule
@@ -5573,7 +5575,7 @@ src/wubupdfform/CMakeFiles/wubupdfform.dir/all: src/wubuform/CMakeFiles/wubuform
 
 # Build rule for subdir invocation for target.
 src/wubupdfform/CMakeFiles/wubupdfform.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 2
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 1
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/wubupdfform/CMakeFiles/wubupdfform.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : src/wubupdfform/CMakeFiles/wubupdfform.dir/rule
@@ -5600,7 +5602,7 @@ src/wubupdfform/CMakeFiles/test_pdfform.dir/all: src/wubupdfform/CMakeFiles/wubu
 
 # Build rule for subdir invocation for target.
 src/wubupdfform/CMakeFiles/test_pdfform.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 2
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 1
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/wubupdfform/CMakeFiles/test_pdfform.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : src/wubupdfform/CMakeFiles/test_pdfform.dir/rule
@@ -5855,12 +5857,12 @@ src/wubumailmerge/CMakeFiles/wubumailmerge.dir/clean:
 src/wubumailmerge/CMakeFiles/test_wubumailmerge.dir/all: src/wubumailmerge/CMakeFiles/wubumailmerge.dir/all
 	$(MAKE) $(MAKESILENT) -f src/wubumailmerge/CMakeFiles/test_wubumailmerge.dir/build.make src/wubumailmerge/CMakeFiles/test_wubumailmerge.dir/depend
 	$(MAKE) $(MAKESILENT) -f src/wubumailmerge/CMakeFiles/test_wubumailmerge.dir/build.make src/wubumailmerge/CMakeFiles/test_wubumailmerge.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=48 "Built target test_wubumailmerge"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num= "Built target test_wubumailmerge"
 .PHONY : src/wubumailmerge/CMakeFiles/test_wubumailmerge.dir/all
 
 # Build rule for subdir invocation for target.
 src/wubumailmerge/CMakeFiles/test_wubumailmerge.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 1
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/wubumailmerge/CMakeFiles/test_wubumailmerge.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : src/wubumailmerge/CMakeFiles/test_wubumailmerge.dir/rule
@@ -5881,12 +5883,12 @@ src/wubumailmerge/CMakeFiles/test_wubumailmerge.dir/clean:
 src/wubudiff/CMakeFiles/wubudiff.dir/all:
 	$(MAKE) $(MAKESILENT) -f src/wubudiff/CMakeFiles/wubudiff.dir/build.make src/wubudiff/CMakeFiles/wubudiff.dir/depend
 	$(MAKE) $(MAKESILENT) -f src/wubudiff/CMakeFiles/wubudiff.dir/build.make src/wubudiff/CMakeFiles/wubudiff.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num= "Built target wubudiff"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=65 "Built target wubudiff"
 .PHONY : src/wubudiff/CMakeFiles/wubudiff.dir/all
 
 # Build rule for subdir invocation for target.
 src/wubudiff/CMakeFiles/wubudiff.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 1
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/wubudiff/CMakeFiles/wubudiff.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : src/wubudiff/CMakeFiles/wubudiff.dir/rule
@@ -5912,7 +5914,7 @@ src/wubudiff/CMakeFiles/test_wubudiff.dir/all: src/wubudiff/CMakeFiles/wubudiff.
 
 # Build rule for subdir invocation for target.
 src/wubudiff/CMakeFiles/test_wubudiff.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 1
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 2
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/wubudiff/CMakeFiles/test_wubudiff.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : src/wubudiff/CMakeFiles/test_wubudiff.dir/rule
@@ -5985,12 +5987,12 @@ src/wubumasterdoc/CMakeFiles/test_wubumasterdoc.dir/clean:
 src/wubudropcap/CMakeFiles/wubudropcap.dir/all:
 	$(MAKE) $(MAKESILENT) -f src/wubudropcap/CMakeFiles/wubudropcap.dir/build.make src/wubudropcap/CMakeFiles/wubudropcap.dir/depend
 	$(MAKE) $(MAKESILENT) -f src/wubudropcap/CMakeFiles/wubudropcap.dir/build.make src/wubudropcap/CMakeFiles/wubudropcap.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=66 "Built target wubudropcap"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num= "Built target wubudropcap"
 .PHONY : src/wubudropcap/CMakeFiles/wubudropcap.dir/all
 
 # Build rule for subdir invocation for target.
 src/wubudropcap/CMakeFiles/wubudropcap.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 1
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/wubudropcap/CMakeFiles/wubudropcap.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : src/wubudropcap/CMakeFiles/wubudropcap.dir/rule
@@ -6016,7 +6018,7 @@ src/wubudropcap/CMakeFiles/test_wubudropcap.dir/all: src/wubudropcap/CMakeFiles/
 
 # Build rule for subdir invocation for target.
 src/wubudropcap/CMakeFiles/test_wubudropcap.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 1
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/wubudropcap/CMakeFiles/test_wubudropcap.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : src/wubudropcap/CMakeFiles/test_wubudropcap.dir/rule
@@ -6271,12 +6273,12 @@ src/wubusidebar/CMakeFiles/wubusidebar.dir/clean:
 src/wubusidebar/CMakeFiles/test_wubusidebar.dir/all: src/wubusidebar/CMakeFiles/wubusidebar.dir/all
 	$(MAKE) $(MAKESILENT) -f src/wubusidebar/CMakeFiles/test_wubusidebar.dir/build.make src/wubusidebar/CMakeFiles/test_wubusidebar.dir/depend
 	$(MAKE) $(MAKESILENT) -f src/wubusidebar/CMakeFiles/test_wubusidebar.dir/build.make src/wubusidebar/CMakeFiles/test_wubusidebar.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=51 "Built target test_wubusidebar"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num= "Built target test_wubusidebar"
 .PHONY : src/wubusidebar/CMakeFiles/test_wubusidebar.dir/all
 
 # Build rule for subdir invocation for target.
 src/wubusidebar/CMakeFiles/test_wubusidebar.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 1
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/wubusidebar/CMakeFiles/test_wubusidebar.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : src/wubusidebar/CMakeFiles/test_wubusidebar.dir/rule
@@ -6349,12 +6351,12 @@ src/wubutransition/CMakeFiles/test_wubutransition.dir/clean:
 src/wubuanimation/CMakeFiles/wubuanimation.dir/all:
 	$(MAKE) $(MAKESILENT) -f src/wubuanimation/CMakeFiles/wubuanimation.dir/build.make src/wubuanimation/CMakeFiles/wubuanimation.dir/depend
 	$(MAKE) $(MAKESILENT) -f src/wubuanimation/CMakeFiles/wubuanimation.dir/build.make src/wubuanimation/CMakeFiles/wubuanimation.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num= "Built target wubuanimation"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=61 "Built target wubuanimation"
 .PHONY : src/wubuanimation/CMakeFiles/wubuanimation.dir/all
 
 # Build rule for subdir invocation for target.
 src/wubuanimation/CMakeFiles/wubuanimation.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 1
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/wubuanimation/CMakeFiles/wubuanimation.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : src/wubuanimation/CMakeFiles/wubuanimation.dir/rule
@@ -6375,7 +6377,7 @@ src/wubuanimation/CMakeFiles/wubuanimation.dir/clean:
 src/wubuanimation/CMakeFiles/test_wubuanimation.dir/all: src/wubuanimation/CMakeFiles/wubuanimation.dir/all
 	$(MAKE) $(MAKESILENT) -f src/wubuanimation/CMakeFiles/test_wubuanimation.dir/build.make src/wubuanimation/CMakeFiles/test_wubuanimation.dir/depend
 	$(MAKE) $(MAKESILENT) -f src/wubuanimation/CMakeFiles/test_wubuanimation.dir/build.make src/wubuanimation/CMakeFiles/test_wubuanimation.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=44 "Built target test_wubuanimation"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num= "Built target test_wubuanimation"
 .PHONY : src/wubuanimation/CMakeFiles/test_wubuanimation.dir/all
 
 # Build rule for subdir invocation for target.
@@ -6583,12 +6585,12 @@ src/wubumailexport/CMakeFiles/wubumailexport.dir/clean:
 src/wubumailexport/CMakeFiles/test_wubumailexport.dir/all: src/wubumailexport/CMakeFiles/wubumailexport.dir/all
 	$(MAKE) $(MAKESILENT) -f src/wubumailexport/CMakeFiles/test_wubumailexport.dir/build.make src/wubumailexport/CMakeFiles/test_wubumailexport.dir/depend
 	$(MAKE) $(MAKESILENT) -f src/wubumailexport/CMakeFiles/test_wubumailexport.dir/build.make src/wubumailexport/CMakeFiles/test_wubumailexport.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num= "Built target test_wubumailexport"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=48 "Built target test_wubumailexport"
 .PHONY : src/wubumailexport/CMakeFiles/test_wubumailexport.dir/all
 
 # Build rule for subdir invocation for target.
 src/wubumailexport/CMakeFiles/test_wubumailexport.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 1
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 2
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/wubumailexport/CMakeFiles/test_wubumailexport.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : src/wubumailexport/CMakeFiles/test_wubumailexport.dir/rule
@@ -6817,12 +6819,12 @@ src/wububasic/CMakeFiles/test_wububasic.dir/clean:
 src/wubu3d/CMakeFiles/wubu3d.dir/all:
 	$(MAKE) $(MAKESILENT) -f src/wubu3d/CMakeFiles/wubu3d.dir/build.make src/wubu3d/CMakeFiles/wubu3d.dir/depend
 	$(MAKE) $(MAKESILENT) -f src/wubu3d/CMakeFiles/wubu3d.dir/build.make src/wubu3d/CMakeFiles/wubu3d.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num= "Built target wubu3d"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=60 "Built target wubu3d"
 .PHONY : src/wubu3d/CMakeFiles/wubu3d.dir/all
 
 # Build rule for subdir invocation for target.
 src/wubu3d/CMakeFiles/wubu3d.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 1
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/wubu3d/CMakeFiles/wubu3d.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : src/wubu3d/CMakeFiles/wubu3d.dir/rule
@@ -6843,12 +6845,12 @@ src/wubu3d/CMakeFiles/wubu3d.dir/clean:
 src/wubu3d/CMakeFiles/test_wubu3d.dir/all: src/wubu3d/CMakeFiles/wubu3d.dir/all
 	$(MAKE) $(MAKESILENT) -f src/wubu3d/CMakeFiles/test_wubu3d.dir/build.make src/wubu3d/CMakeFiles/test_wubu3d.dir/depend
 	$(MAKE) $(MAKESILENT) -f src/wubu3d/CMakeFiles/test_wubu3d.dir/build.make src/wubu3d/CMakeFiles/test_wubu3d.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num= "Built target test_wubu3d"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=44 "Built target test_wubu3d"
 .PHONY : src/wubu3d/CMakeFiles/test_wubu3d.dir/all
 
 # Build rule for subdir invocation for target.
 src/wubu3d/CMakeFiles/test_wubu3d.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 2
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 src/wubu3d/CMakeFiles/test_wubu3d.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : src/wubu3d/CMakeFiles/test_wubu3d.dir/rule
@@ -7580,7 +7582,7 @@ apps/wubuos/CMakeFiles/test_doccmd.dir/all: apps/wubupdf/CMakeFiles/wubupdf_app.
 
 # Build rule for subdir invocation for target.
 apps/wubuos/CMakeFiles/test_doccmd.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 27
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 29
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 apps/wubuos/CMakeFiles/test_doccmd.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : apps/wubuos/CMakeFiles/test_doccmd.dir/rule
@@ -8338,12 +8340,12 @@ apps/wubufont/CMakeFiles/wubufont_cli.dir/all: src/wubuzip/CMakeFiles/wubuzip.di
 apps/wubufont/CMakeFiles/wubufont_cli.dir/all: src/wubufont/CMakeFiles/wubufont.dir/all
 	$(MAKE) $(MAKESILENT) -f apps/wubufont/CMakeFiles/wubufont_cli.dir/build.make apps/wubufont/CMakeFiles/wubufont_cli.dir/depend
 	$(MAKE) $(MAKESILENT) -f apps/wubufont/CMakeFiles/wubufont_cli.dir/build.make apps/wubufont/CMakeFiles/wubufont_cli.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num= "Built target wubufont_cli"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=69 "Built target wubufont_cli"
 .PHONY : apps/wubufont/CMakeFiles/wubufont_cli.dir/all
 
 # Build rule for subdir invocation for target.
 apps/wubufont/CMakeFiles/wubufont_cli.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 2
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 3
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 apps/wubufont/CMakeFiles/wubufont_cli.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : apps/wubufont/CMakeFiles/wubufont_cli.dir/rule
@@ -8444,12 +8446,12 @@ apps/wubunote/CMakeFiles/wubunote.dir/all: apps/wubuedit/CMakeFiles/wubuedit_app
 apps/wubunote/CMakeFiles/wubunote.dir/all: apps/wubuconv/CMakeFiles/wubuconv.dir/all
 	$(MAKE) $(MAKESILENT) -f apps/wubunote/CMakeFiles/wubunote.dir/build.make apps/wubunote/CMakeFiles/wubunote.dir/depend
 	$(MAKE) $(MAKESILENT) -f apps/wubunote/CMakeFiles/wubunote.dir/build.make apps/wubunote/CMakeFiles/wubunote.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=77 "Built target wubunote"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num= "Built target wubunote"
 .PHONY : apps/wubunote/CMakeFiles/wubunote.dir/all
 
 # Build rule for subdir invocation for target.
 apps/wubunote/CMakeFiles/wubunote.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 15
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 13
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 apps/wubunote/CMakeFiles/wubunote.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : apps/wubunote/CMakeFiles/wubunote.dir/rule
@@ -8494,7 +8496,7 @@ apps/wubuview/CMakeFiles/wubuview.dir/all: apps/wubuconv/CMakeFiles/wubuconv.dir
 
 # Build rule for subdir invocation for target.
 apps/wubuview/CMakeFiles/wubuview.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 14
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 13
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 apps/wubuview/CMakeFiles/wubuview.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : apps/wubuview/CMakeFiles/wubuview.dir/rule
@@ -8604,12 +8606,12 @@ apps/wubupad_bridge/CMakeFiles/wubupad_edit.dir/clean:
 apps/wubupad_bridge/CMakeFiles/test_wubupad_bridge.dir/all: apps/wubupad_bridge/CMakeFiles/wubupad_bridge.dir/all
 	$(MAKE) $(MAKESILENT) -f apps/wubupad_bridge/CMakeFiles/test_wubupad_bridge.dir/build.make apps/wubupad_bridge/CMakeFiles/test_wubupad_bridge.dir/depend
 	$(MAKE) $(MAKESILENT) -f apps/wubupad_bridge/CMakeFiles/test_wubupad_bridge.dir/build.make apps/wubupad_bridge/CMakeFiles/test_wubupad_bridge.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=50 "Built target test_wubupad_bridge"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num= "Built target test_wubupad_bridge"
 .PHONY : apps/wubupad_bridge/CMakeFiles/test_wubupad_bridge.dir/all
 
 # Build rule for subdir invocation for target.
 apps/wubupad_bridge/CMakeFiles/test_wubupad_bridge.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 2
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 1
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 apps/wubupad_bridge/CMakeFiles/test_wubupad_bridge.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : apps/wubupad_bridge/CMakeFiles/test_wubupad_bridge.dir/rule
@@ -8750,12 +8752,12 @@ tools/CMakeFiles/test_qr.dir/all: src/wubufont/CMakeFiles/wubufont.dir/all
 tools/CMakeFiles/test_qr.dir/all: src/wubuocr/CMakeFiles/wubuocr.dir/all
 	$(MAKE) $(MAKESILENT) -f tools/CMakeFiles/test_qr.dir/build.make tools/CMakeFiles/test_qr.dir/depend
 	$(MAKE) $(MAKESILENT) -f tools/CMakeFiles/test_qr.dir/build.make tools/CMakeFiles/test_qr.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=35 "Built target test_qr"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num= "Built target test_qr"
 .PHONY : tools/CMakeFiles/test_qr.dir/all
 
 # Build rule for subdir invocation for target.
 tools/CMakeFiles/test_qr.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 7
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 6
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tools/CMakeFiles/test_qr.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : tools/CMakeFiles/test_qr.dir/rule
@@ -9265,12 +9267,12 @@ tools/CMakeFiles/ocringest.dir/clean:
 tools/CMakeFiles/test_zoning.dir/all:
 	$(MAKE) $(MAKESILENT) -f tools/CMakeFiles/test_zoning.dir/build.make tools/CMakeFiles/test_zoning.dir/depend
 	$(MAKE) $(MAKESILENT) -f tools/CMakeFiles/test_zoning.dir/build.make tools/CMakeFiles/test_zoning.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=55 "Built target test_zoning"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num= "Built target test_zoning"
 .PHONY : tools/CMakeFiles/test_zoning.dir/all
 
 # Build rule for subdir invocation for target.
 tools/CMakeFiles/test_zoning.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 1
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tools/CMakeFiles/test_zoning.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : tools/CMakeFiles/test_zoning.dir/rule
@@ -9629,12 +9631,12 @@ tests/CMakeFiles/test_wubuzip.dir/clean:
 tests/CMakeFiles/test_inflate.dir/all: src/wubuzip/CMakeFiles/wubuzip.dir/all
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_inflate.dir/build.make tests/CMakeFiles/test_inflate.dir/depend
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_inflate.dir/build.make tests/CMakeFiles/test_inflate.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num= "Built target test_inflate"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=30 "Built target test_inflate"
 .PHONY : tests/CMakeFiles/test_inflate.dir/all
 
 # Build rule for subdir invocation for target.
 tests/CMakeFiles/test_inflate.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 2
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 3
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_inflate.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : tests/CMakeFiles/test_inflate.dir/rule
@@ -9737,12 +9739,12 @@ tests/CMakeFiles/test_png.dir/all: src/wubufont/CMakeFiles/wubufont.dir/all
 tests/CMakeFiles/test_png.dir/all: src/wubuocr/CMakeFiles/wubuocr.dir/all
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_png.dir/build.make tests/CMakeFiles/test_png.dir/depend
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_png.dir/build.make tests/CMakeFiles/test_png.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num= "Built target test_png"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=35 "Built target test_png"
 .PHONY : tests/CMakeFiles/test_png.dir/all
 
 # Build rule for subdir invocation for target.
 tests/CMakeFiles/test_png.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 6
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 7
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_png.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : tests/CMakeFiles/test_png.dir/rule
@@ -9802,7 +9804,7 @@ tests/CMakeFiles/test_autosave.dir/all: src/wubuoxml/CMakeFiles/wubuoxml.dir/all
 
 # Build rule for subdir invocation for target.
 tests/CMakeFiles/test_autosave.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 4
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 3
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_autosave.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : tests/CMakeFiles/test_autosave.dir/rule
@@ -9832,7 +9834,7 @@ tests/CMakeFiles/test_draw.dir/all: src/wubusvg/CMakeFiles/wubusvg.dir/all
 
 # Build rule for subdir invocation for target.
 tests/CMakeFiles/test_draw.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 1
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 2
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_draw.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : tests/CMakeFiles/test_draw.dir/rule
@@ -9951,7 +9953,7 @@ tests/CMakeFiles/test_a11y.dir/all: src/wubuoxml/CMakeFiles/wubuoxml.dir/all
 
 # Build rule for subdir invocation for target.
 tests/CMakeFiles/test_a11y.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 4
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 3
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_a11y.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : tests/CMakeFiles/test_a11y.dir/rule
@@ -10083,12 +10085,12 @@ tests/CMakeFiles/test_load_async.dir/clean:
 tests/CMakeFiles/test_deflate_roundtrip.dir/all: src/wubuzip/CMakeFiles/wubuzip.dir/all
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_deflate_roundtrip.dir/build.make tests/CMakeFiles/test_deflate_roundtrip.dir/depend
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_deflate_roundtrip.dir/build.make tests/CMakeFiles/test_deflate_roundtrip.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num= "Built target test_deflate_roundtrip"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=20 "Built target test_deflate_roundtrip"
 .PHONY : tests/CMakeFiles/test_deflate_roundtrip.dir/all
 
 # Build rule for subdir invocation for target.
 tests/CMakeFiles/test_deflate_roundtrip.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 2
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 3
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_deflate_roundtrip.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : tests/CMakeFiles/test_deflate_roundtrip.dir/rule
@@ -10414,12 +10416,12 @@ tests/CMakeFiles/test_cell_edit.dir/all: src/wubuoxml/CMakeFiles/wubuoxml.dir/al
 tests/CMakeFiles/test_cell_edit.dir/all: apps/wubucell/CMakeFiles/wubucell_app.dir/all
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_cell_edit.dir/build.make tests/CMakeFiles/test_cell_edit.dir/depend
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_cell_edit.dir/build.make tests/CMakeFiles/test_cell_edit.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=14 "Built target test_cell_edit"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num= "Built target test_cell_edit"
 .PHONY : tests/CMakeFiles/test_cell_edit.dir/all
 
 # Build rule for subdir invocation for target.
 tests/CMakeFiles/test_cell_edit.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 4
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 3
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_cell_edit.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : tests/CMakeFiles/test_cell_edit.dir/rule
@@ -10474,12 +10476,12 @@ tests/CMakeFiles/test_cell_merge.dir/all: src/wubuoxml/CMakeFiles/wubuoxml.dir/a
 tests/CMakeFiles/test_cell_merge.dir/all: apps/wubucell/CMakeFiles/wubucell_app.dir/all
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_cell_merge.dir/build.make tests/CMakeFiles/test_cell_merge.dir/depend
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_cell_merge.dir/build.make tests/CMakeFiles/test_cell_merge.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num= "Built target test_cell_merge"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=14 "Built target test_cell_merge"
 .PHONY : tests/CMakeFiles/test_cell_merge.dir/all
 
 # Build rule for subdir invocation for target.
 tests/CMakeFiles/test_cell_merge.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 3
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 4
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_cell_merge.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : tests/CMakeFiles/test_cell_merge.dir/rule
@@ -10504,12 +10506,12 @@ tests/CMakeFiles/test_csv.dir/all: src/wubuoxml/CMakeFiles/wubuoxml.dir/all
 tests/CMakeFiles/test_csv.dir/all: apps/wubucell/CMakeFiles/wubucell_app.dir/all
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_csv.dir/build.make tests/CMakeFiles/test_csv.dir/depend
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_csv.dir/build.make tests/CMakeFiles/test_csv.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=20 "Built target test_csv"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num= "Built target test_csv"
 .PHONY : tests/CMakeFiles/test_csv.dir/all
 
 # Build rule for subdir invocation for target.
 tests/CMakeFiles/test_csv.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 4
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 3
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_csv.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : tests/CMakeFiles/test_csv.dir/rule
@@ -10572,12 +10574,12 @@ tests/CMakeFiles/test_rtf_json.dir/all: apps/wubuedit/CMakeFiles/wubuedit_app.di
 tests/CMakeFiles/test_rtf_json.dir/all: apps/wubudoc/CMakeFiles/wubudoc_app.dir/all
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_rtf_json.dir/build.make tests/CMakeFiles/test_rtf_json.dir/depend
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_rtf_json.dir/build.make tests/CMakeFiles/test_rtf_json.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=36 "Built target test_rtf_json"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num= "Built target test_rtf_json"
 .PHONY : tests/CMakeFiles/test_rtf_json.dir/all
 
 # Build rule for subdir invocation for target.
 tests/CMakeFiles/test_rtf_json.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 5
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 4
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_rtf_json.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : tests/CMakeFiles/test_rtf_json.dir/rule
@@ -10824,12 +10826,12 @@ tests/CMakeFiles/test_flat_epub.dir/all: apps/wubudoc/CMakeFiles/wubudoc_app.dir
 tests/CMakeFiles/test_flat_epub.dir/all: apps/wubuodf/CMakeFiles/wubuodf_app.dir/all
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_flat_epub.dir/build.make tests/CMakeFiles/test_flat_epub.dir/depend
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_flat_epub.dir/build.make tests/CMakeFiles/test_flat_epub.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=25 "Built target test_flat_epub"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num= "Built target test_flat_epub"
 .PHONY : tests/CMakeFiles/test_flat_epub.dir/all
 
 # Build rule for subdir invocation for target.
 tests/CMakeFiles/test_flat_epub.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 5
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 4
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_flat_epub.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : tests/CMakeFiles/test_flat_epub.dir/rule
@@ -11122,12 +11124,12 @@ tests/CMakeFiles/test_nfc.dir/all: src/wubufont/CMakeFiles/wubufont.dir/all
 tests/CMakeFiles/test_nfc.dir/all: src/wubuocr/CMakeFiles/wubuocr.dir/all
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_nfc.dir/build.make tests/CMakeFiles/test_nfc.dir/depend
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_nfc.dir/build.make tests/CMakeFiles/test_nfc.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=33 "Built target test_nfc"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num= "Built target test_nfc"
 .PHONY : tests/CMakeFiles/test_nfc.dir/all
 
 # Build rule for subdir invocation for target.
 tests/CMakeFiles/test_nfc.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 7
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 6
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_nfc.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : tests/CMakeFiles/test_nfc.dir/rule
@@ -11244,12 +11246,12 @@ tests/CMakeFiles/test_wubuocr_recognize.dir/all: src/wubufont/CMakeFiles/wubufon
 tests/CMakeFiles/test_wubuocr_recognize.dir/all: src/wubuocr/CMakeFiles/wubuocr.dir/all
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_wubuocr_recognize.dir/build.make tests/CMakeFiles/test_wubuocr_recognize.dir/depend
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_wubuocr_recognize.dir/build.make tests/CMakeFiles/test_wubuocr_recognize.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num= "Built target test_wubuocr_recognize"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=50 "Built target test_wubuocr_recognize"
 .PHONY : tests/CMakeFiles/test_wubuocr_recognize.dir/all
 
 # Build rule for subdir invocation for target.
 tests/CMakeFiles/test_wubuocr_recognize.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 6
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 7
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_wubuocr_recognize.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : tests/CMakeFiles/test_wubuocr_recognize.dir/rule
@@ -11361,12 +11363,12 @@ tests/CMakeFiles/test_wubunote_ctrl.dir/all: src/wubutui/CMakeFiles/wubutui.dir/
 tests/CMakeFiles/test_wubunote_ctrl.dir/all: src/wubunote/CMakeFiles/wubunote_core.dir/all
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_wubunote_ctrl.dir/build.make tests/CMakeFiles/test_wubunote_ctrl.dir/depend
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_wubunote_ctrl.dir/build.make tests/CMakeFiles/test_wubunote_ctrl.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=49 "Built target test_wubunote_ctrl"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num= "Built target test_wubunote_ctrl"
 .PHONY : tests/CMakeFiles/test_wubunote_ctrl.dir/all
 
 # Build rule for subdir invocation for target.
 tests/CMakeFiles/test_wubunote_ctrl.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 1
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_wubunote_ctrl.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : tests/CMakeFiles/test_wubunote_ctrl.dir/rule
@@ -11387,12 +11389,12 @@ tests/CMakeFiles/test_wubunote_ctrl.dir/clean:
 tests/CMakeFiles/test_wubunote.dir/all: src/wubunote/CMakeFiles/wubunote_core.dir/all
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_wubunote.dir/build.make tests/CMakeFiles/test_wubunote.dir/depend
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_wubunote.dir/build.make tests/CMakeFiles/test_wubunote.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num= "Built target test_wubunote"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=49 "Built target test_wubunote"
 .PHONY : tests/CMakeFiles/test_wubunote.dir/all
 
 # Build rule for subdir invocation for target.
 tests/CMakeFiles/test_wubunote.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 1
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_wubunote.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : tests/CMakeFiles/test_wubunote.dir/rule
@@ -11467,12 +11469,12 @@ tests/CMakeFiles/test_wubusvg.dir/all: src/wubujson/CMakeFiles/wubujson.dir/all
 tests/CMakeFiles/test_wubusvg.dir/all: src/wubusvg/CMakeFiles/wubusvg.dir/all
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_wubusvg.dir/build.make tests/CMakeFiles/test_wubusvg.dir/depend
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_wubusvg.dir/build.make tests/CMakeFiles/test_wubusvg.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=52 "Built target test_wubusvg"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num= "Built target test_wubusvg"
 .PHONY : tests/CMakeFiles/test_wubusvg.dir/all
 
 # Build rule for subdir invocation for target.
 tests/CMakeFiles/test_wubusvg.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 2
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 1
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_wubusvg.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : tests/CMakeFiles/test_wubusvg.dir/rule
@@ -11516,7 +11518,7 @@ tests/CMakeFiles/test_wubudoc.dir/all: apps/wubuconv/CMakeFiles/wubuconv.dir/all
 
 # Build rule for subdir invocation for target.
 tests/CMakeFiles/test_wubudoc.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 14
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 13
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_wubudoc.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : tests/CMakeFiles/test_wubudoc.dir/rule
@@ -11561,7 +11563,7 @@ tests/CMakeFiles/test_drop.dir/all: apps/wubuconv/CMakeFiles/wubuconv.dir/all
 
 # Build rule for subdir invocation for target.
 tests/CMakeFiles/test_drop.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 15
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 14
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_drop.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : tests/CMakeFiles/test_drop.dir/rule
@@ -11858,7 +11860,7 @@ tests/CMakeFiles/test_agent_verbs.dir/all: apps/wubuconv/CMakeFiles/wubuconv.dir
 
 # Build rule for subdir invocation for target.
 tests/CMakeFiles/test_agent_verbs.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 14
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 13
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_agent_verbs.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
 .PHONY : tests/CMakeFiles/test_agent_verbs.dir/rule
@@ -11871,6 +11873,35 @@ test_agent_verbs: tests/CMakeFiles/test_agent_verbs.dir/rule
 tests/CMakeFiles/test_agent_verbs.dir/clean:
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_agent_verbs.dir/build.make tests/CMakeFiles/test_agent_verbs.dir/clean
 .PHONY : tests/CMakeFiles/test_agent_verbs.dir/clean
+
+#=============================================================================
+# Target rules for target tests/CMakeFiles/test_grabbag.dir
+
+# All Build rule for target.
+tests/CMakeFiles/test_grabbag.dir/all: src/wubuzip/CMakeFiles/wubuzip.dir/all
+tests/CMakeFiles/test_grabbag.dir/all: src/wubuxml/CMakeFiles/wubuxml.dir/all
+tests/CMakeFiles/test_grabbag.dir/all: src/wubumodel/CMakeFiles/wubumodel.dir/all
+tests/CMakeFiles/test_grabbag.dir/all: src/wubuoxml/CMakeFiles/wubuoxml.dir/all
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_grabbag.dir/build.make tests/CMakeFiles/test_grabbag.dir/depend
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_grabbag.dir/build.make tests/CMakeFiles/test_grabbag.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num= "Built target test_grabbag"
+.PHONY : tests/CMakeFiles/test_grabbag.dir/all
+
+# Build rule for subdir invocation for target.
+tests/CMakeFiles/test_grabbag.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 3
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_grabbag.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/wubu/WuBuOffice/build-plugin/CMakeFiles 0
+.PHONY : tests/CMakeFiles/test_grabbag.dir/rule
+
+# Convenience name for target.
+test_grabbag: tests/CMakeFiles/test_grabbag.dir/rule
+.PHONY : test_grabbag
+
+# clean rule for target.
+tests/CMakeFiles/test_grabbag.dir/clean:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_grabbag.dir/build.make tests/CMakeFiles/test_grabbag.dir/clean
+.PHONY : tests/CMakeFiles/test_grabbag.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

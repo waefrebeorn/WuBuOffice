@@ -4247,6 +4247,19 @@ test_agent_verbs/fast:
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_agent_verbs.dir/build.make tests/CMakeFiles/test_agent_verbs.dir/build
 .PHONY : test_agent_verbs/fast
 
+#=============================================================================
+# Target rules for targets named test_grabbag
+
+# Build rule for target.
+test_grabbag: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_grabbag
+.PHONY : test_grabbag
+
+# fast build rule for target.
+test_grabbag/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_grabbag.dir/build.make tests/CMakeFiles/test_grabbag.dir/build
+.PHONY : test_grabbag/fast
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -4346,6 +4359,7 @@ help:
 	@echo "... test_gemm_nt"
 	@echo "... test_gotoline"
 	@echo "... test_gpu_blas"
+	@echo "... test_grabbag"
 	@echo "... test_gru_cmp"
 	@echo "... test_gru_gpu"
 	@echo "... test_hash"

@@ -1243,6 +1243,7 @@ apps/wubuos/CMakeFiles/test_view.dir/toast.c.o
 
 apps/wubuos/CMakeFiles/test_view.dir/view_cell.c.o
  /home/wubu/WuBuOffice/apps/wubuos/view_cell.c
+ /home/wubu/WuBuOffice/apps/wubuoxml/package.h
  /home/wubu/WuBuOffice/apps/wubucell/cell.h
  /home/wubu/WuBuOffice/apps/wubucell/cell_csv.h
  /home/wubu/WuBuOffice/apps/wubucell/cell_internal.h
@@ -1256,7 +1257,6 @@ apps/wubuos/CMakeFiles/test_view.dir/view_cell.c.o
  /home/wubu/WuBuOffice/src/wubuformula/funcs.h
  /home/wubu/WuBuOffice/src/wubuformula/value.h
  /home/wubu/WuBuOffice/src/wubumath/math.h
- /home/wubu/WuBuOffice/src/wubuoxml/package.h
  /home/wubu/WuBuOffice/src/wubumodel/model.h
  /usr/include/ctype.h
  /usr/include/features-time64.h

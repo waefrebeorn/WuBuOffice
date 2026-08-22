@@ -1216,6 +1216,7 @@ apps/wubuos/CMakeFiles/test_view.dir/toast.c.o: /home/wubu/WuBuOffice/apps/wubuo
   /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h
 
 apps/wubuos/CMakeFiles/test_view.dir/view_cell.c.o: /home/wubu/WuBuOffice/apps/wubuos/view_cell.c \
+  /home/wubu/WuBuOffice/apps/wubuoxml/package.h \
   /home/wubu/WuBuOffice/apps/wubucell/cell.h \
   /home/wubu/WuBuOffice/apps/wubucell/cell_csv.h \
   /home/wubu/WuBuOffice/apps/wubucell/cell_internal.h \
@@ -1229,7 +1230,6 @@ apps/wubuos/CMakeFiles/test_view.dir/view_cell.c.o: /home/wubu/WuBuOffice/apps/w
   /home/wubu/WuBuOffice/src/wubuformula/funcs.h \
   /home/wubu/WuBuOffice/src/wubuformula/value.h \
   /home/wubu/WuBuOffice/src/wubumath/math.h \
-  /home/wubu/WuBuOffice/src/wubuoxml/package.h \
   /home/wubu/WuBuOffice/src/wubumodel/model.h \
   /usr/include/ctype.h \
   /usr/include/features-time64.h \
@@ -2713,8 +2713,6 @@ apps/wubuos/CMakeFiles/test_view.dir/wuos_font.c.o: /home/wubu/WuBuOffice/apps/w
 
 /usr/include/SDL2/SDL_scancode.h:
 
-/usr/include/SDL2/SDL_rwops.h:
-
 /usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h:
 
 /home/wubu/WuBuOffice/apps/wubuos/gotoline.c:
@@ -2768,6 +2766,8 @@ apps/wubuos/CMakeFiles/test_view.dir/wuos_font.c.o: /home/wubu/WuBuOffice/apps/w
 /home/wubu/WuBuOffice/src/wubuqr/wubuqr.h:
 
 /home/wubu/WuBuOffice/apps/wubucell/style.h:
+
+/home/wubu/WuBuOffice/src/wubupdfextract/pdfextract.h:
 
 /home/wubu/WuBuOffice/src/wubunotebookbar/wubunotebookbar.h:
 
@@ -2902,6 +2902,8 @@ apps/wubuos/CMakeFiles/test_view.dir/wuos_font.c.o: /home/wubu/WuBuOffice/apps/w
 /home/wubu/WuBuOffice/apps/wubuos/view_doc.c:
 
 /home/wubu/WuBuOffice/apps/wubuos/view_cell.c:
+
+/usr/include/SDL2/SDL_rwops.h:
 
 /usr/include/SDL2/begin_code.h:
 
@@ -3292,10 +3294,6 @@ apps/wubuos/CMakeFiles/test_view.dir/wuos_font.c.o: /home/wubu/WuBuOffice/apps/w
 /usr/include/x86_64-linux-gnu/bits/atomic_wide_counter.h:
 
 /home/wubu/WuBuOffice/src/wubuformula/value.h:
-
-/home/wubu/WuBuOffice/src/wubupdfextract/pdfextract.h:
-
-/home/wubu/WuBuOffice/src/wubuoxml/package.h:
 
 /home/wubu/WuBuOffice/apps/wubuos/view_compare.c:
 

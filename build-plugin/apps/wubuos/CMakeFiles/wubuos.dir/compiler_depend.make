@@ -1194,6 +1194,7 @@ apps/wubuos/CMakeFiles/wubuos.dir/toast.c.o: /home/wubu/WuBuOffice/apps/wubuos/t
   /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h
 
 apps/wubuos/CMakeFiles/wubuos.dir/view_cell.c.o: /home/wubu/WuBuOffice/apps/wubuos/view_cell.c \
+  /home/wubu/WuBuOffice/apps/wubuoxml/package.h \
   /home/wubu/WuBuOffice/apps/wubucell/cell.h \
   /home/wubu/WuBuOffice/apps/wubucell/cell_csv.h \
   /home/wubu/WuBuOffice/apps/wubucell/cell_internal.h \
@@ -1207,7 +1208,6 @@ apps/wubuos/CMakeFiles/wubuos.dir/view_cell.c.o: /home/wubu/WuBuOffice/apps/wubu
   /home/wubu/WuBuOffice/src/wubuformula/funcs.h \
   /home/wubu/WuBuOffice/src/wubuformula/value.h \
   /home/wubu/WuBuOffice/src/wubumath/math.h \
-  /home/wubu/WuBuOffice/src/wubuoxml/package.h \
   /home/wubu/WuBuOffice/src/wubumodel/model.h \
   /usr/include/ctype.h \
   /usr/include/features-time64.h \
@@ -3237,8 +3237,6 @@ apps/wubuos/CMakeFiles/wubuos.dir/wuos_toolbar.c.o: /home/wubu/WuBuOffice/apps/w
 
 /home/wubu/WuBuOffice/src/wubuqr/wubuqr.h:
 
-/home/wubu/WuBuOffice/src/wubuoxml/package.h:
-
 /home/wubu/WuBuOffice/src/wubupdfextract/pdfextract.h:
 
 /home/wubu/WuBuOffice/src/wubunotebookbar/wubunotebookbar.h:
@@ -3262,6 +3260,8 @@ apps/wubuos/CMakeFiles/wubuos.dir/wuos_toolbar.c.o: /home/wubu/WuBuOffice/apps/w
 /home/wubu/WuBuOffice/src/wubumasterdoc/wubumasterdoc.h:
 
 /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h:
+
+/home/wubu/WuBuOffice/apps/wubuoxml/package.h:
 
 /usr/lib/gcc/x86_64-linux-gnu/13/include/xsavesintrin.h:
 

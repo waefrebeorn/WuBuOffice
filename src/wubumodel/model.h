@@ -32,7 +32,11 @@ typedef enum {
     WUBUMODEL_COMMENT,   /* DOC-63: review comment anchored to a run */
     WUBUMODEL_TRACKCHANGE,/* DOC-64: redline insert/delete */
     WUBUMODEL_SECTIONBREAK,/* DOC-57: section break (new page + reset cols) */
-    WUBUMODEL_PAGEBREAK  /* DOC-57: hard page break */
+    WUBUMODEL_PAGEBREAK,  /* DOC-57: hard page break */
+    WUBUMODEL_FOREIGN     /* grab-bag: opaque construct from a foreign format
+                           * (name via node_set_field, raw XML via run text).
+                           * Preserved on ingest, re-emitted on save so
+                           * round-trips never silently drop data. */
 } wubumodel_kind;
 
 typedef uint64_t wubumodel_id;
@@ -116,6 +120,14 @@ int  wubumodel_node_set_author(wubumodel_node *n, const char *a);  /* COMMENT/TR
 const char *wubumodel_node_author(const wubumodel_node *n);
 int  wubumodel_node_set_field(wubumodel_node *n, const char *f);   /* FIELD kind/value */
 const char *wubumodel_node_field(const wubumodel_node *n);
+/* --- FOREIGN (grab-bag) nodes: opaque preservation of constructs the model
+ * cannot natively express. name = element/feature identifier, raw = verbatim
+ * source XML. Renderers skip them; save filters re-emit them. */
+int         wubumodel_node_set_foreign(wubumodel_node *n, const char *name,
+                                       const char *raw); /* 0 ok */
+const char *wubumodel_node_foreign_name(const wubumodel_node *n);
+const char *wubumodel_node_foreign_raw(const wubumodel_node *n);
+
 int  wubumodel_node_set_tc(wubumodel_node *n, int t);   /* TRACKCHANGE 0=ins,1=del */
 int  wubumodel_node_tc(const wubumodel_node *n);
 int  wubumodel_node_set_break(wubumodel_node *n, int b); /* PAGEBREAK=0, SECTIONBREAK=1 */

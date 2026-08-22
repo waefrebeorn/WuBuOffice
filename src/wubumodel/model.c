@@ -195,6 +195,23 @@ int  wubumodel_node_set_field(wubumodel_node *n, const char *f){
     return 0;
 }
 const char *wubumodel_node_field(const wubumodel_node *n){ return n?n->field:NULL; }
+
+int  wubumodel_node_set_foreign(wubumodel_node *n, const char *name,
+                                const char *raw){
+    if (!n) return -1;
+    n->kind = WUBUMODEL_FOREIGN;
+    char *c = name ? strdup(name) : NULL;
+    free(n->field); n->field = c;
+    char *r = raw ? strdup(raw) : NULL;
+    free(n->text);  n->text = r;      /* raw XML rides the node text slot */
+    return 0;
+}
+const char *wubumodel_node_foreign_name(const wubumodel_node *n){
+    return (n && n->kind == WUBUMODEL_FOREIGN) ? n->field : NULL;
+}
+const char *wubumodel_node_foreign_raw(const wubumodel_node *n){
+    return (n && n->kind == WUBUMODEL_FOREIGN) ? n->text : NULL;
+}
 int  wubumodel_node_set_tc(wubumodel_node *n, int t){ if(!n)return -1; n->tc=t; return 0; }
 int  wubumodel_node_tc(const wubumodel_node *n){ return n?(n->tc):0; }
 int  wubumodel_node_set_break(wubumodel_node *n, int b){ if(!n)return -1; n->brk=b; return 0; }

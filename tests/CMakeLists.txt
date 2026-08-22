@@ -476,3 +476,8 @@ set_property(TEST toc PROPERTY LABELS toc)
 add_executable(test_agent_verbs test_agent_verbs.c)
 target_link_libraries(test_agent_verbs PRIVATE wubudoc wubujson wubuoxml wubuzip wubuxml)
 add_test(NAME agent_verbs COMMAND test_agent_verbs)
+
+add_executable(test_grabbag test_grabbag.c)
+target_link_libraries(test_grabbag PRIVATE wubuoxml wubumodel wubuxml)
+target_include_directories(test_grabbag PRIVATE ${CMAKE_SOURCE_DIR}/src)
+add_test(NAME grabbag COMMAND test_grabbag)

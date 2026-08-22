@@ -22,7 +22,7 @@ apps/wubuconv/CMakeFiles/wubuconv_app.dir/conv_map.c.o: \
  /home/wubu/WuBuOffice/apps/wubuconv/conv_bridge.h \
  /home/wubu/WuBuOffice/apps/wubuconv/../wubuedit/docmodel.h \
  /home/wubu/WuBuOffice/apps/wubuconv/../wubucell/cell.h \
- /home/wubu/WuBuOffice/src/wubuoxml/../wubuoxml/package.h \
+ /home/wubu/WuBuOffice/apps/wubuconv/../wubucell/../wubuoxml/package.h \
  /usr/include/stdio.h /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h \
  /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \
@@ -37,6 +37,7 @@ apps/wubuconv/CMakeFiles/wubuconv_app.dir/conv_map.c.o: \
  /usr/include/x86_64-linux-gnu/bits/stdio.h \
  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
  /home/wubu/WuBuOffice/apps/wubuconv/../wubushow/show.h \
+ /home/wubu/WuBuOffice/apps/wubuconv/../wubushow/../wubuoxml/package.h \
  /home/wubu/WuBuOffice/src/wubuoxml/../wubumodel/model.h \
  /home/wubu/WuBuOffice/apps/wubuconv/model_from_json.h \
  /home/wubu/WuBuOffice/src/wubujson/json.h /usr/include/stdlib.h \
@@ -63,6 +64,7 @@ apps/wubuconv/CMakeFiles/wubuconv_app.dir/conv_map.c.o: \
  /home/wubu/WuBuOffice/apps/wubuconv/../wubushow/show_read.h \
  /home/wubu/WuBuOffice/apps/wubuconv/../wubushow/show.h \
  /home/wubu/WuBuOffice/apps/wubuconv/../wubuword/word.h \
+ /home/wubu/WuBuOffice/apps/wubuconv/../wubuword/../wubuoxml/package.h \
  /home/wubu/WuBuOffice/src/wubuoxml/../wubuxml/xml.h \
  /home/wubu/WuBuOffice/apps/wubuconv/../wubuword/assemble.h \
  /home/wubu/WuBuOffice/apps/wubuconv/../wubuword/word.h \
@@ -86,6 +88,6 @@ apps/wubuconv/CMakeFiles/wubuconv_app.dir/conv_map.c.o: \
  /home/wubu/WuBuOffice/apps/wubuconv/../wubupdf/../wubuedit/docmodel.h \
  /home/wubu/WuBuOffice/apps/wubuconv/../wuburead/readers.h \
  /home/wubu/WuBuOffice/apps/wubuconv/../wuburead/../wubuedit/docmodel.h \
- /home/wubu/WuBuOffice/src/wubuoxml/../wubuoxml/reader.h \
- /home/wubu/WuBuOffice/src/wubuoxml/../wubuoxml/docx_text.h \
+ /home/wubu/WuBuOffice/apps/wubuconv/../wubuoxml/reader.h \
+ /home/wubu/WuBuOffice/apps/wubuconv/../wubuoxml/docx_text.h \
  /home/wubu/WuBuOffice/src/wubuoxml/../wubuxml/parser.h

@@ -672,6 +672,7 @@
 /home/wubu/WuBuOffice/build-plugin/tests/CMakeFiles/test_settings.dir
 /home/wubu/WuBuOffice/build-plugin/tests/CMakeFiles/test_toc.dir
 /home/wubu/WuBuOffice/build-plugin/tests/CMakeFiles/test_agent_verbs.dir
+/home/wubu/WuBuOffice/build-plugin/tests/CMakeFiles/test_grabbag.dir
 /home/wubu/WuBuOffice/build-plugin/tests/CMakeFiles/test.dir
 /home/wubu/WuBuOffice/build-plugin/tests/CMakeFiles/edit_cache.dir
 /home/wubu/WuBuOffice/build-plugin/tests/CMakeFiles/rebuild_cache.dir
