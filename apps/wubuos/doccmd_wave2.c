@@ -1,4 +1,7 @@
 #include "doccmd.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "wubusort.h"
 #include "wubufilter.h"
 #include "wubusubtotal.h"
