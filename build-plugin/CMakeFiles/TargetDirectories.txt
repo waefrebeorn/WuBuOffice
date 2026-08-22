@@ -501,6 +501,7 @@
 /home/wubu/WuBuOffice/build-plugin/apps/wubuedit/CMakeFiles/edit_cache.dir
 /home/wubu/WuBuOffice/build-plugin/apps/wubuedit/CMakeFiles/rebuild_cache.dir
 /home/wubu/WuBuOffice/build-plugin/apps/wubudoc/CMakeFiles/wubudoc_app.dir
+/home/wubu/WuBuOffice/build-plugin/apps/wubudoc/CMakeFiles/wubudoc_serve.dir
 /home/wubu/WuBuOffice/build-plugin/apps/wubudoc/CMakeFiles/test.dir
 /home/wubu/WuBuOffice/build-plugin/apps/wubudoc/CMakeFiles/edit_cache.dir
 /home/wubu/WuBuOffice/build-plugin/apps/wubudoc/CMakeFiles/rebuild_cache.dir

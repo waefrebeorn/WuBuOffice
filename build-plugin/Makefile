@@ -2610,6 +2610,19 @@ wubudoc_app/fast:
 .PHONY : wubudoc_app/fast
 
 #=============================================================================
+# Target rules for targets named wubudoc_serve
+
+# Build rule for target.
+wubudoc_serve: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 wubudoc_serve
+.PHONY : wubudoc_serve
+
+# fast build rule for target.
+wubudoc_serve/fast:
+	$(MAKE) $(MAKESILENT) -f apps/wubudoc/CMakeFiles/wubudoc_serve.dir/build.make apps/wubudoc/CMakeFiles/wubudoc_serve.dir/build
+.PHONY : wubudoc_serve/fast
+
+#=============================================================================
 # Target rules for targets named wubuodf_app
 
 # Build rule for target.
@@ -4489,6 +4502,7 @@ help:
 	@echo "... wubudiff"
 	@echo "... wubudoc"
 	@echo "... wubudoc_app"
+	@echo "... wubudoc_serve"
 	@echo "... wubudraw"
 	@echo "... wubudropcap"
 	@echo "... wubudyslexia"

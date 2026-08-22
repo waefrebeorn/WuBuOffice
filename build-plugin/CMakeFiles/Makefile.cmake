@@ -479,6 +479,7 @@ set(CMAKE_DEPEND_INFO_FILES
   "apps/wubuedit/CMakeFiles/wubuedit_app.dir/DependInfo.cmake"
   "apps/wubuedit/CMakeFiles/wubuedit.dir/DependInfo.cmake"
   "apps/wubudoc/CMakeFiles/wubudoc_app.dir/DependInfo.cmake"
+  "apps/wubudoc/CMakeFiles/wubudoc_serve.dir/DependInfo.cmake"
   "apps/wubuodf/CMakeFiles/wubuodf_app.dir/DependInfo.cmake"
   "apps/wubuconv/CMakeFiles/wubuconv_app.dir/DependInfo.cmake"
   "apps/wubuconv/CMakeFiles/wubuconv.dir/DependInfo.cmake"

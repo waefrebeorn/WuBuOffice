@@ -140,6 +140,44 @@ wubudoc_app/fast:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubudoc/CMakeFiles/wubudoc_app.dir/build.make apps/wubudoc/CMakeFiles/wubudoc_app.dir/build
 .PHONY : wubudoc_app/fast
 
+# Convenience name for target.
+apps/wubudoc/CMakeFiles/wubudoc_serve.dir/rule:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 apps/wubudoc/CMakeFiles/wubudoc_serve.dir/rule
+.PHONY : apps/wubudoc/CMakeFiles/wubudoc_serve.dir/rule
+
+# Convenience name for target.
+wubudoc_serve: apps/wubudoc/CMakeFiles/wubudoc_serve.dir/rule
+.PHONY : wubudoc_serve
+
+# fast build rule for target.
+wubudoc_serve/fast:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubudoc/CMakeFiles/wubudoc_serve.dir/build.make apps/wubudoc/CMakeFiles/wubudoc_serve.dir/build
+.PHONY : wubudoc_serve/fast
+
+agent_main.o: agent_main.c.o
+.PHONY : agent_main.o
+
+# target to build an object file
+agent_main.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubudoc/CMakeFiles/wubudoc_serve.dir/build.make apps/wubudoc/CMakeFiles/wubudoc_serve.dir/agent_main.c.o
+.PHONY : agent_main.c.o
+
+agent_main.i: agent_main.c.i
+.PHONY : agent_main.i
+
+# target to preprocess a source file
+agent_main.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubudoc/CMakeFiles/wubudoc_serve.dir/build.make apps/wubudoc/CMakeFiles/wubudoc_serve.dir/agent_main.c.i
+.PHONY : agent_main.c.i
+
+agent_main.s: agent_main.c.s
+.PHONY : agent_main.s
+
+# target to generate assembly for a file
+agent_main.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubudoc/CMakeFiles/wubudoc_serve.dir/build.make apps/wubudoc/CMakeFiles/wubudoc_serve.dir/agent_main.c.s
+.PHONY : agent_main.c.s
+
 doc_md.o: doc_md.c.o
 .PHONY : doc_md.o
 
@@ -246,6 +284,10 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... test"
 	@echo "... wubudoc_app"
+	@echo "... wubudoc_serve"
+	@echo "... agent_main.o"
+	@echo "... agent_main.i"
+	@echo "... agent_main.s"
 	@echo "... doc_md.o"
 	@echo "... doc_md.i"
 	@echo "... doc_md.s"

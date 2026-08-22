@@ -218,17 +218,25 @@ char *doc_agent_handle(DocSession *s, const char *command_json) {
             /* walk nodes collecting kind+text summary (depth-first) */
             /* iterative stack-free walk over the JSON object arrays */
             /* nodes live under {"nodes":[...]} or {"body":[...]} */
+            JVal *inner = j_obj_get(model, "model");
+            if (inner) model = inner;   /* doc_json wraps: {"model":{...}} */
             JVal *nodes = j_obj_get(model, "nodes");
             if (!nodes) nodes = j_obj_get(model, "body");
+            if (!nodes) nodes = j_obj_get(model, "blocks");
             if (nodes && j_type(nodes) == J_ARR) {
                 for (size_t i = 0; i < j_len(nodes); i++) {
                     JVal *nd = (JVal *)j_arr_at(nodes, i);
                     if (!nd || j_type(nd) != J_OBJ) continue;
                     const JVal *kind = j_obj_get(nd, "kind");
+                    const JVal *sty  = j_obj_get(nd, "style");
                     const JVal *txt  = j_obj_get(nd, "text");
                     if (!kind) continue;
                     const char *ks = j_as_str(kind);
-                    int interesting = strstr(ks, "head") || strstr(ks, "table")
+                    /* heading detection: kind OR style ("Heading1" etc.) */
+                    const char *ss = (sty && j_type(sty)==J_STR) ? j_as_str(sty) : NULL;
+                    int is_heading = (ss && strncmp(ss, "Heading", 7) == 0);
+                    int interesting = is_heading
+                                   || strstr(ks, "head") || strstr(ks, "table")
                                    || strstr(ks, "figure") || strstr(ks, "image")
                                    || strstr(ks, "caption");
                     if (!interesting) continue;
@@ -239,6 +247,7 @@ char *doc_agent_handle(DocSession *s, const char *command_json) {
                     if (txt && j_type(txt) == J_STR) {
                         snprintf(sum, sizeof sum, "%.70s", j_as_str(txt));
                     }
+                    if (ss) j_obj_put(e, "style", j_str(ss));
                     j_obj_put(e, "summary", j_str(sum));
                     j_arr_push(out, e);
                 }
