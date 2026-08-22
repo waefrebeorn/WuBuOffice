@@ -196,4 +196,5 @@ apps/wubuos/CMakeFiles/test_view.dir/view_editor.c.o: \
  /home/wubu/WuBuOffice/../WuBuPad/src/doc.h \
  /home/wubu/WuBuOffice/src/wubuautosave/autosave.h \
  /home/wubu/WuBuOffice/src/wubuspell/spell.h \
- /home/wubu/WuBuOffice/src/wubusettings/settings.h
+ /home/wubu/WuBuOffice/src/wubusettings/settings.h \
+ /home/wubu/WuBuOffice/apps/wubuos/view_editor_internal.h

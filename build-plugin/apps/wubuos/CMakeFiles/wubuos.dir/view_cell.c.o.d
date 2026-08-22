@@ -38,7 +38,14 @@ apps/wubuos/CMakeFiles/wubuos.dir/view_cell.c.o: \
  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
  /home/wubu/WuBuOffice/apps/wubucell/cell_csv.h \
  /home/wubu/WuBuOffice/apps/wubucell/cell.h \
- /home/wubu/WuBuOffice/apps/wubucell/cell_read.h /usr/include/stdlib.h \
+ /home/wubu/WuBuOffice/apps/wubucell/cell_read.h \
+ /home/wubu/WuBuOffice/apps/wubucell/cell_internal.h \
+ /home/wubu/WuBuOffice/apps/wubucell/style.h \
+ /home/wubu/WuBuOffice/src/wubuformula/value.h \
+ /home/wubu/WuBuOffice/src/wubuformula/eval.h \
+ /home/wubu/WuBuOffice/src/wubuformula/value.h \
+ /home/wubu/WuBuOffice/src/wubuformula/ast.h \
+ /home/wubu/WuBuOffice/src/wubuformula/funcs.h /usr/include/stdlib.h \
  /usr/include/x86_64-linux-gnu/bits/waitflags.h \
  /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
@@ -47,4 +54,6 @@ apps/wubuos/CMakeFiles/wubuos.dir/view_cell.c.o: \
  /usr/include/x86_64-linux-gnu/bits/types/locale_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h \
  /usr/include/x86_64-linux-gnu/bits/string_fortified.h \
- /usr/include/strings.h
+ /home/wubu/WuBuOffice/src/wubumath/math.h /usr/include/ctype.h \
+ /usr/include/x86_64-linux-gnu/bits/endian.h \
+ /usr/include/x86_64-linux-gnu/bits/endianness.h /usr/include/strings.h

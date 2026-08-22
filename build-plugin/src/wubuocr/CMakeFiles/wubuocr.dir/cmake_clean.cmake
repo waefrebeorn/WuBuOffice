@@ -11,6 +11,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/wubuocr.dir/convnet3.c.o.d"
   "CMakeFiles/wubuocr.dir/crnn_transcribe.c.o"
   "CMakeFiles/wubuocr.dir/crnn_transcribe.c.o.d"
+  "CMakeFiles/wubuocr.dir/crnn_transcribe_pre.c.o"
+  "CMakeFiles/wubuocr.dir/crnn_transcribe_pre.c.o.d"
   "CMakeFiles/wubuocr.dir/dft.c.o"
   "CMakeFiles/wubuocr.dir/dft.c.o.d"
   "CMakeFiles/wubuocr.dir/docfmt.c.o"

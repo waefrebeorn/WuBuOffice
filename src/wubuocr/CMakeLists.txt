@@ -11,7 +11,7 @@ add_library(wubuocr STATIC
     zoning.c mlp.c
     convnet.c conv_gemm.c convnet3.c
     stylebank.c dft.c goldplace.c
-    crnn_transcribe.c docfmt.c pdfsearch.c
+    crnn_transcribe.c crnn_transcribe_pre.c docfmt.c pdfsearch.c
     qr.c
     gru_layout.c)
 target_include_directories(wubuocr PUBLIC

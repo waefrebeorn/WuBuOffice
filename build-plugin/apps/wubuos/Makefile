@@ -169,6 +169,48 @@ test_shell_ui/fast:
 .PHONY : test_shell_ui/fast
 
 # Convenience name for target.
+apps/wubuos/CMakeFiles/test_motion.dir/rule:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 apps/wubuos/CMakeFiles/test_motion.dir/rule
+.PHONY : apps/wubuos/CMakeFiles/test_motion.dir/rule
+
+# Convenience name for target.
+test_motion: apps/wubuos/CMakeFiles/test_motion.dir/rule
+.PHONY : test_motion
+
+# fast build rule for target.
+test_motion/fast:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_motion.dir/build.make apps/wubuos/CMakeFiles/test_motion.dir/build
+.PHONY : test_motion/fast
+
+# Convenience name for target.
+apps/wubuos/CMakeFiles/test_hive.dir/rule:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 apps/wubuos/CMakeFiles/test_hive.dir/rule
+.PHONY : apps/wubuos/CMakeFiles/test_hive.dir/rule
+
+# Convenience name for target.
+test_hive: apps/wubuos/CMakeFiles/test_hive.dir/rule
+.PHONY : test_hive
+
+# fast build rule for target.
+test_hive/fast:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_hive.dir/build.make apps/wubuos/CMakeFiles/test_hive.dir/build
+.PHONY : test_hive/fast
+
+# Convenience name for target.
+apps/wubuos/CMakeFiles/test_wuos_toolbar.dir/rule:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 apps/wubuos/CMakeFiles/test_wuos_toolbar.dir/rule
+.PHONY : apps/wubuos/CMakeFiles/test_wuos_toolbar.dir/rule
+
+# Convenience name for target.
+test_wuos_toolbar: apps/wubuos/CMakeFiles/test_wuos_toolbar.dir/rule
+.PHONY : test_wuos_toolbar
+
+# fast build rule for target.
+test_wuos_toolbar/fast:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_wuos_toolbar.dir/build.make apps/wubuos/CMakeFiles/test_wuos_toolbar.dir/build
+.PHONY : test_wuos_toolbar/fast
+
+# Convenience name for target.
 apps/wubuos/CMakeFiles/sample_plugin.dir/rule:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 apps/wubuos/CMakeFiles/sample_plugin.dir/rule
 .PHONY : apps/wubuos/CMakeFiles/sample_plugin.dir/rule
@@ -476,38 +518,104 @@ dialog.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_dialog.dir/build.make apps/wubuos/CMakeFiles/test_dialog.dir/dialog.c.s
 .PHONY : dialog.c.s
 
-doccmd.o: doccmd.c.o
-.PHONY : doccmd.o
+doccmd_core.o: doccmd_core.c.o
+.PHONY : doccmd_core.o
 
 # target to build an object file
-doccmd.c.o:
-	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/doccmd.c.o
-	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/doccmd.c.o
-	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_doccmd.dir/build.make apps/wubuos/CMakeFiles/test_doccmd.dir/doccmd.c.o
-	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/doccmd.c.o
-.PHONY : doccmd.c.o
+doccmd_core.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/doccmd_core.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/doccmd_core.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_doccmd.dir/build.make apps/wubuos/CMakeFiles/test_doccmd.dir/doccmd_core.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/doccmd_core.c.o
+.PHONY : doccmd_core.c.o
 
-doccmd.i: doccmd.c.i
-.PHONY : doccmd.i
+doccmd_core.i: doccmd_core.c.i
+.PHONY : doccmd_core.i
 
 # target to preprocess a source file
-doccmd.c.i:
-	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/doccmd.c.i
-	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/doccmd.c.i
-	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_doccmd.dir/build.make apps/wubuos/CMakeFiles/test_doccmd.dir/doccmd.c.i
-	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/doccmd.c.i
-.PHONY : doccmd.c.i
+doccmd_core.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/doccmd_core.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/doccmd_core.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_doccmd.dir/build.make apps/wubuos/CMakeFiles/test_doccmd.dir/doccmd_core.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/doccmd_core.c.i
+.PHONY : doccmd_core.c.i
 
-doccmd.s: doccmd.c.s
-.PHONY : doccmd.s
+doccmd_core.s: doccmd_core.c.s
+.PHONY : doccmd_core.s
 
 # target to generate assembly for a file
-doccmd.c.s:
-	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/doccmd.c.s
-	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/doccmd.c.s
-	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_doccmd.dir/build.make apps/wubuos/CMakeFiles/test_doccmd.dir/doccmd.c.s
-	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/doccmd.c.s
-.PHONY : doccmd.c.s
+doccmd_core.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/doccmd_core.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/doccmd_core.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_doccmd.dir/build.make apps/wubuos/CMakeFiles/test_doccmd.dir/doccmd_core.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/doccmd_core.c.s
+.PHONY : doccmd_core.c.s
+
+doccmd_wave1.o: doccmd_wave1.c.o
+.PHONY : doccmd_wave1.o
+
+# target to build an object file
+doccmd_wave1.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/doccmd_wave1.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/doccmd_wave1.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_doccmd.dir/build.make apps/wubuos/CMakeFiles/test_doccmd.dir/doccmd_wave1.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/doccmd_wave1.c.o
+.PHONY : doccmd_wave1.c.o
+
+doccmd_wave1.i: doccmd_wave1.c.i
+.PHONY : doccmd_wave1.i
+
+# target to preprocess a source file
+doccmd_wave1.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/doccmd_wave1.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/doccmd_wave1.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_doccmd.dir/build.make apps/wubuos/CMakeFiles/test_doccmd.dir/doccmd_wave1.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/doccmd_wave1.c.i
+.PHONY : doccmd_wave1.c.i
+
+doccmd_wave1.s: doccmd_wave1.c.s
+.PHONY : doccmd_wave1.s
+
+# target to generate assembly for a file
+doccmd_wave1.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/doccmd_wave1.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/doccmd_wave1.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_doccmd.dir/build.make apps/wubuos/CMakeFiles/test_doccmd.dir/doccmd_wave1.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/doccmd_wave1.c.s
+.PHONY : doccmd_wave1.c.s
+
+doccmd_wave2.o: doccmd_wave2.c.o
+.PHONY : doccmd_wave2.o
+
+# target to build an object file
+doccmd_wave2.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/doccmd_wave2.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/doccmd_wave2.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_doccmd.dir/build.make apps/wubuos/CMakeFiles/test_doccmd.dir/doccmd_wave2.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/doccmd_wave2.c.o
+.PHONY : doccmd_wave2.c.o
+
+doccmd_wave2.i: doccmd_wave2.c.i
+.PHONY : doccmd_wave2.i
+
+# target to preprocess a source file
+doccmd_wave2.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/doccmd_wave2.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/doccmd_wave2.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_doccmd.dir/build.make apps/wubuos/CMakeFiles/test_doccmd.dir/doccmd_wave2.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/doccmd_wave2.c.i
+.PHONY : doccmd_wave2.c.i
+
+doccmd_wave2.s: doccmd_wave2.c.s
+.PHONY : doccmd_wave2.s
+
+# target to generate assembly for a file
+doccmd_wave2.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/doccmd_wave2.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/doccmd_wave2.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_doccmd.dir/build.make apps/wubuos/CMakeFiles/test_doccmd.dir/doccmd_wave2.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/doccmd_wave2.c.s
+.PHONY : doccmd_wave2.c.s
 
 findbar.o: findbar.c.o
 .PHONY : findbar.o
@@ -574,6 +682,42 @@ gotoline.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_gotoline.dir/build.make apps/wubuos/CMakeFiles/test_gotoline.dir/gotoline.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/gotoline.c.s
 .PHONY : gotoline.c.s
+
+hive.o: hive.c.o
+.PHONY : hive.o
+
+# target to build an object file
+hive.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/hive.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/hive.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_hive.dir/build.make apps/wubuos/CMakeFiles/test_hive.dir/hive.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_wuos_toolbar.dir/build.make apps/wubuos/CMakeFiles/test_wuos_toolbar.dir/hive.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/hive.c.o
+.PHONY : hive.c.o
+
+hive.i: hive.c.i
+.PHONY : hive.i
+
+# target to preprocess a source file
+hive.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/hive.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/hive.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_hive.dir/build.make apps/wubuos/CMakeFiles/test_hive.dir/hive.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_wuos_toolbar.dir/build.make apps/wubuos/CMakeFiles/test_wuos_toolbar.dir/hive.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/hive.c.i
+.PHONY : hive.c.i
+
+hive.s: hive.c.s
+.PHONY : hive.s
+
+# target to generate assembly for a file
+hive.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/hive.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/hive.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_hive.dir/build.make apps/wubuos/CMakeFiles/test_hive.dir/hive.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_wuos_toolbar.dir/build.make apps/wubuos/CMakeFiles/test_wuos_toolbar.dir/hive.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/hive.c.s
+.PHONY : hive.c.s
 
 home/wubu/WuBuPad/src/buffer.o: home/wubu/WuBuPad/src/buffer.c.o
 .PHONY : home/wubu/WuBuPad/src/buffer.o
@@ -1241,6 +1385,30 @@ test_gotoline.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_gotoline.dir/build.make apps/wubuos/CMakeFiles/test_gotoline.dir/test_gotoline.c.s
 .PHONY : test_gotoline.c.s
 
+test_hive.o: test_hive.c.o
+.PHONY : test_hive.o
+
+# target to build an object file
+test_hive.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_hive.dir/build.make apps/wubuos/CMakeFiles/test_hive.dir/test_hive.c.o
+.PHONY : test_hive.c.o
+
+test_hive.i: test_hive.c.i
+.PHONY : test_hive.i
+
+# target to preprocess a source file
+test_hive.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_hive.dir/build.make apps/wubuos/CMakeFiles/test_hive.dir/test_hive.c.i
+.PHONY : test_hive.c.i
+
+test_hive.s: test_hive.c.s
+.PHONY : test_hive.s
+
+# target to generate assembly for a file
+test_hive.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_hive.dir/build.make apps/wubuos/CMakeFiles/test_hive.dir/test_hive.c.s
+.PHONY : test_hive.c.s
+
 test_macro.o: test_macro.c.o
 .PHONY : test_macro.o
 
@@ -1264,6 +1432,30 @@ test_macro.s: test_macro.c.s
 test_macro.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_macro.dir/build.make apps/wubuos/CMakeFiles/test_macro.dir/test_macro.c.s
 .PHONY : test_macro.c.s
+
+test_motion.o: test_motion.c.o
+.PHONY : test_motion.o
+
+# target to build an object file
+test_motion.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_motion.dir/build.make apps/wubuos/CMakeFiles/test_motion.dir/test_motion.c.o
+.PHONY : test_motion.c.o
+
+test_motion.i: test_motion.c.i
+.PHONY : test_motion.i
+
+# target to preprocess a source file
+test_motion.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_motion.dir/build.make apps/wubuos/CMakeFiles/test_motion.dir/test_motion.c.i
+.PHONY : test_motion.c.i
+
+test_motion.s: test_motion.c.s
+.PHONY : test_motion.s
+
+# target to generate assembly for a file
+test_motion.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_motion.dir/build.make apps/wubuos/CMakeFiles/test_motion.dir/test_motion.c.s
+.PHONY : test_motion.c.s
 
 test_plugin_abi.o: test_plugin_abi.c.o
 .PHONY : test_plugin_abi.o
@@ -1336,6 +1528,30 @@ test_view.s: test_view.c.s
 test_view.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/test_view.c.s
 .PHONY : test_view.c.s
+
+test_wuos_toolbar.o: test_wuos_toolbar.c.o
+.PHONY : test_wuos_toolbar.o
+
+# target to build an object file
+test_wuos_toolbar.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_wuos_toolbar.dir/build.make apps/wubuos/CMakeFiles/test_wuos_toolbar.dir/test_wuos_toolbar.c.o
+.PHONY : test_wuos_toolbar.c.o
+
+test_wuos_toolbar.i: test_wuos_toolbar.c.i
+.PHONY : test_wuos_toolbar.i
+
+# target to preprocess a source file
+test_wuos_toolbar.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_wuos_toolbar.dir/build.make apps/wubuos/CMakeFiles/test_wuos_toolbar.dir/test_wuos_toolbar.c.i
+.PHONY : test_wuos_toolbar.c.i
+
+test_wuos_toolbar.s: test_wuos_toolbar.c.s
+.PHONY : test_wuos_toolbar.s
+
+# target to generate assembly for a file
+test_wuos_toolbar.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_wuos_toolbar.dir/build.make apps/wubuos/CMakeFiles/test_wuos_toolbar.dir/test_wuos_toolbar.c.s
+.PHONY : test_wuos_toolbar.c.s
 
 toast.o: toast.c.o
 .PHONY : toast.o
@@ -1460,6 +1676,36 @@ view_doc.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_doc.c.s
 .PHONY : view_doc.c.s
 
+view_doc_render.o: view_doc_render.c.o
+.PHONY : view_doc_render.o
+
+# target to build an object file
+view_doc_render.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/view_doc_render.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/view_doc_render.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_doc_render.c.o
+.PHONY : view_doc_render.c.o
+
+view_doc_render.i: view_doc_render.c.i
+.PHONY : view_doc_render.i
+
+# target to preprocess a source file
+view_doc_render.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/view_doc_render.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/view_doc_render.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_doc_render.c.i
+.PHONY : view_doc_render.c.i
+
+view_doc_render.s: view_doc_render.c.s
+.PHONY : view_doc_render.s
+
+# target to generate assembly for a file
+view_doc_render.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/view_doc_render.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/view_doc_render.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_doc_render.c.s
+.PHONY : view_doc_render.c.s
+
 view_editor.o: view_editor.c.o
 .PHONY : view_editor.o
 
@@ -1489,6 +1735,96 @@ view_editor.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/view_editor.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_editor.c.s
 .PHONY : view_editor.c.s
+
+view_editor_keys.o: view_editor_keys.c.o
+.PHONY : view_editor_keys.o
+
+# target to build an object file
+view_editor_keys.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/view_editor_keys.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/view_editor_keys.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_editor_keys.c.o
+.PHONY : view_editor_keys.c.o
+
+view_editor_keys.i: view_editor_keys.c.i
+.PHONY : view_editor_keys.i
+
+# target to preprocess a source file
+view_editor_keys.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/view_editor_keys.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/view_editor_keys.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_editor_keys.c.i
+.PHONY : view_editor_keys.c.i
+
+view_editor_keys.s: view_editor_keys.c.s
+.PHONY : view_editor_keys.s
+
+# target to generate assembly for a file
+view_editor_keys.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/view_editor_keys.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/view_editor_keys.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_editor_keys.c.s
+.PHONY : view_editor_keys.c.s
+
+view_editor_render.o: view_editor_render.c.o
+.PHONY : view_editor_render.o
+
+# target to build an object file
+view_editor_render.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/view_editor_render.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/view_editor_render.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_editor_render.c.o
+.PHONY : view_editor_render.c.o
+
+view_editor_render.i: view_editor_render.c.i
+.PHONY : view_editor_render.i
+
+# target to preprocess a source file
+view_editor_render.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/view_editor_render.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/view_editor_render.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_editor_render.c.i
+.PHONY : view_editor_render.c.i
+
+view_editor_render.s: view_editor_render.c.s
+.PHONY : view_editor_render.s
+
+# target to generate assembly for a file
+view_editor_render.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/view_editor_render.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/view_editor_render.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_editor_render.c.s
+.PHONY : view_editor_render.c.s
+
+view_editor_textops.o: view_editor_textops.c.o
+.PHONY : view_editor_textops.o
+
+# target to build an object file
+view_editor_textops.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/view_editor_textops.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/view_editor_textops.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_editor_textops.c.o
+.PHONY : view_editor_textops.c.o
+
+view_editor_textops.i: view_editor_textops.c.i
+.PHONY : view_editor_textops.i
+
+# target to preprocess a source file
+view_editor_textops.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/view_editor_textops.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/view_editor_textops.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_editor_textops.c.i
+.PHONY : view_editor_textops.c.i
+
+view_editor_textops.s: view_editor_textops.c.s
+.PHONY : view_editor_textops.s
+
+# target to generate assembly for a file
+view_editor_textops.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/view_editor_textops.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/view_editor_textops.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_editor_textops.c.s
+.PHONY : view_editor_textops.c.s
 
 view_ocr.o: view_ocr.c.o
 .PHONY : view_ocr.o
@@ -1641,6 +1977,7 @@ wuos_font.o: wuos_font.c.o
 wuos_font.c.o:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/wuos_font.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/wuos_font.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_wuos_toolbar.dir/build.make apps/wubuos/CMakeFiles/test_wuos_toolbar.dir/wuos_font.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_font.dir/build.make apps/wubuos/CMakeFiles/test_font.dir/wuos_font.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/wuos_font.c.o
 .PHONY : wuos_font.c.o
@@ -1652,6 +1989,7 @@ wuos_font.i: wuos_font.c.i
 wuos_font.c.i:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/wuos_font.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/wuos_font.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_wuos_toolbar.dir/build.make apps/wubuos/CMakeFiles/test_wuos_toolbar.dir/wuos_font.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_font.dir/build.make apps/wubuos/CMakeFiles/test_font.dir/wuos_font.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/wuos_font.c.i
 .PHONY : wuos_font.c.i
@@ -1663,9 +2001,88 @@ wuos_font.s: wuos_font.c.s
 wuos_font.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/wuos_font.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/wuos_font.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_wuos_toolbar.dir/build.make apps/wubuos/CMakeFiles/test_wuos_toolbar.dir/wuos_font.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_font.dir/build.make apps/wubuos/CMakeFiles/test_font.dir/wuos_font.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/wuos_font.c.s
 .PHONY : wuos_font.c.s
+
+wuos_frame.o: wuos_frame.c.o
+.PHONY : wuos_frame.o
+
+# target to build an object file
+wuos_frame.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/wuos_frame.c.o
+.PHONY : wuos_frame.c.o
+
+wuos_frame.i: wuos_frame.c.i
+.PHONY : wuos_frame.i
+
+# target to preprocess a source file
+wuos_frame.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/wuos_frame.c.i
+.PHONY : wuos_frame.c.i
+
+wuos_frame.s: wuos_frame.c.s
+.PHONY : wuos_frame.s
+
+# target to generate assembly for a file
+wuos_frame.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/wuos_frame.c.s
+.PHONY : wuos_frame.c.s
+
+wuos_motion.o: wuos_motion.c.o
+.PHONY : wuos_motion.o
+
+# target to build an object file
+wuos_motion.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/wuos_motion.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_motion.dir/build.make apps/wubuos/CMakeFiles/test_motion.dir/wuos_motion.c.o
+.PHONY : wuos_motion.c.o
+
+wuos_motion.i: wuos_motion.c.i
+.PHONY : wuos_motion.i
+
+# target to preprocess a source file
+wuos_motion.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/wuos_motion.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_motion.dir/build.make apps/wubuos/CMakeFiles/test_motion.dir/wuos_motion.c.i
+.PHONY : wuos_motion.c.i
+
+wuos_motion.s: wuos_motion.c.s
+.PHONY : wuos_motion.s
+
+# target to generate assembly for a file
+wuos_motion.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/wuos_motion.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_motion.dir/build.make apps/wubuos/CMakeFiles/test_motion.dir/wuos_motion.c.s
+.PHONY : wuos_motion.c.s
+
+wuos_toolbar.o: wuos_toolbar.c.o
+.PHONY : wuos_toolbar.o
+
+# target to build an object file
+wuos_toolbar.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/wuos_toolbar.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_wuos_toolbar.dir/build.make apps/wubuos/CMakeFiles/test_wuos_toolbar.dir/wuos_toolbar.c.o
+.PHONY : wuos_toolbar.c.o
+
+wuos_toolbar.i: wuos_toolbar.c.i
+.PHONY : wuos_toolbar.i
+
+# target to preprocess a source file
+wuos_toolbar.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/wuos_toolbar.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_wuos_toolbar.dir/build.make apps/wubuos/CMakeFiles/test_wuos_toolbar.dir/wuos_toolbar.c.i
+.PHONY : wuos_toolbar.c.i
+
+wuos_toolbar.s: wuos_toolbar.c.s
+.PHONY : wuos_toolbar.s
+
+# target to generate assembly for a file
+wuos_toolbar.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/wuos_toolbar.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_wuos_toolbar.dir/build.make apps/wubuos/CMakeFiles/test_wuos_toolbar.dir/wuos_toolbar.c.s
+.PHONY : wuos_toolbar.c.s
 
 # Help Target
 help:
@@ -1686,10 +2103,13 @@ help:
 	@echo "... test_findbar"
 	@echo "... test_font"
 	@echo "... test_gotoline"
+	@echo "... test_hive"
 	@echo "... test_macro"
+	@echo "... test_motion"
 	@echo "... test_plugin_abi"
 	@echo "... test_shell_ui"
 	@echo "... test_view"
+	@echo "... test_wuos_toolbar"
 	@echo "... viewshot"
 	@echo "... wubuos"
 	@echo "... autocomp.o"
@@ -1704,15 +2124,24 @@ help:
 	@echo "... dialog.o"
 	@echo "... dialog.i"
 	@echo "... dialog.s"
-	@echo "... doccmd.o"
-	@echo "... doccmd.i"
-	@echo "... doccmd.s"
+	@echo "... doccmd_core.o"
+	@echo "... doccmd_core.i"
+	@echo "... doccmd_core.s"
+	@echo "... doccmd_wave1.o"
+	@echo "... doccmd_wave1.i"
+	@echo "... doccmd_wave1.s"
+	@echo "... doccmd_wave2.o"
+	@echo "... doccmd_wave2.i"
+	@echo "... doccmd_wave2.s"
 	@echo "... findbar.o"
 	@echo "... findbar.i"
 	@echo "... findbar.s"
 	@echo "... gotoline.o"
 	@echo "... gotoline.i"
 	@echo "... gotoline.s"
+	@echo "... hive.o"
+	@echo "... hive.i"
+	@echo "... hive.s"
 	@echo "... home/wubu/WuBuPad/src/buffer.o"
 	@echo "... home/wubu/WuBuPad/src/buffer.i"
 	@echo "... home/wubu/WuBuPad/src/buffer.s"
@@ -1779,9 +2208,15 @@ help:
 	@echo "... test_gotoline.o"
 	@echo "... test_gotoline.i"
 	@echo "... test_gotoline.s"
+	@echo "... test_hive.o"
+	@echo "... test_hive.i"
+	@echo "... test_hive.s"
 	@echo "... test_macro.o"
 	@echo "... test_macro.i"
 	@echo "... test_macro.s"
+	@echo "... test_motion.o"
+	@echo "... test_motion.i"
+	@echo "... test_motion.s"
 	@echo "... test_plugin_abi.o"
 	@echo "... test_plugin_abi.i"
 	@echo "... test_plugin_abi.s"
@@ -1791,6 +2226,9 @@ help:
 	@echo "... test_view.o"
 	@echo "... test_view.i"
 	@echo "... test_view.s"
+	@echo "... test_wuos_toolbar.o"
+	@echo "... test_wuos_toolbar.i"
+	@echo "... test_wuos_toolbar.s"
 	@echo "... toast.o"
 	@echo "... toast.i"
 	@echo "... toast.s"
@@ -1803,9 +2241,21 @@ help:
 	@echo "... view_doc.o"
 	@echo "... view_doc.i"
 	@echo "... view_doc.s"
+	@echo "... view_doc_render.o"
+	@echo "... view_doc_render.i"
+	@echo "... view_doc_render.s"
 	@echo "... view_editor.o"
 	@echo "... view_editor.i"
 	@echo "... view_editor.s"
+	@echo "... view_editor_keys.o"
+	@echo "... view_editor_keys.i"
+	@echo "... view_editor_keys.s"
+	@echo "... view_editor_render.o"
+	@echo "... view_editor_render.i"
+	@echo "... view_editor_render.s"
+	@echo "... view_editor_textops.o"
+	@echo "... view_editor_textops.i"
+	@echo "... view_editor_textops.s"
 	@echo "... view_ocr.o"
 	@echo "... view_ocr.i"
 	@echo "... view_ocr.s"
@@ -1824,6 +2274,15 @@ help:
 	@echo "... wuos_font.o"
 	@echo "... wuos_font.i"
 	@echo "... wuos_font.s"
+	@echo "... wuos_frame.o"
+	@echo "... wuos_frame.i"
+	@echo "... wuos_frame.s"
+	@echo "... wuos_motion.o"
+	@echo "... wuos_motion.i"
+	@echo "... wuos_motion.s"
+	@echo "... wuos_toolbar.o"
+	@echo "... wuos_toolbar.i"
+	@echo "... wuos_toolbar.s"
 .PHONY : help
 
 

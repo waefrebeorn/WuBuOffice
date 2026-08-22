@@ -49,8 +49,9 @@ apps/wubuos/CMakeFiles/wubuos.dir/view_doc.c.o: \
  /home/wubu/WuBuOffice/src/wubuscript/script.h \
  /home/wubu/WuBuOffice/apps/wubuos/doccmd.h \
  /home/wubu/WuBuOffice/src/wubumodel/model.h \
- /home/wubu/WuBuOffice/src/wuburtf/rtf.h /usr/include/stdlib.h \
- /usr/include/x86_64-linux-gnu/bits/waitflags.h \
+ /home/wubu/WuBuOffice/src/wuburtf/rtf.h \
+ /home/wubu/WuBuOffice/apps/wubuos/view_doc_internal.h \
+ /usr/include/stdlib.h /usr/include/x86_64-linux-gnu/bits/waitflags.h \
  /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \

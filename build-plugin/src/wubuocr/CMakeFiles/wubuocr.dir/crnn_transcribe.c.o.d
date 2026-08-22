@@ -53,4 +53,5 @@ src/wubuocr/CMakeFiles/wubuocr.dir/crnn_transcribe.c.o: \
  /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
  /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
  /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
- /home/wubu/WuBuOffice/src/wubuocr/binarize.h
+ /home/wubu/WuBuOffice/src/wubuocr/binarize.h \
+ /home/wubu/WuBuOffice/src/wubuocr/crnn_transcribe_internal.h

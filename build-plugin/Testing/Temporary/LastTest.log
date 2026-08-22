@@ -1,506 +1,287 @@
-Start testing: Jul 30 20:34 EDT
+Start testing: Aug 22 13:08 EDT
 ----------------------------------------------------------
-1/131 Testing: crdt
-1/131 Test: crdt
-Command: "/home/wubu/WuBuOffice/build-plugin/src/wubucrdt/test_crdt"
-Directory: /home/wubu/WuBuOffice/build-plugin/src/wubucrdt
-"crdt" start time: Jul 30 20:34 EDT
+125/170 Testing: cell_edit
+125/170 Test: cell_edit
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_cell_edit"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"cell_edit" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
-PASS: crdt (concurrent convergence, tombstone+insert, serialize, move)
+B1 after eval = 11
+B1 after A1=20 = 21
+CELL_EDIT PASS
 <end of output>
-Test time =   0.00 sec
+Test time =   0.01 sec
 ----------------------------------------------------------
 Test Passed.
-"crdt" end time: Jul 30 20:34 EDT
-"crdt" time elapsed: 00:00:00
+"cell_edit" end time: Aug 22 13:08 EDT
+"cell_edit" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-2/131 Testing: history
-2/131 Test: history
-Command: "/home/wubu/WuBuOffice/build-plugin/src/wubuhistory/test_history"
-Directory: /home/wubu/WuBuOffice/build-plugin/src/wubuhistory
-"history" start time: Jul 30 20:34 EDT
+91/170 Testing: convnet
+91/170 Test: convnet
+Command: "/home/wubu/WuBuOffice/build-plugin/tools/test_convnet"
+Directory: /home/wubu/WuBuOffice/build-plugin/tools
+"convnet" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
-PASS: history (commit/count/author/label/blob/diff)
+conv feature dim = 256 (K2=16, pool2 4x4)
+conv+MLP train accuracy on separable 2-class: 100.00%
+conv+MLP LEARNS -> forward+backward (incl. 2-stage conv) correct
+test_convnet: ALL PASS
 <end of output>
-Test time =   0.00 sec
+Test time =   8.72 sec
 ----------------------------------------------------------
 Test Passed.
-"history" end time: Jul 30 20:34 EDT
-"history" time elapsed: 00:00:00
+"convnet" end time: Aug 22 13:08 EDT
+"convnet" time elapsed: 00:00:08
 ----------------------------------------------------------
 
-3/131 Testing: sync
-3/131 Test: sync
-Command: "/home/wubu/WuBuOffice/build-plugin/src/wubusync/test_sync"
-Directory: /home/wubu/WuBuOffice/build-plugin/src/wubusync
-"sync" start time: Jul 30 20:34 EDT
+95/170 Testing: stylebank
+95/170 Test: stylebank
+Command: "/home/wubu/WuBuOffice/build-plugin/tools/test_stylebank"
+Directory: /home/wubu/WuBuOffice/build-plugin/tools
+"stylebank" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
-PASS: sync (CRDT store merge + shared lock)
+WARN: could not load data/conv3.wts (run a trainer first) -- skipping load test
+ensemble forward OK (slot0 logit=-0.004)
+WARN: train_slot skipped (no fashion t10k)
+promote returned slot 0
+PASS
 <end of output>
-Test time =   0.00 sec
+Test time =   6.47 sec
 ----------------------------------------------------------
 Test Passed.
-"sync" end time: Jul 30 20:34 EDT
-"sync" time elapsed: 00:00:00
+"stylebank" end time: Aug 22 13:08 EDT
+"stylebank" time elapsed: 00:00:06
 ----------------------------------------------------------
 
-4/131 Testing: col
-4/131 Test: col
-Command: "/home/wubu/WuBuOffice/build-plugin/src/wubucol/test_col"
-Directory: /home/wubu/WuBuOffice/build-plugin/src/wubucol
-"col" start time: Jul 30 20:34 EDT
+153/170 Testing: gauntlet
+153/170 Test: gauntlet
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_gauntlet"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"gauntlet" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
-PASS: col (threads, replies, resolve, remove)
+using 4 font(s)
+  clean-probe accuracy = 60.0%
+  ablation(drop 0) accuracy = 60.0%
+  scatter recall (read/placed) = 51.7%
+  lines recall (read/placed) = 50.0%
+  grid recall (read/placed) = 39.6%
+GAUNTLET TESTS PASSED (4 fonts)
 <end of output>
-Test time =   0.00 sec
+Test time =   0.37 sec
 ----------------------------------------------------------
 Test Passed.
-"col" end time: Jul 30 20:34 EDT
-"col" time elapsed: 00:00:00
+"gauntlet" end time: Aug 22 13:08 EDT
+"gauntlet" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-5/131 Testing: vars
-5/131 Test: vars
-Command: "/home/wubu/WuBuOffice/build-plugin/src/wubuvars/test_vars"
-Directory: /home/wubu/WuBuOffice/build-plugin/src/wubuvars
-"vars" start time: Jul 30 20:34 EDT
+94/170 Testing: inorm_gradcheck
+94/170 Test: inorm_gradcheck
+Command: "/home/wubu/WuBuOffice/build-plugin/tools/gradcheck_inorm"
+Directory: /home/wubu/WuBuOffice/build-plugin/tools
+"inorm_gradcheck" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
-PASS: vars (set/get/expand/overwrite)
+ga1[5]: analytic= 0.102422  fd= 0.102579  rel_err=7.64e-04  ok
+be1[0]: analytic= 0.000738  fd= 0.000945  rel_err=1.23e-01  ok
+ga2[14]: analytic= 0.012335  fd= 0.012264  rel_err=2.91e-03  ok
+be2[26]: analytic=-0.006201  fd=-0.006258  rel_err=4.58e-03  ok
+ga3[19]: analytic= 0.023068  fd= 0.023028  rel_err=8.67e-04  ok
+be3[51]: analytic=-0.020195  fd=-0.020196  rel_err=2.98e-05  ok
+
+GRADCHECK PASS
 <end of output>
-Test time =   0.00 sec
+Test time =   0.81 sec
 ----------------------------------------------------------
 Test Passed.
-"vars" end time: Jul 30 20:34 EDT
-"vars" time elapsed: 00:00:00
+"inorm_gradcheck" end time: Aug 22 13:08 EDT
+"inorm_gradcheck" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-6/131 Testing: lang
-6/131 Test: lang
-Command: "/home/wubu/WuBuOffice/build-plugin/src/wubulang/test_lang"
-Directory: /home/wubu/WuBuOffice/build-plugin/src/wubulang
-"lang" start time: Jul 30 20:34 EDT
+93/170 Testing: convnet3_im2col
+93/170 Test: convnet3_im2col
+Command: "/home/wubu/WuBuOffice/build-plugin/tools/test_convnet3_im2col"
+Directory: /home/wubu/WuBuOffice/build-plugin/tools
+"convnet3_im2col" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
-PASS: lang (set/get/reset/count)
+[fwd] max|new-ref| = 1.073e-06 (D=256)
+[grad] bias analytic=4.0000  finite-diff=4.0000  (|diff|=7.153e-07)
+PASS
 <end of output>
-Test time =   0.00 sec
+Test time =   0.24 sec
 ----------------------------------------------------------
 Test Passed.
-"lang" end time: Jul 30 20:34 EDT
-"lang" time elapsed: 00:00:00
+"convnet3_im2col" end time: Aug 22 13:08 EDT
+"convnet3_im2col" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-7/131 Testing: caption
-7/131 Test: caption
-Command: "/home/wubu/WuBuOffice/build-plugin/src/wubucaption/test_caption"
-Directory: /home/wubu/WuBuOffice/build-plugin/src/wubucaption
-"caption" start time: Jul 30 20:34 EDT
+138/170 Testing: wubufont
+138/170 Test: wubufont
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_wubufont"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"wubufont" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
-PASS: caption (set/get/reset/count)
+using font: /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf
+  unitsPerEm=2048
+  glyphCount=6253
+  'A' path[0..40]=M700 -1294L426 -551L975 -551ZM586 -1493L
+  family="DejaVu Sans"
+  'H' @96ppm: 35x71 ink=18.7%
+  'A' @96ppm: 43x71 ink=20.0%
+  'l' @32ppm: 3x25 ink=22
+  'i' @32ppm: 3x26 ink=17
+WUBUFONT TESTS PASSED (real font: /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf)
 <end of output>
-Test time =   0.00 sec
+Test time =   0.55 sec
 ----------------------------------------------------------
 Test Passed.
-"caption" end time: Jul 30 20:34 EDT
-"caption" time elapsed: 00:00:00
+"wubufont" end time: Aug 22 13:08 EDT
+"wubufont" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-8/131 Testing: watermark
-8/131 Test: watermark
-Command: "/home/wubu/WuBuOffice/build-plugin/src/wubuwatermark/test_watermark"
-Directory: /home/wubu/WuBuOffice/build-plugin/src/wubuwatermark
-"watermark" start time: Jul 30 20:34 EDT
+136/170 Testing: legacy_pdf
+136/170 Test: legacy_pdf
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_legacy_pdf"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"legacy_pdf" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
-PASS: watermark (text/angle/opacity-clamp/enabled)
+(xls oracle skipped: xlwt unavailable)
+(pdf oracle skipped: pypdf/pdfminer unavailable)
+(xls write oracle skipped: xlrd unavailable)
+(doc write oracle skipped: olefile unavailable)
+(ppt write oracle skipped: olefile unavailable)
+real MS .doc decoded OK (piece table)
+real MS .ppt decoded OK (1 slide[s])
+real MS .xls opened OK (3 sheet[s])
+(some oracles skipped; core paths exercised where libs present)
+LEGACY+PDF TEST PASSED
 <end of output>
-Test time =   0.00 sec
+Test time =   0.40 sec
 ----------------------------------------------------------
 Test Passed.
-"watermark" end time: Jul 30 20:34 EDT
-"watermark" time elapsed: 00:00:00
+"legacy_pdf" end time: Aug 22 13:08 EDT
+"legacy_pdf" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-9/131 Testing: focus
-9/131 Test: focus
-Command: "/home/wubu/WuBuOffice/build-plugin/src/wubufocus/test_focus"
-Directory: /home/wubu/WuBuOffice/build-plugin/src/wubufocus
-"focus" start time: Jul 30 20:34 EDT
+137/170 Testing: flat_epub
+137/170 Test: flat_epub
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_flat_epub"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"flat_epub" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
-PASS: focus (color/width/enabled)
+flat OK root=office:document child=office:text
+flat OK root=office:document child=office:spreadsheet
+flat OK root=office:document child=office:presentation
+(epub oracle skipped: EbookLib unavailable)
+(epub oracle skipped; flat-ODF gates exercised regardless)
+FLAT+EPUB TEST PASSED
 <end of output>
-Test time =   0.00 sec
+Test time =   0.24 sec
 ----------------------------------------------------------
 Test Passed.
-"focus" end time: Jul 30 20:34 EDT
-"focus" time elapsed: 00:00:00
+"flat_epub" end time: Aug 22 13:08 EDT
+"flat_epub" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-10/131 Testing: dyslexia
-10/131 Test: dyslexia
-Command: "/home/wubu/WuBuOffice/build-plugin/src/wubudyslexia/test_dyslexia"
-Directory: /home/wubu/WuBuOffice/build-plugin/src/wubudyslexia
-"dyslexia" start time: Jul 30 20:34 EDT
+132/170 Testing: convert
+132/170 Test: convert
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_convert"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"convert" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
-PASS: dyslexia (enabled/face/spacing-clamp)
+odfpy unavailable
+odfpy SKIP
+(odfpy oracle skipped)
+CONVERT TEST PASSED (full matrix: same-family + cross-family + ODF + JSON oracle)
 <end of output>
-Test time =   0.00 sec
+Test time =   0.26 sec
 ----------------------------------------------------------
 Test Passed.
-"dyslexia" end time: Jul 30 20:34 EDT
-"dyslexia" time elapsed: 00:00:00
+"convert" end time: Aug 22 13:08 EDT
+"convert" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-11/131 Testing: scope
-11/131 Test: scope
-Command: "/home/wubu/WuBuOffice/build-plugin/src/wubuscope/test_scope"
-Directory: /home/wubu/WuBuOffice/build-plugin/src/wubuscope
-"scope" start time: Jul 30 20:34 EDT
+121/170 Testing: conformance
+121/170 Test: conformance
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_conformance"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"conformance" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
-PASS: scope (col/row/default/lookup)
+CONFORMANT
+openpyxl unavailable -> SKIP value check
+CONFORMANT (well-formed; value oracle skipped)
+python-pptx unavailable -> SKIP value check
+CONFORMANT (well-formed; value oracle skipped)
+conformance: /tmp/conf.docx -> CONFORMANT
+conformance: /tmp/conf.xlsx -> CONFORMANT
+conformance: /tmp/conf.pptx -> CONFORMANT
+CONFORMANCE PASSED (3 checked, 0 skipped)
 <end of output>
-Test time =   0.00 sec
+Test time =   0.16 sec
 ----------------------------------------------------------
 Test Passed.
-"scope" end time: Jul 30 20:34 EDT
-"scope" time elapsed: 00:00:00
+"conformance" end time: Aug 22 13:08 EDT
+"conformance" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-12/131 Testing: a11ytree
-12/131 Test: a11ytree
-Command: "/home/wubu/WuBuOffice/build-plugin/src/wubua11ytree/test_a11ytree"
-Directory: /home/wubu/WuBuOffice/build-plugin/src/wubua11ytree
-"a11ytree" start time: Jul 30 20:34 EDT
+70/170 Testing: design_ratios
+70/170 Test: design_ratios
+Command: "/home/wubu/.hermes/hermes-agent/venv/bin/python3" "/home/wubu/WuBuOffice/../tooling/design_ratios.py" "wubuoffice"
+Directory: /home/wubu/WuBuOffice/build-plugin/apps/wubuos
+"design_ratios" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
-PASS: a11ytree (section/paragraph/image roles + alt)
+DESIGNER-RATIO + UX-LAW AUDIT: wubuoffice
+  LINE_HEIGHT  PASS  (chrome rows are font-derived, scale with zoom)
+  SPACING_GRID PASS  chrome heights {'TAB': 32, 'MENU': 24, 'TOOLBAR': 28, 'STATUS': 28, 'SIDEBAR': 224} all multiples of 4
+  GOLDEN_LAYOUT PASS  content/sidebar = 3.29 (advisory; want >1.2, NN/g ideal ~1.618)
+  HIT_TARGET   PASS  interactive rows {'menu_item': 24, 'toolbar': 28, 'tab': 32} (need ≥24px)
+  MENU_COLLISION SKIP
+  HICKS_LAW    PASS  0 buttons in 1 groups, biggest=0 (want <=7 groups, each <=7; T~b·log2(n+1))
+  MILLERS_LAW  PASS  5 distinct chrome regions (want <=9 chunks)
+  COLOR_601010 PASS  theme has base + accent roles (60/30/10)
+  DELTA_E      SKIP
+
+RESULT: PASS (0 checks failed)
 <end of output>
-Test time =   0.00 sec
+Test time =   0.06 sec
 ----------------------------------------------------------
 Test Passed.
-"a11ytree" end time: Jul 30 20:34 EDT
-"a11ytree" time elapsed: 00:00:00
+"design_ratios" end time: Aug 22 13:08 EDT
+"design_ratios" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-13/131 Testing: eqnum
-13/131 Test: eqnum
-Command: "/home/wubu/WuBuOffice/build-plugin/src/wubueqnum/test_eqnum"
-Directory: /home/wubu/WuBuOffice/build-plugin/src/wubueqnum
-"eqnum" start time: Jul 30 20:34 EDT
+130/170 Testing: rtf_json
+130/170 Test: rtf_json
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_rtf_json"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"rtf_json" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
-PASS: eqnum (sequential equation numbering)
+RTF/JSON TEST PASSED (rtf + doc/book/pres json, oracle-validated)
 <end of output>
-Test time =   0.00 sec
+Test time =   0.18 sec
 ----------------------------------------------------------
 Test Passed.
-"eqnum" end time: Jul 30 20:34 EDT
-"eqnum" time elapsed: 00:00:00
+"rtf_json" end time: Aug 22 13:08 EDT
+"rtf_json" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-14/131 Testing: heading
-14/131 Test: heading
-Command: "/home/wubu/WuBuOffice/build-plugin/src/wubuheading/test_heading"
-Directory: /home/wubu/WuBuOffice/build-plugin/src/wubuheading
-"heading" start time: Jul 30 20:34 EDT
-Output:
-----------------------------------------------------------
-PASS: heading (sequential level enforcement, no skip)
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"heading" end time: Jul 30 20:34 EDT
-"heading" time elapsed: 00:00:00
-----------------------------------------------------------
-
-15/131 Testing: cite
-15/131 Test: cite
-Command: "/home/wubu/WuBuOffice/build-plugin/src/wubucite/test_cite"
-Directory: /home/wubu/WuBuOffice/build-plugin/src/wubucite
-"cite" start time: Jul 30 20:34 EDT
-Output:
-----------------------------------------------------------
-PASS: cite (add/inline/bibliography)
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"cite" end time: Jul 30 20:34 EDT
-"cite" time elapsed: 00:00:00
-----------------------------------------------------------
-
-16/131 Testing: hash
-16/131 Test: hash
-Command: "/home/wubu/WuBuOffice/build-plugin/src/wubuhash/test_hash"
-Directory: /home/wubu/WuBuOffice/build-plugin/src/wubuhash
-"hash" start time: Jul 30 20:34 EDT
-Output:
-----------------------------------------------------------
-PASS: hash (SHA-256 FIPS vectors)
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"hash" end time: Jul 30 20:34 EDT
-"hash" time elapsed: 00:00:00
-----------------------------------------------------------
-
-17/131 Testing: sig
-17/131 Test: sig
-Command: "/home/wubu/WuBuOffice/build-plugin/src/wubusig/test_sig"
-Directory: /home/wubu/WuBuOffice/build-plugin/src/wubusig
-"sig" start time: Jul 30 20:34 EDT
-Output:
-----------------------------------------------------------
-PASS: sig (HMAC-SHA256 sign/verify/tamper)
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"sig" end time: Jul 30 20:34 EDT
-"sig" time elapsed: 00:00:00
-----------------------------------------------------------
-
-18/131 Testing: redact
-18/131 Test: redact
-Command: "/home/wubu/WuBuOffice/build-plugin/src/wuburedact/test_redact"
-Directory: /home/wubu/WuBuOffice/build-plugin/src/wuburedact
-"redact" start time: Jul 30 20:34 EDT
-Output:
-----------------------------------------------------------
-PASS: redact (mark/apply/out-of-bounds)
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"redact" end time: Jul 30 20:34 EDT
-"redact" time elapsed: 00:00:00
-----------------------------------------------------------
-
-19/131 Testing: wubucsv
-19/131 Test: wubucsv
-Command: "/home/wubu/WuBuOffice/build-plugin/src/wubucsv/test_wubucsv"
-Directory: /home/wubu/WuBuOffice/build-plugin/src/wubucsv
-"wubucsv" start time: Jul 30 20:34 EDT
-Output:
-----------------------------------------------------------
-PASS: csv (quoted comma/newline parsing)
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"wubucsv" end time: Jul 30 20:34 EDT
-"wubucsv" time elapsed: 00:00:00
-----------------------------------------------------------
-
-20/131 Testing: pasteplain
-20/131 Test: pasteplain
-Command: "/home/wubu/WuBuOffice/build-plugin/src/wubupasteplain/test_pasteplain"
-Directory: /home/wubu/WuBuOffice/build-plugin/src/wubupasteplain
-"pasteplain" start time: Jul 30 20:34 EDT
-Output:
-----------------------------------------------------------
-PASS: pasteplain (html/rtf strip)
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"pasteplain" end time: Jul 30 20:34 EDT
-"pasteplain" time elapsed: 00:00:00
-----------------------------------------------------------
-
-21/131 Testing: rtf
-21/131 Test: rtf
-Command: "/home/wubu/WuBuOffice/build-plugin/src/wuburtf/test_rtf"
-Directory: /home/wubu/WuBuOffice/build-plugin/src/wuburtf
-"rtf" start time: Jul 30 20:34 EDT
-Output:
-----------------------------------------------------------
-PASS: rtf (bold/italic + brace escaping)
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"rtf" end time: Jul 30 20:34 EDT
-"rtf" time elapsed: 00:00:00
-----------------------------------------------------------
-
-22/131 Testing: a11yannounce
-22/131 Test: a11yannounce
-Command: "/home/wubu/WuBuOffice/build-plugin/src/wubua11yannounce/test_a11yannounce"
-Directory: /home/wubu/WuBuOffice/build-plugin/src/wubua11yannounce
-"a11yannounce" start time: Jul 30 20:34 EDT
-Output:
-----------------------------------------------------------
-PASS: a11yannounce (FIFO queue)
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"a11yannounce" end time: Jul 30 20:34 EDT
-"a11yannounce" time elapsed: 00:00:00
-----------------------------------------------------------
-
-23/131 Testing: form
-23/131 Test: form
-Command: "/home/wubu/WuBuOffice/build-plugin/src/wubuform/test_form"
-Directory: /home/wubu/WuBuOffice/build-plugin/src/wubuform
-"form" start time: Jul 30 20:34 EDT
-Output:
-----------------------------------------------------------
-PASS: form (add/set/type/lookup)
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"form" end time: Jul 30 20:34 EDT
-"form" time elapsed: 00:00:00
-----------------------------------------------------------
-
-24/131 Testing: exp_png
-24/131 Test: exp_png
-Command: "/home/wubu/WuBuOffice/build-plugin/src/wubuexp_png/test_exp_png"
-Directory: /home/wubu/WuBuOffice/build-plugin/src/wubuexp_png
-"exp_png" start time: Jul 30 20:34 EDT
-Output:
-----------------------------------------------------------
-PASS: exp_png (write + PNG signature)
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"exp_png" end time: Jul 30 20:34 EDT
-"exp_png" time elapsed: 00:00:00
-----------------------------------------------------------
-
-25/131 Testing: pdfextract
-25/131 Test: pdfextract
-Command: "/home/wubu/WuBuOffice/build-plugin/src/wubupdfextract/test_pdfextract"
-Directory: /home/wubu/WuBuOffice/build-plugin/src/wubupdfextract
-"pdfextract" start time: Jul 30 20:34 EDT
-Output:
-----------------------------------------------------------
-PASS: pdfextract (graceful null + no-crash)
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"pdfextract" end time: Jul 30 20:34 EDT
-"pdfextract" time elapsed: 00:00:00
-----------------------------------------------------------
-
-26/131 Testing: xps
-26/131 Test: xps
-Command: "/home/wubu/WuBuOffice/build-plugin/src/wubuxps/test_xps"
-Directory: /home/wubu/WuBuOffice/build-plugin/src/wubuxps
-"xps" start time: Jul 30 20:34 EDT
-Output:
-----------------------------------------------------------
-PASS: xps (store-ZIP container + FixedPage)
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"xps" end time: Jul 30 20:34 EDT
-"xps" time elapsed: 00:00:00
-----------------------------------------------------------
-
-27/131 Testing: aislot
-27/131 Test: aislot
-Command: "/home/wubu/WuBuOffice/build-plugin/src/wubuaislot/test_aislot"
-Directory: /home/wubu/WuBuOffice/build-plugin/src/wubuaislot
-"aislot" start time: Jul 30 20:34 EDT
-Output:
-----------------------------------------------------------
-PASS: aislot (fallback + provider swap)
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"aislot" end time: Jul 30 20:34 EDT
-"aislot" time elapsed: 00:00:00
-----------------------------------------------------------
-
-28/131 Testing: sandbox
-28/131 Test: sandbox
-Command: "/home/wubu/WuBuOffice/build-plugin/src/wubusandbox/test_sandbox"
-Directory: /home/wubu/WuBuOffice/build-plugin/src/wubusandbox
-"sandbox" start time: Jul 30 20:34 EDT
-Output:
-----------------------------------------------------------
-PASS: sandbox (deny-by-default capability gates)
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"sandbox" end time: Jul 30 20:34 EDT
-"sandbox" time elapsed: 00:00:00
-----------------------------------------------------------
-
-29/131 Testing: fmtpaint
-29/131 Test: fmtpaint
-Command: "/home/wubu/WuBuOffice/build-plugin/src/wubufmtpaint/test_fmtpaint"
-Directory: /home/wubu/WuBuOffice/build-plugin/src/wubufmtpaint
-"fmtpaint" start time: Jul 30 20:34 EDT
-Output:
-----------------------------------------------------------
-PASS: fmtpaint (pick/apply/no-alias)
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"fmtpaint" end time: Jul 30 20:34 EDT
-"fmtpaint" time elapsed: 00:00:00
-----------------------------------------------------------
-
-30/131 Testing: nesttab
-30/131 Test: nesttab
-Command: "/home/wubu/WuBuOffice/build-plugin/src/wubunesttab/test_nesttab"
-Directory: /home/wubu/WuBuOffice/build-plugin/src/wubunesttab
-"nesttab" start time: Jul 30 20:34 EDT
-Output:
-----------------------------------------------------------
-PASS: nesttab (build/nest depth 3/validate)
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"nesttab" end time: Jul 30 20:34 EDT
-"nesttab" time elapsed: 00:00:00
-----------------------------------------------------------
-
-31/131 Testing: pdfform
-31/131 Test: pdfform
-Command: "/home/wubu/WuBuOffice/build-plugin/src/wubupdfform/test_pdfform"
-Directory: /home/wubu/WuBuOffice/build-plugin/src/wubupdfform
-"pdfform" start time: Jul 30 20:34 EDT
-Output:
-----------------------------------------------------------
-PASS: pdfform (AcroForm Tx+Btn, escaped values, valid xref)
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"pdfform" end time: Jul 30 20:34 EDT
-"pdfform" time elapsed: 00:00:00
-----------------------------------------------------------
-
-32/131 Testing: view
-32/131 Test: view
+64/170 Testing: view
+64/170 Test: view
 Command: "/home/wubu/WuBuOffice/build-plugin/apps/wubuos/test_view"
 Directory: /home/wubu/WuBuOffice/build-plugin/apps/wubuos
-"view" start time: Jul 30 20:34 EDT
+"view" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
 [doc] ok 960x664
@@ -508,9 +289,12 @@ Output:
 [slide] ok 960x664
 [ocr] ok 960x664
 [editor] ok 960x664
+[slide rt] edit->save OK (title+bullet persisted)
+[slide rt] reload OK (path=/tmp/wubuos_slide.txt)
 [settings] ok 960x664
 [settings] ok (Settings — dark, zoom 100%)
 [doc(file)] ok 960x664
+[doc] sidebar ok (TOC heading present)
 [doc] insert ok (3 overlays)
 [doc] epub ok
 [doc] a11y ok (1 issues)
@@ -518,6 +302,7 @@ Output:
 [kbd] palette keyboard-nav ok (id=3)
 [doc] wubuscript field ok
 [editor(file)] ok 960x664
+[editor] status ok (has word count)
 [active-line] ok (highlight band rendered)
 [save-as] ok (path=/tmp/wubuos_saveas_test.txt, 296 bytes)
 [spell] ok (cat=known, zzqfoo=misspelled)
@@ -537,15 +322,20 @@ Output:
 [cell(csv)] ok 960x664
 [compare] ok 960x664
 [cell] ok 960x664
+[cell] sidebar ok (active cell present)
 [cell] ok (nav + SUM=79)
 [cell] ok (live edit at E2 formula='A1+A1')
+[cell rt] CSV edit round-trip OK (A1='hi')
+[cell xlsx] round-trip OK (A1=10, formula='A1+B1')
+[cell ref] highlight refs OK (A1+B2)
+[cell ref] non-formula no-refs OK
 [ocr] ok 960x664
 [ocr] ok (4 blocks; recognized '! ! ! ! ')
 [ocr] selected '!'
 [doc] ok 960x664
 [doc-i] ok (sample rendered page)
 [doc-toc] ok 960x664
-[doc-toc] ok (toc=0 entries)
+[doc-toc] ok (toc=1 entries)
 [doc-hc] ok (toggled 0->1)
 [doc-i] ok (text opened, find 'bravo' hit)
 [plugin-host] sample_plugin: init ok
@@ -553,126 +343,56 @@ Output:
 [plugin] ok (loaded 'hello', exec ok)
 done bad=0
 <end of output>
-Test time =   0.06 sec
+Test time =   0.12 sec
 ----------------------------------------------------------
 Test Passed.
-"view" end time: Jul 30 20:34 EDT
+"view" end time: Aug 22 13:08 EDT
 "view" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-33/131 Testing: shell_ui
-33/131 Test: shell_ui
-Command: "/home/wubu/WuBuOffice/build-plugin/apps/wubuos/test_shell_ui"
+68/170 Testing: toolbar
+68/170 Test: toolbar
+Command: "/home/wubu/WuBuOffice/build-plugin/apps/wubuos/test_wuos_toolbar"
 Directory: /home/wubu/WuBuOffice/build-plugin/apps/wubuos
-"shell_ui" start time: Jul 30 20:34 EDT
+"toolbar" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
-SHELL UI TESTS PASSED
+toolbar spans 912 px
+TOOLBAR TESTS PASSED
 <end of output>
-Test time =   0.00 sec
+Test time =   0.04 sec
 ----------------------------------------------------------
 Test Passed.
-"shell_ui" end time: Jul 30 20:34 EDT
-"shell_ui" time elapsed: 00:00:00
+"toolbar" end time: Aug 22 13:08 EDT
+"toolbar" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-34/131 Testing: plugin_abi
-34/131 Test: plugin_abi
-Command: "/home/wubu/WuBuOffice/build-plugin/apps/wubuos/test_plugin_abi" "/home/wubu/WuBuOffice/build-plugin/apps/wubuos/plugins/sample_plugin.so" "/home/wubu/WuBuOffice/build-plugin/apps/wubuos/plugins/badabi_plugin.so"
-Directory: /home/wubu/WuBuOffice/build-plugin/apps/wubuos
-"plugin_abi" start time: Jul 30 20:34 EDT
+131/170 Testing: odf
+131/170 Test: odf
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_odf"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"odf" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
-[plugin-host] sample_plugin: init ok
-[ok] load good .so
-[ok] exactly one plugin loaded
-[ok] loaded plugin name == hello
-[plugin-host] sample_plugin: exec
-[ok] exec returns host-verified string
-[plugin] /home/wubu/WuBuOffice/build-plugin/apps/wubuos/plugins/badabi_plugin.so: abi 999 != 1
-[ok] loader rejects mismatched abi version
-[ok] rejected plugin not added to manager
-[plugin] dlopen /no/such/plugin.so: /no/such/plugin.so: cannot open shared object file: No such file or directory
-[ok] loader rejects missing .so
-[ok] missing .so not added to manager
-done failures=0
+odfpy unavailable
+ODT OK
+ODS OK
+ODP OK
+FOREIGN ODF SKIPPED (odfpy unavailable)
+ODF TEST PASSED (odt/ods/odp write+read + foreign odfpy interop)
 <end of output>
-Test time =   0.00 sec
+Test time =   0.11 sec
 ----------------------------------------------------------
 Test Passed.
-"plugin_abi" end time: Jul 30 20:34 EDT
-"plugin_abi" time elapsed: 00:00:00
+"odf" end time: Aug 22 13:08 EDT
+"odf" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-35/131 Testing: codefold
-35/131 Test: codefold
-Command: "/home/wubu/WuBuOffice/build-plugin/apps/wubuos/test_codefold"
-Directory: /home/wubu/WuBuOffice/build-plugin/apps/wubuos
-"codefold" start time: Jul 30 20:34 EDT
-Output:
-----------------------------------------------------------
-PASS: codefold (toggle hide/show brace region, sym toggle, no-region)
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"codefold" end time: Jul 30 20:34 EDT
-"codefold" time elapsed: 00:00:00
-----------------------------------------------------------
-
-36/131 Testing: bkmk
-36/131 Test: bkmk
-Command: "/home/wubu/WuBuOffice/build-plugin/apps/wubuos/test_bkmk"
-Directory: /home/wubu/WuBuOffice/build-plugin/apps/wubuos
-"bkmk" start time: Jul 30 20:34 EDT
-Output:
-----------------------------------------------------------
-PASS: bkmk (toggle, sorted-unique, has, jump next/prev, empty)
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"bkmk" end time: Jul 30 20:34 EDT
-"bkmk" time elapsed: 00:00:00
-----------------------------------------------------------
-
-37/131 Testing: autocomp
-37/131 Test: autocomp
-Command: "/home/wubu/WuBuOffice/build-plugin/apps/wubuos/test_autocomp"
-Directory: /home/wubu/WuBuOffice/build-plugin/apps/wubuos
-"autocomp" start time: Jul 30 20:34 EDT
-Output:
-----------------------------------------------------------
-PASS: autocomp (collect builtins+docs, prefix, move, accept, close)
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"autocomp" end time: Jul 30 20:34 EDT
-"autocomp" time elapsed: 00:00:00
-----------------------------------------------------------
-
-38/131 Testing: findbar
-38/131 Test: findbar
-Command: "/home/wubu/WuBuOffice/build-plugin/apps/wubuos/test_findbar"
-Directory: /home/wubu/WuBuOffice/build-plugin/apps/wubuos
-"findbar" start time: Jul 30 20:34 EDT
-Output:
-----------------------------------------------------------
-PASS: findbar (literal/regex find, replace-one, replace-all, clear, no-match)
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"findbar" end time: Jul 30 20:34 EDT
-"findbar" time elapsed: 00:00:00
-----------------------------------------------------------
-
-39/131 Testing: doccmd
-39/131 Test: doccmd
+76/170 Testing: doccmd
+76/170 Test: doccmd
 Command: "/home/wubu/WuBuOffice/build-plugin/apps/wubuos/test_doccmd"
 Directory: /home/wubu/WuBuOffice/build-plugin/apps/wubuos
-"doccmd" start time: Jul 30 20:34 EDT
+"doccmd" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
   epub: EPUB written: /tmp/test_doccmd.epub
@@ -714,68 +434,116 @@ Output:
   xps: xps ok: rc=0 path=/tmp/wubuos_export.xps
   aislot: aislot ok: custom=0 out=This is a long document about CRDTs and real-time collaboration.
 
+  sort: sort ok: rc=0 first=ann
+  filter: filter ok: rc=0 matches=4
+  subtotal: subtotal ok: rc=0 groups=2
+  goalseek: goalseek ok: rc=0 x=1.414214 conv=1
+  solver: solver ok: rc=0 x=1.00 y=2.00
+  pivot: pivot ok: rows=2 cols=2 East/Apples=10
+  scenario: scenario ok: rc=0 scenarios=1
+  freeze: freeze ok: rc=0 frozen_rows=1 vis_row5=4
+  hyperlink: hyperlink ok: rc=0 links=1 target=https://example.com
+  thesaurus: thesaurus ok: rc=0 entries=1 first=glad
+  grammar: grammar ok: findings=2 first_id=1
+  index: index ok: rc=0 entries=2 first=apple pages=1
+  mailmerge: mailmerge ok: rc=0 records=1 merged=Dear Alice of Boston.
+  diff: diff ok: hunks=4
+  masterdoc: masterdoc ok: rc=0 subs=2 first=ch1.docx
+  dropcap: dropcap ok: rc=0 lines=3
+  ruler: ruler ok: rc=0 content=468x648
+  gridline: gridline ok: rc=0 show=0
+  icon: icon ok: rc=0 icons=1
+  gallery: gallery ok: rc=0 galleries=1
+  sidebar: sidebar ok: rc=0 panels=2
+  transition: transition ok: rc=0 type=1
+  animation: animation ok: rc=0 keys=1
+  masterslide: masterslide ok: rc=0 font=24
+  connector: connector ok: rc=0 edges=1
+  encrypt: encrypt ok: rc=1 roundtrip=1
+  mailexport: mailexport ok: rc=0 len=86
+  notebookbar: notebookbar ok: rc=0 tabs=2
+  qr: qr ok: ok=1 size=21
+  smartart: smartart ok: rc=0 nodes=1
+10
+  basic: basic ok: rc=0 s=10
+  3d: 3d ok: rc=0 verts=8 faces=12
+  roundtrip docx save: OK
+  roundtrip docx: text survived reload OK
+  roundtrip odt save: OK
+  roundtrip odt: text survived reload OK
+  roundtrip rtf save: OK
+  roundtrip rtf: text survived reload OK
+  roundtrip epub save: OK
+  roundtrip epub: text survived reload OK
 PASS: doccmd (15 structural inserts + script field + epub/save/a11y + 6 layout exporters + rtf_runs/redact/col + cite/caption/heading/eqnum/vars/hash/sig/crdt + csv/focus/watermark/dyslexia/fmtpaint/sandbox + form/history/lang/nesttab/pdfextract/pdfform/scope/sync/xps/aislot)
 <end of output>
-Test time =   0.01 sec
+Test time =   0.04 sec
 ----------------------------------------------------------
 Test Passed.
-"doccmd" end time: Jul 30 20:34 EDT
+"doccmd" end time: Aug 22 13:08 EDT
 "doccmd" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-40/131 Testing: macro
-40/131 Test: macro
-Command: "/home/wubu/WuBuOffice/build-plugin/apps/wubuos/test_macro"
-Directory: /home/wubu/WuBuOffice/build-plugin/apps/wubuos
-"macro" start time: Jul 30 20:34 EDT
+154/170 Testing: latin1
+154/170 Test: latin1
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_latin1"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"latin1" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
-PASS: macro (record chars/return/backspace, toggle, count, playback seq, save/load)
+using 3 font(s) for Latin tier
+  latin1 scatter recall (read/placed) = 19.4%
+LATIN1 TESTS PASSED (3 fonts)
 <end of output>
-Test time =   0.00 sec
+Test time =   0.04 sec
 ----------------------------------------------------------
 Test Passed.
-"macro" end time: Jul 30 20:34 EDT
-"macro" time elapsed: 00:00:00
+"latin1" end time: Aug 22 13:08 EDT
+"latin1" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-41/131 Testing: gotoline
-41/131 Test: gotoline
-Command: "/home/wubu/WuBuOffice/build-plugin/apps/wubuos/test_gotoline"
-Directory: /home/wubu/WuBuOffice/build-plugin/apps/wubuos
-"gotoline" start time: Jul 30 20:34 EDT
+152/170 Testing: fontbank
+152/170 Test: fontbank
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_fontbank"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"fontbank" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
-PASS: gotoline (open/active, digit capture, backspace, commit, esc, dismiss)
+using 4 font(s) in bank
+  nb=5
+  recovered: "HHee'''']o]o" (expected "Hello")
+  deduped: "He'']o]o"
+FONTBANK TESTS PASSED (4 fonts)
 <end of output>
-Test time =   0.00 sec
+Test time =   0.02 sec
 ----------------------------------------------------------
 Test Passed.
-"gotoline" end time: Jul 30 20:34 EDT
-"gotoline" time elapsed: 00:00:00
+"fontbank" end time: Aug 22 13:08 EDT
+"fontbank" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-42/131 Testing: dialog
-42/131 Test: dialog
-Command: "/home/wubu/WuBuOffice/build-plugin/apps/wubuos/test_dialog"
-Directory: /home/wubu/WuBuOffice/build-plugin/apps/wubuos
-"dialog" start time: Jul 30 20:34 EDT
+122/170 Testing: foreign_read
+122/170 Test: foreign_read
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_foreign"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"foreign_read" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
-PASS: dialog (open/active, type, backspace, confirm, cancel, default)
+openpyxl unavailable
+FOREIGN SKIPPED (openpyxl/python-pptx unavailable)
 <end of output>
-Test time =   0.00 sec
+Test time =   0.04 sec
 ----------------------------------------------------------
 Test Passed.
-"dialog" end time: Jul 30 20:34 EDT
-"dialog" time elapsed: 00:00:00
+"foreign_read" end time: Aug 22 13:08 EDT
+"foreign_read" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-43/131 Testing: font
-43/131 Test: font
+80/170 Testing: font
+80/170 Test: font
 Command: "/home/wubu/WuBuOffice/build-plugin/apps/wubuos/test_font"
 Directory: /home/wubu/WuBuOffice/build-plugin/apps/wubuos
-"font" start time: Jul 30 20:34 EDT
+"font" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
 [font] 23 families enumerated
@@ -784,115 +552,1147 @@ PASS: font (init, scan, 23 families, set/current, draw, OOB-reject)
 Test time =   0.01 sec
 ----------------------------------------------------------
 Test Passed.
-"font" end time: Jul 30 20:34 EDT
+"font" end time: Aug 22 13:08 EDT
 "font" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-44/131 Testing: wubupad_bridge
-44/131 Test: wubupad_bridge
-Command: "/home/wubu/WuBuOffice/build-plugin/apps/wubupad_bridge/test_wubupad_bridge"
-Directory: /home/wubu/WuBuOffice/build-plugin/apps/wubupad_bridge
-"wubupad_bridge" start time: Jul 30 20:34 EDT
+120/170 Testing: edit_roundtrip
+120/170 Test: edit_roundtrip
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_edit"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"edit_roundtrip" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
-PASS: wubupad_bridge (cross-repo reuse of WuBuPad core)
+EDIT DOCX OK
+EDIT XLSX OK
+EDIT PPTX OK
+EDIT ROUNDTRIP PASSED (docx + xlsx + pptx lossless)
+<end of output>
+Test time =   0.03 sec
+----------------------------------------------------------
+Test Passed.
+"edit_roundtrip" end time: Aug 22 13:08 EDT
+"edit_roundtrip" time elapsed: 00:00:00
+----------------------------------------------------------
+
+160/170 Testing: wubudoc
+160/170 Test: wubudoc
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_wubudoc"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"wubudoc" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+WUBUDOC TESTS PASSED
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"wubudoc" end time: Aug 22 13:08 EDT
+"wubudoc" time elapsed: 00:00:00
+----------------------------------------------------------
+
+161/170 Testing: drop
+161/170 Test: drop
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_drop"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"drop" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+  paste decode OK
+  drop text extraction OK
+  drop PDF extraction OK
+  drop PNG decode + ingest OK
+DROP TESTS PASSED
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"drop" end time: Aug 22 13:08 EDT
+"drop" time elapsed: 00:00:00
+----------------------------------------------------------
+
+104/170 Testing: autosave
+104/170 Test: autosave
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_autosave"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"autosave" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: wubuautosave (atomic snapshot, dirty-skip, crash recovery round-trip)
+<end of output>
+Test time =   0.03 sec
+----------------------------------------------------------
+Test Passed.
+"autosave" end time: Aug 22 13:08 EDT
+"autosave" time elapsed: 00:00:00
+----------------------------------------------------------
+
+44/170 Testing: wubumailmerge
+44/170 Test: wubumailmerge
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubumailmerge/test_wubumailmerge"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubumailmerge
+"wubumailmerge" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: wubumailmerge (template ${field}/{field} fill from records, unknown passthrough)
 <end of output>
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"wubupad_bridge" end time: Jul 30 20:34 EDT
-"wubupad_bridge" time elapsed: 00:00:00
+"wubumailmerge" end time: Aug 22 13:08 EDT
+"wubumailmerge" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-45/131 Testing: ctc_test
-45/131 Test: ctc_test
-Command: "/home/wubu/WuBuOffice/build-plugin/tools/ctc_test"
+32/170 Testing: wubusubtotal
+32/170 Test: wubusubtotal
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubusubtotal/test_wubusubtotal"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubusubtotal
+"wubusubtotal" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: wubusubtotal (group-by key, SUM/AVG/COUNT/MIN/MAX)
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"wubusubtotal" end time: Aug 22 13:08 EDT
+"wubusubtotal" time elapsed: 00:00:00
+----------------------------------------------------------
+
+67/170 Testing: hive
+67/170 Test: hive
+Command: "/home/wubu/WuBuOffice/build-plugin/apps/wubuos/test_hive"
+Directory: /home/wubu/WuBuOffice/build-plugin/apps/wubuos
+"hive" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+HIVE CONFIG TESTS PASSED
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"hive" end time: Aug 22 13:08 EDT
+"hive" time elapsed: 00:00:00
+----------------------------------------------------------
+
+61/170 Testing: wubusmartart
+61/170 Test: wubusmartart
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubusmartart/test_wubusmartart"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubusmartart
+"wubusmartart" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: wubusmartart (diagram model + real layout engine: process/hierarchy/cycle/list)
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"wubusmartart" end time: Aug 22 13:08 EDT
+"wubusmartart" time elapsed: 00:00:00
+----------------------------------------------------------
+
+119/170 Testing: extract
+119/170 Test: extract
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_extract"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"extract" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+ok docx extract
+ok xlsx extract (shared strings + formula cached)
+ok pptx extract
+EXTRACT TEST PASSED
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"extract" end time: Aug 22 13:08 EDT
+"extract" time elapsed: 00:00:00
+----------------------------------------------------------
+
+57/170 Testing: wubuencrypt
+57/170 Test: wubuencrypt
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubuencrypt/test_wubuencrypt"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubuencrypt
+"wubuencrypt" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: wubuencrypt (AES-128-CBC NIST vector + password roundtrip + PKCS7)
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"wubuencrypt" end time: Aug 22 13:08 EDT
+"wubuencrypt" time elapsed: 00:00:00
+----------------------------------------------------------
+
+54/170 Testing: wubuanimation
+54/170 Test: wubuanimation
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubuanimation/test_wubuanimation"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubuanimation
+"wubuanimation" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: wubuanimation (keyframe engine: eased per-object timeline progress)
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"wubuanimation" end time: Aug 22 13:08 EDT
+"wubuanimation" time elapsed: 00:00:00
+----------------------------------------------------------
+
+45/170 Testing: wubudiff
+45/170 Test: wubudiff
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubudiff/test_wubudiff"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubudiff
+"wubudiff" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: wubudiff (LCS line diff: eq/ins/del, substitution, empty)
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"wubudiff" end time: Aug 22 13:08 EDT
+"wubudiff" time elapsed: 00:00:00
+----------------------------------------------------------
+
+60/170 Testing: wubuqr
+60/170 Test: wubuqr
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubuqr/test_wubuqr"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubuqr
+"wubuqr" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: wubuqr (QR encode -> ASCII matrix, finder pattern present)
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"wubuqr" end time: Aug 22 13:08 EDT
+"wubuqr" time elapsed: 00:00:00
+----------------------------------------------------------
+
+49/170 Testing: wubugridline
+49/170 Test: wubugridline
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubugridline/test_wubugridline"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubugridline
+"wubugridline" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: wubugridline (gridline show/print toggle)
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"wubugridline" end time: Aug 22 13:08 EDT
+"wubugridline" time elapsed: 00:00:00
+----------------------------------------------------------
+
+108/170 Testing: epub_model_roundtrip
+108/170 Test: epub_model_roundtrip
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_epub_model_roundtrip"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"epub_model_roundtrip" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: epub writer<->model loader round trip (heading/para/table/link)
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"epub_model_roundtrip" end time: Aug 22 13:08 EDT
+"epub_model_roundtrip" time elapsed: 00:00:00
+----------------------------------------------------------
+
+52/170 Testing: wubusidebar
+52/170 Test: wubusidebar
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubusidebar/test_wubusidebar"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubusidebar
+"wubusidebar" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: wubusidebar (named panels, active index, visibility)
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"wubusidebar" end time: Aug 22 13:08 EDT
+"wubusidebar" time elapsed: 00:00:00
+----------------------------------------------------------
+
+41/170 Testing: wubuthesaurus
+41/170 Test: wubuthesaurus
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubuthesaurus/test_wubuthesaurus"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubuthesaurus
+"wubuthesaurus" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: wubuthesaurus (word->synonyms store, case-insensitive, overwrite)
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"wubuthesaurus" end time: Aug 22 13:08 EDT
+"wubuthesaurus" time elapsed: 00:00:00
+----------------------------------------------------------
+
+29/170 Testing: fmtpaint
+29/170 Test: fmtpaint
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubufmtpaint/test_fmtpaint"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubufmtpaint
+"fmtpaint" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: fmtpaint (pick/apply/no-alias)
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"fmtpaint" end time: Aug 22 13:08 EDT
+"fmtpaint" time elapsed: 00:00:00
+----------------------------------------------------------
+
+40/170 Testing: wubuhyperlink
+40/170 Test: wubuhyperlink
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubuhyperlink/test_wubuhyperlink"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubuhyperlink
+"wubuhyperlink" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: wubuhyperlink (node-id side table, set/get/overwrite/remove)
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"wubuhyperlink" end time: Aug 22 13:08 EDT
+"wubuhyperlink" time elapsed: 00:00:00
+----------------------------------------------------------
+
+50/170 Testing: wubuicon
+50/170 Test: wubuicon
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubuicon/test_wubuicon"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubuicon
+"wubuicon" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: wubuicon (named icon registry, add/get/overwrite/enum)
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"wubuicon" end time: Aug 22 13:08 EDT
+"wubuicon" time elapsed: 00:00:00
+----------------------------------------------------------
+
+20/170 Testing: pasteplain
+20/170 Test: pasteplain
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubupasteplain/test_pasteplain"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubupasteplain
+"pasteplain" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: pasteplain (html/rtf strip)
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"pasteplain" end time: Aug 22 13:08 EDT
+"pasteplain" time elapsed: 00:00:00
+----------------------------------------------------------
+
+2/170 Testing: history
+2/170 Test: history
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubuhistory/test_history"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubuhistory
+"history" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: history (commit/count/author/label/blob/diff)
+<end of output>
+Test time =   0.03 sec
+----------------------------------------------------------
+Test Passed.
+"history" end time: Aug 22 13:08 EDT
+"history" time elapsed: 00:00:00
+----------------------------------------------------------
+
+36/170 Testing: wubuscenario
+36/170 Test: wubuscenario
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubuscenario/test_wubuscenario"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubuscenario
+"wubuscenario" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: wubuscenario (named what-if scenarios, apply/restore, enum)
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"wubuscenario" end time: Aug 22 13:08 EDT
+"wubuscenario" time elapsed: 00:00:00
+----------------------------------------------------------
+
+170/170 Testing: toc
+170/170 Test: toc
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_toc"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"toc" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+TOC + SETTINGS + FOOTNOTE TESTS PASSED
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"toc" end time: Aug 22 13:08 EDT
+"toc" time elapsed: 00:00:00
+----------------------------------------------------------
+
+47/170 Testing: wubudropcap
+47/170 Test: wubudropcap
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubudropcap/test_wubudropcap"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubudropcap
+"wubudropcap" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: wubudropcap (first-letter drop cap, 2-5 line span, enable/disable)
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"wubudropcap" end time: Aug 22 13:08 EDT
+"wubudropcap" time elapsed: 00:00:00
+----------------------------------------------------------
+
+62/170 Testing: wububasic
+62/170 Test: wububasic
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wububasic/test_wububasic"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wububasic
+"wububasic" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: wububasic (minimal BASIC: LET/PRINT/IF/FOR/GOSUB/vars/concat)
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"wububasic" end time: Aug 22 13:08 EDT
+"wububasic" time elapsed: 00:00:00
+----------------------------------------------------------
+
+31/170 Testing: wubufilter
+31/170 Test: wubufilter
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubufilter/test_wubufilter"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubufilter
+"wubufilter" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: wubufilter (eq/gt/between/top N/multi-criteria AutoFilter)
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"wubufilter" end time: Aug 22 13:08 EDT
+"wubufilter" time elapsed: 00:00:00
+----------------------------------------------------------
+
+123/170 Testing: cell_read
+123/170 Test: cell_read
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_cell_read"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"cell_read" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+XLSX READ ROUNDTRIP PASSED (shared strings + formula recalc)
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"cell_read" end time: Aug 22 13:08 EDT
+"cell_read" time elapsed: 00:00:00
+----------------------------------------------------------
+
+46/170 Testing: wubumasterdoc
+46/170 Test: wubumasterdoc
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubumasterdoc/test_wubumasterdoc"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubumasterdoc
+"wubumasterdoc" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: wubumasterdoc (ordered sub-doc references, insert/remove/enum)
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"wubumasterdoc" end time: Aug 22 13:08 EDT
+"wubumasterdoc" time elapsed: 00:00:00
+----------------------------------------------------------
+
+139/170 Testing: wubuocr
+139/170 Test: wubuocr
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_wubuocr"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"wubuocr" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+WUBUOCR TESTS PASSED
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"wubuocr" end time: Aug 22 13:08 EDT
+"wubuocr" time elapsed: 00:00:00
+----------------------------------------------------------
+
+33/170 Testing: wubugoalseek
+33/170 Test: wubugoalseek
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubugoalseek/test_wubugoalseek"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubugoalseek
+"wubugoalseek" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: wubugoalseek (root-find sqrt2/linear, unbracketed safe, LSQ fit)
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"wubugoalseek" end time: Aug 22 13:08 EDT
+"wubugoalseek" time elapsed: 00:00:00
+----------------------------------------------------------
+
+151/170 Testing: wubuocr_recognize
+151/170 Test: wubuocr_recognize
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_wubuocr_recognize"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"wubuocr_recognize" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+  digit recognition: 10/10 correct
+  uppercase recognition: 9/12 correct
+WUBUOCR RECOGNIZE TESTS PASSED
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"wubuocr_recognize" end time: Aug 22 13:08 EDT
+"wubuocr_recognize" time elapsed: 00:00:00
+----------------------------------------------------------
+
+90/170 Testing: mlp
+90/170 Test: mlp
+Command: "/home/wubu/WuBuOffice/build-plugin/tools/test_mlp"
 Directory: /home/wubu/WuBuOffice/build-plugin/tools
-"ctc_test" start time: Jul 30 20:34 EDT
+"mlp" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
-[1] perfect-input loss = 0.001341 (expect ~0)
-[2] uniform-input loss = 1.136352  brute_cnt=15  ctc_cnt=26  expect_loss=1.136353
-  (brute-force counter disagrees with CTC; trusting CTC forward)
-[3] base loss=2.9993  grad mismatches(>5%)=0/20
+test_mlp: ALL PASS
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"mlp" end time: Aug 22 13:08 EDT
+"mlp" time elapsed: 00:00:00
+----------------------------------------------------------
 
-CTC TESTS PASSED
+135/170 Testing: readers
+135/170 Test: readers
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_readers"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"readers" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+READERS TEST PASSED (rtf/html/epub -> dm_doc round-trip, text + table recovered)
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"readers" end time: Aug 22 13:08 EDT
+"readers" time elapsed: 00:00:00
+----------------------------------------------------------
+
+19/170 Testing: wubucsv
+19/170 Test: wubucsv
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubucsv/test_wubucsv"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubucsv
+"wubucsv" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: csv (quoted comma/newline parsing)
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"wubucsv" end time: Aug 22 13:08 EDT
+"wubucsv" time elapsed: 00:00:00
+----------------------------------------------------------
+
+1/170 Testing: crdt
+1/170 Test: crdt
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubucrdt/test_crdt"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubucrdt
+"crdt" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: crdt (concurrent convergence, tombstone+insert, serialize, move)
 <end of output>
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"ctc_test" end time: Jul 30 20:34 EDT
-"ctc_test" time elapsed: 00:00:00
+"crdt" end time: Aug 22 13:08 EDT
+"crdt" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-46/131 Testing: gru_test
-46/131 Test: gru_test
-Command: "/home/wubu/WuBuOffice/build-plugin/tools/gru_test"
-Directory: /home/wubu/WuBuOffice/build-plugin/tools
-"gru_test" start time: Jul 30 20:34 EDT
+116/170 Testing: model_io_roundtrip
+116/170 Test: model_io_roundtrip
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_model_io_roundtrip"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"model_io_roundtrip" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
-GRU weight grad max|ana-num| = 1.398773e-05
-GRU input grad  max|ana-num| = 1.140455e-05
-GRU TESTS PASSED
+model_io_roundtrip: structural write->load->cache->async PASSED (ws05#0885/#0884/#082, ws07#1342/#1334)
 <end of output>
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"gru_test" end time: Jul 30 20:34 EDT
-"gru_test" time elapsed: 00:00:00
+"model_io_roundtrip" end time: Aug 22 13:08 EDT
+"model_io_roundtrip" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-47/131 Testing: ocl_gru
-47/131 Test: ocl_gru
-Command: "/home/wubu/WuBuOffice/build-plugin/tools/ocl_gru_test"
-Directory: /home/wubu/WuBuOffice/build-plugin/tools
-"ocl_gru" start time: Jul 30 20:34 EDT
+73/170 Testing: bkmk
+73/170 Test: bkmk
+Command: "/home/wubu/WuBuOffice/build-plugin/apps/wubuos/test_bkmk"
+Directory: /home/wubu/WuBuOffice/build-plugin/apps/wubuos
+"bkmk" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
-SKIP: no OpenCL device
+PASS: bkmk (toggle, sorted-unique, has, jump next/prev, empty)
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"bkmk" end time: Aug 22 13:08 EDT
+"bkmk" time elapsed: 00:00:00
+----------------------------------------------------------
+
+124/170 Testing: cell_xlsample
+124/170 Test: cell_xlsample
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_xlsample"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"cell_xlsample" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+R1c1 kind=2 num=0.0 cached=14.0
+R1c2 kind=2 num=0.0 cached=49.0
+R1c3 kind=2 num=0.0 cached=56.0
+R2c1 kind=2 num=0.0 cached=15.0
+R2c2 kind=2 num=0.0 cached=14.0
+R2c3 <empty>
+R3c1 kind=1 num=7.0 cached=0.0
+R3c2 kind=1 num=5.0 cached=0.0
+R3c3 kind=1 num=3.0 cached=0.0
+R4c1 kind=0 num=0.0 cached=0.0
+R4c2 kind=2 num=0.0 cached=15.0
+R4c3 <empty>
+OK A1=14 = 14.0
+OK B1=49 = 49.0
+OK A3=7 = 7.0
+OK B4=15 = 15.0
+XLSAMPLE PASS
 <end of output>
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"ocl_gru" end time: Jul 30 20:34 EDT
-"ocl_gru" time elapsed: 00:00:00
+"cell_xlsample" end time: Aug 22 13:08 EDT
+"cell_xlsample" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-48/131 Testing: test_math
-48/131 Test: test_math
-Command: "/home/wubu/WuBuOffice/build-plugin/tools/test_math"
-Directory: /home/wubu/WuBuOffice/build-plugin/tools
-"test_math" start time: Jul 30 20:34 EDT
+42/170 Testing: wubugrammar
+42/170 Test: wubugrammar
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubugrammar/test_wubugrammar"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubugrammar
+"wubugrammar" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
-ok   got=1 expect=1  "E = mc^2"
-ok   got=1 expect=1  "a^2 + b^2 = c^2"
-ok   got=1 expect=1  "x = (-b + sqrt(b^2 - 4ac)) / (2a)"
-ok   got=1 expect=1  "H_2O + O_2 -> H_2O_2"
-ok   got=1 expect=1  "f(x) = (a + (b * c)) / d"
-ok   got=1 expect=1  "α + β = γ"
-ok   got=1 expect=1  "∫ f(x) dx = 0"
-ok   got=1 expect=1  "∑ x_i = N"
-ok   got=0 expect=0  "the quick brown fox jumps"
-ok   got=0 expect=0  "This is a normal sentence about documents."
-ok   got=0 expect=0  "We the people of the United States"
-ok   got=0 expect=0  "a b c d e f g"
-ok   got=0 expect=0  "hello world"
-PASS: all math cases correct
+PASS: wubugrammar (doubled word, a/an, misspellings, double space)
 <end of output>
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"test_math" end time: Jul 30 20:34 EDT
-"test_math" time elapsed: 00:00:00
+"wubugrammar" end time: Aug 22 13:08 EDT
+"wubugrammar" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-49/131 Testing: test_qr
-49/131 Test: test_qr
+48/170 Testing: wuburuler
+48/170 Test: wuburuler
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wuburuler/test_wuburuler"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wuburuler
+"wuburuler" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: wuburuler (page margins -> content box + pixel geometry @dpi)
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"wuburuler" end time: Aug 22 13:08 EDT
+"wuburuler" time elapsed: 00:00:00
+----------------------------------------------------------
+
+78/170 Testing: gotoline
+78/170 Test: gotoline
+Command: "/home/wubu/WuBuOffice/build-plugin/apps/wubuos/test_gotoline"
+Directory: /home/wubu/WuBuOffice/build-plugin/apps/wubuos
+"gotoline" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: gotoline (open/active, digit capture, backspace, commit, esc, dismiss)
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"gotoline" end time: Aug 22 13:08 EDT
+"gotoline" time elapsed: 00:00:00
+----------------------------------------------------------
+
+58/170 Testing: wubumailexport
+58/170 Test: wubumailexport
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubumailexport/test_wubumailexport"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubumailexport
+"wubumailexport" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: wubumailexport (RFC-5322 mail message render)
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"wubumailexport" end time: Aug 22 13:08 EDT
+"wubumailexport" time elapsed: 00:00:00
+----------------------------------------------------------
+
+3/170 Testing: sync
+3/170 Test: sync
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubusync/test_sync"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubusync
+"sync" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: sync (CRDT store merge + shared lock)
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"sync" end time: Aug 22 13:08 EDT
+"sync" time elapsed: 00:00:00
+----------------------------------------------------------
+
+38/170 Testing: nesttab
+38/170 Test: nesttab
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubunesttab/test_nesttab"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubunesttab
+"nesttab" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: nesttab (build/nest depth 3/validate)
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"nesttab" end time: Aug 22 13:08 EDT
+"nesttab" time elapsed: 00:00:00
+----------------------------------------------------------
+
+35/170 Testing: wubupivot
+35/170 Test: wubupivot
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubupivot/test_wubupivot"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubupivot
+"wubupivot" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: wubupivot (2D cross-tab, SUM/COUNT/AVG, absent-key)
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"wubupivot" end time: Aug 22 13:08 EDT
+"wubupivot" time elapsed: 00:00:00
+----------------------------------------------------------
+
+30/170 Testing: wubusort
+30/170 Test: wubusort
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubusort/test_wubusort"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubusort
+"wubusort" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: wubusort (stable multi-col lexicographic+numeric, asc/desc, tie-break)
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"wubusort" end time: Aug 22 13:08 EDT
+"wubusort" time elapsed: 00:00:00
+----------------------------------------------------------
+
+7/170 Testing: caption
+7/170 Test: caption
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubucaption/test_caption"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubucaption
+"caption" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: caption (set/get/reset/count)
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"caption" end time: Aug 22 13:08 EDT
+"caption" time elapsed: 00:00:00
+----------------------------------------------------------
+
+66/170 Testing: motion
+66/170 Test: motion
+Command: "/home/wubu/WuBuOffice/build-plugin/apps/wubuos/test_motion"
+Directory: /home/wubu/WuBuOffice/build-plugin/apps/wubuos
+"motion" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+MOTION TESTS PASSED
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"motion" end time: Aug 22 13:08 EDT
+"motion" time elapsed: 00:00:00
+----------------------------------------------------------
+
+4/170 Testing: col
+4/170 Test: col
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubucol/test_col"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubucol
+"col" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: col (threads, replies, resolve, remove)
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"col" end time: Aug 22 13:08 EDT
+"col" time elapsed: 00:00:00
+----------------------------------------------------------
+
+18/170 Testing: redact
+18/170 Test: redact
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wuburedact/test_redact"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wuburedact
+"redact" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: redact (mark/apply/out-of-bounds)
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"redact" end time: Aug 22 13:08 EDT
+"redact" time elapsed: 00:00:00
+----------------------------------------------------------
+
+147/170 Testing: nfc
+147/170 Test: nfc
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_nfc"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"nfc" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: test_nfc (Latin NFC composition)
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"nfc" end time: Aug 22 13:08 EDT
+"nfc" time elapsed: 00:00:00
+----------------------------------------------------------
+
+23/170 Testing: form
+23/170 Test: form
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubuform/test_form"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubuform
+"form" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: form (add/set/type/lookup)
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"form" end time: Aug 22 13:08 EDT
+"form" time elapsed: 00:00:00
+----------------------------------------------------------
+
+63/170 Testing: wubu3d
+63/170 Test: wubu3d
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubu3d/test_wubu3d"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubu3d
+"wubu3d" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: wubu3d (mesh model + perspective renderer core: rotate/project)
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"wubu3d" end time: Aug 22 13:08 EDT
+"wubu3d" time elapsed: 00:00:00
+----------------------------------------------------------
+
+8/170 Testing: watermark
+8/170 Test: watermark
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubuwatermark/test_watermark"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubuwatermark
+"watermark" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: watermark (text/angle/opacity-clamp/enabled)
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"watermark" end time: Aug 22 13:08 EDT
+"watermark" time elapsed: 00:00:00
+----------------------------------------------------------
+
+150/170 Testing: ocr_realpage
+150/170 Test: ocr_realpage
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_ocr_realpage"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"ocr_realpage" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+SKIP (set LOAD=/path/to/latin.crnn)
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"ocr_realpage" end time: Aug 22 13:08 EDT
+"ocr_realpage" time elapsed: 00:00:00
+----------------------------------------------------------
+
+126/170 Testing: cell_cycle
+126/170 Test: cell_cycle
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_cell_cycle"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"cell_cycle" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+cell_cycle: circular-reference crash fixed + #CYCLE! surfaces + normal eval OK
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"cell_cycle" end time: Aug 22 13:08 EDT
+"cell_cycle" time elapsed: 00:00:00
+----------------------------------------------------------
+
+142/170 Testing: columns
+142/170 Test: columns
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_columns"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"columns" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+SKIP: set LOAD=<model> CHARS=<charset>
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"columns" end time: Aug 22 13:08 EDT
+"columns" time elapsed: 00:00:00
+----------------------------------------------------------
+
+53/170 Testing: wubutransition
+53/170 Test: wubutransition
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubutransition/test_wubutransition"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubutransition
+"wubutransition" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: wubutransition (slide transition engine: per-frame blend factor)
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"wubutransition" end time: Aug 22 13:08 EDT
+"wubutransition" time elapsed: 00:00:00
+----------------------------------------------------------
+
+34/170 Testing: wubusolver
+34/170 Test: wubusolver
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubusolver/test_wubusolver"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubusolver
+"wubusolver" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: wubusolver (Gaussian elimination solve 2x2/3x3, det, inv, singular detection)
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"wubusolver" end time: Aug 22 13:08 EDT
+"wubusolver" time elapsed: 00:00:00
+----------------------------------------------------------
+
+11/170 Testing: scope
+11/170 Test: scope
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubuscope/test_scope"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubuscope
+"scope" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: scope (col/row/default/lookup)
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"scope" end time: Aug 22 13:08 EDT
+"scope" time elapsed: 00:00:00
+----------------------------------------------------------
+
+24/170 Testing: exp_png
+24/170 Test: exp_png
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubuexp_png/test_exp_png"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubuexp_png
+"exp_png" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: exp_png (write + PNG signature)
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"exp_png" end time: Aug 22 13:08 EDT
+"exp_png" time elapsed: 00:00:00
+----------------------------------------------------------
+
+9/170 Testing: focus
+9/170 Test: focus
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubufocus/test_focus"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubufocus
+"focus" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: focus (color/width/enabled)
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"focus" end time: Aug 22 13:08 EDT
+"focus" time elapsed: 00:00:00
+----------------------------------------------------------
+
+141/170 Testing: crnn_transcribe_full
+141/170 Test: crnn_transcribe_full
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_crnn_transcribe_full"
+Directory: /home/wubu/WuBuOffice
+"crnn_transcribe_full" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+SKIP: set LOAD=<trained .crnn>
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"crnn_transcribe_full" end time: Aug 22 13:08 EDT
+"crnn_transcribe_full" time elapsed: 00:00:00
+----------------------------------------------------------
+
+113/170 Testing: load_async
+113/170 Test: load_async
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_load_async"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"load_async" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+load_async: ALL CHECKS PASSED (ws07#1334)
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"load_async" end time: Aug 22 13:08 EDT
+"load_async" time elapsed: 00:00:00
+----------------------------------------------------------
+
+27/170 Testing: aislot
+27/170 Test: aislot
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubuaislot/test_aislot"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubuaislot
+"aislot" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: aislot (fallback + provider swap)
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"aislot" end time: Aug 22 13:08 EDT
+"aislot" time elapsed: 00:00:00
+----------------------------------------------------------
+
+129/170 Testing: md
+129/170 Test: md
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_md"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"md" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+MD TEST PASSED (md -> docx -> model -> md/html, headings+bold+table)
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"md" end time: Aug 22 13:08 EDT
+"md" time elapsed: 00:00:00
+----------------------------------------------------------
+
+145/170 Testing: docfmt2
+145/170 Test: docfmt2
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_docfmt2"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"docfmt2" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: test_docfmt2 (TEI + order/head/cconf)
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"docfmt2" end time: Aug 22 13:08 EDT
+"docfmt2" time elapsed: 00:00:00
+----------------------------------------------------------
+
+74/170 Testing: autocomp
+74/170 Test: autocomp
+Command: "/home/wubu/WuBuOffice/build-plugin/apps/wubuos/test_autocomp"
+Directory: /home/wubu/WuBuOffice/build-plugin/apps/wubuos
+"autocomp" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: autocomp (collect builtins+docs, prefix, move, accept, close)
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"autocomp" end time: Aug 22 13:08 EDT
+"autocomp" time elapsed: 00:00:00
+----------------------------------------------------------
+
+86/170 Testing: test_qr
+86/170 Test: test_qr
 Command: "/home/wubu/WuBuOffice/build-plugin/tools/test_qr"
 Directory: /home/wubu/WuBuOffice/build-plugin/tools
-"test_qr" start time: Jul 30 20:34 EDT
+"test_qr" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
 ok   ver1 'A'
@@ -913,785 +1713,146 @@ ok   acquire v4 scale=6 off=(0,0) 'WUBUOFFICE-QR-ACQUISITION-LONGER-PAYLOAD-42'
 ok   acquire v4 scale=4 off=(21,60) 'WUBUOFFICE-QR-ACQUISITION-LONGER-PAYLOAD-42'
 PASS: all QR cases correct
 <end of output>
-Test time =   0.00 sec
+Test time =   0.01 sec
 ----------------------------------------------------------
 Test Passed.
-"test_qr" end time: Jul 30 20:34 EDT
+"test_qr" end time: Aug 22 13:08 EDT
 "test_qr" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-50/131 Testing: rnn_test
-50/131 Test: rnn_test
-Command: "/home/wubu/WuBuOffice/build-plugin/tools/rnn_test"
-Directory: /home/wubu/WuBuOffice/build-plugin/tools
-"rnn_test" start time: Jul 30 20:34 EDT
+12/170 Testing: a11ytree
+12/170 Test: a11ytree
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubua11ytree/test_a11ytree"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubua11ytree
+"a11ytree" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
-LSTM gradcheck: checked=13 fails(>5%)=0
-LSTM TESTS PASSED
+PASS: a11ytree (section/paragraph/image roles + alt)
 <end of output>
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"rnn_test" end time: Jul 30 20:34 EDT
-"rnn_test" time elapsed: 00:00:00
+"a11ytree" end time: Aug 22 13:08 EDT
+"a11ytree" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-51/131 Testing: gradcheck_conv3
-51/131 Test: gradcheck_conv3
-Command: "/home/wubu/WuBuOffice/build-plugin/tools/gradcheck_conv3"
-Directory: /home/wubu/WuBuOffice/build-plugin/tools
-"gradcheck_conv3" start time: Jul 30 20:34 EDT
+21/170 Testing: rtf
+21/170 Test: rtf
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wuburtf/test_rtf"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wuburtf
+"rtf" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
-layer 0: n=72 checked=72 max|ana-num|=4.284e-04 fails(>2e-2)=0
-layer 1: n=8 checked=8 max|ana-num|=3.506e-04 fails(>2e-2)=0
-layer 2: n=1152 checked=231 max|ana-num|=1.955e-04 fails(>2e-2)=0
-layer 3: n=16 checked=16 max|ana-num|=8.849e-05 fails(>2e-2)=0
-layer 4: n=4608 checked=201 max|ana-num|=2.309e-05 fails(>2e-2)=0
-layer 5: n=32 checked=32 max|ana-num|=1.213e-05 fails(>2e-2)=0
-=== GRADCHECK: worst_max_err=4.284e-04 at layer 0, total_fails=0 ===
-PASS
-<end of output>
-Test time =   0.62 sec
-----------------------------------------------------------
-Test Passed.
-"gradcheck_conv3" end time: Jul 30 20:34 EDT
-"gradcheck_conv3" time elapsed: 00:00:00
-----------------------------------------------------------
-
-52/131 Testing: zoning
-52/131 Test: zoning
-Command: "/home/wubu/WuBuOffice/build-plugin/tools/test_zoning"
-Directory: /home/wubu/WuBuOffice/build-plugin/tools
-"zoning" start time: Jul 30 20:34 EDT
-Output:
-----------------------------------------------------------
-test_zoning: ALL PASS (glyph diff=10.369)
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"zoning" end time: Jul 30 20:34 EDT
-"zoning" time elapsed: 00:00:00
-----------------------------------------------------------
-
-53/131 Testing: mlp
-53/131 Test: mlp
-Command: "/home/wubu/WuBuOffice/build-plugin/tools/test_mlp"
-Directory: /home/wubu/WuBuOffice/build-plugin/tools
-"mlp" start time: Jul 30 20:34 EDT
-Output:
-----------------------------------------------------------
-test_mlp: ALL PASS
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"mlp" end time: Jul 30 20:34 EDT
-"mlp" time elapsed: 00:00:00
-----------------------------------------------------------
-
-54/131 Testing: convnet
-54/131 Test: convnet
-Command: "/home/wubu/WuBuOffice/build-plugin/tools/test_convnet"
-Directory: /home/wubu/WuBuOffice/build-plugin/tools
-"convnet" start time: Jul 30 20:34 EDT
-Output:
-----------------------------------------------------------
-conv feature dim = 256 (K2=16, pool2 4x4)
-conv+MLP train accuracy on separable 2-class: 100.00%
-conv+MLP LEARNS -> forward+backward (incl. 2-stage conv) correct
-test_convnet: ALL PASS
-<end of output>
-Test time =   2.56 sec
-----------------------------------------------------------
-Test Passed.
-"convnet" end time: Jul 30 20:34 EDT
-"convnet" time elapsed: 00:00:02
-----------------------------------------------------------
-
-55/131 Testing: convnet3
-55/131 Test: convnet3
-Command: "/home/wubu/WuBuOffice/build-plugin/tools/test_convnet3"
-Directory: /home/wubu/WuBuOffice/build-plugin/tools
-"convnet3" start time: Jul 30 20:34 EDT
-Output:
-----------------------------------------------------------
-[conv3 smoke] 4 core(s), 1600 samples x 60 epochs (full-batch SGD)
-conv3+MLP end-to-end on separable 2-class: acc=100.0%
-PASS
-<end of output>
-Test time =  49.27 sec
-----------------------------------------------------------
-Test Passed.
-"convnet3" end time: Jul 30 20:34 EDT
-"convnet3" time elapsed: 00:00:49
-----------------------------------------------------------
-
-56/131 Testing: convnet3_im2col
-56/131 Test: convnet3_im2col
-Command: "/home/wubu/WuBuOffice/build-plugin/tools/test_convnet3_im2col"
-Directory: /home/wubu/WuBuOffice/build-plugin/tools
-"convnet3_im2col" start time: Jul 30 20:34 EDT
-Output:
-----------------------------------------------------------
-[fwd] max|new-ref| = 1.073e-06 (D=256)
-[grad] bias analytic=4.0000  finite-diff=4.0000  (|diff|=7.153e-07)
-PASS
+PASS: rtf (bold/italic + brace escaping)
 <end of output>
 Test time =   0.01 sec
 ----------------------------------------------------------
 Test Passed.
-"convnet3_im2col" end time: Jul 30 20:34 EDT
-"convnet3_im2col" time elapsed: 00:00:00
+"rtf" end time: Aug 22 13:08 EDT
+"rtf" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-57/131 Testing: inorm_gradcheck
-57/131 Test: inorm_gradcheck
-Command: "/home/wubu/WuBuOffice/build-plugin/tools/gradcheck_inorm"
-Directory: /home/wubu/WuBuOffice/build-plugin/tools
-"inorm_gradcheck" start time: Jul 30 20:34 EDT
-Output:
-----------------------------------------------------------
-ga1[5]: analytic= 0.102422  fd= 0.102579  rel_err=7.64e-04  ok
-be1[0]: analytic= 0.000738  fd= 0.000945  rel_err=1.23e-01  ok
-ga2[14]: analytic= 0.012335  fd= 0.012264  rel_err=2.91e-03  ok
-be2[26]: analytic=-0.006201  fd=-0.006258  rel_err=4.58e-03  ok
-ga3[19]: analytic= 0.023068  fd= 0.023028  rel_err=8.67e-04  ok
-be3[51]: analytic=-0.020195  fd=-0.020196  rel_err=2.98e-05  ok
-
-GRADCHECK PASS
-<end of output>
-Test time =   0.01 sec
-----------------------------------------------------------
-Test Passed.
-"inorm_gradcheck" end time: Jul 30 20:34 EDT
-"inorm_gradcheck" time elapsed: 00:00:00
-----------------------------------------------------------
-
-58/131 Testing: stylebank
-58/131 Test: stylebank
-Command: "/home/wubu/WuBuOffice/build-plugin/tools/test_stylebank"
-Directory: /home/wubu/WuBuOffice/build-plugin/tools
-"stylebank" start time: Jul 30 20:34 EDT
-Output:
-----------------------------------------------------------
-WARN: could not load data/conv3.wts (run a trainer first) -- skipping load test
-ensemble forward OK (slot0 logit=-0.004)
-WARN: train_slot skipped (no fashion t10k)
-promote returned slot 0
-PASS
-<end of output>
-Test time =   0.08 sec
-----------------------------------------------------------
-Test Passed.
-"stylebank" end time: Jul 30 20:34 EDT
-"stylebank" time elapsed: 00:00:00
-----------------------------------------------------------
-
-59/131 Testing: emnist_train_conv3_smoke
-59/131 Test: emnist_train_conv3_smoke
-Command: "/home/wubu/WuBuOffice/build-plugin/tools/emnist_train_conv3" "data/emnist" "128" "64" "2" "2000"
+140/170 Testing: crnn_transcribe
+140/170 Test: crnn_transcribe
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_crnn_transcribe"
 Directory: /home/wubu/WuBuOffice
-"emnist_train_conv3_smoke" start time: Jul 30 20:34 EDT
+"crnn_transcribe" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
-[threads] using 4 worker thread(s) (detected 4 cores)
-conv3+MLP: conv feats=256 -> MLP 256->128->64->26; epochs=2 batch=256 lr=0.0500 sgd norm=0 nclass=26; train=124800 test=20800
-  epoch  1: train_acc~3.90%  lr=0.0050
-  epoch  2: train_acc~3.90%  lr=0.0275
-
-=== dataset (ultra-light conv3+MLP, plain C11 sgd) ===
-OVERALL ACCURACY: 3.52% (732/20800)
-saved conv3 -> data/emnist/conv3.wts
-saved mlp  -> data/emnist/conv3_mlp.wts
-<end of output>
-Test time =   8.91 sec
-----------------------------------------------------------
-Test Passed.
-"emnist_train_conv3_smoke" end time: Jul 30 20:35 EDT
-"emnist_train_conv3_smoke" time elapsed: 00:00:08
-----------------------------------------------------------
-
-60/131 Testing: wubuzip_crc
-60/131 Test: wubuzip_crc
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_wubuzip"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"wubuzip_crc" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-zip bytes: 138
-ALL TESTS PASSED
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"wubuzip_crc" end time: Jul 30 20:35 EDT
-"wubuzip_crc" time elapsed: 00:00:00
-----------------------------------------------------------
-
-61/131 Testing: inflate
-61/131 Test: inflate
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_inflate"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"inflate" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-ok case 0 (len 0)
-ok case 1 (len 16)
-ok case 2 (len 23)
-ok case 3 (len 99)
-ok case 4 (len 113)
-INFLATE TESTS PASSED
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"inflate" end time: Jul 30 20:35 EDT
-"inflate" time elapsed: 00:00:00
-----------------------------------------------------------
-
-62/131 Testing: formula
-62/131 Test: formula
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_formula"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"formula" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-FORMULA TESTS OK (77 functions registered)
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"formula" end time: Jul 30 20:35 EDT
-"formula" time elapsed: 00:00:00
-----------------------------------------------------------
-
-63/131 Testing: spell
-63/131 Test: spell
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_spell"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"spell" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-PASS: wubuspell (dict + suggest + scan + load)
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"spell" end time: Jul 30 20:35 EDT
-"spell" time elapsed: 00:00:00
-----------------------------------------------------------
-
-64/131 Testing: base
-64/131 Test: base
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_base"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"base" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-base: all tests passed
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"base" end time: Jul 30 20:35 EDT
-"base" time elapsed: 00:00:00
-----------------------------------------------------------
-
-65/131 Testing: png
-65/131 Test: png
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_png"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"png" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-png: all tests passed
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"png" end time: Jul 30 20:35 EDT
-"png" time elapsed: 00:00:00
-----------------------------------------------------------
-
-66/131 Testing: chart
-66/131 Test: chart
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_chart"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"chart" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-PASS: wubuchart (bar/line/pie/scatter + formula subtitle, wubusvg-validated)
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"chart" end time: Jul 30 20:35 EDT
-"chart" time elapsed: 00:00:00
-----------------------------------------------------------
-
-67/131 Testing: autosave
-67/131 Test: autosave
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_autosave"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"autosave" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-PASS: wubuautosave (atomic snapshot, dirty-skip, crash recovery round-trip)
+SKIP: set LOAD=<trained .crnn>
 <end of output>
 Test time =   0.01 sec
 ----------------------------------------------------------
 Test Passed.
-"autosave" end time: Jul 30 20:35 EDT
-"autosave" time elapsed: 00:00:00
+"crnn_transcribe" end time: Aug 22 13:08 EDT
+"crnn_transcribe" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-68/131 Testing: draw
-68/131 Test: draw
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_draw"
+143/170 Testing: imageops
+143/170 Test: imageops
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_imageops"
 Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"draw" start time: Jul 30 20:35 EDT
+"imageops" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
-PASS: wubudraw (rect/ellipse/line/polyline/text, wubusvg-validated)
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"draw" end time: Jul 30 20:35 EDT
-"draw" time elapsed: 00:00:00
-----------------------------------------------------------
-
-69/131 Testing: wubumath
-69/131 Test: wubumath
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_wubumath"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"wubumath" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-PASS: wubumath (frac/sup/sub/group, wubusvg-validated)
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"wubumath" end time: Jul 30 20:35 EDT
-"wubumath" time elapsed: 00:00:00
-----------------------------------------------------------
-
-70/131 Testing: epub
-70/131 Test: epub
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_epub"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"epub" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-PASS: wubuepub (valid EPUB3: mimetype + container + opf + nav + chapter)
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"epub" end time: Jul 30 20:35 EDT
-"epub" time elapsed: 00:00:00
-----------------------------------------------------------
-
-71/131 Testing: epub_model_roundtrip
-71/131 Test: epub_model_roundtrip
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_epub_model_roundtrip"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"epub_model_roundtrip" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-PASS: epub writer<->model loader round trip (heading/para/table/link)
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"epub_model_roundtrip" end time: Jul 30 20:35 EDT
-"epub_model_roundtrip" time elapsed: 00:00:00
-----------------------------------------------------------
-
-72/131 Testing: a11y
-72/131 Test: a11y
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_a11y"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"a11y" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-PASS: wubua11y (doc empty/titled + EPUB parts good/bad)
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"a11y" end time: Jul 30 20:35 EDT
-"a11y" time elapsed: 00:00:00
-----------------------------------------------------------
-
-73/131 Testing: script
-73/131 Test: script
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_script"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"script" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-PASS: wubuscript (arith, SUM, vars, unknown-var fail, str)
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"script" end time: Jul 30 20:35 EDT
-"script" time elapsed: 00:00:00
-----------------------------------------------------------
-
-74/131 Testing: model
-74/131 Test: model
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_model"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"model" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-model: all green-baseline checks passed
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"model" end time: Jul 30 20:35 EDT
-"model" time elapsed: 00:00:00
-----------------------------------------------------------
-
-75/131 Testing: doc_cache
-75/131 Test: doc_cache
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_doc_cache"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"doc_cache" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-doc_cache: ALL CHECKS PASSED (ws07#1342)
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"doc_cache" end time: Jul 30 20:35 EDT
-"doc_cache" time elapsed: 00:00:00
-----------------------------------------------------------
-
-76/131 Testing: load_async
-76/131 Test: load_async
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_load_async"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"load_async" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-load_async: ALL CHECKS PASSED (ws07#1334)
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"load_async" end time: Jul 30 20:35 EDT
-"load_async" time elapsed: 00:00:00
-----------------------------------------------------------
-
-77/131 Testing: deflate_roundtrip
-77/131 Test: deflate_roundtrip
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_deflate_roundtrip"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"deflate_roundtrip" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-deflate_roundtrip: 4/4 PASSED (our own DEFLATE, no zlib) (ws07#1338)
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"deflate_roundtrip" end time: Jul 30 20:35 EDT
-"deflate_roundtrip" time elapsed: 00:00:00
-----------------------------------------------------------
-
-78/131 Testing: cold_start
-78/131 Test: cold_start
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_cold_start"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"cold_start" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-cold_start: 0.015 ms (bound 50 ms) PASSED (ws07#1333)
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"cold_start" end time: Jul 30 20:35 EDT
-"cold_start" time elapsed: 00:00:00
-----------------------------------------------------------
-
-79/131 Testing: model_io_roundtrip
-79/131 Test: model_io_roundtrip
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_model_io_roundtrip"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"model_io_roundtrip" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-model_io_roundtrip: structural write->load->cache->async PASSED (ws05#0885/#0884/#082, ws07#1342/#1334)
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"model_io_roundtrip" end time: Jul 30 20:35 EDT
-"model_io_roundtrip" time elapsed: 00:00:00
-----------------------------------------------------------
-
-80/131 Testing: wubuxml_parser
-80/131 Test: wubuxml_parser
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_wubuxml_parser"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"wubuxml_parser" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-wubuxml_parser: closing-tag event order + nesting + entities + malformed-rejection PASSED (ws05#0884 regression)
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"wubuxml_parser" end time: Jul 30 20:35 EDT
-"wubuxml_parser" time elapsed: 00:00:00
-----------------------------------------------------------
-
-81/131 Testing: reader_roundtrip
-81/131 Test: reader_roundtrip
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_reader"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"reader_roundtrip" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-READER ROUNDTRIP PASSED
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"reader_roundtrip" end time: Jul 30 20:35 EDT
-"reader_roundtrip" time elapsed: 00:00:00
-----------------------------------------------------------
-
-82/131 Testing: extract
-82/131 Test: extract
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_extract"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"extract" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-ok docx extract
-ok xlsx extract (shared strings + formula cached)
-ok pptx extract
-EXTRACT TEST PASSED
+PASS: test_imageops (0 checks)
 <end of output>
 Test time =   0.01 sec
 ----------------------------------------------------------
 Test Passed.
-"extract" end time: Jul 30 20:35 EDT
-"extract" time elapsed: 00:00:00
+"imageops" end time: Aug 22 13:08 EDT
+"imageops" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-83/131 Testing: edit_roundtrip
-83/131 Test: edit_roundtrip
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_edit"
+169/170 Testing: settings
+169/170 Test: settings
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_settings"
 Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"edit_roundtrip" start time: Jul 30 20:35 EDT
+"settings" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
-EDIT DOCX OK
-EDIT XLSX OK
-EDIT PPTX OK
-EDIT ROUNDTRIP PASSED (docx + xlsx + pptx lossless)
+SETTINGS TESTS PASSED
 <end of output>
 Test time =   0.01 sec
 ----------------------------------------------------------
 Test Passed.
-"edit_roundtrip" end time: Jul 30 20:35 EDT
-"edit_roundtrip" time elapsed: 00:00:00
+"settings" end time: Aug 22 13:08 EDT
+"settings" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-84/131 Testing: conformance
-84/131 Test: conformance
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_conformance"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"conformance" start time: Jul 30 20:35 EDT
+28/170 Testing: sandbox
+28/170 Test: sandbox
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubusandbox/test_sandbox"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubusandbox
+"sandbox" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
-CONFORMANT
-openpyxl unavailable -> SKIP value check
-CONFORMANT (well-formed; value oracle skipped)
-python-pptx unavailable -> SKIP value check
-CONFORMANT (well-formed; value oracle skipped)
-conformance: /tmp/conf.docx -> CONFORMANT
-conformance: /tmp/conf.xlsx -> CONFORMANT
-conformance: /tmp/conf.pptx -> CONFORMANT
-CONFORMANCE PASSED (3 checked, 0 skipped)
-<end of output>
-Test time =   0.07 sec
-----------------------------------------------------------
-Test Passed.
-"conformance" end time: Jul 30 20:35 EDT
-"conformance" time elapsed: 00:00:00
-----------------------------------------------------------
-
-85/131 Testing: foreign_read
-85/131 Test: foreign_read
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_foreign"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"foreign_read" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-openpyxl unavailable
-FOREIGN SKIPPED (openpyxl/python-pptx unavailable)
-<end of output>
-Test time =   0.02 sec
-----------------------------------------------------------
-Test Passed.
-"foreign_read" end time: Jul 30 20:35 EDT
-"foreign_read" time elapsed: 00:00:00
-----------------------------------------------------------
-
-86/131 Testing: cell_read
-86/131 Test: cell_read
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_cell_read"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"cell_read" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-XLSX READ ROUNDTRIP PASSED (shared strings + formula recalc)
+PASS: sandbox (deny-by-default capability gates)
 <end of output>
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"cell_read" end time: Jul 30 20:35 EDT
-"cell_read" time elapsed: 00:00:00
+"sandbox" end time: Aug 22 13:08 EDT
+"sandbox" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-87/131 Testing: cell_cycle
-87/131 Test: cell_cycle
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_cell_cycle"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"cell_cycle" start time: Jul 30 20:35 EDT
+25/170 Testing: pdfextract
+25/170 Test: pdfextract
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubupdfextract/test_pdfextract"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubupdfextract
+"pdfextract" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
-cell_cycle: circular-reference crash fixed + #CYCLE! surfaces + normal eval OK
+PASS: pdfextract (graceful null + no-crash)
 <end of output>
-Test time =   0.00 sec
+Test time =   0.01 sec
 ----------------------------------------------------------
 Test Passed.
-"cell_cycle" end time: Jul 30 20:35 EDT
-"cell_cycle" time elapsed: 00:00:00
+"pdfextract" end time: Aug 22 13:08 EDT
+"pdfextract" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-88/131 Testing: cell_merge
-88/131 Test: cell_merge
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_cell_merge"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"cell_merge" start time: Jul 30 20:35 EDT
+43/170 Testing: wubuindex
+43/170 Test: wubuindex
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubuindex/test_wubuindex"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubuindex
+"wubuindex" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
-cell_merge: XLSX merge write+read round trip PASSED
+PASS: wubuindex (vocab->sorted page refs, dedup, case-insensitive)
 <end of output>
-Test time =   0.00 sec
+Test time =   0.01 sec
 ----------------------------------------------------------
 Test Passed.
-"cell_merge" end time: Jul 30 20:35 EDT
-"cell_merge" time elapsed: 00:00:00
+"wubuindex" end time: Aug 22 13:08 EDT
+"wubuindex" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-89/131 Testing: csv
-89/131 Test: csv
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_csv"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"csv" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-CSV TEST PASSED (RFC 4180 quoting + newline + numeric + TSV round-trip)
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"csv" end time: Jul 30 20:35 EDT
-"csv" time elapsed: 00:00:00
-----------------------------------------------------------
-
-90/131 Testing: md
-90/131 Test: md
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_md"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"md" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-MD TEST PASSED (md -> docx -> model -> md/html, headings+bold+table)
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"md" end time: Jul 30 20:35 EDT
-"md" time elapsed: 00:00:00
-----------------------------------------------------------
-
-91/131 Testing: rtf_json
-91/131 Test: rtf_json
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_rtf_json"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"rtf_json" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-RTF/JSON TEST PASSED (rtf + doc/book/pres json, oracle-validated)
-<end of output>
-Test time =   0.05 sec
-----------------------------------------------------------
-Test Passed.
-"rtf_json" end time: Jul 30 20:35 EDT
-"rtf_json" time elapsed: 00:00:00
-----------------------------------------------------------
-
-92/131 Testing: odf
-92/131 Test: odf
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_odf"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"odf" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-odfpy unavailable
-ODT OK
-ODS OK
-ODP OK
-FOREIGN ODF SKIPPED (odfpy unavailable)
-ODF TEST PASSED (odt/ods/odp write+read + foreign odfpy interop)
-<end of output>
-Test time =   0.02 sec
-----------------------------------------------------------
-Test Passed.
-"odf" end time: Jul 30 20:35 EDT
-"odf" time elapsed: 00:00:00
-----------------------------------------------------------
-
-93/131 Testing: convert
-93/131 Test: convert
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_convert"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"convert" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-odfpy unavailable
-odfpy SKIP
-(odfpy oracle skipped)
-CONVERT TEST PASSED (full matrix: same-family + cross-family + ODF + JSON oracle)
-<end of output>
-Test time =   0.12 sec
-----------------------------------------------------------
-Test Passed.
-"convert" end time: Jul 30 20:35 EDT
-"convert" time elapsed: 00:00:00
-----------------------------------------------------------
-
-94/131 Testing: conv_model
-94/131 Test: conv_model
+133/170 Testing: conv_model
+133/170 Test: conv_model
 Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_conv_model"
 Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"conv_model" start time: Jul 30 20:35 EDT
+"conv_model" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
 PASS: conv_model (model->text: section→paragraph, table→table block)
@@ -1699,198 +1860,79 @@ PASS: conv_model (model->text: section→paragraph, table→table block)
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"conv_model" end time: Jul 30 20:35 EDT
+"conv_model" end time: Aug 22 13:08 EDT
 "conv_model" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-95/131 Testing: word_lists
-95/131 Test: word_lists
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_word_lists"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"word_lists" start time: Jul 30 20:35 EDT
+14/170 Testing: heading
+14/170 Test: heading
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubuheading/test_heading"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubuheading
+"heading" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
-test_word_lists: PASS
+PASS: heading (sequential level enforcement, no skip)
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"heading" end time: Aug 22 13:08 EDT
+"heading" time elapsed: 00:00:00
+----------------------------------------------------------
+
+79/170 Testing: dialog
+79/170 Test: dialog
+Command: "/home/wubu/WuBuOffice/build-plugin/apps/wubuos/test_dialog"
+Directory: /home/wubu/WuBuOffice/build-plugin/apps/wubuos
+"dialog" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: dialog (open/active, type, backspace, confirm, cancel, default)
 <end of output>
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"word_lists" end time: Jul 30 20:35 EDT
-"word_lists" time elapsed: 00:00:00
+"dialog" end time: Aug 22 13:08 EDT
+"dialog" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-96/131 Testing: readers
-96/131 Test: readers
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_readers"
+26/170 Testing: xps
+26/170 Test: xps
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubuxps/test_xps"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubuxps
+"xps" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: xps (store-ZIP container + FixedPage)
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"xps" end time: Aug 22 13:08 EDT
+"xps" time elapsed: 00:00:00
+----------------------------------------------------------
+
+167/170 Testing: layout
+167/170 Test: layout
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_layout"
 Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"readers" start time: Jul 30 20:35 EDT
+"layout" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
-READERS TEST PASSED (rtf/html/epub -> dm_doc round-trip, text + table recovered)
+LAYOUT TESTS PASSED
 <end of output>
-Test time =   0.00 sec
+Test time =   0.01 sec
 ----------------------------------------------------------
 Test Passed.
-"readers" end time: Jul 30 20:35 EDT
-"readers" time elapsed: 00:00:00
+"layout" end time: Aug 22 13:08 EDT
+"layout" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-97/131 Testing: legacy_pdf
-97/131 Test: legacy_pdf
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_legacy_pdf"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"legacy_pdf" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-(xls oracle skipped: xlwt unavailable)
-(pdf oracle skipped: pypdf/pdfminer unavailable)
-(xls write oracle skipped: xlrd unavailable)
-(doc write oracle skipped: olefile unavailable)
-(ppt write oracle skipped: olefile unavailable)
-real MS .doc decoded OK (piece table)
-real MS .ppt decoded OK (1 slide[s])
-real MS .xls opened OK (3 sheet[s])
-(some oracles skipped; core paths exercised where libs present)
-LEGACY+PDF TEST PASSED
-<end of output>
-Test time =   0.10 sec
-----------------------------------------------------------
-Test Passed.
-"legacy_pdf" end time: Jul 30 20:35 EDT
-"legacy_pdf" time elapsed: 00:00:00
-----------------------------------------------------------
-
-98/131 Testing: flat_epub
-98/131 Test: flat_epub
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_flat_epub"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"flat_epub" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-flat OK root=office:document child=office:text
-flat OK root=office:document child=office:spreadsheet
-flat OK root=office:document child=office:presentation
-(epub oracle skipped: EbookLib unavailable)
-(epub oracle skipped; flat-ODF gates exercised regardless)
-FLAT+EPUB TEST PASSED
-<end of output>
-Test time =   0.09 sec
-----------------------------------------------------------
-Test Passed.
-"flat_epub" end time: Jul 30 20:35 EDT
-"flat_epub" time elapsed: 00:00:00
-----------------------------------------------------------
-
-99/131 Testing: wubufont
-99/131 Test: wubufont
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_wubufont"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"wubufont" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-using font: /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf
-  unitsPerEm=2048
-  glyphCount=6253
-  'A' path[0..40]=M700 -1294L426 -551L975 -551ZM586 -1493L
-  family="DejaVu Sans"
-  'H' @96ppm: 35x71 ink=18.7%
-  'A' @96ppm: 43x71 ink=20.0%
-  'l' @32ppm: 3x25 ink=22
-  'i' @32ppm: 3x26 ink=17
-WUBUFONT TESTS PASSED (real font: /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf)
-<end of output>
-Test time =   0.13 sec
-----------------------------------------------------------
-Test Passed.
-"wubufont" end time: Jul 30 20:35 EDT
-"wubufont" time elapsed: 00:00:00
-----------------------------------------------------------
-
-100/131 Testing: wubuocr
-100/131 Test: wubuocr
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_wubuocr"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"wubuocr" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-WUBUOCR TESTS PASSED
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"wubuocr" end time: Jul 30 20:35 EDT
-"wubuocr" time elapsed: 00:00:00
-----------------------------------------------------------
-
-101/131 Testing: crnn_transcribe
-101/131 Test: crnn_transcribe
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_crnn_transcribe"
-Directory: /home/wubu/WuBuOffice
-"crnn_transcribe" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-SKIP: set LOAD=<trained .crnn>
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"crnn_transcribe" end time: Jul 30 20:35 EDT
-"crnn_transcribe" time elapsed: 00:00:00
-----------------------------------------------------------
-
-102/131 Testing: crnn_transcribe_full
-102/131 Test: crnn_transcribe_full
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_crnn_transcribe_full"
-Directory: /home/wubu/WuBuOffice
-"crnn_transcribe_full" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-SKIP: set LOAD=<trained .crnn>
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"crnn_transcribe_full" end time: Jul 30 20:35 EDT
-"crnn_transcribe_full" time elapsed: 00:00:00
-----------------------------------------------------------
-
-103/131 Testing: columns
-103/131 Test: columns
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_columns"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"columns" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-SKIP: set LOAD=<model> CHARS=<charset>
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"columns" end time: Jul 30 20:35 EDT
-"columns" time elapsed: 00:00:00
-----------------------------------------------------------
-
-104/131 Testing: imageops
-104/131 Test: imageops
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_imageops"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"imageops" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-PASS: test_imageops (0 checks)
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"imageops" end time: Jul 30 20:35 EDT
-"imageops" time elapsed: 00:00:00
-----------------------------------------------------------
-
-105/131 Testing: xlsx
-105/131 Test: xlsx
+144/170 Testing: xlsx
+144/170 Test: xlsx
 Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_xlsx"
 Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"xlsx" start time: Jul 30 20:35 EDT
+"xlsx" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
 OK: xlsx has all 6 OOXML parts
@@ -1899,63 +1941,143 @@ PASS: test_xlsx
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"xlsx" end time: Jul 30 20:35 EDT
+"xlsx" end time: Aug 22 13:08 EDT
 "xlsx" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-106/131 Testing: docfmt2
-106/131 Test: docfmt2
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_docfmt2"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"docfmt2" start time: Jul 30 20:35 EDT
+37/170 Testing: wubufreeze
+37/170 Test: wubufreeze
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubufreeze/test_wubufreeze"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubufreeze
+"wubufreeze" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
-PASS: test_docfmt2 (TEI + order/head/cconf)
+PASS: wubufreeze (frozen header rows/cols, scroll origin, visibility map)
 <end of output>
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"docfmt2" end time: Jul 30 20:35 EDT
-"docfmt2" time elapsed: 00:00:00
+"wubufreeze" end time: Aug 22 13:08 EDT
+"wubufreeze" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-107/131 Testing: pdfua
-107/131 Test: pdfua
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_pdfua"
+127/170 Testing: cell_merge
+127/170 Test: cell_merge
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_cell_merge"
 Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"pdfua" start time: Jul 30 20:35 EDT
+"cell_merge" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
-PASS: test_pdfua (StructTreeRoot + MarkInfo + /Lang=ru)
+cell_merge: XLSX merge write+read round trip PASSED
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"cell_merge" end time: Aug 22 13:08 EDT
+"cell_merge" time elapsed: 00:00:00
+----------------------------------------------------------
+
+51/170 Testing: wubugallery
+51/170 Test: wubugallery
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubugallery/test_wubugallery"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubugallery
+"wubugallery" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: wubugallery (named collections, add/get items)
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"wubugallery" end time: Aug 22 13:08 EDT
+"wubugallery" time elapsed: 00:00:00
+----------------------------------------------------------
+
+16/170 Testing: hash
+16/170 Test: hash
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubuhash/test_hash"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubuhash
+"hash" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: hash (SHA-256 FIPS vectors)
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"hash" end time: Aug 22 13:08 EDT
+"hash" time elapsed: 00:00:00
+----------------------------------------------------------
+
+22/170 Testing: a11yannounce
+22/170 Test: a11yannounce
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubua11yannounce/test_a11yannounce"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubua11yannounce
+"a11yannounce" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: a11yannounce (FIFO queue)
 <end of output>
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"pdfua" end time: Jul 30 20:35 EDT
-"pdfua" time elapsed: 00:00:00
+"a11yannounce" end time: Aug 22 13:08 EDT
+"a11yannounce" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-108/131 Testing: nfc
-108/131 Test: nfc
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_nfc"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"nfc" start time: Jul 30 20:35 EDT
+77/170 Testing: macro
+77/170 Test: macro
+Command: "/home/wubu/WuBuOffice/build-plugin/apps/wubuos/test_macro"
+Directory: /home/wubu/WuBuOffice/build-plugin/apps/wubuos
+"macro" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
-PASS: test_nfc (Latin NFC composition)
+PASS: macro (record chars/return/backspace, toggle, count, playback seq, save/load)
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"macro" end time: Aug 22 13:08 EDT
+"macro" time elapsed: 00:00:00
+----------------------------------------------------------
+
+72/170 Testing: codefold
+72/170 Test: codefold
+Command: "/home/wubu/WuBuOffice/build-plugin/apps/wubuos/test_codefold"
+Directory: /home/wubu/WuBuOffice/build-plugin/apps/wubuos
+"codefold" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: codefold (toggle hide/show brace region, sym toggle, no-region)
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"codefold" end time: Aug 22 13:08 EDT
+"codefold" time elapsed: 00:00:00
+----------------------------------------------------------
+
+55/170 Testing: wubumasterslide
+55/170 Test: wubumasterslide
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubumasterslide/test_wubumasterslide"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubumasterslide
+"wubumasterslide" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: wubumasterslide (master theme + resolved harmonized palette)
 <end of output>
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"nfc" end time: Jul 30 20:35 EDT
-"nfc" time elapsed: 00:00:00
+"wubumasterslide" end time: Aug 22 13:08 EDT
+"wubumasterslide" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-109/131 Testing: imgops
-109/131 Test: imgops
+148/170 Testing: imgops
+148/170 Test: imgops
 Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_imgops"
 Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"imgops" start time: Jul 30 20:35 EDT
+"imgops" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
 PASS test_imgops
@@ -1963,276 +2085,15 @@ PASS test_imgops
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"imgops" end time: Jul 30 20:35 EDT
+"imgops" end time: Aug 22 13:08 EDT
 "imgops" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-110/131 Testing: docfmt
-110/131 Test: docfmt
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_docfmt"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"docfmt" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-PASS test_docfmt
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"docfmt" end time: Jul 30 20:35 EDT
-"docfmt" time elapsed: 00:00:00
-----------------------------------------------------------
-
-111/131 Testing: ocr_realpage
-111/131 Test: ocr_realpage
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_ocr_realpage"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"ocr_realpage" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-SKIP (set LOAD=/path/to/latin.crnn)
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"ocr_realpage" end time: Jul 30 20:35 EDT
-"ocr_realpage" time elapsed: 00:00:00
-----------------------------------------------------------
-
-112/131 Testing: wubuocr_recognize
-112/131 Test: wubuocr_recognize
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_wubuocr_recognize"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"wubuocr_recognize" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-  digit recognition: 10/10 correct
-  uppercase recognition: 9/12 correct
-WUBUOCR RECOGNIZE TESTS PASSED
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"wubuocr_recognize" end time: Jul 30 20:35 EDT
-"wubuocr_recognize" time elapsed: 00:00:00
-----------------------------------------------------------
-
-113/131 Testing: fontbank
-113/131 Test: fontbank
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_fontbank"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"fontbank" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-using 4 font(s) in bank
-  nb=5
-  recovered: "HHee'''']o]o" (expected "Hello")
-  deduped: "He'']o]o"
-FONTBANK TESTS PASSED (4 fonts)
-<end of output>
-Test time =   0.01 sec
-----------------------------------------------------------
-Test Passed.
-"fontbank" end time: Jul 30 20:35 EDT
-"fontbank" time elapsed: 00:00:00
-----------------------------------------------------------
-
-114/131 Testing: gauntlet
-114/131 Test: gauntlet
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_gauntlet"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"gauntlet" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-using 4 font(s)
-  clean-probe accuracy = 60.0%
-  ablation(drop 0) accuracy = 60.0%
-  scatter recall (read/placed) = 51.7%
-  lines recall (read/placed) = 50.0%
-  grid recall (read/placed) = 39.6%
-GAUNTLET TESTS PASSED (4 fonts)
-<end of output>
-Test time =   0.13 sec
-----------------------------------------------------------
-Test Passed.
-"gauntlet" end time: Jul 30 20:35 EDT
-"gauntlet" time elapsed: 00:00:00
-----------------------------------------------------------
-
-115/131 Testing: latin1
-115/131 Test: latin1
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_latin1"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"latin1" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-using 3 font(s) for Latin tier
-  latin1 scatter recall (read/placed) = 19.4%
-LATIN1 TESTS PASSED (3 fonts)
-<end of output>
-Test time =   0.01 sec
-----------------------------------------------------------
-Test Passed.
-"latin1" end time: Jul 30 20:35 EDT
-"latin1" time elapsed: 00:00:00
-----------------------------------------------------------
-
-116/131 Testing: wubunote_ctrl
-116/131 Test: wubunote_ctrl
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_wubunote_ctrl"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"wubunote_ctrl" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-WUBUNOTE CTRL TESTS PASSED
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"wubunote_ctrl" end time: Jul 30 20:35 EDT
-"wubunote_ctrl" time elapsed: 00:00:00
-----------------------------------------------------------
-
-117/131 Testing: wubunote
-117/131 Test: wubunote
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_wubunote"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"wubunote" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-WUBUEDIT TESTS PASSED
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"wubunote" end time: Jul 30 20:35 EDT
-"wubunote" time elapsed: 00:00:00
-----------------------------------------------------------
-
-118/131 Testing: wubuview
-118/131 Test: wubuview
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_wubuview"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"wubuview" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-WUBUVIEW TESTS PASSED
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"wubuview" end time: Jul 30 20:35 EDT
-"wubuview" time elapsed: 00:00:00
-----------------------------------------------------------
-
-119/131 Testing: wubuview_ctrl
-119/131 Test: wubuview_ctrl
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_wubuview_ctrl"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"wubuview_ctrl" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-WUBUVIEW CTRL TESTS PASSED
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"wubuview_ctrl" end time: Jul 30 20:35 EDT
-"wubuview_ctrl" time elapsed: 00:00:00
-----------------------------------------------------------
-
-120/131 Testing: wubusvg
-120/131 Test: wubusvg
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_wubusvg"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"wubusvg" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-WUBUSVG TESTS PASSED
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"wubusvg" end time: Jul 30 20:35 EDT
-"wubusvg" time elapsed: 00:00:00
-----------------------------------------------------------
-
-121/131 Testing: wubudoc
-121/131 Test: wubudoc
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_wubudoc"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"wubudoc" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-WUBUDOC TESTS PASSED
-<end of output>
-Test time =   0.01 sec
-----------------------------------------------------------
-Test Passed.
-"wubudoc" end time: Jul 30 20:35 EDT
-"wubudoc" time elapsed: 00:00:00
-----------------------------------------------------------
-
-122/131 Testing: drop
-122/131 Test: drop
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_drop"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"drop" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-  paste decode OK
-  drop text extraction OK
-  drop PDF extraction OK
-  drop PNG decode + ingest OK
-DROP TESTS PASSED
-<end of output>
-Test time =   0.01 sec
-----------------------------------------------------------
-Test Passed.
-"drop" end time: Jul 30 20:35 EDT
-"drop" time elapsed: 00:00:00
-----------------------------------------------------------
-
-123/131 Testing: wubusvg_agent
-123/131 Test: wubusvg_agent
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_wubusvg_agent"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"wubusvg_agent" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-WUBUSVG_AGENT TESTS PASSED
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"wubusvg_agent" end time: Jul 30 20:35 EDT
-"wubusvg_agent" time elapsed: 00:00:00
-----------------------------------------------------------
-
-124/131 Testing: gpu_blas
-124/131 Test: gpu_blas
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_gpu_blas"
-Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"gpu_blas" start time: Jul 30 20:35 EDT
-Output:
-----------------------------------------------------------
-gpu_available = 0
-GEMM   PASS (maxdiff=0.00e+00)
-CONV   PASS (Hout=20 Wout=20 maxdiff=0.00e+00)
-OVERALL: PASS
-<end of output>
-Test time =   0.00 sec
-----------------------------------------------------------
-Test Passed.
-"gpu_blas" end time: Jul 30 20:35 EDT
-"gpu_blas" time elapsed: 00:00:00
-----------------------------------------------------------
-
-125/131 Testing: gru_gpu_gradcheck
-125/131 Test: gru_gpu_gradcheck
+164/170 Testing: gru_gpu_gradcheck
+164/170 Test: gru_gpu_gradcheck
 Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_gru_gpu"
 Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"gru_gpu_gradcheck" start time: Jul 30 20:35 EDT
+"gru_gpu_gradcheck" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
 gpu_available=0
@@ -2248,33 +2109,549 @@ OVERALL: PASS
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"gru_gpu_gradcheck" end time: Jul 30 20:35 EDT
+"gru_gpu_gradcheck" end time: Aug 22 13:08 EDT
 "gru_gpu_gradcheck" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-126/131 Testing: gemm_nt
-126/131 Test: gemm_nt
+75/170 Testing: findbar
+75/170 Test: findbar
+Command: "/home/wubu/WuBuOffice/build-plugin/apps/wubuos/test_findbar"
+Directory: /home/wubu/WuBuOffice/build-plugin/apps/wubuos
+"findbar" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: findbar (literal/regex find, replace-one, replace-all, clear, no-match)
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"findbar" end time: Aug 22 13:08 EDT
+"findbar" time elapsed: 00:00:00
+----------------------------------------------------------
+
+168/170 Testing: exp
+168/170 Test: exp
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_exp"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"exp" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+EXP TESTS PASSED
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"exp" end time: Aug 22 13:08 EDT
+"exp" time elapsed: 00:00:00
+----------------------------------------------------------
+
+5/170 Testing: vars
+5/170 Test: vars
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubuvars/test_vars"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubuvars
+"vars" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: vars (set/get/expand/overwrite)
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"vars" end time: Aug 22 13:08 EDT
+"vars" time elapsed: 00:00:00
+----------------------------------------------------------
+
+146/170 Testing: pdfua
+146/170 Test: pdfua
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_pdfua"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"pdfua" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: test_pdfua (StructTreeRoot + MarkInfo + /Lang=ru)
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"pdfua" end time: Aug 22 13:08 EDT
+"pdfua" time elapsed: 00:00:00
+----------------------------------------------------------
+
+149/170 Testing: docfmt
+149/170 Test: docfmt
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_docfmt"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"docfmt" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS test_docfmt
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"docfmt" end time: Aug 22 13:08 EDT
+"docfmt" time elapsed: 00:00:00
+----------------------------------------------------------
+
+6/170 Testing: lang
+6/170 Test: lang
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubulang/test_lang"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubulang
+"lang" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: lang (set/get/reset/count)
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"lang" end time: Aug 22 13:08 EDT
+"lang" time elapsed: 00:00:00
+----------------------------------------------------------
+
+10/170 Testing: dyslexia
+10/170 Test: dyslexia
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubudyslexia/test_dyslexia"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubudyslexia
+"dyslexia" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: dyslexia (enabled/face/spacing-clamp)
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"dyslexia" end time: Aug 22 13:08 EDT
+"dyslexia" time elapsed: 00:00:00
+----------------------------------------------------------
+
+17/170 Testing: sig
+17/170 Test: sig
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubusig/test_sig"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubusig
+"sig" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: sig (HMAC-SHA256 sign/verify/tamper)
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"sig" end time: Aug 22 13:08 EDT
+"sig" time elapsed: 00:00:00
+----------------------------------------------------------
+
+85/170 Testing: test_math
+85/170 Test: test_math
+Command: "/home/wubu/WuBuOffice/build-plugin/tools/test_math"
+Directory: /home/wubu/WuBuOffice/build-plugin/tools
+"test_math" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+ok   got=1 expect=1  "E = mc^2"
+ok   got=1 expect=1  "a^2 + b^2 = c^2"
+ok   got=1 expect=1  "x = (-b + sqrt(b^2 - 4ac)) / (2a)"
+ok   got=1 expect=1  "H_2O + O_2 -> H_2O_2"
+ok   got=1 expect=1  "f(x) = (a + (b * c)) / d"
+ok   got=1 expect=1  "α + β = γ"
+ok   got=1 expect=1  "∫ f(x) dx = 0"
+ok   got=1 expect=1  "∑ x_i = N"
+ok   got=0 expect=0  "the quick brown fox jumps"
+ok   got=0 expect=0  "This is a normal sentence about documents."
+ok   got=0 expect=0  "We the people of the United States"
+ok   got=0 expect=0  "a b c d e f g"
+ok   got=0 expect=0  "hello world"
+PASS: all math cases correct
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"test_math" end time: Aug 22 13:08 EDT
+"test_math" time elapsed: 00:00:00
+----------------------------------------------------------
+
+107/170 Testing: epub
+107/170 Test: epub
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_epub"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"epub" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: wubuepub (valid EPUB3: mimetype + container + opf + nav + chapter)
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"epub" end time: Aug 22 13:08 EDT
+"epub" time elapsed: 00:00:00
+----------------------------------------------------------
+
+59/170 Testing: wubunotebookbar
+59/170 Test: wubunotebookbar
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubunotebookbar/test_wubunotebookbar"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubunotebookbar
+"wubunotebookbar" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: wubunotebookbar (sheet-tab strip + drawable/hit-test rects)
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"wubunotebookbar" end time: Aug 22 13:08 EDT
+"wubunotebookbar" time elapsed: 00:00:00
+----------------------------------------------------------
+
+13/170 Testing: eqnum
+13/170 Test: eqnum
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubueqnum/test_eqnum"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubueqnum
+"eqnum" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: eqnum (sequential equation numbering)
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"eqnum" end time: Aug 22 13:08 EDT
+"eqnum" time elapsed: 00:00:00
+----------------------------------------------------------
+
+84/170 Testing: ocl_gru
+84/170 Test: ocl_gru
+Command: "/home/wubu/WuBuOffice/build-plugin/tools/ocl_gru_test"
+Directory: /home/wubu/WuBuOffice/build-plugin/tools
+"ocl_gru" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+SKIP: no OpenCL device
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"ocl_gru" end time: Aug 22 13:08 EDT
+"ocl_gru" time elapsed: 00:00:00
+----------------------------------------------------------
+
+115/170 Testing: cold_start
+115/170 Test: cold_start
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_cold_start"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"cold_start" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+cold_start: 0.018 ms (bound 50 ms) PASSED (ws07#1333)
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"cold_start" end time: Aug 22 13:08 EDT
+"cold_start" time elapsed: 00:00:00
+----------------------------------------------------------
+
+112/170 Testing: doc_cache
+112/170 Test: doc_cache
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_doc_cache"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"doc_cache" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+doc_cache: ALL CHECKS PASSED (ws07#1342)
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"doc_cache" end time: Aug 22 13:08 EDT
+"doc_cache" time elapsed: 00:00:00
+----------------------------------------------------------
+
+65/170 Testing: shell_ui
+65/170 Test: shell_ui
+Command: "/home/wubu/WuBuOffice/build-plugin/apps/wubuos/test_shell_ui"
+Directory: /home/wubu/WuBuOffice/build-plugin/apps/wubuos
+"shell_ui" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+SHELL UI TESTS PASSED
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"shell_ui" end time: Aug 22 13:08 EDT
+"shell_ui" time elapsed: 00:00:00
+----------------------------------------------------------
+
+83/170 Testing: gru_test
+83/170 Test: gru_test
+Command: "/home/wubu/WuBuOffice/build-plugin/tools/gru_test"
+Directory: /home/wubu/WuBuOffice/build-plugin/tools
+"gru_test" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+GRU weight grad max|ana-num| = 1.398773e-05
+GRU input grad  max|ana-num| = 1.140455e-05
+GRU TESTS PASSED
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"gru_test" end time: Aug 22 13:08 EDT
+"gru_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+157/170 Testing: wubuview
+157/170 Test: wubuview
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_wubuview"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"wubuview" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+WUBUVIEW TESTS PASSED
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"wubuview" end time: Aug 22 13:08 EDT
+"wubuview" time elapsed: 00:00:00
+----------------------------------------------------------
+
+162/170 Testing: wubusvg_agent
+162/170 Test: wubusvg_agent
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_wubusvg_agent"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"wubusvg_agent" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+WUBUSVG_AGENT TESTS PASSED
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"wubusvg_agent" end time: Aug 22 13:08 EDT
+"wubusvg_agent" time elapsed: 00:00:00
+----------------------------------------------------------
+
+39/170 Testing: pdfform
+39/170 Test: pdfform
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubupdfform/test_pdfform"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubupdfform
+"pdfform" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: pdfform (AcroForm Tx+Btn, escaped values, valid xref)
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"pdfform" end time: Aug 22 13:08 EDT
+"pdfform" time elapsed: 00:00:00
+----------------------------------------------------------
+
+165/170 Testing: gemm_nt
+165/170 Test: gemm_nt
 Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_gemm_nt"
 Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"gemm_nt" start time: Jul 30 20:35 EDT
+"gemm_nt" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
 gemmNT     maxdiff=0.00e+00 PASS
 gemmT      maxdiff=0.00e+00 PASS
 PASS
 <end of output>
-Test time =   0.00 sec
+Test time =   0.01 sec
 ----------------------------------------------------------
 Test Passed.
-"gemm_nt" end time: Jul 30 20:35 EDT
+"gemm_nt" end time: Aug 22 13:08 EDT
 "gemm_nt" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-127/131 Testing: gru_cmp
-127/131 Test: gru_cmp
+128/170 Testing: csv
+128/170 Test: csv
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_csv"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"csv" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+CSV TEST PASSED (RFC 4180 quoting + newline + numeric + TSV round-trip)
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"csv" end time: Aug 22 13:08 EDT
+"csv" time elapsed: 00:00:00
+----------------------------------------------------------
+
+89/170 Testing: zoning
+89/170 Test: zoning
+Command: "/home/wubu/WuBuOffice/build-plugin/tools/test_zoning"
+Directory: /home/wubu/WuBuOffice/build-plugin/tools
+"zoning" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+test_zoning: ALL PASS (glyph diff=10.369)
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"zoning" end time: Aug 22 13:08 EDT
+"zoning" time elapsed: 00:00:00
+----------------------------------------------------------
+
+15/170 Testing: cite
+15/170 Test: cite
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubucite/test_cite"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubucite
+"cite" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: cite (add/inline/bibliography)
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"cite" end time: Aug 22 13:08 EDT
+"cite" time elapsed: 00:00:00
+----------------------------------------------------------
+
+114/170 Testing: deflate_roundtrip
+114/170 Test: deflate_roundtrip
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_deflate_roundtrip"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"deflate_roundtrip" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+deflate_roundtrip: 4/4 PASSED (our own DEFLATE, no zlib) (ws07#1338)
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"deflate_roundtrip" end time: Aug 22 13:08 EDT
+"deflate_roundtrip" time elapsed: 00:00:00
+----------------------------------------------------------
+
+117/170 Testing: wubuxml_parser
+117/170 Test: wubuxml_parser
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_wubuxml_parser"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"wubuxml_parser" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+wubuxml_parser: closing-tag event order + nesting + entities + malformed-rejection PASSED (ws05#0884 regression)
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"wubuxml_parser" end time: Aug 22 13:08 EDT
+"wubuxml_parser" time elapsed: 00:00:00
+----------------------------------------------------------
+
+98/170 Testing: inflate
+98/170 Test: inflate
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_inflate"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"inflate" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+ok case 0 (len 0)
+ok case 1 (len 16)
+ok case 2 (len 23)
+ok case 3 (len 99)
+ok case 4 (len 113)
+INFLATE TESTS PASSED
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"inflate" end time: Aug 22 13:08 EDT
+"inflate" time elapsed: 00:00:00
+----------------------------------------------------------
+
+103/170 Testing: chart
+103/170 Test: chart
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_chart"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"chart" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: wubuchart (bar/line/pie/scatter + formula subtitle, wubusvg-validated)
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"chart" end time: Aug 22 13:08 EDT
+"chart" time elapsed: 00:00:00
+----------------------------------------------------------
+
+155/170 Testing: wubunote_ctrl
+155/170 Test: wubunote_ctrl
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_wubunote_ctrl"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"wubunote_ctrl" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+WUBUNOTE CTRL TESTS PASSED
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"wubunote_ctrl" end time: Aug 22 13:08 EDT
+"wubunote_ctrl" time elapsed: 00:00:00
+----------------------------------------------------------
+
+159/170 Testing: wubusvg
+159/170 Test: wubusvg
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_wubusvg"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"wubusvg" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+WUBUSVG TESTS PASSED
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"wubusvg" end time: Aug 22 13:08 EDT
+"wubusvg" time elapsed: 00:00:00
+----------------------------------------------------------
+
+81/170 Testing: wubupad_bridge
+81/170 Test: wubupad_bridge
+Command: "/home/wubu/WuBuOffice/build-plugin/apps/wubupad_bridge/test_wubupad_bridge"
+Directory: /home/wubu/WuBuOffice/build-plugin/apps/wubupad_bridge
+"wubupad_bridge" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: wubupad_bridge (cross-repo reuse of WuBuPad core)
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"wubupad_bridge" end time: Aug 22 13:08 EDT
+"wubupad_bridge" time elapsed: 00:00:00
+----------------------------------------------------------
+
+56/170 Testing: wubuconnector
+56/170 Test: wubuconnector
+Command: "/home/wubu/WuBuOffice/build-plugin/src/wubuconnector/test_wubuconnector"
+Directory: /home/wubu/WuBuOffice/build-plugin/src/wubuconnector
+"wubuconnector" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: wubuconnector (diagram connector model + orthogonal L-route)
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"wubuconnector" end time: Aug 22 13:08 EDT
+"wubuconnector" time elapsed: 00:00:00
+----------------------------------------------------------
+
+166/170 Testing: gru_cmp
+166/170 Test: gru_cmp
 Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_gru_cmp"
 Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"gru_cmp" start time: Jul 30 20:35 EDT
+"gru_cmp" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
 gpu=0
@@ -2287,75 +2664,410 @@ OVERALL: PASS
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"gru_cmp" end time: Jul 30 20:35 EDT
+"gru_cmp" end time: Aug 22 13:08 EDT
 "gru_cmp" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-128/131 Testing: layout
-128/131 Test: layout
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_layout"
+111/170 Testing: model
+111/170 Test: model
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_model"
 Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"layout" start time: Jul 30 20:35 EDT
+"model" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
-LAYOUT TESTS PASSED
+model: all green-baseline checks passed
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"model" end time: Aug 22 13:08 EDT
+"model" time elapsed: 00:00:00
+----------------------------------------------------------
+
+82/170 Testing: ctc_test
+82/170 Test: ctc_test
+Command: "/home/wubu/WuBuOffice/build-plugin/tools/ctc_test"
+Directory: /home/wubu/WuBuOffice/build-plugin/tools
+"ctc_test" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+[1] perfect-input loss = 0.001341 (expect ~0)
+[2] uniform-input loss = 1.136352  brute_cnt=15  ctc_cnt=26  expect_loss=1.136353
+  (brute-force counter disagrees with CTC; trusting CTC forward)
+[3] base loss=2.9993  grad mismatches(>5%)=0/20
+
+CTC TESTS PASSED
 <end of output>
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"layout" end time: Jul 30 20:35 EDT
-"layout" time elapsed: 00:00:00
+"ctc_test" end time: Aug 22 13:08 EDT
+"ctc_test" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-129/131 Testing: exp
-129/131 Test: exp
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_exp"
+99/170 Testing: formula
+99/170 Test: formula
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_formula"
 Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"exp" start time: Jul 30 20:35 EDT
+"formula" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
-EXP TESTS PASSED
+FORMULA TESTS OK (77 functions registered)
 <end of output>
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"exp" end time: Jul 30 20:35 EDT
-"exp" time elapsed: 00:00:00
+"formula" end time: Aug 22 13:08 EDT
+"formula" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-130/131 Testing: settings
-130/131 Test: settings
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_settings"
+101/170 Testing: base
+101/170 Test: base
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_base"
 Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"settings" start time: Jul 30 20:35 EDT
+"base" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
-SETTINGS TESTS PASSED
+base: all tests passed
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"base" end time: Aug 22 13:08 EDT
+"base" time elapsed: 00:00:00
+----------------------------------------------------------
+
+134/170 Testing: word_lists
+134/170 Test: word_lists
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_word_lists"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"word_lists" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+test_word_lists: PASS
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"word_lists" end time: Aug 22 13:08 EDT
+"word_lists" time elapsed: 00:00:00
+----------------------------------------------------------
+
+105/170 Testing: draw
+105/170 Test: draw
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_draw"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"draw" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: wubudraw (rect/ellipse/line/polyline/text, wubusvg-validated)
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"draw" end time: Aug 22 13:08 EDT
+"draw" time elapsed: 00:00:00
+----------------------------------------------------------
+
+102/170 Testing: png
+102/170 Test: png
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_png"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"png" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+png: all tests passed
 <end of output>
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"settings" end time: Jul 30 20:35 EDT
-"settings" time elapsed: 00:00:00
+"png" end time: Aug 22 13:08 EDT
+"png" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-131/131 Testing: toc
-131/131 Test: toc
-Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_toc"
+118/170 Testing: reader_roundtrip
+118/170 Test: reader_roundtrip
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_reader"
 Directory: /home/wubu/WuBuOffice/build-plugin/tests
-"toc" start time: Jul 30 20:35 EDT
+"reader_roundtrip" start time: Aug 22 13:08 EDT
 Output:
 ----------------------------------------------------------
-TOC + SETTINGS + FOOTNOTE TESTS PASSED
+READER ROUNDTRIP PASSED
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"reader_roundtrip" end time: Aug 22 13:08 EDT
+"reader_roundtrip" time elapsed: 00:00:00
+----------------------------------------------------------
+
+71/170 Testing: plugin_abi
+71/170 Test: plugin_abi
+Command: "/home/wubu/WuBuOffice/build-plugin/apps/wubuos/test_plugin_abi" "/home/wubu/WuBuOffice/build-plugin/apps/wubuos/plugins/sample_plugin.so" "/home/wubu/WuBuOffice/build-plugin/apps/wubuos/plugins/badabi_plugin.so"
+Directory: /home/wubu/WuBuOffice/build-plugin/apps/wubuos
+"plugin_abi" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+[plugin-host] sample_plugin: init ok
+[ok] load good .so
+[ok] exactly one plugin loaded
+[ok] loaded plugin name == hello
+[plugin-host] sample_plugin: exec
+[ok] exec returns host-verified string
+[plugin] /home/wubu/WuBuOffice/build-plugin/apps/wubuos/plugins/badabi_plugin.so: abi 999 != 1
+[ok] loader rejects mismatched abi version
+[ok] rejected plugin not added to manager
+[plugin] dlopen /no/such/plugin.so: /no/such/plugin.so: cannot open shared object file: No such file or directory
+[ok] loader rejects missing .so
+[ok] missing .so not added to manager
+done failures=0
 <end of output>
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"toc" end time: Jul 30 20:35 EDT
-"toc" time elapsed: 00:00:00
+"plugin_abi" end time: Aug 22 13:08 EDT
+"plugin_abi" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-End testing: Jul 30 20:35 EDT
+163/170 Testing: gpu_blas
+163/170 Test: gpu_blas
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_gpu_blas"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"gpu_blas" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+gpu_available = 0
+GEMM   PASS (maxdiff=0.00e+00)
+CONV   PASS (Hout=20 Wout=20 maxdiff=0.00e+00)
+OVERALL: PASS
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"gpu_blas" end time: Aug 22 13:08 EDT
+"gpu_blas" time elapsed: 00:00:00
+----------------------------------------------------------
+
+110/170 Testing: script
+110/170 Test: script
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_script"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"script" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: wubuscript (arith, SUM, vars, unknown-var fail, str)
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"script" end time: Aug 22 13:08 EDT
+"script" time elapsed: 00:00:00
+----------------------------------------------------------
+
+158/170 Testing: wubuview_ctrl
+158/170 Test: wubuview_ctrl
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_wubuview_ctrl"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"wubuview_ctrl" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+WUBUVIEW CTRL TESTS PASSED
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"wubuview_ctrl" end time: Aug 22 13:08 EDT
+"wubuview_ctrl" time elapsed: 00:00:00
+----------------------------------------------------------
+
+106/170 Testing: wubumath
+106/170 Test: wubumath
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_wubumath"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"wubumath" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: wubumath (frac/sup/sub/group, wubusvg-validated)
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"wubumath" end time: Aug 22 13:08 EDT
+"wubumath" time elapsed: 00:00:00
+----------------------------------------------------------
+
+156/170 Testing: wubunote
+156/170 Test: wubunote
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_wubunote"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"wubunote" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+WUBUEDIT TESTS PASSED
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"wubunote" end time: Aug 22 13:08 EDT
+"wubunote" time elapsed: 00:00:00
+----------------------------------------------------------
+
+87/170 Testing: rnn_test
+87/170 Test: rnn_test
+Command: "/home/wubu/WuBuOffice/build-plugin/tools/rnn_test"
+Directory: /home/wubu/WuBuOffice/build-plugin/tools
+"rnn_test" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+LSTM gradcheck: checked=13 fails(>5%)=0
+LSTM TESTS PASSED
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"rnn_test" end time: Aug 22 13:08 EDT
+"rnn_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+97/170 Testing: wubuzip_crc
+97/170 Test: wubuzip_crc
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_wubuzip"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"wubuzip_crc" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+zip bytes: 138
+ALL TESTS PASSED
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"wubuzip_crc" end time: Aug 22 13:08 EDT
+"wubuzip_crc" time elapsed: 00:00:00
+----------------------------------------------------------
+
+109/170 Testing: a11y
+109/170 Test: a11y
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_a11y"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"a11y" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: wubua11y (doc empty/titled + EPUB parts good/bad)
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"a11y" end time: Aug 22 13:08 EDT
+"a11y" time elapsed: 00:00:00
+----------------------------------------------------------
+
+100/170 Testing: spell
+100/170 Test: spell
+Command: "/home/wubu/WuBuOffice/build-plugin/tests/test_spell"
+Directory: /home/wubu/WuBuOffice/build-plugin/tests
+"spell" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+PASS: wubuspell (dict + suggest + scan + load)
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"spell" end time: Aug 22 13:08 EDT
+"spell" time elapsed: 00:00:00
+----------------------------------------------------------
+
+88/170 Testing: gradcheck_conv3
+88/170 Test: gradcheck_conv3
+Command: "/home/wubu/WuBuOffice/build-plugin/tools/gradcheck_conv3"
+Directory: /home/wubu/WuBuOffice/build-plugin/tools
+"gradcheck_conv3" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+layer 0: n=72 checked=72 max|ana-num|=4.284e-04 fails(>2e-2)=0
+layer 1: n=8 checked=8 max|ana-num|=3.506e-04 fails(>2e-2)=0
+layer 2: n=1152 checked=231 max|ana-num|=1.955e-04 fails(>2e-2)=0
+layer 3: n=16 checked=16 max|ana-num|=8.849e-05 fails(>2e-2)=0
+layer 4: n=4608 checked=201 max|ana-num|=2.309e-05 fails(>2e-2)=0
+layer 5: n=32 checked=32 max|ana-num|=1.213e-05 fails(>2e-2)=0
+=== GRADCHECK: worst_max_err=4.284e-04 at layer 0, total_fails=0 ===
+PASS
+<end of output>
+Test time =  43.92 sec
+----------------------------------------------------------
+Test Passed.
+"gradcheck_conv3" end time: Aug 22 13:09 EDT
+"gradcheck_conv3" time elapsed: 00:00:43
+----------------------------------------------------------
+
+92/170 Testing: convnet3
+92/170 Test: convnet3
+Command: "/home/wubu/WuBuOffice/build-plugin/tools/test_convnet3"
+Directory: /home/wubu/WuBuOffice/build-plugin/tools
+"convnet3" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+[conv3 smoke] 4 core(s), 1600 samples x 60 epochs (full-batch SGD)
+conv3+MLP end-to-end on separable 2-class: acc=100.0%
+PASS
+<end of output>
+Test time = 130.71 sec
+----------------------------------------------------------
+Test Passed.
+"convnet3" end time: Aug 22 13:10 EDT
+"convnet3" time elapsed: 00:02:10
+----------------------------------------------------------
+
+96/170 Testing: emnist_train_conv3_smoke
+96/170 Test: emnist_train_conv3_smoke
+Command: "/home/wubu/WuBuOffice/build-plugin/tools/emnist_train_conv3" "data/emnist" "128" "64" "2" "2000"
+Directory: /home/wubu/WuBuOffice
+"emnist_train_conv3_smoke" start time: Aug 22 13:08 EDT
+Output:
+----------------------------------------------------------
+[threads] using 4 worker thread(s) (detected 4 cores)
+conv3+MLP: conv feats=256 -> MLP 256->128->64->26; epochs=2 batch=256 lr=0.0500 sgd norm=0 nclass=26; train=124800 test=20800
+  epoch  1: train_acc~3.90%  lr=0.0050
+  epoch  2: train_acc~3.90%  lr=0.0275
+
+=== dataset (ultra-light conv3+MLP, plain C11 sgd) ===
+OVERALL ACCURACY: 3.52% (732/20800)
+saved conv3 -> data/emnist/conv3.wts
+saved mlp  -> data/emnist/conv3_mlp.wts
+<end of output>
+Test time = 135.75 sec
+----------------------------------------------------------
+Test Passed.
+"emnist_train_conv3_smoke" end time: Aug 22 13:10 EDT
+"emnist_train_conv3_smoke" time elapsed: 00:02:15
+----------------------------------------------------------
+
+69/170 Testing: gui_parity
+69/170 Test: gui_parity
+Command: "/usr/bin/bash" "/home/wubu/WuBuOffice/../tooling/gui_audit_test.sh"
+Directory: /home/wubu/WuBuOffice/build-plugin/apps/wubuos
+"gui_parity" start time: Aug 22 13:10 EDT
+Output:
+----------------------------------------------------------
+AUDIT /tmp/wuos_audit.png (960x720)
+region        legib  rows glyphH contrast  PASS?
+tabs          9.2%    21     19     5.2:1  PASS
+menu          3.5%    19     19     6.4:1  PASS
+toolbar      19.3%    21     21     2.8:1  PASS
+sidebar       0.9%    33     15    10.7:1  PASS
+status        8.8%    19     19     7.8:1  PASS
+
+SCORE: 5/5 regions legible
+<end of output>
+Test time =   4.23 sec
+----------------------------------------------------------
+Test Passed.
+"gui_parity" end time: Aug 22 13:10 EDT
+"gui_parity" time elapsed: 00:00:04
+----------------------------------------------------------
+
+End testing: Aug 22 13:10 EDT
 
 a11y =   0.00 sec*proc
 
@@ -2363,45 +3075,47 @@ a11yannounce =   0.00 sec*proc
 
 a11ytree =   0.00 sec*proc
 
-aislot =   0.00 sec*proc
+aislot =   0.01 sec*proc
 
-apps =   0.09 sec*proc
+apps =   4.50 sec*proc
 
 autocomp =   0.00 sec*proc
 
-autosave =   0.01 sec*proc
+autosave =   0.03 sec*proc
 
-base =   0.00 sec*proc
+base =   0.01 sec*proc
 
-bkmk =   0.00 sec*proc
+bkmk =   0.01 sec*proc
 
-caption =   0.00 sec*proc
+caption =   0.01 sec*proc
 
-cell =   0.01 sec*proc
+cell =   0.03 sec*proc
 
 chart =   0.00 sec*proc
 
-cite =   0.00 sec*proc
+cite =   0.01 sec*proc
 
-codefold =   0.00 sec*proc
+codefold =   0.01 sec*proc
 
-col =   0.00 sec*proc
+col =   0.01 sec*proc
 
 convert =   0.00 sec*proc
 
 crdt =   0.00 sec*proc
 
+design =   0.06 sec*proc
+
 dialog =   0.00 sec*proc
 
-doc =   0.02 sec*proc
+doc =   0.04 sec*proc
 
-doccmd =   0.01 sec*proc
+doccmd =   0.04 sec*proc
 
-draw =   0.00 sec*proc
+draw =   0.01 sec*proc
 
-dyslexia =   0.00 sec*proc
+dyslexia =   0.01 sec*proc
 
-epub =   0.00 sec*proc
+epub =   0.02 sec*proc
 
 eqnum =   0.00 sec*proc
 
@@ -2409,13 +3123,13 @@ exp =   0.00 sec*proc
 
 exp_png =   0.00 sec*proc
 
-findbar =   0.00 sec*proc
+findbar =   0.01 sec*proc
 
-fmtpaint =   0.00 sec*proc
+fmtpaint =   0.01 sec*proc
 
 focus =   0.00 sec*proc
 
-font =   0.13 sec*proc
+font =   0.57 sec*proc
 
 form =   0.00 sec*proc
 
@@ -2423,39 +3137,41 @@ formula =   0.00 sec*proc
 
 gotoline =   0.00 sec*proc
 
-gpu =   0.01 sec*proc
+gpu =   0.03 sec*proc
 
-hash =   0.00 sec*proc
+gui =   0.06 sec*proc
 
-heading =   0.00 sec*proc
+hash =   0.01 sec*proc
 
-history =   0.00 sec*proc
+heading =   0.01 sec*proc
+
+history =   0.03 sec*proc
 
 lang =   0.00 sec*proc
 
-layout =   0.00 sec*proc
+layout =   0.01 sec*proc
 
-libs =   0.03 sec*proc
+libs =   0.29 sec*proc
 
-macro =   0.00 sec*proc
+macro =   0.01 sec*proc
 
-math =   0.00 sec*proc
+math =   0.01 sec*proc
 
-model =   0.01 sec*proc
+model =   0.03 sec*proc
 
-nesttab =   0.00 sec*proc
+nesttab =   0.01 sec*proc
 
-note =   0.00 sec*proc
+note =   0.02 sec*proc
 
-ocr =  60.92 sec*proc
+ocr = 275.90 sec*proc
 
-odf =   0.14 sec*proc
+odf =   0.37 sec*proc
 
-oxml =   0.11 sec*proc
+oxml =   0.25 sec*proc
 
-pasteplain =   0.00 sec*proc
+pasteplain =   0.01 sec*proc
 
-pdfextract =   0.00 sec*proc
+pdfextract =   0.01 sec*proc
 
 pdfform =   0.00 sec*proc
 
@@ -2463,39 +3179,103 @@ plugin =   0.00 sec*proc
 
 png =   0.00 sec*proc
 
-redact =   0.00 sec*proc
+redact =   0.01 sec*proc
 
-rtf =   0.00 sec*proc
+rtf =   0.01 sec*proc
 
 sandbox =   0.00 sec*proc
 
-scope =   0.00 sec*proc
+scope =   0.01 sec*proc
 
 script =   0.00 sec*proc
 
-settings =   0.00 sec*proc
+settings =   0.01 sec*proc
 
 sig =   0.00 sec*proc
 
-spell =   0.00 sec*proc
+spell =   0.01 sec*proc
 
-svg =   0.00 sec*proc
+svg =   0.02 sec*proc
 
-sync =   0.00 sec*proc
+sync =   0.01 sec*proc
 
-toc =   0.00 sec*proc
+toc =   0.01 sec*proc
 
-vars =   0.00 sec*proc
+vars =   0.01 sec*proc
 
-view =   0.07 sec*proc
+view =   4.42 sec*proc
 
 watermark =   0.00 sec*proc
 
-word =   0.25 sec*proc
+word =   0.86 sec*proc
 
-wubucsv =   0.00 sec*proc
+wubu3d =   0.00 sec*proc
 
-xps =   0.00 sec*proc
+wubuanimation =   0.00 sec*proc
 
-zip =   0.00 sec*proc
+wububasic =   0.00 sec*proc
+
+wubuconnector =   0.00 sec*proc
+
+wubucsv =   0.01 sec*proc
+
+wubudiff =   0.00 sec*proc
+
+wubudropcap =   0.01 sec*proc
+
+wubuencrypt =   0.01 sec*proc
+
+wubufilter =   0.00 sec*proc
+
+wubufreeze =   0.00 sec*proc
+
+wubugallery =   0.01 sec*proc
+
+wubugoalseek =   0.00 sec*proc
+
+wubugrammar =   0.00 sec*proc
+
+wubugridline =   0.00 sec*proc
+
+wubuhyperlink =   0.00 sec*proc
+
+wubuicon =   0.00 sec*proc
+
+wubuindex =   0.01 sec*proc
+
+wubumailexport =   0.01 sec*proc
+
+wubumailmerge =   0.00 sec*proc
+
+wubumasterdoc =   0.00 sec*proc
+
+wubumasterslide =   0.00 sec*proc
+
+wubunotebookbar =   0.00 sec*proc
+
+wubupivot =   0.01 sec*proc
+
+wubuqr =   0.00 sec*proc
+
+wuburuler =   0.00 sec*proc
+
+wubuscenario =   0.01 sec*proc
+
+wubusidebar =   0.01 sec*proc
+
+wubusmartart =   0.00 sec*proc
+
+wubusolver =   0.00 sec*proc
+
+wubusort =   0.01 sec*proc
+
+wubusubtotal =   0.00 sec*proc
+
+wubuthesaurus =   0.00 sec*proc
+
+wubutransition =   0.00 sec*proc
+
+xps =   0.01 sec*proc
+
+zip =   0.02 sec*proc
 

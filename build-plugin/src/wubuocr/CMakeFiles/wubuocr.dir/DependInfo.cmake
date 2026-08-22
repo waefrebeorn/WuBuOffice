@@ -14,6 +14,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/wubu/WuBuOffice/src/wubuocr/convnet.c" "src/wubuocr/CMakeFiles/wubuocr.dir/convnet.c.o" "gcc" "src/wubuocr/CMakeFiles/wubuocr.dir/convnet.c.o.d"
   "/home/wubu/WuBuOffice/src/wubuocr/convnet3.c" "src/wubuocr/CMakeFiles/wubuocr.dir/convnet3.c.o" "gcc" "src/wubuocr/CMakeFiles/wubuocr.dir/convnet3.c.o.d"
   "/home/wubu/WuBuOffice/src/wubuocr/crnn_transcribe.c" "src/wubuocr/CMakeFiles/wubuocr.dir/crnn_transcribe.c.o" "gcc" "src/wubuocr/CMakeFiles/wubuocr.dir/crnn_transcribe.c.o.d"
+  "/home/wubu/WuBuOffice/src/wubuocr/crnn_transcribe_pre.c" "src/wubuocr/CMakeFiles/wubuocr.dir/crnn_transcribe_pre.c.o" "gcc" "src/wubuocr/CMakeFiles/wubuocr.dir/crnn_transcribe_pre.c.o.d"
   "/home/wubu/WuBuOffice/src/wubuocr/dft.c" "src/wubuocr/CMakeFiles/wubuocr.dir/dft.c.o" "gcc" "src/wubuocr/CMakeFiles/wubuocr.dir/dft.c.o.d"
   "/home/wubu/WuBuOffice/src/wubuocr/docfmt.c" "src/wubuocr/CMakeFiles/wubuocr.dir/docfmt.c.o" "gcc" "src/wubuocr/CMakeFiles/wubuocr.dir/docfmt.c.o.d"
   "/home/wubu/WuBuOffice/src/wubuocr/font8x8.c" "src/wubuocr/CMakeFiles/wubuocr.dir/font8x8.c.o" "gcc" "src/wubuocr/CMakeFiles/wubuocr.dir/font8x8.c.o.d"

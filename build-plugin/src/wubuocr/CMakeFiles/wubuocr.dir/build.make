@@ -377,10 +377,24 @@ src/wubuocr/CMakeFiles/wubuocr.dir/crnn_transcribe.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/wubuocr.dir/crnn_transcribe.c.s"
 	cd /home/wubu/WuBuOffice/build-plugin/src/wubuocr && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/wubu/WuBuOffice/src/wubuocr/crnn_transcribe.c -o CMakeFiles/wubuocr.dir/crnn_transcribe.c.s
 
+src/wubuocr/CMakeFiles/wubuocr.dir/crnn_transcribe_pre.c.o: src/wubuocr/CMakeFiles/wubuocr.dir/flags.make
+src/wubuocr/CMakeFiles/wubuocr.dir/crnn_transcribe_pre.c.o: /home/wubu/WuBuOffice/src/wubuocr/crnn_transcribe_pre.c
+src/wubuocr/CMakeFiles/wubuocr.dir/crnn_transcribe_pre.c.o: src/wubuocr/CMakeFiles/wubuocr.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_23) "Building C object src/wubuocr/CMakeFiles/wubuocr.dir/crnn_transcribe_pre.c.o"
+	cd /home/wubu/WuBuOffice/build-plugin/src/wubuocr && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT src/wubuocr/CMakeFiles/wubuocr.dir/crnn_transcribe_pre.c.o -MF CMakeFiles/wubuocr.dir/crnn_transcribe_pre.c.o.d -o CMakeFiles/wubuocr.dir/crnn_transcribe_pre.c.o -c /home/wubu/WuBuOffice/src/wubuocr/crnn_transcribe_pre.c
+
+src/wubuocr/CMakeFiles/wubuocr.dir/crnn_transcribe_pre.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/wubuocr.dir/crnn_transcribe_pre.c.i"
+	cd /home/wubu/WuBuOffice/build-plugin/src/wubuocr && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/wubu/WuBuOffice/src/wubuocr/crnn_transcribe_pre.c > CMakeFiles/wubuocr.dir/crnn_transcribe_pre.c.i
+
+src/wubuocr/CMakeFiles/wubuocr.dir/crnn_transcribe_pre.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/wubuocr.dir/crnn_transcribe_pre.c.s"
+	cd /home/wubu/WuBuOffice/build-plugin/src/wubuocr && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/wubu/WuBuOffice/src/wubuocr/crnn_transcribe_pre.c -o CMakeFiles/wubuocr.dir/crnn_transcribe_pre.c.s
+
 src/wubuocr/CMakeFiles/wubuocr.dir/docfmt.c.o: src/wubuocr/CMakeFiles/wubuocr.dir/flags.make
 src/wubuocr/CMakeFiles/wubuocr.dir/docfmt.c.o: /home/wubu/WuBuOffice/src/wubuocr/docfmt.c
 src/wubuocr/CMakeFiles/wubuocr.dir/docfmt.c.o: src/wubuocr/CMakeFiles/wubuocr.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_23) "Building C object src/wubuocr/CMakeFiles/wubuocr.dir/docfmt.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_24) "Building C object src/wubuocr/CMakeFiles/wubuocr.dir/docfmt.c.o"
 	cd /home/wubu/WuBuOffice/build-plugin/src/wubuocr && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT src/wubuocr/CMakeFiles/wubuocr.dir/docfmt.c.o -MF CMakeFiles/wubuocr.dir/docfmt.c.o.d -o CMakeFiles/wubuocr.dir/docfmt.c.o -c /home/wubu/WuBuOffice/src/wubuocr/docfmt.c
 
 src/wubuocr/CMakeFiles/wubuocr.dir/docfmt.c.i: cmake_force
@@ -394,7 +408,7 @@ src/wubuocr/CMakeFiles/wubuocr.dir/docfmt.c.s: cmake_force
 src/wubuocr/CMakeFiles/wubuocr.dir/pdfsearch.c.o: src/wubuocr/CMakeFiles/wubuocr.dir/flags.make
 src/wubuocr/CMakeFiles/wubuocr.dir/pdfsearch.c.o: /home/wubu/WuBuOffice/src/wubuocr/pdfsearch.c
 src/wubuocr/CMakeFiles/wubuocr.dir/pdfsearch.c.o: src/wubuocr/CMakeFiles/wubuocr.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_24) "Building C object src/wubuocr/CMakeFiles/wubuocr.dir/pdfsearch.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_25) "Building C object src/wubuocr/CMakeFiles/wubuocr.dir/pdfsearch.c.o"
 	cd /home/wubu/WuBuOffice/build-plugin/src/wubuocr && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT src/wubuocr/CMakeFiles/wubuocr.dir/pdfsearch.c.o -MF CMakeFiles/wubuocr.dir/pdfsearch.c.o.d -o CMakeFiles/wubuocr.dir/pdfsearch.c.o -c /home/wubu/WuBuOffice/src/wubuocr/pdfsearch.c
 
 src/wubuocr/CMakeFiles/wubuocr.dir/pdfsearch.c.i: cmake_force
@@ -408,7 +422,7 @@ src/wubuocr/CMakeFiles/wubuocr.dir/pdfsearch.c.s: cmake_force
 src/wubuocr/CMakeFiles/wubuocr.dir/qr.c.o: src/wubuocr/CMakeFiles/wubuocr.dir/flags.make
 src/wubuocr/CMakeFiles/wubuocr.dir/qr.c.o: /home/wubu/WuBuOffice/src/wubuocr/qr.c
 src/wubuocr/CMakeFiles/wubuocr.dir/qr.c.o: src/wubuocr/CMakeFiles/wubuocr.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_25) "Building C object src/wubuocr/CMakeFiles/wubuocr.dir/qr.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_26) "Building C object src/wubuocr/CMakeFiles/wubuocr.dir/qr.c.o"
 	cd /home/wubu/WuBuOffice/build-plugin/src/wubuocr && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT src/wubuocr/CMakeFiles/wubuocr.dir/qr.c.o -MF CMakeFiles/wubuocr.dir/qr.c.o.d -o CMakeFiles/wubuocr.dir/qr.c.o -c /home/wubu/WuBuOffice/src/wubuocr/qr.c
 
 src/wubuocr/CMakeFiles/wubuocr.dir/qr.c.i: cmake_force
@@ -422,7 +436,7 @@ src/wubuocr/CMakeFiles/wubuocr.dir/qr.c.s: cmake_force
 src/wubuocr/CMakeFiles/wubuocr.dir/gru_layout.c.o: src/wubuocr/CMakeFiles/wubuocr.dir/flags.make
 src/wubuocr/CMakeFiles/wubuocr.dir/gru_layout.c.o: /home/wubu/WuBuOffice/src/wubuocr/gru_layout.c
 src/wubuocr/CMakeFiles/wubuocr.dir/gru_layout.c.o: src/wubuocr/CMakeFiles/wubuocr.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_26) "Building C object src/wubuocr/CMakeFiles/wubuocr.dir/gru_layout.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_27) "Building C object src/wubuocr/CMakeFiles/wubuocr.dir/gru_layout.c.o"
 	cd /home/wubu/WuBuOffice/build-plugin/src/wubuocr && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT src/wubuocr/CMakeFiles/wubuocr.dir/gru_layout.c.o -MF CMakeFiles/wubuocr.dir/gru_layout.c.o.d -o CMakeFiles/wubuocr.dir/gru_layout.c.o -c /home/wubu/WuBuOffice/src/wubuocr/gru_layout.c
 
 src/wubuocr/CMakeFiles/wubuocr.dir/gru_layout.c.i: cmake_force
@@ -457,6 +471,7 @@ wubuocr_OBJECTS = \
 "CMakeFiles/wubuocr.dir/dft.c.o" \
 "CMakeFiles/wubuocr.dir/goldplace.c.o" \
 "CMakeFiles/wubuocr.dir/crnn_transcribe.c.o" \
+"CMakeFiles/wubuocr.dir/crnn_transcribe_pre.c.o" \
 "CMakeFiles/wubuocr.dir/docfmt.c.o" \
 "CMakeFiles/wubuocr.dir/pdfsearch.c.o" \
 "CMakeFiles/wubuocr.dir/qr.c.o" \
@@ -487,13 +502,14 @@ src/wubuocr/libwubuocr.a: src/wubuocr/CMakeFiles/wubuocr.dir/stylebank.c.o
 src/wubuocr/libwubuocr.a: src/wubuocr/CMakeFiles/wubuocr.dir/dft.c.o
 src/wubuocr/libwubuocr.a: src/wubuocr/CMakeFiles/wubuocr.dir/goldplace.c.o
 src/wubuocr/libwubuocr.a: src/wubuocr/CMakeFiles/wubuocr.dir/crnn_transcribe.c.o
+src/wubuocr/libwubuocr.a: src/wubuocr/CMakeFiles/wubuocr.dir/crnn_transcribe_pre.c.o
 src/wubuocr/libwubuocr.a: src/wubuocr/CMakeFiles/wubuocr.dir/docfmt.c.o
 src/wubuocr/libwubuocr.a: src/wubuocr/CMakeFiles/wubuocr.dir/pdfsearch.c.o
 src/wubuocr/libwubuocr.a: src/wubuocr/CMakeFiles/wubuocr.dir/qr.c.o
 src/wubuocr/libwubuocr.a: src/wubuocr/CMakeFiles/wubuocr.dir/gru_layout.c.o
 src/wubuocr/libwubuocr.a: src/wubuocr/CMakeFiles/wubuocr.dir/build.make
 src/wubuocr/libwubuocr.a: src/wubuocr/CMakeFiles/wubuocr.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_27) "Linking C static library libwubuocr.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_28) "Linking C static library libwubuocr.a"
 	cd /home/wubu/WuBuOffice/build-plugin/src/wubuocr && $(CMAKE_COMMAND) -P CMakeFiles/wubuocr.dir/cmake_clean_target.cmake
 	cd /home/wubu/WuBuOffice/build-plugin/src/wubuocr && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/wubuocr.dir/link.txt --verbose=$(VERBOSE)
 

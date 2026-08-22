@@ -322,6 +322,30 @@ crnn_transcribe.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f src/wubuocr/CMakeFiles/wubuocr.dir/build.make src/wubuocr/CMakeFiles/wubuocr.dir/crnn_transcribe.c.s
 .PHONY : crnn_transcribe.c.s
 
+crnn_transcribe_pre.o: crnn_transcribe_pre.c.o
+.PHONY : crnn_transcribe_pre.o
+
+# target to build an object file
+crnn_transcribe_pre.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f src/wubuocr/CMakeFiles/wubuocr.dir/build.make src/wubuocr/CMakeFiles/wubuocr.dir/crnn_transcribe_pre.c.o
+.PHONY : crnn_transcribe_pre.c.o
+
+crnn_transcribe_pre.i: crnn_transcribe_pre.c.i
+.PHONY : crnn_transcribe_pre.i
+
+# target to preprocess a source file
+crnn_transcribe_pre.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f src/wubuocr/CMakeFiles/wubuocr.dir/build.make src/wubuocr/CMakeFiles/wubuocr.dir/crnn_transcribe_pre.c.i
+.PHONY : crnn_transcribe_pre.c.i
+
+crnn_transcribe_pre.s: crnn_transcribe_pre.c.s
+.PHONY : crnn_transcribe_pre.s
+
+# target to generate assembly for a file
+crnn_transcribe_pre.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f src/wubuocr/CMakeFiles/wubuocr.dir/build.make src/wubuocr/CMakeFiles/wubuocr.dir/crnn_transcribe_pre.c.s
+.PHONY : crnn_transcribe_pre.c.s
+
 ctc.o: ctc.c.o
 .PHONY : ctc.o
 
@@ -1026,6 +1050,9 @@ help:
 	@echo "... crnn_transcribe.o"
 	@echo "... crnn_transcribe.i"
 	@echo "... crnn_transcribe.s"
+	@echo "... crnn_transcribe_pre.o"
+	@echo "... crnn_transcribe_pre.i"
+	@echo "... crnn_transcribe_pre.s"
 	@echo "... ctc.o"
 	@echo "... ctc.i"
 	@echo "... ctc.s"

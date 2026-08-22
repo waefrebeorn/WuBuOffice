@@ -24,8 +24,10 @@ apps/wubuos/CMakeFiles/test_view.dir/test_view.c.o: \
  /home/wubu/WuBuOffice/src/wubutoc/toc.h \
  /home/wubu/WuBuOffice/apps/wubuos/palette.h \
  /home/wubu/WuBuOffice/apps/wubuos/wuos_file.h \
- /home/wubu/WuBuOffice/src/wubuautosave/autosave.h /usr/include/stdio.h \
- /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h \
+ /home/wubu/WuBuOffice/src/wubuautosave/autosave.h \
+ /home/wubu/WuBuOffice/apps/wubucell/cell.h \
+ /home/wubu/WuBuOffice/src/wubumodel/../wubuoxml/package.h \
+ /usr/include/stdio.h /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h \
  /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h \

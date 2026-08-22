@@ -505,6 +505,34 @@ test_cell_read/fast:
 .PHONY : test_cell_read/fast
 
 # Convenience name for target.
+tests/CMakeFiles/test_xlsample.dir/rule:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_xlsample.dir/rule
+.PHONY : tests/CMakeFiles/test_xlsample.dir/rule
+
+# Convenience name for target.
+test_xlsample: tests/CMakeFiles/test_xlsample.dir/rule
+.PHONY : test_xlsample
+
+# fast build rule for target.
+test_xlsample/fast:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_xlsample.dir/build.make tests/CMakeFiles/test_xlsample.dir/build
+.PHONY : test_xlsample/fast
+
+# Convenience name for target.
+tests/CMakeFiles/test_cell_edit.dir/rule:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_cell_edit.dir/rule
+.PHONY : tests/CMakeFiles/test_cell_edit.dir/rule
+
+# Convenience name for target.
+test_cell_edit: tests/CMakeFiles/test_cell_edit.dir/rule
+.PHONY : test_cell_edit
+
+# fast build rule for target.
+test_cell_edit/fast:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_cell_edit.dir/build.make tests/CMakeFiles/test_cell_edit.dir/build
+.PHONY : test_cell_edit/fast
+
+# Convenience name for target.
 tests/CMakeFiles/test_cell_cycle.dir/rule:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_cell_cycle.dir/rule
 .PHONY : tests/CMakeFiles/test_cell_cycle.dir/rule
@@ -1379,6 +1407,30 @@ test_cell_cycle.s: test_cell_cycle.c.s
 test_cell_cycle.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_cell_cycle.dir/build.make tests/CMakeFiles/test_cell_cycle.dir/test_cell_cycle.c.s
 .PHONY : test_cell_cycle.c.s
+
+test_cell_edit.o: test_cell_edit.c.o
+.PHONY : test_cell_edit.o
+
+# target to build an object file
+test_cell_edit.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_cell_edit.dir/build.make tests/CMakeFiles/test_cell_edit.dir/test_cell_edit.c.o
+.PHONY : test_cell_edit.c.o
+
+test_cell_edit.i: test_cell_edit.c.i
+.PHONY : test_cell_edit.i
+
+# target to preprocess a source file
+test_cell_edit.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_cell_edit.dir/build.make tests/CMakeFiles/test_cell_edit.dir/test_cell_edit.c.i
+.PHONY : test_cell_edit.c.i
+
+test_cell_edit.s: test_cell_edit.c.s
+.PHONY : test_cell_edit.s
+
+# target to generate assembly for a file
+test_cell_edit.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_cell_edit.dir/build.make tests/CMakeFiles/test_cell_edit.dir/test_cell_edit.c.s
+.PHONY : test_cell_edit.c.s
 
 test_cell_merge.o: test_cell_merge.c.o
 .PHONY : test_cell_merge.o
@@ -2988,6 +3040,30 @@ test_wubuzip.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_wubuzip.dir/build.make tests/CMakeFiles/test_wubuzip.dir/test_wubuzip.c.s
 .PHONY : test_wubuzip.c.s
 
+test_xlsample.o: test_xlsample.c.o
+.PHONY : test_xlsample.o
+
+# target to build an object file
+test_xlsample.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_xlsample.dir/build.make tests/CMakeFiles/test_xlsample.dir/test_xlsample.c.o
+.PHONY : test_xlsample.c.o
+
+test_xlsample.i: test_xlsample.c.i
+.PHONY : test_xlsample.i
+
+# target to preprocess a source file
+test_xlsample.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_xlsample.dir/build.make tests/CMakeFiles/test_xlsample.dir/test_xlsample.c.i
+.PHONY : test_xlsample.c.i
+
+test_xlsample.s: test_xlsample.c.s
+.PHONY : test_xlsample.s
+
+# target to generate assembly for a file
+test_xlsample.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_xlsample.dir/build.make tests/CMakeFiles/test_xlsample.dir/test_xlsample.c.s
+.PHONY : test_xlsample.c.s
+
 test_xlsx.o: test_xlsx.c.o
 .PHONY : test_xlsx.o
 
@@ -3025,6 +3101,7 @@ help:
 	@echo "... test_autosave"
 	@echo "... test_base"
 	@echo "... test_cell_cycle"
+	@echo "... test_cell_edit"
 	@echo "... test_cell_merge"
 	@echo "... test_cell_read"
 	@echo "... test_chart"
@@ -3092,6 +3169,7 @@ help:
 	@echo "... test_wubuview_ctrl"
 	@echo "... test_wubuxml_parser"
 	@echo "... test_wubuzip"
+	@echo "... test_xlsample"
 	@echo "... test_xlsx"
 	@echo "... __/apps/wubunote/note_controller.o"
 	@echo "... __/apps/wubunote/note_controller.i"
@@ -3123,6 +3201,9 @@ help:
 	@echo "... test_cell_cycle.o"
 	@echo "... test_cell_cycle.i"
 	@echo "... test_cell_cycle.s"
+	@echo "... test_cell_edit.o"
+	@echo "... test_cell_edit.i"
+	@echo "... test_cell_edit.s"
 	@echo "... test_cell_merge.o"
 	@echo "... test_cell_merge.i"
 	@echo "... test_cell_merge.s"
@@ -3324,6 +3405,9 @@ help:
 	@echo "... test_wubuzip.o"
 	@echo "... test_wubuzip.i"
 	@echo "... test_wubuzip.s"
+	@echo "... test_xlsample.o"
+	@echo "... test_xlsample.i"
+	@echo "... test_xlsample.s"
 	@echo "... test_xlsx.o"
 	@echo "... test_xlsx.i"
 	@echo "... test_xlsx.s"

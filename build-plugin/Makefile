@@ -1323,6 +1323,214 @@ test_fmtpaint/fast:
 .PHONY : test_fmtpaint/fast
 
 #=============================================================================
+# Target rules for targets named wubusort
+
+# Build rule for target.
+wubusort: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 wubusort
+.PHONY : wubusort
+
+# fast build rule for target.
+wubusort/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubusort/CMakeFiles/wubusort.dir/build.make src/wubusort/CMakeFiles/wubusort.dir/build
+.PHONY : wubusort/fast
+
+#=============================================================================
+# Target rules for targets named test_wubusort
+
+# Build rule for target.
+test_wubusort: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_wubusort
+.PHONY : test_wubusort
+
+# fast build rule for target.
+test_wubusort/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubusort/CMakeFiles/test_wubusort.dir/build.make src/wubusort/CMakeFiles/test_wubusort.dir/build
+.PHONY : test_wubusort/fast
+
+#=============================================================================
+# Target rules for targets named wubufilter
+
+# Build rule for target.
+wubufilter: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 wubufilter
+.PHONY : wubufilter
+
+# fast build rule for target.
+wubufilter/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubufilter/CMakeFiles/wubufilter.dir/build.make src/wubufilter/CMakeFiles/wubufilter.dir/build
+.PHONY : wubufilter/fast
+
+#=============================================================================
+# Target rules for targets named test_wubufilter
+
+# Build rule for target.
+test_wubufilter: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_wubufilter
+.PHONY : test_wubufilter
+
+# fast build rule for target.
+test_wubufilter/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubufilter/CMakeFiles/test_wubufilter.dir/build.make src/wubufilter/CMakeFiles/test_wubufilter.dir/build
+.PHONY : test_wubufilter/fast
+
+#=============================================================================
+# Target rules for targets named wubusubtotal
+
+# Build rule for target.
+wubusubtotal: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 wubusubtotal
+.PHONY : wubusubtotal
+
+# fast build rule for target.
+wubusubtotal/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubusubtotal/CMakeFiles/wubusubtotal.dir/build.make src/wubusubtotal/CMakeFiles/wubusubtotal.dir/build
+.PHONY : wubusubtotal/fast
+
+#=============================================================================
+# Target rules for targets named test_wubusubtotal
+
+# Build rule for target.
+test_wubusubtotal: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_wubusubtotal
+.PHONY : test_wubusubtotal
+
+# fast build rule for target.
+test_wubusubtotal/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubusubtotal/CMakeFiles/test_wubusubtotal.dir/build.make src/wubusubtotal/CMakeFiles/test_wubusubtotal.dir/build
+.PHONY : test_wubusubtotal/fast
+
+#=============================================================================
+# Target rules for targets named wubugoalseek
+
+# Build rule for target.
+wubugoalseek: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 wubugoalseek
+.PHONY : wubugoalseek
+
+# fast build rule for target.
+wubugoalseek/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubugoalseek/CMakeFiles/wubugoalseek.dir/build.make src/wubugoalseek/CMakeFiles/wubugoalseek.dir/build
+.PHONY : wubugoalseek/fast
+
+#=============================================================================
+# Target rules for targets named test_wubugoalseek
+
+# Build rule for target.
+test_wubugoalseek: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_wubugoalseek
+.PHONY : test_wubugoalseek
+
+# fast build rule for target.
+test_wubugoalseek/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubugoalseek/CMakeFiles/test_wubugoalseek.dir/build.make src/wubugoalseek/CMakeFiles/test_wubugoalseek.dir/build
+.PHONY : test_wubugoalseek/fast
+
+#=============================================================================
+# Target rules for targets named wubusolver
+
+# Build rule for target.
+wubusolver: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 wubusolver
+.PHONY : wubusolver
+
+# fast build rule for target.
+wubusolver/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubusolver/CMakeFiles/wubusolver.dir/build.make src/wubusolver/CMakeFiles/wubusolver.dir/build
+.PHONY : wubusolver/fast
+
+#=============================================================================
+# Target rules for targets named test_wubusolver
+
+# Build rule for target.
+test_wubusolver: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_wubusolver
+.PHONY : test_wubusolver
+
+# fast build rule for target.
+test_wubusolver/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubusolver/CMakeFiles/test_wubusolver.dir/build.make src/wubusolver/CMakeFiles/test_wubusolver.dir/build
+.PHONY : test_wubusolver/fast
+
+#=============================================================================
+# Target rules for targets named wubupivot
+
+# Build rule for target.
+wubupivot: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 wubupivot
+.PHONY : wubupivot
+
+# fast build rule for target.
+wubupivot/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubupivot/CMakeFiles/wubupivot.dir/build.make src/wubupivot/CMakeFiles/wubupivot.dir/build
+.PHONY : wubupivot/fast
+
+#=============================================================================
+# Target rules for targets named test_wubupivot
+
+# Build rule for target.
+test_wubupivot: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_wubupivot
+.PHONY : test_wubupivot
+
+# fast build rule for target.
+test_wubupivot/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubupivot/CMakeFiles/test_wubupivot.dir/build.make src/wubupivot/CMakeFiles/test_wubupivot.dir/build
+.PHONY : test_wubupivot/fast
+
+#=============================================================================
+# Target rules for targets named wubuscenario
+
+# Build rule for target.
+wubuscenario: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 wubuscenario
+.PHONY : wubuscenario
+
+# fast build rule for target.
+wubuscenario/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubuscenario/CMakeFiles/wubuscenario.dir/build.make src/wubuscenario/CMakeFiles/wubuscenario.dir/build
+.PHONY : wubuscenario/fast
+
+#=============================================================================
+# Target rules for targets named test_wubuscenario
+
+# Build rule for target.
+test_wubuscenario: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_wubuscenario
+.PHONY : test_wubuscenario
+
+# fast build rule for target.
+test_wubuscenario/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubuscenario/CMakeFiles/test_wubuscenario.dir/build.make src/wubuscenario/CMakeFiles/test_wubuscenario.dir/build
+.PHONY : test_wubuscenario/fast
+
+#=============================================================================
+# Target rules for targets named wubufreeze
+
+# Build rule for target.
+wubufreeze: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 wubufreeze
+.PHONY : wubufreeze
+
+# fast build rule for target.
+wubufreeze/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubufreeze/CMakeFiles/wubufreeze.dir/build.make src/wubufreeze/CMakeFiles/wubufreeze.dir/build
+.PHONY : wubufreeze/fast
+
+#=============================================================================
+# Target rules for targets named test_wubufreeze
+
+# Build rule for target.
+test_wubufreeze: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_wubufreeze
+.PHONY : test_wubufreeze
+
+# fast build rule for target.
+test_wubufreeze/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubufreeze/CMakeFiles/test_wubufreeze.dir/build.make src/wubufreeze/CMakeFiles/test_wubufreeze.dir/build
+.PHONY : test_wubufreeze/fast
+
+#=============================================================================
 # Target rules for targets named wubunesttab
 
 # Build rule for target.
@@ -1373,6 +1581,630 @@ test_pdfform: cmake_check_build_system
 test_pdfform/fast:
 	$(MAKE) $(MAKESILENT) -f src/wubupdfform/CMakeFiles/test_pdfform.dir/build.make src/wubupdfform/CMakeFiles/test_pdfform.dir/build
 .PHONY : test_pdfform/fast
+
+#=============================================================================
+# Target rules for targets named wubuhyperlink
+
+# Build rule for target.
+wubuhyperlink: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 wubuhyperlink
+.PHONY : wubuhyperlink
+
+# fast build rule for target.
+wubuhyperlink/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubuhyperlink/CMakeFiles/wubuhyperlink.dir/build.make src/wubuhyperlink/CMakeFiles/wubuhyperlink.dir/build
+.PHONY : wubuhyperlink/fast
+
+#=============================================================================
+# Target rules for targets named test_wubuhyperlink
+
+# Build rule for target.
+test_wubuhyperlink: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_wubuhyperlink
+.PHONY : test_wubuhyperlink
+
+# fast build rule for target.
+test_wubuhyperlink/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubuhyperlink/CMakeFiles/test_wubuhyperlink.dir/build.make src/wubuhyperlink/CMakeFiles/test_wubuhyperlink.dir/build
+.PHONY : test_wubuhyperlink/fast
+
+#=============================================================================
+# Target rules for targets named wubuthesaurus
+
+# Build rule for target.
+wubuthesaurus: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 wubuthesaurus
+.PHONY : wubuthesaurus
+
+# fast build rule for target.
+wubuthesaurus/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubuthesaurus/CMakeFiles/wubuthesaurus.dir/build.make src/wubuthesaurus/CMakeFiles/wubuthesaurus.dir/build
+.PHONY : wubuthesaurus/fast
+
+#=============================================================================
+# Target rules for targets named test_wubuthesaurus
+
+# Build rule for target.
+test_wubuthesaurus: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_wubuthesaurus
+.PHONY : test_wubuthesaurus
+
+# fast build rule for target.
+test_wubuthesaurus/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubuthesaurus/CMakeFiles/test_wubuthesaurus.dir/build.make src/wubuthesaurus/CMakeFiles/test_wubuthesaurus.dir/build
+.PHONY : test_wubuthesaurus/fast
+
+#=============================================================================
+# Target rules for targets named wubugrammar
+
+# Build rule for target.
+wubugrammar: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 wubugrammar
+.PHONY : wubugrammar
+
+# fast build rule for target.
+wubugrammar/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubugrammar/CMakeFiles/wubugrammar.dir/build.make src/wubugrammar/CMakeFiles/wubugrammar.dir/build
+.PHONY : wubugrammar/fast
+
+#=============================================================================
+# Target rules for targets named test_wubugrammar
+
+# Build rule for target.
+test_wubugrammar: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_wubugrammar
+.PHONY : test_wubugrammar
+
+# fast build rule for target.
+test_wubugrammar/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubugrammar/CMakeFiles/test_wubugrammar.dir/build.make src/wubugrammar/CMakeFiles/test_wubugrammar.dir/build
+.PHONY : test_wubugrammar/fast
+
+#=============================================================================
+# Target rules for targets named wubuindex
+
+# Build rule for target.
+wubuindex: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 wubuindex
+.PHONY : wubuindex
+
+# fast build rule for target.
+wubuindex/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubuindex/CMakeFiles/wubuindex.dir/build.make src/wubuindex/CMakeFiles/wubuindex.dir/build
+.PHONY : wubuindex/fast
+
+#=============================================================================
+# Target rules for targets named test_wubuindex
+
+# Build rule for target.
+test_wubuindex: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_wubuindex
+.PHONY : test_wubuindex
+
+# fast build rule for target.
+test_wubuindex/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubuindex/CMakeFiles/test_wubuindex.dir/build.make src/wubuindex/CMakeFiles/test_wubuindex.dir/build
+.PHONY : test_wubuindex/fast
+
+#=============================================================================
+# Target rules for targets named wubumailmerge
+
+# Build rule for target.
+wubumailmerge: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 wubumailmerge
+.PHONY : wubumailmerge
+
+# fast build rule for target.
+wubumailmerge/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubumailmerge/CMakeFiles/wubumailmerge.dir/build.make src/wubumailmerge/CMakeFiles/wubumailmerge.dir/build
+.PHONY : wubumailmerge/fast
+
+#=============================================================================
+# Target rules for targets named test_wubumailmerge
+
+# Build rule for target.
+test_wubumailmerge: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_wubumailmerge
+.PHONY : test_wubumailmerge
+
+# fast build rule for target.
+test_wubumailmerge/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubumailmerge/CMakeFiles/test_wubumailmerge.dir/build.make src/wubumailmerge/CMakeFiles/test_wubumailmerge.dir/build
+.PHONY : test_wubumailmerge/fast
+
+#=============================================================================
+# Target rules for targets named wubudiff
+
+# Build rule for target.
+wubudiff: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 wubudiff
+.PHONY : wubudiff
+
+# fast build rule for target.
+wubudiff/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubudiff/CMakeFiles/wubudiff.dir/build.make src/wubudiff/CMakeFiles/wubudiff.dir/build
+.PHONY : wubudiff/fast
+
+#=============================================================================
+# Target rules for targets named test_wubudiff
+
+# Build rule for target.
+test_wubudiff: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_wubudiff
+.PHONY : test_wubudiff
+
+# fast build rule for target.
+test_wubudiff/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubudiff/CMakeFiles/test_wubudiff.dir/build.make src/wubudiff/CMakeFiles/test_wubudiff.dir/build
+.PHONY : test_wubudiff/fast
+
+#=============================================================================
+# Target rules for targets named wubumasterdoc
+
+# Build rule for target.
+wubumasterdoc: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 wubumasterdoc
+.PHONY : wubumasterdoc
+
+# fast build rule for target.
+wubumasterdoc/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubumasterdoc/CMakeFiles/wubumasterdoc.dir/build.make src/wubumasterdoc/CMakeFiles/wubumasterdoc.dir/build
+.PHONY : wubumasterdoc/fast
+
+#=============================================================================
+# Target rules for targets named test_wubumasterdoc
+
+# Build rule for target.
+test_wubumasterdoc: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_wubumasterdoc
+.PHONY : test_wubumasterdoc
+
+# fast build rule for target.
+test_wubumasterdoc/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubumasterdoc/CMakeFiles/test_wubumasterdoc.dir/build.make src/wubumasterdoc/CMakeFiles/test_wubumasterdoc.dir/build
+.PHONY : test_wubumasterdoc/fast
+
+#=============================================================================
+# Target rules for targets named wubudropcap
+
+# Build rule for target.
+wubudropcap: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 wubudropcap
+.PHONY : wubudropcap
+
+# fast build rule for target.
+wubudropcap/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubudropcap/CMakeFiles/wubudropcap.dir/build.make src/wubudropcap/CMakeFiles/wubudropcap.dir/build
+.PHONY : wubudropcap/fast
+
+#=============================================================================
+# Target rules for targets named test_wubudropcap
+
+# Build rule for target.
+test_wubudropcap: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_wubudropcap
+.PHONY : test_wubudropcap
+
+# fast build rule for target.
+test_wubudropcap/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubudropcap/CMakeFiles/test_wubudropcap.dir/build.make src/wubudropcap/CMakeFiles/test_wubudropcap.dir/build
+.PHONY : test_wubudropcap/fast
+
+#=============================================================================
+# Target rules for targets named wuburuler
+
+# Build rule for target.
+wuburuler: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 wuburuler
+.PHONY : wuburuler
+
+# fast build rule for target.
+wuburuler/fast:
+	$(MAKE) $(MAKESILENT) -f src/wuburuler/CMakeFiles/wuburuler.dir/build.make src/wuburuler/CMakeFiles/wuburuler.dir/build
+.PHONY : wuburuler/fast
+
+#=============================================================================
+# Target rules for targets named test_wuburuler
+
+# Build rule for target.
+test_wuburuler: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_wuburuler
+.PHONY : test_wuburuler
+
+# fast build rule for target.
+test_wuburuler/fast:
+	$(MAKE) $(MAKESILENT) -f src/wuburuler/CMakeFiles/test_wuburuler.dir/build.make src/wuburuler/CMakeFiles/test_wuburuler.dir/build
+.PHONY : test_wuburuler/fast
+
+#=============================================================================
+# Target rules for targets named wubugridline
+
+# Build rule for target.
+wubugridline: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 wubugridline
+.PHONY : wubugridline
+
+# fast build rule for target.
+wubugridline/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubugridline/CMakeFiles/wubugridline.dir/build.make src/wubugridline/CMakeFiles/wubugridline.dir/build
+.PHONY : wubugridline/fast
+
+#=============================================================================
+# Target rules for targets named test_wubugridline
+
+# Build rule for target.
+test_wubugridline: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_wubugridline
+.PHONY : test_wubugridline
+
+# fast build rule for target.
+test_wubugridline/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubugridline/CMakeFiles/test_wubugridline.dir/build.make src/wubugridline/CMakeFiles/test_wubugridline.dir/build
+.PHONY : test_wubugridline/fast
+
+#=============================================================================
+# Target rules for targets named wubuicon
+
+# Build rule for target.
+wubuicon: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 wubuicon
+.PHONY : wubuicon
+
+# fast build rule for target.
+wubuicon/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubuicon/CMakeFiles/wubuicon.dir/build.make src/wubuicon/CMakeFiles/wubuicon.dir/build
+.PHONY : wubuicon/fast
+
+#=============================================================================
+# Target rules for targets named test_wubuicon
+
+# Build rule for target.
+test_wubuicon: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_wubuicon
+.PHONY : test_wubuicon
+
+# fast build rule for target.
+test_wubuicon/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubuicon/CMakeFiles/test_wubuicon.dir/build.make src/wubuicon/CMakeFiles/test_wubuicon.dir/build
+.PHONY : test_wubuicon/fast
+
+#=============================================================================
+# Target rules for targets named wubugallery
+
+# Build rule for target.
+wubugallery: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 wubugallery
+.PHONY : wubugallery
+
+# fast build rule for target.
+wubugallery/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubugallery/CMakeFiles/wubugallery.dir/build.make src/wubugallery/CMakeFiles/wubugallery.dir/build
+.PHONY : wubugallery/fast
+
+#=============================================================================
+# Target rules for targets named test_wubugallery
+
+# Build rule for target.
+test_wubugallery: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_wubugallery
+.PHONY : test_wubugallery
+
+# fast build rule for target.
+test_wubugallery/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubugallery/CMakeFiles/test_wubugallery.dir/build.make src/wubugallery/CMakeFiles/test_wubugallery.dir/build
+.PHONY : test_wubugallery/fast
+
+#=============================================================================
+# Target rules for targets named wubusidebar
+
+# Build rule for target.
+wubusidebar: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 wubusidebar
+.PHONY : wubusidebar
+
+# fast build rule for target.
+wubusidebar/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubusidebar/CMakeFiles/wubusidebar.dir/build.make src/wubusidebar/CMakeFiles/wubusidebar.dir/build
+.PHONY : wubusidebar/fast
+
+#=============================================================================
+# Target rules for targets named test_wubusidebar
+
+# Build rule for target.
+test_wubusidebar: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_wubusidebar
+.PHONY : test_wubusidebar
+
+# fast build rule for target.
+test_wubusidebar/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubusidebar/CMakeFiles/test_wubusidebar.dir/build.make src/wubusidebar/CMakeFiles/test_wubusidebar.dir/build
+.PHONY : test_wubusidebar/fast
+
+#=============================================================================
+# Target rules for targets named wubutransition
+
+# Build rule for target.
+wubutransition: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 wubutransition
+.PHONY : wubutransition
+
+# fast build rule for target.
+wubutransition/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubutransition/CMakeFiles/wubutransition.dir/build.make src/wubutransition/CMakeFiles/wubutransition.dir/build
+.PHONY : wubutransition/fast
+
+#=============================================================================
+# Target rules for targets named test_wubutransition
+
+# Build rule for target.
+test_wubutransition: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_wubutransition
+.PHONY : test_wubutransition
+
+# fast build rule for target.
+test_wubutransition/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubutransition/CMakeFiles/test_wubutransition.dir/build.make src/wubutransition/CMakeFiles/test_wubutransition.dir/build
+.PHONY : test_wubutransition/fast
+
+#=============================================================================
+# Target rules for targets named wubuanimation
+
+# Build rule for target.
+wubuanimation: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 wubuanimation
+.PHONY : wubuanimation
+
+# fast build rule for target.
+wubuanimation/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubuanimation/CMakeFiles/wubuanimation.dir/build.make src/wubuanimation/CMakeFiles/wubuanimation.dir/build
+.PHONY : wubuanimation/fast
+
+#=============================================================================
+# Target rules for targets named test_wubuanimation
+
+# Build rule for target.
+test_wubuanimation: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_wubuanimation
+.PHONY : test_wubuanimation
+
+# fast build rule for target.
+test_wubuanimation/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubuanimation/CMakeFiles/test_wubuanimation.dir/build.make src/wubuanimation/CMakeFiles/test_wubuanimation.dir/build
+.PHONY : test_wubuanimation/fast
+
+#=============================================================================
+# Target rules for targets named wubumasterslide
+
+# Build rule for target.
+wubumasterslide: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 wubumasterslide
+.PHONY : wubumasterslide
+
+# fast build rule for target.
+wubumasterslide/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubumasterslide/CMakeFiles/wubumasterslide.dir/build.make src/wubumasterslide/CMakeFiles/wubumasterslide.dir/build
+.PHONY : wubumasterslide/fast
+
+#=============================================================================
+# Target rules for targets named test_wubumasterslide
+
+# Build rule for target.
+test_wubumasterslide: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_wubumasterslide
+.PHONY : test_wubumasterslide
+
+# fast build rule for target.
+test_wubumasterslide/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubumasterslide/CMakeFiles/test_wubumasterslide.dir/build.make src/wubumasterslide/CMakeFiles/test_wubumasterslide.dir/build
+.PHONY : test_wubumasterslide/fast
+
+#=============================================================================
+# Target rules for targets named wubuconnector
+
+# Build rule for target.
+wubuconnector: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 wubuconnector
+.PHONY : wubuconnector
+
+# fast build rule for target.
+wubuconnector/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubuconnector/CMakeFiles/wubuconnector.dir/build.make src/wubuconnector/CMakeFiles/wubuconnector.dir/build
+.PHONY : wubuconnector/fast
+
+#=============================================================================
+# Target rules for targets named test_wubuconnector
+
+# Build rule for target.
+test_wubuconnector: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_wubuconnector
+.PHONY : test_wubuconnector
+
+# fast build rule for target.
+test_wubuconnector/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubuconnector/CMakeFiles/test_wubuconnector.dir/build.make src/wubuconnector/CMakeFiles/test_wubuconnector.dir/build
+.PHONY : test_wubuconnector/fast
+
+#=============================================================================
+# Target rules for targets named wubuencrypt
+
+# Build rule for target.
+wubuencrypt: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 wubuencrypt
+.PHONY : wubuencrypt
+
+# fast build rule for target.
+wubuencrypt/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubuencrypt/CMakeFiles/wubuencrypt.dir/build.make src/wubuencrypt/CMakeFiles/wubuencrypt.dir/build
+.PHONY : wubuencrypt/fast
+
+#=============================================================================
+# Target rules for targets named test_wubuencrypt
+
+# Build rule for target.
+test_wubuencrypt: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_wubuencrypt
+.PHONY : test_wubuencrypt
+
+# fast build rule for target.
+test_wubuencrypt/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubuencrypt/CMakeFiles/test_wubuencrypt.dir/build.make src/wubuencrypt/CMakeFiles/test_wubuencrypt.dir/build
+.PHONY : test_wubuencrypt/fast
+
+#=============================================================================
+# Target rules for targets named wubumailexport
+
+# Build rule for target.
+wubumailexport: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 wubumailexport
+.PHONY : wubumailexport
+
+# fast build rule for target.
+wubumailexport/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubumailexport/CMakeFiles/wubumailexport.dir/build.make src/wubumailexport/CMakeFiles/wubumailexport.dir/build
+.PHONY : wubumailexport/fast
+
+#=============================================================================
+# Target rules for targets named test_wubumailexport
+
+# Build rule for target.
+test_wubumailexport: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_wubumailexport
+.PHONY : test_wubumailexport
+
+# fast build rule for target.
+test_wubumailexport/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubumailexport/CMakeFiles/test_wubumailexport.dir/build.make src/wubumailexport/CMakeFiles/test_wubumailexport.dir/build
+.PHONY : test_wubumailexport/fast
+
+#=============================================================================
+# Target rules for targets named wubunotebookbar
+
+# Build rule for target.
+wubunotebookbar: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 wubunotebookbar
+.PHONY : wubunotebookbar
+
+# fast build rule for target.
+wubunotebookbar/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubunotebookbar/CMakeFiles/wubunotebookbar.dir/build.make src/wubunotebookbar/CMakeFiles/wubunotebookbar.dir/build
+.PHONY : wubunotebookbar/fast
+
+#=============================================================================
+# Target rules for targets named test_wubunotebookbar
+
+# Build rule for target.
+test_wubunotebookbar: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_wubunotebookbar
+.PHONY : test_wubunotebookbar
+
+# fast build rule for target.
+test_wubunotebookbar/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubunotebookbar/CMakeFiles/test_wubunotebookbar.dir/build.make src/wubunotebookbar/CMakeFiles/test_wubunotebookbar.dir/build
+.PHONY : test_wubunotebookbar/fast
+
+#=============================================================================
+# Target rules for targets named wubuqr
+
+# Build rule for target.
+wubuqr: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 wubuqr
+.PHONY : wubuqr
+
+# fast build rule for target.
+wubuqr/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubuqr/CMakeFiles/wubuqr.dir/build.make src/wubuqr/CMakeFiles/wubuqr.dir/build
+.PHONY : wubuqr/fast
+
+#=============================================================================
+# Target rules for targets named test_wubuqr
+
+# Build rule for target.
+test_wubuqr: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_wubuqr
+.PHONY : test_wubuqr
+
+# fast build rule for target.
+test_wubuqr/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubuqr/CMakeFiles/test_wubuqr.dir/build.make src/wubuqr/CMakeFiles/test_wubuqr.dir/build
+.PHONY : test_wubuqr/fast
+
+#=============================================================================
+# Target rules for targets named wubusmartart
+
+# Build rule for target.
+wubusmartart: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 wubusmartart
+.PHONY : wubusmartart
+
+# fast build rule for target.
+wubusmartart/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubusmartart/CMakeFiles/wubusmartart.dir/build.make src/wubusmartart/CMakeFiles/wubusmartart.dir/build
+.PHONY : wubusmartart/fast
+
+#=============================================================================
+# Target rules for targets named test_wubusmartart
+
+# Build rule for target.
+test_wubusmartart: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_wubusmartart
+.PHONY : test_wubusmartart
+
+# fast build rule for target.
+test_wubusmartart/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubusmartart/CMakeFiles/test_wubusmartart.dir/build.make src/wubusmartart/CMakeFiles/test_wubusmartart.dir/build
+.PHONY : test_wubusmartart/fast
+
+#=============================================================================
+# Target rules for targets named wububasic
+
+# Build rule for target.
+wububasic: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 wububasic
+.PHONY : wububasic
+
+# fast build rule for target.
+wububasic/fast:
+	$(MAKE) $(MAKESILENT) -f src/wububasic/CMakeFiles/wububasic.dir/build.make src/wububasic/CMakeFiles/wububasic.dir/build
+.PHONY : wububasic/fast
+
+#=============================================================================
+# Target rules for targets named test_wububasic
+
+# Build rule for target.
+test_wububasic: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_wububasic
+.PHONY : test_wububasic
+
+# fast build rule for target.
+test_wububasic/fast:
+	$(MAKE) $(MAKESILENT) -f src/wububasic/CMakeFiles/test_wububasic.dir/build.make src/wububasic/CMakeFiles/test_wububasic.dir/build
+.PHONY : test_wububasic/fast
+
+#=============================================================================
+# Target rules for targets named wubu3d
+
+# Build rule for target.
+wubu3d: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 wubu3d
+.PHONY : wubu3d
+
+# fast build rule for target.
+wubu3d/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubu3d/CMakeFiles/wubu3d.dir/build.make src/wubu3d/CMakeFiles/wubu3d.dir/build
+.PHONY : wubu3d/fast
+
+#=============================================================================
+# Target rules for targets named test_wubu3d
+
+# Build rule for target.
+test_wubu3d: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_wubu3d
+.PHONY : test_wubu3d
+
+# fast build rule for target.
+test_wubu3d/fast:
+	$(MAKE) $(MAKESILENT) -f src/wubu3d/CMakeFiles/test_wubu3d.dir/build.make src/wubu3d/CMakeFiles/test_wubu3d.dir/build
+.PHONY : test_wubu3d/fast
 
 #=============================================================================
 # Target rules for targets named wubuword_app
@@ -1451,6 +2283,45 @@ test_shell_ui: cmake_check_build_system
 test_shell_ui/fast:
 	$(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_shell_ui.dir/build.make apps/wubuos/CMakeFiles/test_shell_ui.dir/build
 .PHONY : test_shell_ui/fast
+
+#=============================================================================
+# Target rules for targets named test_motion
+
+# Build rule for target.
+test_motion: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_motion
+.PHONY : test_motion
+
+# fast build rule for target.
+test_motion/fast:
+	$(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_motion.dir/build.make apps/wubuos/CMakeFiles/test_motion.dir/build
+.PHONY : test_motion/fast
+
+#=============================================================================
+# Target rules for targets named test_hive
+
+# Build rule for target.
+test_hive: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_hive
+.PHONY : test_hive
+
+# fast build rule for target.
+test_hive/fast:
+	$(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_hive.dir/build.make apps/wubuos/CMakeFiles/test_hive.dir/build
+.PHONY : test_hive/fast
+
+#=============================================================================
+# Target rules for targets named test_wuos_toolbar
+
+# Build rule for target.
+test_wuos_toolbar: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_wuos_toolbar
+.PHONY : test_wuos_toolbar
+
+# fast build rule for target.
+test_wuos_toolbar/fast:
+	$(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_wuos_toolbar.dir/build.make apps/wubuos/CMakeFiles/test_wuos_toolbar.dir/build
+.PHONY : test_wuos_toolbar/fast
 
 #=============================================================================
 # Target rules for targets named sample_plugin
@@ -2753,6 +3624,32 @@ test_cell_read/fast:
 .PHONY : test_cell_read/fast
 
 #=============================================================================
+# Target rules for targets named test_xlsample
+
+# Build rule for target.
+test_xlsample: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_xlsample
+.PHONY : test_xlsample
+
+# fast build rule for target.
+test_xlsample/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_xlsample.dir/build.make tests/CMakeFiles/test_xlsample.dir/build
+.PHONY : test_xlsample/fast
+
+#=============================================================================
+# Target rules for targets named test_cell_edit
+
+# Build rule for target.
+test_cell_edit: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cell_edit
+.PHONY : test_cell_edit
+
+# fast build rule for target.
+test_cell_edit/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_cell_edit.dir/build.make tests/CMakeFiles/test_cell_edit.dir/build
+.PHONY : test_cell_edit/fast
+
+#=============================================================================
 # Target rules for targets named test_cell_cycle
 
 # Build rule for target.
@@ -3387,6 +4284,7 @@ help:
 	@echo "... test_bkmk"
 	@echo "... test_caption"
 	@echo "... test_cell_cycle"
+	@echo "... test_cell_edit"
 	@echo "... test_cell_merge"
 	@echo "... test_cell_read"
 	@echo "... test_chart"
@@ -3439,6 +4337,7 @@ help:
 	@echo "... test_hash"
 	@echo "... test_heading"
 	@echo "... test_history"
+	@echo "... test_hive"
 	@echo "... test_imageops"
 	@echo "... test_imgops"
 	@echo "... test_inflate"
@@ -3453,6 +4352,7 @@ help:
 	@echo "... test_mlp"
 	@echo "... test_model"
 	@echo "... test_model_io_roundtrip"
+	@echo "... test_motion"
 	@echo "... test_nesttab"
 	@echo "... test_nfc"
 	@echo "... test_ocr_realpage"
@@ -3483,32 +4383,69 @@ help:
 	@echo "... test_view"
 	@echo "... test_watermark"
 	@echo "... test_word_lists"
+	@echo "... test_wubu3d"
+	@echo "... test_wubuanimation"
+	@echo "... test_wububasic"
+	@echo "... test_wubuconnector"
 	@echo "... test_wubucsv"
+	@echo "... test_wubudiff"
 	@echo "... test_wubudoc"
+	@echo "... test_wubudropcap"
+	@echo "... test_wubuencrypt"
+	@echo "... test_wubufilter"
 	@echo "... test_wubufont"
+	@echo "... test_wubufreeze"
+	@echo "... test_wubugallery"
+	@echo "... test_wubugoalseek"
+	@echo "... test_wubugrammar"
+	@echo "... test_wubugridline"
+	@echo "... test_wubuhyperlink"
+	@echo "... test_wubuicon"
+	@echo "... test_wubuindex"
+	@echo "... test_wubumailexport"
+	@echo "... test_wubumailmerge"
+	@echo "... test_wubumasterdoc"
+	@echo "... test_wubumasterslide"
 	@echo "... test_wubumath"
 	@echo "... test_wubunote"
 	@echo "... test_wubunote_ctrl"
+	@echo "... test_wubunotebookbar"
 	@echo "... test_wubuocr"
 	@echo "... test_wubuocr_recognize"
 	@echo "... test_wubupad_bridge"
+	@echo "... test_wubupivot"
+	@echo "... test_wubuqr"
+	@echo "... test_wuburuler"
+	@echo "... test_wubuscenario"
+	@echo "... test_wubusidebar"
+	@echo "... test_wubusmartart"
+	@echo "... test_wubusolver"
+	@echo "... test_wubusort"
+	@echo "... test_wubusubtotal"
 	@echo "... test_wubusvg"
 	@echo "... test_wubusvg_agent"
+	@echo "... test_wubuthesaurus"
+	@echo "... test_wubutransition"
 	@echo "... test_wubuview"
 	@echo "... test_wubuview_ctrl"
 	@echo "... test_wubuxml_parser"
 	@echo "... test_wubuzip"
+	@echo "... test_wuos_toolbar"
+	@echo "... test_xlsample"
 	@echo "... test_xlsx"
 	@echo "... test_xps"
 	@echo "... test_zoning"
 	@echo "... trainer_cli"
 	@echo "... viewshot"
+	@echo "... wubu3d"
 	@echo "... wubua11y"
 	@echo "... wubua11yannounce"
 	@echo "... wubua11ytree"
 	@echo "... wubuaislot"
+	@echo "... wubuanimation"
 	@echo "... wubuautosave"
 	@echo "... wububase"
+	@echo "... wububasic"
 	@echo "... wubucaption"
 	@echo "... wubucell"
 	@echo "... wubucell_app"
@@ -3516,40 +4453,58 @@ help:
 	@echo "... wubuchart"
 	@echo "... wubucite"
 	@echo "... wubucol"
+	@echo "... wubuconnector"
 	@echo "... wubuconv"
 	@echo "... wubuconv_app"
 	@echo "... wubucrdt"
 	@echo "... wubucsv"
+	@echo "... wubudiff"
 	@echo "... wubudoc"
 	@echo "... wubudoc_app"
 	@echo "... wubudraw"
+	@echo "... wubudropcap"
 	@echo "... wubudyslexia"
 	@echo "... wubuedit"
 	@echo "... wubuedit_app"
+	@echo "... wubuencrypt"
 	@echo "... wubuepub"
 	@echo "... wubueqnum"
 	@echo "... wubuexp"
 	@echo "... wubuexp_png"
+	@echo "... wubufilter"
 	@echo "... wubufmtpaint"
 	@echo "... wubufocus"
 	@echo "... wubufont"
 	@echo "... wubufont_cli"
 	@echo "... wubuform"
 	@echo "... wubuformula"
+	@echo "... wubufreeze"
+	@echo "... wubugallery"
 	@echo "... wubugauntlet_cli"
+	@echo "... wubugoalseek"
+	@echo "... wubugrammar"
+	@echo "... wubugridline"
 	@echo "... wubuhash"
 	@echo "... wubuheading"
 	@echo "... wubuhistory"
+	@echo "... wubuhyperlink"
+	@echo "... wubuicon"
 	@echo "... wubuimage"
+	@echo "... wubuindex"
 	@echo "... wubujson"
 	@echo "... wubulang"
 	@echo "... wubulayout"
 	@echo "... wubulegacy_app"
+	@echo "... wubumailexport"
+	@echo "... wubumailmerge"
+	@echo "... wubumasterdoc"
+	@echo "... wubumasterslide"
 	@echo "... wubumath"
 	@echo "... wubumodel"
 	@echo "... wubunesttab"
 	@echo "... wubunote"
 	@echo "... wubunote_core"
+	@echo "... wubunotebookbar"
 	@echo "... wubuocr"
 	@echo "... wubuocr_cli"
 	@echo "... wubuodf_app"
@@ -3562,26 +4517,37 @@ help:
 	@echo "... wubupdf_app"
 	@echo "... wubupdfextract"
 	@echo "... wubupdfform"
+	@echo "... wubupivot"
 	@echo "... wubupng"
+	@echo "... wubuqr"
 	@echo "... wuburead"
 	@echo "... wuburead_app"
 	@echo "... wuburedact"
 	@echo "... wuburender"
 	@echo "... wuburtf"
+	@echo "... wuburuler"
 	@echo "... wubusandbox"
+	@echo "... wubuscenario"
 	@echo "... wubuscope"
 	@echo "... wubuscript"
 	@echo "... wubusettings"
 	@echo "... wubushape"
 	@echo "... wubushow"
 	@echo "... wubushow_app"
+	@echo "... wubusidebar"
 	@echo "... wubusig"
+	@echo "... wubusmartart"
+	@echo "... wubusolver"
+	@echo "... wubusort"
 	@echo "... wubuspell"
+	@echo "... wubusubtotal"
 	@echo "... wubusvg"
 	@echo "... wubusvg_agent"
 	@echo "... wubusvg_cli"
 	@echo "... wubusync"
+	@echo "... wubuthesaurus"
 	@echo "... wubutoc"
+	@echo "... wubutransition"
 	@echo "... wubutui"
 	@echo "... wubuvars"
 	@echo "... wubuview"
