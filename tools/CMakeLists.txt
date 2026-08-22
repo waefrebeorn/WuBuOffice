@@ -40,7 +40,7 @@ target_link_libraries(rnn_test PRIVATE crnnocr wubuocr wubufont m)
 add_test(NAME rnn_test COMMAND rnn_test)
 
 add_executable(gradcheck_conv3 gradcheck_conv3.c
-               ${CMAKE_SOURCE_DIR}/src/wubuocr/convnet3.c ${CMAKE_SOURCE_DIR}/src/wubuocr/mlp.c ${CMAKE_SOURCE_DIR}/src/wubuocr/conv_gemm.c)
+               ${CMAKE_SOURCE_DIR}/src/wubuocr/convnet3.c ${CMAKE_SOURCE_DIR}/src/wubuocr/convnet3_cbam.c ${CMAKE_SOURCE_DIR}/src/wubuocr/mlp.c ${CMAKE_SOURCE_DIR}/src/wubuocr/conv_gemm.c)
 target_include_directories(gradcheck_conv3 PRIVATE ${CMAKE_SOURCE_DIR}/src/wubuocr)
 target_link_libraries(gradcheck_conv3 PRIVATE m)
 add_test(NAME gradcheck_conv3 COMMAND gradcheck_conv3)
@@ -117,7 +117,7 @@ set_tests_properties(convnet PROPERTIES TIMEOUT 600 LABELS ocr)
 
 # conv3 (3-stage MED) gradient pipeline test (same decisive proof).
 add_executable(test_convnet3 ${CMAKE_SOURCE_DIR}/tests/test_convnet3.c
-               ${CMAKE_SOURCE_DIR}/src/wubuocr/convnet3.c ${CMAKE_SOURCE_DIR}/src/wubuocr/mlp.c ${CMAKE_SOURCE_DIR}/src/wubuocr/conv_gemm.c)
+               ${CMAKE_SOURCE_DIR}/src/wubuocr/convnet3.c ${CMAKE_SOURCE_DIR}/src/wubuocr/convnet3_cbam.c ${CMAKE_SOURCE_DIR}/src/wubuocr/mlp.c ${CMAKE_SOURCE_DIR}/src/wubuocr/conv_gemm.c)
 target_include_directories(test_convnet3 PRIVATE ${CMAKE_SOURCE_DIR}/src/wubuocr)
 target_link_libraries(test_convnet3 PRIVATE m)
 add_test(NAME convnet3 COMMAND test_convnet3)
@@ -125,7 +125,7 @@ set_tests_properties(convnet3 PROPERTIES TIMEOUT 1800 LABELS ocr)
 
 # im2col+GEMM conv rewrite: numeric equivalence to brute-force conv + bias-grad FD check.
 add_executable(test_convnet3_im2col test_convnet3_im2col.c
-               ${CMAKE_SOURCE_DIR}/src/wubuocr/convnet3.c ${CMAKE_SOURCE_DIR}/src/wubuocr/mlp.c ${CMAKE_SOURCE_DIR}/src/wubuocr/conv_gemm.c
+               ${CMAKE_SOURCE_DIR}/src/wubuocr/convnet3.c ${CMAKE_SOURCE_DIR}/src/wubuocr/convnet3_cbam.c ${CMAKE_SOURCE_DIR}/src/wubuocr/mlp.c ${CMAKE_SOURCE_DIR}/src/wubuocr/conv_gemm.c
                ${CMAKE_SOURCE_DIR}/src/wubuocr/dft.c ${CMAKE_SOURCE_DIR}/src/wubuocr/goldplace.c
                ${CMAKE_SOURCE_DIR}/src/wubuocr/stylebank.c ${CMAKE_SOURCE_DIR}/src/wubuocr/zoning.c)
 target_include_directories(test_convnet3_im2col PRIVATE ${CMAKE_SOURCE_DIR}/src/wubuocr)
@@ -135,21 +135,21 @@ set_property(TEST convnet3_im2col PROPERTY LABELS ocr)
 
 # instance-norm (batch-free BatchNorm) gamma/beta gradient finite-diff check.
 add_executable(gradcheck_inorm ${CMAKE_SOURCE_DIR}/tests/gradcheck_inorm.c
-               ${CMAKE_SOURCE_DIR}/src/wubuocr/convnet3.c ${CMAKE_SOURCE_DIR}/src/wubuocr/mlp.c ${CMAKE_SOURCE_DIR}/src/wubuocr/conv_gemm.c)
+               ${CMAKE_SOURCE_DIR}/src/wubuocr/convnet3.c ${CMAKE_SOURCE_DIR}/src/wubuocr/convnet3_cbam.c ${CMAKE_SOURCE_DIR}/src/wubuocr/mlp.c ${CMAKE_SOURCE_DIR}/src/wubuocr/conv_gemm.c)
 target_include_directories(gradcheck_inorm PRIVATE ${CMAKE_SOURCE_DIR}/src/wubuocr)
 target_link_libraries(gradcheck_inorm PRIVATE m)
 add_test(NAME inorm_gradcheck COMMAND gradcheck_inorm)
 
 # stylebank: 64MB multi-style expert bank (56 best + 8 rolling) smoke test.
 add_executable(test_stylebank ${CMAKE_SOURCE_DIR}/tests/test_stylebank.c
-               ${CMAKE_SOURCE_DIR}/src/wubuocr/stylebank.c ${CMAKE_SOURCE_DIR}/src/wubuocr/convnet3.c ${CMAKE_SOURCE_DIR}/src/wubuocr/mlp.c ${CMAKE_SOURCE_DIR}/src/wubuocr/conv_gemm.c)
+               ${CMAKE_SOURCE_DIR}/src/wubuocr/stylebank.c ${CMAKE_SOURCE_DIR}/src/wubuocr/convnet3.c ${CMAKE_SOURCE_DIR}/src/wubuocr/convnet3_cbam.c ${CMAKE_SOURCE_DIR}/src/wubuocr/mlp.c ${CMAKE_SOURCE_DIR}/src/wubuocr/conv_gemm.c)
 target_include_directories(test_stylebank PRIVATE ${CMAKE_SOURCE_DIR}/src/wubuocr)
 target_link_libraries(test_stylebank PRIVATE m)
 add_test(NAME stylebank COMMAND test_stylebank)
 
 # emnist_train_conv3 / emnist_infer_conv3: 3-stage MED conv+MLP (2011 build).
 add_executable(emnist_infer_conv emnist_infer_conv.c
-               ${CMAKE_SOURCE_DIR}/src/wubuocr/convnet3.c ${CMAKE_SOURCE_DIR}/src/wubuocr/mlp.c ${CMAKE_SOURCE_DIR}/src/wubuocr/conv_gemm.c
+               ${CMAKE_SOURCE_DIR}/src/wubuocr/convnet3.c ${CMAKE_SOURCE_DIR}/src/wubuocr/convnet3_cbam.c ${CMAKE_SOURCE_DIR}/src/wubuocr/mlp.c ${CMAKE_SOURCE_DIR}/src/wubuocr/conv_gemm.c
                ${CMAKE_SOURCE_DIR}/src/wubuocr/dft.c ${CMAKE_SOURCE_DIR}/src/wubuocr/goldplace.c
                ${CMAKE_SOURCE_DIR}/src/wubuocr/stylebank.c ${CMAKE_SOURCE_DIR}/src/wubuocr/zoning.c)
 target_include_directories(emnist_infer_conv PRIVATE ${CMAKE_SOURCE_DIR}/src/wubuocr)
@@ -157,18 +157,18 @@ target_link_libraries(emnist_infer_conv PRIVATE m)
 
 # Modular trainer CLI
 add_executable(trainer_cli trainer_cli.c ${CMAKE_SOURCE_DIR}/src/wubuocr/trainer.c
-               ${CMAKE_SOURCE_DIR}/src/wubuocr/convnet3.c ${CMAKE_SOURCE_DIR}/src/wubuocr/mlp.c ${CMAKE_SOURCE_DIR}/src/wubuocr/conv_gemm.c)
+               ${CMAKE_SOURCE_DIR}/src/wubuocr/convnet3.c ${CMAKE_SOURCE_DIR}/src/wubuocr/convnet3_cbam.c ${CMAKE_SOURCE_DIR}/src/wubuocr/mlp.c ${CMAKE_SOURCE_DIR}/src/wubuocr/conv_gemm.c)
 target_include_directories(trainer_cli PRIVATE ${CMAKE_SOURCE_DIR}/src/wubuocr)
 target_link_libraries(trainer_cli PRIVATE m pthread)
 
 # Fast validation trainer (small net, few epochs, capped data)
-add_executable(emnist_train_fast emnist_train_fast.c ${CMAKE_SOURCE_DIR}/src/wubuocr/convnet3.c ${CMAKE_SOURCE_DIR}/src/wubuocr/mlp.c ${CMAKE_SOURCE_DIR}/src/wubuocr/conv_gemm.c)
+add_executable(emnist_train_fast emnist_train_fast.c ${CMAKE_SOURCE_DIR}/src/wubuocr/convnet3.c ${CMAKE_SOURCE_DIR}/src/wubuocr/convnet3_cbam.c ${CMAKE_SOURCE_DIR}/src/wubuocr/mlp.c ${CMAKE_SOURCE_DIR}/src/wubuocr/conv_gemm.c)
 target_include_directories(emnist_train_fast PRIVATE ${CMAKE_SOURCE_DIR}/src/wubuocr)
 target_link_libraries(emnist_train_fast PRIVATE m pthread)
 
 # emnist_train_conv3 / emnist_infer_conv3: 3-stage MED conv+MLP (2011 build).
 add_executable(emnist_train_conv3 emnist_train_conv3.c
-               ${CMAKE_SOURCE_DIR}/src/wubuocr/convnet3.c ${CMAKE_SOURCE_DIR}/src/wubuocr/mlp.c ${CMAKE_SOURCE_DIR}/src/wubuocr/conv_gemm.c)
+               ${CMAKE_SOURCE_DIR}/src/wubuocr/convnet3.c ${CMAKE_SOURCE_DIR}/src/wubuocr/convnet3_cbam.c ${CMAKE_SOURCE_DIR}/src/wubuocr/mlp.c ${CMAKE_SOURCE_DIR}/src/wubuocr/conv_gemm.c)
 target_include_directories(emnist_train_conv3 PRIVATE ${CMAKE_SOURCE_DIR}/src/wubuocr)
 target_link_libraries(emnist_train_conv3 PRIVATE m pthread)
 # The smoke test needs the downloaded EMNIST IDX corpus under data/emnist/.
