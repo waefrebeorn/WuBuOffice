@@ -153,7 +153,7 @@ target_compile_options(wubuos PRIVATE -Wall -Wextra -Wpedantic)
 
 # Headless smoke test: create + render every view (real engines, no GUI).
 # Verifies each WuView adapter renders without crashing and returns a buffer.
-add_executable(test_view test_view.c wuos_font.c wuos_file.c plugin.c toast.c palette.c view_doc.c view_doc_render.c view_cell.c
+add_executable(test_view test_view.c test_view_docfile.c test_view_editor.c test_view_cell.c test_view_ocr_doc.c wuos_font.c wuos_file.c plugin.c toast.c palette.c view_doc.c view_doc_render.c view_cell.c
     view_slide.c view_ocr.c view_editor.c view_editor_textops.c view_editor_render.c view_editor_keys.c view_compare.c view_settings.c findbar.c autocomp.c bkmk.c codefold.c doccmd_core.c doccmd_wave1.c doccmd_wave2.c macro.c gotoline.c hive.c)
 target_include_directories(test_view PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
