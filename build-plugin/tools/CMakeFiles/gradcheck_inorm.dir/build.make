@@ -97,10 +97,24 @@ tools/CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/convnet3.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/convnet3.c.s"
 	cd /home/wubu/WuBuOffice/build-plugin/tools && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/wubu/WuBuOffice/src/wubuocr/convnet3.c -o CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/convnet3.c.s
 
+tools/CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/convnet3_cbam.c.o: tools/CMakeFiles/gradcheck_inorm.dir/flags.make
+tools/CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/convnet3_cbam.c.o: /home/wubu/WuBuOffice/src/wubuocr/convnet3_cbam.c
+tools/CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/convnet3_cbam.c.o: tools/CMakeFiles/gradcheck_inorm.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object tools/CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/convnet3_cbam.c.o"
+	cd /home/wubu/WuBuOffice/build-plugin/tools && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT tools/CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/convnet3_cbam.c.o -MF CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/convnet3_cbam.c.o.d -o CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/convnet3_cbam.c.o -c /home/wubu/WuBuOffice/src/wubuocr/convnet3_cbam.c
+
+tools/CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/convnet3_cbam.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/convnet3_cbam.c.i"
+	cd /home/wubu/WuBuOffice/build-plugin/tools && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/wubu/WuBuOffice/src/wubuocr/convnet3_cbam.c > CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/convnet3_cbam.c.i
+
+tools/CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/convnet3_cbam.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/convnet3_cbam.c.s"
+	cd /home/wubu/WuBuOffice/build-plugin/tools && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/wubu/WuBuOffice/src/wubuocr/convnet3_cbam.c -o CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/convnet3_cbam.c.s
+
 tools/CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/mlp.c.o: tools/CMakeFiles/gradcheck_inorm.dir/flags.make
 tools/CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/mlp.c.o: /home/wubu/WuBuOffice/src/wubuocr/mlp.c
 tools/CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/mlp.c.o: tools/CMakeFiles/gradcheck_inorm.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object tools/CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/mlp.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object tools/CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/mlp.c.o"
 	cd /home/wubu/WuBuOffice/build-plugin/tools && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT tools/CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/mlp.c.o -MF CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/mlp.c.o.d -o CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/mlp.c.o -c /home/wubu/WuBuOffice/src/wubuocr/mlp.c
 
 tools/CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/mlp.c.i: cmake_force
@@ -114,7 +128,7 @@ tools/CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/mlp.c.s: cmake_force
 tools/CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/conv_gemm.c.o: tools/CMakeFiles/gradcheck_inorm.dir/flags.make
 tools/CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/conv_gemm.c.o: /home/wubu/WuBuOffice/src/wubuocr/conv_gemm.c
 tools/CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/conv_gemm.c.o: tools/CMakeFiles/gradcheck_inorm.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object tools/CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/conv_gemm.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object tools/CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/conv_gemm.c.o"
 	cd /home/wubu/WuBuOffice/build-plugin/tools && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT tools/CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/conv_gemm.c.o -MF CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/conv_gemm.c.o.d -o CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/conv_gemm.c.o -c /home/wubu/WuBuOffice/src/wubuocr/conv_gemm.c
 
 tools/CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/conv_gemm.c.i: cmake_force
@@ -129,6 +143,7 @@ tools/CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/conv_gemm.c.s: cmake_force
 gradcheck_inorm_OBJECTS = \
 "CMakeFiles/gradcheck_inorm.dir/__/tests/gradcheck_inorm.c.o" \
 "CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/convnet3.c.o" \
+"CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/convnet3_cbam.c.o" \
 "CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/mlp.c.o" \
 "CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/conv_gemm.c.o"
 
@@ -137,11 +152,12 @@ gradcheck_inorm_EXTERNAL_OBJECTS =
 
 tools/gradcheck_inorm: tools/CMakeFiles/gradcheck_inorm.dir/__/tests/gradcheck_inorm.c.o
 tools/gradcheck_inorm: tools/CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/convnet3.c.o
+tools/gradcheck_inorm: tools/CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/convnet3_cbam.c.o
 tools/gradcheck_inorm: tools/CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/mlp.c.o
 tools/gradcheck_inorm: tools/CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/conv_gemm.c.o
 tools/gradcheck_inorm: tools/CMakeFiles/gradcheck_inorm.dir/build.make
 tools/gradcheck_inorm: tools/CMakeFiles/gradcheck_inorm.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking C executable gradcheck_inorm"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking C executable gradcheck_inorm"
 	cd /home/wubu/WuBuOffice/build-plugin/tools && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/gradcheck_inorm.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

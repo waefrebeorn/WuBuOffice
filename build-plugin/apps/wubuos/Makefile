@@ -1529,6 +1529,102 @@ test_view.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/test_view.c.s
 .PHONY : test_view.c.s
 
+test_view_cell.o: test_view_cell.c.o
+.PHONY : test_view_cell.o
+
+# target to build an object file
+test_view_cell.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/test_view_cell.c.o
+.PHONY : test_view_cell.c.o
+
+test_view_cell.i: test_view_cell.c.i
+.PHONY : test_view_cell.i
+
+# target to preprocess a source file
+test_view_cell.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/test_view_cell.c.i
+.PHONY : test_view_cell.c.i
+
+test_view_cell.s: test_view_cell.c.s
+.PHONY : test_view_cell.s
+
+# target to generate assembly for a file
+test_view_cell.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/test_view_cell.c.s
+.PHONY : test_view_cell.c.s
+
+test_view_docfile.o: test_view_docfile.c.o
+.PHONY : test_view_docfile.o
+
+# target to build an object file
+test_view_docfile.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/test_view_docfile.c.o
+.PHONY : test_view_docfile.c.o
+
+test_view_docfile.i: test_view_docfile.c.i
+.PHONY : test_view_docfile.i
+
+# target to preprocess a source file
+test_view_docfile.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/test_view_docfile.c.i
+.PHONY : test_view_docfile.c.i
+
+test_view_docfile.s: test_view_docfile.c.s
+.PHONY : test_view_docfile.s
+
+# target to generate assembly for a file
+test_view_docfile.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/test_view_docfile.c.s
+.PHONY : test_view_docfile.c.s
+
+test_view_editor.o: test_view_editor.c.o
+.PHONY : test_view_editor.o
+
+# target to build an object file
+test_view_editor.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/test_view_editor.c.o
+.PHONY : test_view_editor.c.o
+
+test_view_editor.i: test_view_editor.c.i
+.PHONY : test_view_editor.i
+
+# target to preprocess a source file
+test_view_editor.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/test_view_editor.c.i
+.PHONY : test_view_editor.c.i
+
+test_view_editor.s: test_view_editor.c.s
+.PHONY : test_view_editor.s
+
+# target to generate assembly for a file
+test_view_editor.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/test_view_editor.c.s
+.PHONY : test_view_editor.c.s
+
+test_view_ocr_doc.o: test_view_ocr_doc.c.o
+.PHONY : test_view_ocr_doc.o
+
+# target to build an object file
+test_view_ocr_doc.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/test_view_ocr_doc.c.o
+.PHONY : test_view_ocr_doc.c.o
+
+test_view_ocr_doc.i: test_view_ocr_doc.c.i
+.PHONY : test_view_ocr_doc.i
+
+# target to preprocess a source file
+test_view_ocr_doc.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/test_view_ocr_doc.c.i
+.PHONY : test_view_ocr_doc.c.i
+
+test_view_ocr_doc.s: test_view_ocr_doc.c.s
+.PHONY : test_view_ocr_doc.s
+
+# target to generate assembly for a file
+test_view_ocr_doc.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/test_view_ocr_doc.c.s
+.PHONY : test_view_ocr_doc.c.s
+
 test_wuos_toolbar.o: test_wuos_toolbar.c.o
 .PHONY : test_wuos_toolbar.o
 
@@ -2057,6 +2153,30 @@ wuos_motion.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_motion.dir/build.make apps/wubuos/CMakeFiles/test_motion.dir/wuos_motion.c.s
 .PHONY : wuos_motion.c.s
 
+wuos_shell_events.o: wuos_shell_events.c.o
+.PHONY : wuos_shell_events.o
+
+# target to build an object file
+wuos_shell_events.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/wuos_shell_events.c.o
+.PHONY : wuos_shell_events.c.o
+
+wuos_shell_events.i: wuos_shell_events.c.i
+.PHONY : wuos_shell_events.i
+
+# target to preprocess a source file
+wuos_shell_events.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/wuos_shell_events.c.i
+.PHONY : wuos_shell_events.c.i
+
+wuos_shell_events.s: wuos_shell_events.c.s
+.PHONY : wuos_shell_events.s
+
+# target to generate assembly for a file
+wuos_shell_events.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/wuos_shell_events.c.s
+.PHONY : wuos_shell_events.c.s
+
 wuos_toolbar.o: wuos_toolbar.c.o
 .PHONY : wuos_toolbar.o
 
@@ -2226,6 +2346,18 @@ help:
 	@echo "... test_view.o"
 	@echo "... test_view.i"
 	@echo "... test_view.s"
+	@echo "... test_view_cell.o"
+	@echo "... test_view_cell.i"
+	@echo "... test_view_cell.s"
+	@echo "... test_view_docfile.o"
+	@echo "... test_view_docfile.i"
+	@echo "... test_view_docfile.s"
+	@echo "... test_view_editor.o"
+	@echo "... test_view_editor.i"
+	@echo "... test_view_editor.s"
+	@echo "... test_view_ocr_doc.o"
+	@echo "... test_view_ocr_doc.i"
+	@echo "... test_view_ocr_doc.s"
 	@echo "... test_wuos_toolbar.o"
 	@echo "... test_wuos_toolbar.i"
 	@echo "... test_wuos_toolbar.s"
@@ -2280,6 +2412,9 @@ help:
 	@echo "... wuos_motion.o"
 	@echo "... wuos_motion.i"
 	@echo "... wuos_motion.s"
+	@echo "... wuos_shell_events.o"
+	@echo "... wuos_shell_events.i"
+	@echo "... wuos_shell_events.s"
 	@echo "... wuos_toolbar.o"
 	@echo "... wuos_toolbar.i"
 	@echo "... wuos_toolbar.s"

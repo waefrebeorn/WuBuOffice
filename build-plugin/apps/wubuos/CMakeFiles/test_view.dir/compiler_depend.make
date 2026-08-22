@@ -894,6 +894,8 @@ apps/wubuos/CMakeFiles/test_view.dir/plugin.c.o: /home/wubu/WuBuOffice/apps/wubu
   /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h
 
 apps/wubuos/CMakeFiles/test_view.dir/test_view.c.o: /home/wubu/WuBuOffice/apps/wubuos/test_view.c \
+  /home/wubu/WuBuOffice/apps/wubuoxml/package.h \
+  /home/wubu/WuBuOffice/apps/wubucell/cell.h \
   /home/wubu/WuBuOffice/apps/wubuos/palette.h \
   /home/wubu/WuBuOffice/apps/wubuos/wuos.h \
   /home/wubu/WuBuOffice/apps/wubuos/wuos_file.h \
@@ -956,6 +958,237 @@ apps/wubuos/CMakeFiles/test_view.dir/test_view.c.o: /home/wubu/WuBuOffice/apps/w
   /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h \
   /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h
 
+apps/wubuos/CMakeFiles/test_view.dir/test_view_cell.c.o: /home/wubu/WuBuOffice/apps/wubuos/test_view_cell.c \
+  /home/wubu/WuBuOffice/apps/wubuoxml/package.h \
+  /home/wubu/WuBuOffice/apps/wubucell/cell.h \
+  /home/wubu/WuBuOffice/apps/wubucell/cell.h \
+  /home/wubu/WuBuOffice/apps/wubuos/palette.h \
+  /home/wubu/WuBuOffice/apps/wubuos/wuos.h \
+  /home/wubu/WuBuOffice/src/wubumodel/model.h \
+  /home/wubu/WuBuOffice/src/wubusettings/settings.h \
+  /home/wubu/WuBuOffice/src/wubutoc/toc.h \
+  /usr/include/features-time64.h \
+  /usr/include/features.h \
+  /usr/include/stdc-predef.h \
+  /usr/include/stdint.h \
+  /usr/include/stdio.h \
+  /usr/include/stdlib.h \
+  /usr/include/string.h \
+  /usr/include/x86_64-linux-gnu/bits/floatn-common.h \
+  /usr/include/x86_64-linux-gnu/bits/floatn.h \
+  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
+  /usr/include/x86_64-linux-gnu/bits/long-double.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+  /usr/include/x86_64-linux-gnu/bits/stdio.h \
+  /usr/include/x86_64-linux-gnu/bits/stdio2-decl.h \
+  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
+  /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
+  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
+  /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
+  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
+  /usr/include/x86_64-linux-gnu/bits/string_fortified.h \
+  /usr/include/x86_64-linux-gnu/bits/time64.h \
+  /usr/include/x86_64-linux-gnu/bits/timesize.h \
+  /usr/include/x86_64-linux-gnu/bits/types.h \
+  /usr/include/x86_64-linux-gnu/bits/types/FILE.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__FILE.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/locale_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h \
+  /usr/include/x86_64-linux-gnu/bits/typesizes.h \
+  /usr/include/x86_64-linux-gnu/bits/waitflags.h \
+  /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
+  /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
+  /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
+  /usr/include/x86_64-linux-gnu/gnu/stubs.h \
+  /usr/include/x86_64-linux-gnu/sys/cdefs.h \
+  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h \
+  /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h \
+  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h
+
+apps/wubuos/CMakeFiles/test_view.dir/test_view_docfile.c.o: /home/wubu/WuBuOffice/apps/wubuos/test_view_docfile.c \
+  /home/wubu/WuBuOffice/apps/wubuos/palette.h \
+  /home/wubu/WuBuOffice/apps/wubuos/wuos.h \
+  /home/wubu/WuBuOffice/apps/wubuos/wuos_file.h \
+  /home/wubu/WuBuOffice/src/wubumodel/model.h \
+  /home/wubu/WuBuOffice/src/wubusettings/settings.h \
+  /home/wubu/WuBuOffice/src/wubutoc/toc.h \
+  /usr/include/features-time64.h \
+  /usr/include/features.h \
+  /usr/include/stdc-predef.h \
+  /usr/include/stdint.h \
+  /usr/include/stdio.h \
+  /usr/include/stdlib.h \
+  /usr/include/string.h \
+  /usr/include/unistd.h \
+  /usr/include/x86_64-linux-gnu/bits/confname.h \
+  /usr/include/x86_64-linux-gnu/bits/environments.h \
+  /usr/include/x86_64-linux-gnu/bits/floatn-common.h \
+  /usr/include/x86_64-linux-gnu/bits/floatn.h \
+  /usr/include/x86_64-linux-gnu/bits/getopt_core.h \
+  /usr/include/x86_64-linux-gnu/bits/getopt_posix.h \
+  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
+  /usr/include/x86_64-linux-gnu/bits/long-double.h \
+  /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+  /usr/include/x86_64-linux-gnu/bits/stdio.h \
+  /usr/include/x86_64-linux-gnu/bits/stdio2-decl.h \
+  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
+  /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
+  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
+  /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
+  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
+  /usr/include/x86_64-linux-gnu/bits/string_fortified.h \
+  /usr/include/x86_64-linux-gnu/bits/time64.h \
+  /usr/include/x86_64-linux-gnu/bits/timesize.h \
+  /usr/include/x86_64-linux-gnu/bits/types.h \
+  /usr/include/x86_64-linux-gnu/bits/types/FILE.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__FILE.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/locale_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h \
+  /usr/include/x86_64-linux-gnu/bits/typesizes.h \
+  /usr/include/x86_64-linux-gnu/bits/unistd-decl.h \
+  /usr/include/x86_64-linux-gnu/bits/unistd.h \
+  /usr/include/x86_64-linux-gnu/bits/unistd_ext.h \
+  /usr/include/x86_64-linux-gnu/bits/waitflags.h \
+  /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
+  /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
+  /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
+  /usr/include/x86_64-linux-gnu/gnu/stubs.h \
+  /usr/include/x86_64-linux-gnu/sys/cdefs.h \
+  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h \
+  /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h \
+  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h
+
+apps/wubuos/CMakeFiles/test_view.dir/test_view_editor.c.o: /home/wubu/WuBuOffice/apps/wubuos/test_view_editor.c \
+  /home/wubu/WuBuOffice/apps/wubuoxml/package.h \
+  /home/wubu/WuBuOffice/apps/wubucell/cell.h \
+  /home/wubu/WuBuOffice/apps/wubuos/palette.h \
+  /home/wubu/WuBuOffice/apps/wubuos/wuos.h \
+  /home/wubu/WuBuOffice/apps/wubuos/wuos_file.h \
+  /home/wubu/WuBuOffice/apps/wubuos/wuos_font.h \
+  /home/wubu/WuBuOffice/src/wubuautosave/autosave.h \
+  /home/wubu/WuBuOffice/src/wubumodel/model.h \
+  /home/wubu/WuBuOffice/src/wubusettings/settings.h \
+  /home/wubu/WuBuOffice/src/wubutoc/toc.h \
+  /usr/include/features-time64.h \
+  /usr/include/features.h \
+  /usr/include/stdc-predef.h \
+  /usr/include/stdint.h \
+  /usr/include/stdio.h \
+  /usr/include/stdlib.h \
+  /usr/include/string.h \
+  /usr/include/unistd.h \
+  /usr/include/x86_64-linux-gnu/bits/confname.h \
+  /usr/include/x86_64-linux-gnu/bits/environments.h \
+  /usr/include/x86_64-linux-gnu/bits/floatn-common.h \
+  /usr/include/x86_64-linux-gnu/bits/floatn.h \
+  /usr/include/x86_64-linux-gnu/bits/getopt_core.h \
+  /usr/include/x86_64-linux-gnu/bits/getopt_posix.h \
+  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
+  /usr/include/x86_64-linux-gnu/bits/long-double.h \
+  /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+  /usr/include/x86_64-linux-gnu/bits/stdio.h \
+  /usr/include/x86_64-linux-gnu/bits/stdio2-decl.h \
+  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
+  /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
+  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
+  /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
+  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
+  /usr/include/x86_64-linux-gnu/bits/string_fortified.h \
+  /usr/include/x86_64-linux-gnu/bits/time64.h \
+  /usr/include/x86_64-linux-gnu/bits/timesize.h \
+  /usr/include/x86_64-linux-gnu/bits/types.h \
+  /usr/include/x86_64-linux-gnu/bits/types/FILE.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__FILE.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/locale_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h \
+  /usr/include/x86_64-linux-gnu/bits/typesizes.h \
+  /usr/include/x86_64-linux-gnu/bits/unistd-decl.h \
+  /usr/include/x86_64-linux-gnu/bits/unistd.h \
+  /usr/include/x86_64-linux-gnu/bits/unistd_ext.h \
+  /usr/include/x86_64-linux-gnu/bits/waitflags.h \
+  /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
+  /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
+  /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
+  /usr/include/x86_64-linux-gnu/gnu/stubs.h \
+  /usr/include/x86_64-linux-gnu/sys/cdefs.h \
+  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h \
+  /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h \
+  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h
+
+apps/wubuos/CMakeFiles/test_view.dir/test_view_ocr_doc.c.o: /home/wubu/WuBuOffice/apps/wubuos/test_view_ocr_doc.c \
+  /home/wubu/WuBuOffice/apps/wubuos/palette.h \
+  /home/wubu/WuBuOffice/apps/wubuos/wuos.h \
+  /home/wubu/WuBuOffice/src/wubumodel/model.h \
+  /home/wubu/WuBuOffice/src/wubusettings/settings.h \
+  /home/wubu/WuBuOffice/src/wubutoc/toc.h \
+  /usr/include/features-time64.h \
+  /usr/include/features.h \
+  /usr/include/stdc-predef.h \
+  /usr/include/stdint.h \
+  /usr/include/stdio.h \
+  /usr/include/stdlib.h \
+  /usr/include/string.h \
+  /usr/include/x86_64-linux-gnu/bits/floatn-common.h \
+  /usr/include/x86_64-linux-gnu/bits/floatn.h \
+  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
+  /usr/include/x86_64-linux-gnu/bits/long-double.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+  /usr/include/x86_64-linux-gnu/bits/stdio.h \
+  /usr/include/x86_64-linux-gnu/bits/stdio2-decl.h \
+  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
+  /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
+  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
+  /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
+  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
+  /usr/include/x86_64-linux-gnu/bits/string_fortified.h \
+  /usr/include/x86_64-linux-gnu/bits/time64.h \
+  /usr/include/x86_64-linux-gnu/bits/timesize.h \
+  /usr/include/x86_64-linux-gnu/bits/types.h \
+  /usr/include/x86_64-linux-gnu/bits/types/FILE.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__FILE.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/locale_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h \
+  /usr/include/x86_64-linux-gnu/bits/typesizes.h \
+  /usr/include/x86_64-linux-gnu/bits/waitflags.h \
+  /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
+  /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
+  /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
+  /usr/include/x86_64-linux-gnu/gnu/stubs.h \
+  /usr/include/x86_64-linux-gnu/sys/cdefs.h \
+  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h \
+  /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h \
+  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h
+
 apps/wubuos/CMakeFiles/test_view.dir/toast.c.o: /home/wubu/WuBuOffice/apps/wubuos/toast.c \
   /home/wubu/WuBuOffice/apps/wubuos/toast.h \
   /usr/include/features-time64.h \
@@ -985,12 +1218,20 @@ apps/wubuos/CMakeFiles/test_view.dir/toast.c.o: /home/wubu/WuBuOffice/apps/wubuo
 apps/wubuos/CMakeFiles/test_view.dir/view_cell.c.o: /home/wubu/WuBuOffice/apps/wubuos/view_cell.c \
   /home/wubu/WuBuOffice/apps/wubucell/cell.h \
   /home/wubu/WuBuOffice/apps/wubucell/cell_csv.h \
+  /home/wubu/WuBuOffice/apps/wubucell/cell_internal.h \
   /home/wubu/WuBuOffice/apps/wubucell/cell_read.h \
+  /home/wubu/WuBuOffice/apps/wubucell/style.h \
   /home/wubu/WuBuOffice/apps/wubuos/wuos.h \
   /home/wubu/WuBuOffice/apps/wubuos/wuos_font.h \
   /home/wubu/WuBuOffice/apps/wubuos/wuos_theme.h \
+  /home/wubu/WuBuOffice/src/wubuformula/ast.h \
+  /home/wubu/WuBuOffice/src/wubuformula/eval.h \
+  /home/wubu/WuBuOffice/src/wubuformula/funcs.h \
+  /home/wubu/WuBuOffice/src/wubuformula/value.h \
+  /home/wubu/WuBuOffice/src/wubumath/math.h \
   /home/wubu/WuBuOffice/src/wubuoxml/package.h \
   /home/wubu/WuBuOffice/src/wubumodel/model.h \
+  /usr/include/ctype.h \
   /usr/include/features-time64.h \
   /usr/include/features.h \
   /usr/include/stdc-predef.h \
@@ -999,6 +1240,8 @@ apps/wubuos/CMakeFiles/test_view.dir/view_cell.c.o: /home/wubu/WuBuOffice/apps/w
   /usr/include/stdlib.h \
   /usr/include/string.h \
   /usr/include/strings.h \
+  /usr/include/x86_64-linux-gnu/bits/endian.h \
+  /usr/include/x86_64-linux-gnu/bits/endianness.h \
   /usr/include/x86_64-linux-gnu/bits/floatn-common.h \
   /usr/include/x86_64-linux-gnu/bits/floatn.h \
   /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
@@ -1091,6 +1334,7 @@ apps/wubuos/CMakeFiles/test_view.dir/view_compare.c.o: /home/wubu/WuBuOffice/app
 
 apps/wubuos/CMakeFiles/test_view.dir/view_doc.c.o: /home/wubu/WuBuOffice/apps/wubuos/view_doc.c \
   /home/wubu/WuBuOffice/apps/wubuos/doccmd.h \
+  /home/wubu/WuBuOffice/apps/wubuos/view_doc_internal.h \
   /home/wubu/WuBuOffice/apps/wubuos/wuos.h \
   /home/wubu/WuBuOffice/apps/wubuos/wuos_file.h \
   /home/wubu/WuBuOffice/apps/wubuos/wuos_font.h \
@@ -1224,6 +1468,7 @@ apps/wubuos/CMakeFiles/test_view.dir/view_editor.c.o: /home/wubu/WuBuOffice/apps
   /home/wubu/WuBuOffice/apps/wubuos/findbar.h \
   /home/wubu/WuBuOffice/apps/wubuos/gotoline.h \
   /home/wubu/WuBuOffice/apps/wubuos/macro.h \
+  /home/wubu/WuBuOffice/apps/wubuos/view_editor_internal.h \
   /home/wubu/WuBuOffice/apps/wubuos/wuos.h \
   /home/wubu/WuBuOffice/apps/wubuos/wuos_file.h \
   /home/wubu/WuBuOffice/apps/wubuos/wuos_font.h \
@@ -2081,6 +2326,7 @@ apps/wubuos/CMakeFiles/test_view.dir/view_settings.c.o: /home/wubu/WuBuOffice/ap
   /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h
 
 apps/wubuos/CMakeFiles/test_view.dir/view_slide.c.o: /home/wubu/WuBuOffice/apps/wubuos/view_slide.c \
+  /home/wubu/WuBuOffice/apps/wubuos/hive.h \
   /home/wubu/WuBuOffice/apps/wubuos/wuos.h \
   /home/wubu/WuBuOffice/apps/wubuos/wuos_font.h \
   /home/wubu/WuBuOffice/apps/wubuos/wuos_theme.h \
@@ -2089,6 +2335,7 @@ apps/wubuos/CMakeFiles/test_view.dir/view_slide.c.o: /home/wubu/WuBuOffice/apps/
   /usr/include/features.h \
   /usr/include/stdc-predef.h \
   /usr/include/stdint.h \
+  /usr/include/stdio.h \
   /usr/include/stdlib.h \
   /usr/include/string.h \
   /usr/include/x86_64-linux-gnu/bits/floatn-common.h \
@@ -2098,6 +2345,10 @@ apps/wubuos/CMakeFiles/test_view.dir/view_slide.c.o: /home/wubu/WuBuOffice/apps/
   /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+  /usr/include/x86_64-linux-gnu/bits/stdio.h \
+  /usr/include/x86_64-linux-gnu/bits/stdio2-decl.h \
+  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
+  /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
   /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
   /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
   /usr/include/x86_64-linux-gnu/bits/stdlib.h \
@@ -2105,8 +2356,14 @@ apps/wubuos/CMakeFiles/test_view.dir/view_slide.c.o: /home/wubu/WuBuOffice/apps/
   /usr/include/x86_64-linux-gnu/bits/time64.h \
   /usr/include/x86_64-linux-gnu/bits/timesize.h \
   /usr/include/x86_64-linux-gnu/bits/types.h \
+  /usr/include/x86_64-linux-gnu/bits/types/FILE.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__FILE.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
   /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \
   /usr/include/x86_64-linux-gnu/bits/types/locale_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h \
   /usr/include/x86_64-linux-gnu/bits/typesizes.h \
   /usr/include/x86_64-linux-gnu/bits/waitflags.h \
   /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
@@ -2115,6 +2372,7 @@ apps/wubuos/CMakeFiles/test_view.dir/view_slide.c.o: /home/wubu/WuBuOffice/apps/
   /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
   /usr/include/x86_64-linux-gnu/gnu/stubs.h \
   /usr/include/x86_64-linux-gnu/sys/cdefs.h \
+  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h \
   /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h \
   /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h
 
@@ -2355,10 +2613,6 @@ apps/wubuos/CMakeFiles/test_view.dir/wuos_font.c.o: /home/wubu/WuBuOffice/apps/w
 
 /usr/lib/gcc/x86_64-linux-gnu/13/include/f16cintrin.h:
 
-/home/wubu/WuBuOffice/apps/wubuos/view_editor_internal.h:
-
-/usr/lib/gcc/x86_64-linux-gnu/13/include/emmintrin.h:
-
 /usr/lib/gcc/x86_64-linux-gnu/13/include/cmpccxaddintrin.h:
 
 /usr/lib/gcc/x86_64-linux-gnu/13/include/clflushoptintrin.h:
@@ -2445,6 +2699,22 @@ apps/wubuos/CMakeFiles/test_view.dir/wuos_font.c.o: /home/wubu/WuBuOffice/apps/w
 
 /usr/include/alloca.h:
 
+/usr/lib/gcc/x86_64-linux-gnu/13/include/avx512fintrin.h:
+
+/usr/include/SDL2/SDL_timer.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/13/include/wbnoinvdintrin.h:
+
+/usr/include/SDL2/SDL_thread.h:
+
+/usr/include/SDL2/SDL_system.h:
+
+/usr/include/SDL2/SDL_surface.h:
+
+/usr/include/SDL2/SDL_scancode.h:
+
+/usr/include/SDL2/SDL_rwops.h:
+
 /usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h:
 
 /home/wubu/WuBuOffice/apps/wubuos/gotoline.c:
@@ -2497,6 +2767,8 @@ apps/wubuos/CMakeFiles/test_view.dir/wuos_font.c.o: /home/wubu/WuBuOffice/apps/w
 
 /home/wubu/WuBuOffice/src/wubuqr/wubuqr.h:
 
+/home/wubu/WuBuOffice/apps/wubucell/style.h:
+
 /home/wubu/WuBuOffice/src/wubunotebookbar/wubunotebookbar.h:
 
 /home/wubu/WuBuOffice/src/wubupivot/wubupivot.h:
@@ -2543,9 +2815,9 @@ apps/wubuos/CMakeFiles/test_view.dir/wuos_font.c.o: /home/wubu/WuBuOffice/apps/w
 
 /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/13/include/xsavesintrin.h:
+/usr/include/SDL2/SDL_stdinc.h:
 
-/home/wubu/WuBuOffice/src/wubumailmerge/wubumailmerge.h:
+/home/wubu/WuBuPad/src/buffer.h:
 
 /home/wubu/WuBuOffice/src/wuburender/wuburender.h:
 
@@ -2554,6 +2826,8 @@ apps/wubuos/CMakeFiles/test_view.dir/wuos_font.c.o: /home/wubu/WuBuOffice/apps/w
 /home/wubu/WuBuOffice/src/wubulang/lang.h:
 
 /usr/lib/gcc/x86_64-linux-gnu/13/include/pkuintrin.h:
+
+/home/wubu/WuBuOffice/apps/wubuos/test_view_editor.c:
 
 /home/wubu/WuBuOffice/apps/wubuos/wuos.h:
 
@@ -2564,6 +2838,10 @@ apps/wubuos/CMakeFiles/test_view.dir/wuos_font.c.o: /home/wubu/WuBuOffice/apps/w
 /home/wubu/WuBuOffice/src/wubusmartart/wubusmartart.h:
 
 /usr/include/x86_64-linux-gnu/bits/getopt_posix.h:
+
+/usr/include/SDL2/SDL_sensor.h:
+
+/home/wubu/WuBuOffice/src/wubugallery/wubugallery.h:
 
 /home/wubu/WuBuPad/src/diff.c:
 
@@ -2603,10 +2881,6 @@ apps/wubuos/CMakeFiles/test_view.dir/wuos_font.c.o: /home/wubu/WuBuOffice/apps/w
 
 /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h:
 
-/home/wubu/WuBuOffice/src/wubugallery/wubugallery.h:
-
-/usr/include/SDL2/SDL_sensor.h:
-
 /usr/include/x86_64-linux-gnu/bits/typesizes.h:
 
 /usr/lib/gcc/x86_64-linux-gnu/13/include/avx512fp16intrin.h:
@@ -2627,17 +2901,13 @@ apps/wubuos/CMakeFiles/test_view.dir/wuos_font.c.o: /home/wubu/WuBuOffice/apps/w
 
 /home/wubu/WuBuOffice/apps/wubuos/view_doc.c:
 
-/home/wubu/WuBuOffice/src/wubuvars/vars.h:
-
 /home/wubu/WuBuOffice/apps/wubuos/view_cell.c:
-
-/usr/include/SDL2/SDL_rwops.h:
 
 /usr/include/SDL2/begin_code.h:
 
-/home/wubu/WuBuOffice/src/wubuexp/exp.h:
-
 /usr/include/SDL2/SDL_version.h:
+
+/home/wubu/WuBuOffice/src/wubuexp/exp.h:
 
 /home/wubu/WuBuPad/src/buffer.c:
 
@@ -2693,9 +2963,9 @@ apps/wubuos/CMakeFiles/test_view.dir/wuos_font.c.o: /home/wubu/WuBuOffice/apps/w
 
 /usr/include/stdio.h:
 
-/usr/include/x86_64-linux-gnu/bits/types/__locale_t.h:
+/home/wubu/WuBuOffice/apps/wubuos/test_view_cell.c:
 
-/home/wubu/WuBuOffice/src/wubucite/cite.h:
+/usr/include/x86_64-linux-gnu/bits/types/__locale_t.h:
 
 /usr/lib/gcc/x86_64-linux-gnu/13/include/avx512bwintrin.h:
 
@@ -2737,6 +3007,10 @@ apps/wubuos/CMakeFiles/test_view.dir/wuos_font.c.o: /home/wubu/WuBuOffice/apps/w
 
 /home/wubu/WuBuOffice/apps/wubuos/autocomp.c:
 
+/home/wubu/WuBuOffice/src/wubucite/cite.h:
+
+/home/wubu/WuBuOffice/src/wubuformula/funcs.h:
+
 /home/wubu/WuBuOffice/apps/wubuos/bkmk.h:
 
 /home/wubu/WuBuOffice/src/wubuencrypt/wubuencrypt.h:
@@ -2772,6 +3046,8 @@ apps/wubuos/CMakeFiles/test_view.dir/wuos_font.c.o: /home/wubu/WuBuOffice/apps/w
 /usr/include/x86_64-linux-gnu/bits/waitflags.h:
 
 /home/wubu/WuBuOffice/src/wubuchart/chart.h:
+
+/home/wubu/WuBuOffice/src/wubuformula/ast.h:
 
 /usr/lib/gcc/x86_64-linux-gnu/13/include/float.h:
 
@@ -2845,8 +3121,6 @@ apps/wubuos/CMakeFiles/test_view.dir/wuos_font.c.o: /home/wubu/WuBuOffice/apps/w
 
 /usr/include/SDL2/SDL_atomic.h:
 
-/usr/include/x86_64-linux-gnu/bits/atomic_wide_counter.h:
-
 /usr/include/SDL2/SDL_hidapi.h:
 
 /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h:
@@ -2891,11 +3165,9 @@ apps/wubuos/CMakeFiles/test_view.dir/wuos_font.c.o: /home/wubu/WuBuOffice/apps/w
 
 /home/wubu/WuBuPad/src/diff.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/13/include/wbnoinvdintrin.h:
-
-/usr/include/SDL2/SDL_thread.h:
-
 /home/wubu/WuBuPad/src/doc.c:
+
+/home/wubu/WuBuOffice/apps/wubuos/test_view_ocr_doc.c:
 
 /usr/include/x86_64-linux-gnu/bits/stdint-least.h:
 
@@ -2912,8 +3184,6 @@ apps/wubuos/CMakeFiles/test_view.dir/wuos_font.c.o: /home/wubu/WuBuOffice/apps/w
 /usr/lib/gcc/x86_64-linux-gnu/13/include/tbmintrin.h:
 
 /home/wubu/WuBuPad/src/encode.c:
-
-/usr/include/SDL2/SDL_system.h:
 
 /usr/include/SDL2/close_code.h:
 
@@ -2934,10 +3204,6 @@ apps/wubuos/CMakeFiles/test_view.dir/wuos_font.c.o: /home/wubu/WuBuOffice/apps/w
 /home/wubu/WuBuOffice/apps/wubuos/palette.c:
 
 /home/wubu/WuBuOffice/apps/wubuos/palette.h:
-
-/home/wubu/WuBuPad/src/buffer.h:
-
-/usr/include/SDL2/SDL_stdinc.h:
 
 /home/wubu/WuBuOffice/apps/wubuos/wuos_plugin.h:
 
@@ -2963,6 +3229,20 @@ apps/wubuos/CMakeFiles/test_view.dir/wuos_font.c.o: /home/wubu/WuBuOffice/apps/w
 
 /home/wubu/WuBuOffice/apps/wubuos/test_view.c:
 
+/usr/lib/gcc/x86_64-linux-gnu/13/include/xsavesintrin.h:
+
+/home/wubu/WuBuOffice/src/wubumailmerge/wubumailmerge.h:
+
+/home/wubu/WuBuOffice/apps/wubuoxml/package.h:
+
+/home/wubu/WuBuOffice/src/wubueqnum/eqnum.h:
+
+/usr/include/SDL2/SDL_endian.h:
+
+/home/wubu/WuBuOffice/apps/wubucell/cell.h:
+
+/usr/include/x86_64-linux-gnu/bits/getopt_core.h:
+
 /home/wubu/WuBuOffice/apps/wubuos/view_settings.c:
 
 /usr/include/x86_64-linux-gnu/bits/confname.h:
@@ -2975,13 +3255,13 @@ apps/wubuos/CMakeFiles/test_view.dir/wuos_font.c.o: /home/wubu/WuBuOffice/apps/w
 
 /usr/include/x86_64-linux-gnu/bits/environments.h:
 
-/usr/include/x86_64-linux-gnu/bits/getopt_core.h:
-
-/home/wubu/WuBuOffice/apps/wubucell/cell.h:
-
 /usr/include/x86_64-linux-gnu/bits/posix_opt.h:
 
 /usr/include/x86_64-linux-gnu/bits/unistd.h:
+
+/home/wubu/WuBuOffice/src/wubuvars/vars.h:
+
+/home/wubu/WuBuOffice/apps/wubucell/cell_internal.h:
 
 /home/wubu/WuBuOffice/src/wubuscript/script.h:
 
@@ -2992,6 +3272,8 @@ apps/wubuos/CMakeFiles/test_view.dir/wuos_font.c.o: /home/wubu/WuBuOffice/apps/w
 /home/wubu/WuBuOffice/src/wubua11y/a11y.h:
 
 /usr/include/SDL2/SDL_filesystem.h:
+
+/home/wubu/WuBuOffice/apps/wubuos/test_view_docfile.c:
 
 /home/wubu/WuBuOffice/apps/wubuos/toast.c:
 
@@ -3005,11 +3287,21 @@ apps/wubuos/CMakeFiles/test_view.dir/wuos_font.c.o: /home/wubu/WuBuOffice/apps/w
 
 /home/wubu/WuBuOffice/apps/wubuos/wuos_theme.h:
 
+/home/wubu/WuBuOffice/src/wubuformula/eval.h:
+
+/usr/include/x86_64-linux-gnu/bits/atomic_wide_counter.h:
+
+/home/wubu/WuBuOffice/src/wubuformula/value.h:
+
 /home/wubu/WuBuOffice/src/wubupdfextract/pdfextract.h:
 
 /home/wubu/WuBuOffice/src/wubuoxml/package.h:
 
 /home/wubu/WuBuOffice/apps/wubuos/view_compare.c:
+
+/usr/lib/gcc/x86_64-linux-gnu/13/include/emmintrin.h:
+
+/home/wubu/WuBuOffice/apps/wubuos/view_editor_internal.h:
 
 /home/wubu/WuBuOffice/apps/wubuedit/docmodel.h:
 
@@ -3032,10 +3324,6 @@ apps/wubuos/CMakeFiles/test_view.dir/wuos_font.c.o: /home/wubu/WuBuOffice/apps/w
 /home/wubu/WuBuOffice/apps/wubuos/view_doc_internal.h:
 
 /usr/include/SDL2/SDL_cpuinfo.h:
-
-/home/wubu/WuBuOffice/src/wubueqnum/eqnum.h:
-
-/usr/include/SDL2/SDL_endian.h:
 
 /usr/include/SDL2/SDL_error.h:
 
@@ -3070,11 +3358,3 @@ apps/wubuos/CMakeFiles/test_view.dir/wuos_font.c.o: /home/wubu/WuBuOffice/apps/w
 /usr/include/SDL2/SDL_pixels.h:
 
 /usr/include/SDL2/SDL_power.h:
-
-/usr/include/SDL2/SDL_scancode.h:
-
-/usr/include/SDL2/SDL_surface.h:
-
-/usr/lib/gcc/x86_64-linux-gnu/13/include/avx512fintrin.h:
-
-/usr/include/SDL2/SDL_timer.h:

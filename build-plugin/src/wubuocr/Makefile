@@ -274,6 +274,30 @@ convnet3.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f src/wubuocr/CMakeFiles/wubuocr.dir/build.make src/wubuocr/CMakeFiles/wubuocr.dir/convnet3.c.s
 .PHONY : convnet3.c.s
 
+convnet3_cbam.o: convnet3_cbam.c.o
+.PHONY : convnet3_cbam.o
+
+# target to build an object file
+convnet3_cbam.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f src/wubuocr/CMakeFiles/wubuocr.dir/build.make src/wubuocr/CMakeFiles/wubuocr.dir/convnet3_cbam.c.o
+.PHONY : convnet3_cbam.c.o
+
+convnet3_cbam.i: convnet3_cbam.c.i
+.PHONY : convnet3_cbam.i
+
+# target to preprocess a source file
+convnet3_cbam.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f src/wubuocr/CMakeFiles/wubuocr.dir/build.make src/wubuocr/CMakeFiles/wubuocr.dir/convnet3_cbam.c.i
+.PHONY : convnet3_cbam.c.i
+
+convnet3_cbam.s: convnet3_cbam.c.s
+.PHONY : convnet3_cbam.s
+
+# target to generate assembly for a file
+convnet3_cbam.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f src/wubuocr/CMakeFiles/wubuocr.dir/build.make src/wubuocr/CMakeFiles/wubuocr.dir/convnet3_cbam.c.s
+.PHONY : convnet3_cbam.c.s
+
 crnn.o: crnn.c.o
 .PHONY : crnn.o
 
@@ -1044,6 +1068,9 @@ help:
 	@echo "... convnet3.o"
 	@echo "... convnet3.i"
 	@echo "... convnet3.s"
+	@echo "... convnet3_cbam.o"
+	@echo "... convnet3_cbam.i"
+	@echo "... convnet3_cbam.s"
 	@echo "... crnn.o"
 	@echo "... crnn.i"
 	@echo "... crnn.s"

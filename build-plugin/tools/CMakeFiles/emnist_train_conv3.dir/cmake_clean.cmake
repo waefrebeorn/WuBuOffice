@@ -3,6 +3,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/emnist_train_conv3.dir/__/src/wubuocr/conv_gemm.c.o.d"
   "CMakeFiles/emnist_train_conv3.dir/__/src/wubuocr/convnet3.c.o"
   "CMakeFiles/emnist_train_conv3.dir/__/src/wubuocr/convnet3.c.o.d"
+  "CMakeFiles/emnist_train_conv3.dir/__/src/wubuocr/convnet3_cbam.c.o"
+  "CMakeFiles/emnist_train_conv3.dir/__/src/wubuocr/convnet3_cbam.c.o.d"
   "CMakeFiles/emnist_train_conv3.dir/__/src/wubuocr/mlp.c.o"
   "CMakeFiles/emnist_train_conv3.dir/__/src/wubuocr/mlp.c.o.d"
   "CMakeFiles/emnist_train_conv3.dir/emnist_train_conv3.c.o"

@@ -32,6 +32,63 @@ tools/CMakeFiles/test_stylebank.dir/__/src/wubuocr/conv_gemm.c.o: /home/wubu/WuB
 tools/CMakeFiles/test_stylebank.dir/__/src/wubuocr/convnet3.c.o: /home/wubu/WuBuOffice/src/wubuocr/convnet3.c \
   /home/wubu/WuBuOffice/src/wubuocr/conv_gemm.h \
   /home/wubu/WuBuOffice/src/wubuocr/convnet3.h \
+  /home/wubu/WuBuOffice/src/wubuocr/convnet3_internal.h \
+  /usr/include/features-time64.h \
+  /usr/include/features.h \
+  /usr/include/math.h \
+  /usr/include/stdc-predef.h \
+  /usr/include/stdint.h \
+  /usr/include/stdio.h \
+  /usr/include/stdlib.h \
+  /usr/include/string.h \
+  /usr/include/x86_64-linux-gnu/bits/floatn-common.h \
+  /usr/include/x86_64-linux-gnu/bits/floatn.h \
+  /usr/include/x86_64-linux-gnu/bits/flt-eval-method.h \
+  /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
+  /usr/include/x86_64-linux-gnu/bits/fp-logb.h \
+  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
+  /usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h \
+  /usr/include/x86_64-linux-gnu/bits/long-double.h \
+  /usr/include/x86_64-linux-gnu/bits/math-vector.h \
+  /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
+  /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+  /usr/include/x86_64-linux-gnu/bits/stdio.h \
+  /usr/include/x86_64-linux-gnu/bits/stdio2-decl.h \
+  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
+  /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
+  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
+  /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
+  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
+  /usr/include/x86_64-linux-gnu/bits/string_fortified.h \
+  /usr/include/x86_64-linux-gnu/bits/time64.h \
+  /usr/include/x86_64-linux-gnu/bits/timesize.h \
+  /usr/include/x86_64-linux-gnu/bits/types.h \
+  /usr/include/x86_64-linux-gnu/bits/types/FILE.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__FILE.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/locale_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h \
+  /usr/include/x86_64-linux-gnu/bits/typesizes.h \
+  /usr/include/x86_64-linux-gnu/bits/waitflags.h \
+  /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
+  /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
+  /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
+  /usr/include/x86_64-linux-gnu/gnu/stubs.h \
+  /usr/include/x86_64-linux-gnu/sys/cdefs.h \
+  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h \
+  /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h \
+  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h
+
+tools/CMakeFiles/test_stylebank.dir/__/src/wubuocr/convnet3_cbam.c.o: /home/wubu/WuBuOffice/src/wubuocr/convnet3_cbam.c \
+  /home/wubu/WuBuOffice/src/wubuocr/convnet3.h \
+  /home/wubu/WuBuOffice/src/wubuocr/convnet3_internal.h \
   /usr/include/features-time64.h \
   /usr/include/features.h \
   /usr/include/math.h \
@@ -251,6 +308,8 @@ tools/CMakeFiles/test_stylebank.dir/__/tests/test_stylebank.c.o: /home/wubu/WuBu
 
 /home/wubu/WuBuOffice/tests/test_stylebank.c:
 
+/home/wubu/WuBuOffice/src/wubuocr/mlp.h:
+
 /home/wubu/WuBuOffice/src/wubuocr/convnet3.h:
 
 /home/wubu/WuBuOffice/src/wubuocr/convnet3.c:
@@ -260,6 +319,12 @@ tools/CMakeFiles/test_stylebank.dir/__/tests/test_stylebank.c.o: /home/wubu/WuBu
 /usr/include/x86_64-linux-gnu/bits/floatn-common.h:
 
 /usr/include/x86_64-linux-gnu/sys/cdefs.h:
+
+/home/wubu/WuBuOffice/src/wubuocr/stylebank.h:
+
+/home/wubu/WuBuOffice/src/wubuocr/mlp.c:
+
+/usr/include/x86_64-linux-gnu/bits/stdio2.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h:
 
@@ -278,6 +343,8 @@ tools/CMakeFiles/test_stylebank.dir/__/tests/test_stylebank.c.o: /home/wubu/WuBu
 /usr/include/x86_64-linux-gnu/bits/time64.h:
 
 /usr/lib/gcc/x86_64-linux-gnu/13/include/omp.h:
+
+/home/wubu/WuBuOffice/src/wubuocr/convnet3_cbam.c:
 
 /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h:
 
@@ -309,8 +376,6 @@ tools/CMakeFiles/test_stylebank.dir/__/tests/test_stylebank.c.o: /home/wubu/WuBu
 
 /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h:
 
-/usr/include/x86_64-linux-gnu/bits/wchar.h:
-
 /usr/include/features.h:
 
 /usr/include/x86_64-linux-gnu/bits/long-double.h:
@@ -326,6 +391,10 @@ tools/CMakeFiles/test_stylebank.dir/__/tests/test_stylebank.c.o: /home/wubu/WuBu
 /usr/include/x86_64-linux-gnu/bits/types/locale_t.h:
 
 /usr/include/x86_64-linux-gnu/bits/flt-eval-method.h:
+
+/usr/include/x86_64-linux-gnu/bits/wchar.h:
+
+/home/wubu/WuBuOffice/src/wubuocr/convnet3_internal.h:
 
 /usr/include/x86_64-linux-gnu/bits/stdint-intn.h:
 
@@ -364,11 +433,3 @@ tools/CMakeFiles/test_stylebank.dir/__/tests/test_stylebank.c.o: /home/wubu/WuBu
 /usr/include/x86_64-linux-gnu/bits/waitflags.h:
 
 /usr/include/x86_64-linux-gnu/bits/waitstatus.h:
-
-/home/wubu/WuBuOffice/src/wubuocr/stylebank.h:
-
-/usr/include/x86_64-linux-gnu/bits/stdio2.h:
-
-/home/wubu/WuBuOffice/src/wubuocr/mlp.c:
-
-/home/wubu/WuBuOffice/src/wubuocr/mlp.h:

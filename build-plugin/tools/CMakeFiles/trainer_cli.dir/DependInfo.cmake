@@ -10,6 +10,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/wubu/WuBuOffice/src/wubuocr/conv_gemm.c" "tools/CMakeFiles/trainer_cli.dir/__/src/wubuocr/conv_gemm.c.o" "gcc" "tools/CMakeFiles/trainer_cli.dir/__/src/wubuocr/conv_gemm.c.o.d"
   "/home/wubu/WuBuOffice/src/wubuocr/convnet3.c" "tools/CMakeFiles/trainer_cli.dir/__/src/wubuocr/convnet3.c.o" "gcc" "tools/CMakeFiles/trainer_cli.dir/__/src/wubuocr/convnet3.c.o.d"
+  "/home/wubu/WuBuOffice/src/wubuocr/convnet3_cbam.c" "tools/CMakeFiles/trainer_cli.dir/__/src/wubuocr/convnet3_cbam.c.o" "gcc" "tools/CMakeFiles/trainer_cli.dir/__/src/wubuocr/convnet3_cbam.c.o.d"
   "/home/wubu/WuBuOffice/src/wubuocr/mlp.c" "tools/CMakeFiles/trainer_cli.dir/__/src/wubuocr/mlp.c.o" "gcc" "tools/CMakeFiles/trainer_cli.dir/__/src/wubuocr/mlp.c.o.d"
   "/home/wubu/WuBuOffice/src/wubuocr/trainer.c" "tools/CMakeFiles/trainer_cli.dir/__/src/wubuocr/trainer.c.o" "gcc" "tools/CMakeFiles/trainer_cli.dir/__/src/wubuocr/trainer.c.o.d"
   "/home/wubu/WuBuOffice/tools/trainer_cli.c" "tools/CMakeFiles/trainer_cli.dir/trainer_cli.c.o" "gcc" "tools/CMakeFiles/trainer_cli.dir/trainer_cli.c.o.d"

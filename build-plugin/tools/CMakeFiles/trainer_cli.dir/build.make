@@ -111,10 +111,24 @@ tools/CMakeFiles/trainer_cli.dir/__/src/wubuocr/convnet3.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/trainer_cli.dir/__/src/wubuocr/convnet3.c.s"
 	cd /home/wubu/WuBuOffice/build-plugin/tools && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/wubu/WuBuOffice/src/wubuocr/convnet3.c -o CMakeFiles/trainer_cli.dir/__/src/wubuocr/convnet3.c.s
 
+tools/CMakeFiles/trainer_cli.dir/__/src/wubuocr/convnet3_cbam.c.o: tools/CMakeFiles/trainer_cli.dir/flags.make
+tools/CMakeFiles/trainer_cli.dir/__/src/wubuocr/convnet3_cbam.c.o: /home/wubu/WuBuOffice/src/wubuocr/convnet3_cbam.c
+tools/CMakeFiles/trainer_cli.dir/__/src/wubuocr/convnet3_cbam.c.o: tools/CMakeFiles/trainer_cli.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object tools/CMakeFiles/trainer_cli.dir/__/src/wubuocr/convnet3_cbam.c.o"
+	cd /home/wubu/WuBuOffice/build-plugin/tools && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT tools/CMakeFiles/trainer_cli.dir/__/src/wubuocr/convnet3_cbam.c.o -MF CMakeFiles/trainer_cli.dir/__/src/wubuocr/convnet3_cbam.c.o.d -o CMakeFiles/trainer_cli.dir/__/src/wubuocr/convnet3_cbam.c.o -c /home/wubu/WuBuOffice/src/wubuocr/convnet3_cbam.c
+
+tools/CMakeFiles/trainer_cli.dir/__/src/wubuocr/convnet3_cbam.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/trainer_cli.dir/__/src/wubuocr/convnet3_cbam.c.i"
+	cd /home/wubu/WuBuOffice/build-plugin/tools && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/wubu/WuBuOffice/src/wubuocr/convnet3_cbam.c > CMakeFiles/trainer_cli.dir/__/src/wubuocr/convnet3_cbam.c.i
+
+tools/CMakeFiles/trainer_cli.dir/__/src/wubuocr/convnet3_cbam.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/trainer_cli.dir/__/src/wubuocr/convnet3_cbam.c.s"
+	cd /home/wubu/WuBuOffice/build-plugin/tools && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/wubu/WuBuOffice/src/wubuocr/convnet3_cbam.c -o CMakeFiles/trainer_cli.dir/__/src/wubuocr/convnet3_cbam.c.s
+
 tools/CMakeFiles/trainer_cli.dir/__/src/wubuocr/mlp.c.o: tools/CMakeFiles/trainer_cli.dir/flags.make
 tools/CMakeFiles/trainer_cli.dir/__/src/wubuocr/mlp.c.o: /home/wubu/WuBuOffice/src/wubuocr/mlp.c
 tools/CMakeFiles/trainer_cli.dir/__/src/wubuocr/mlp.c.o: tools/CMakeFiles/trainer_cli.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object tools/CMakeFiles/trainer_cli.dir/__/src/wubuocr/mlp.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object tools/CMakeFiles/trainer_cli.dir/__/src/wubuocr/mlp.c.o"
 	cd /home/wubu/WuBuOffice/build-plugin/tools && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT tools/CMakeFiles/trainer_cli.dir/__/src/wubuocr/mlp.c.o -MF CMakeFiles/trainer_cli.dir/__/src/wubuocr/mlp.c.o.d -o CMakeFiles/trainer_cli.dir/__/src/wubuocr/mlp.c.o -c /home/wubu/WuBuOffice/src/wubuocr/mlp.c
 
 tools/CMakeFiles/trainer_cli.dir/__/src/wubuocr/mlp.c.i: cmake_force
@@ -128,7 +142,7 @@ tools/CMakeFiles/trainer_cli.dir/__/src/wubuocr/mlp.c.s: cmake_force
 tools/CMakeFiles/trainer_cli.dir/__/src/wubuocr/conv_gemm.c.o: tools/CMakeFiles/trainer_cli.dir/flags.make
 tools/CMakeFiles/trainer_cli.dir/__/src/wubuocr/conv_gemm.c.o: /home/wubu/WuBuOffice/src/wubuocr/conv_gemm.c
 tools/CMakeFiles/trainer_cli.dir/__/src/wubuocr/conv_gemm.c.o: tools/CMakeFiles/trainer_cli.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object tools/CMakeFiles/trainer_cli.dir/__/src/wubuocr/conv_gemm.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building C object tools/CMakeFiles/trainer_cli.dir/__/src/wubuocr/conv_gemm.c.o"
 	cd /home/wubu/WuBuOffice/build-plugin/tools && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT tools/CMakeFiles/trainer_cli.dir/__/src/wubuocr/conv_gemm.c.o -MF CMakeFiles/trainer_cli.dir/__/src/wubuocr/conv_gemm.c.o.d -o CMakeFiles/trainer_cli.dir/__/src/wubuocr/conv_gemm.c.o -c /home/wubu/WuBuOffice/src/wubuocr/conv_gemm.c
 
 tools/CMakeFiles/trainer_cli.dir/__/src/wubuocr/conv_gemm.c.i: cmake_force
@@ -144,6 +158,7 @@ trainer_cli_OBJECTS = \
 "CMakeFiles/trainer_cli.dir/trainer_cli.c.o" \
 "CMakeFiles/trainer_cli.dir/__/src/wubuocr/trainer.c.o" \
 "CMakeFiles/trainer_cli.dir/__/src/wubuocr/convnet3.c.o" \
+"CMakeFiles/trainer_cli.dir/__/src/wubuocr/convnet3_cbam.c.o" \
 "CMakeFiles/trainer_cli.dir/__/src/wubuocr/mlp.c.o" \
 "CMakeFiles/trainer_cli.dir/__/src/wubuocr/conv_gemm.c.o"
 
@@ -153,11 +168,12 @@ trainer_cli_EXTERNAL_OBJECTS =
 tools/trainer_cli: tools/CMakeFiles/trainer_cli.dir/trainer_cli.c.o
 tools/trainer_cli: tools/CMakeFiles/trainer_cli.dir/__/src/wubuocr/trainer.c.o
 tools/trainer_cli: tools/CMakeFiles/trainer_cli.dir/__/src/wubuocr/convnet3.c.o
+tools/trainer_cli: tools/CMakeFiles/trainer_cli.dir/__/src/wubuocr/convnet3_cbam.c.o
 tools/trainer_cli: tools/CMakeFiles/trainer_cli.dir/__/src/wubuocr/mlp.c.o
 tools/trainer_cli: tools/CMakeFiles/trainer_cli.dir/__/src/wubuocr/conv_gemm.c.o
 tools/trainer_cli: tools/CMakeFiles/trainer_cli.dir/build.make
 tools/trainer_cli: tools/CMakeFiles/trainer_cli.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking C executable trainer_cli"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking C executable trainer_cli"
 	cd /home/wubu/WuBuOffice/build-plugin/tools && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/trainer_cli.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

@@ -4234,6 +4234,19 @@ test_toc/fast:
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_toc.dir/build.make tests/CMakeFiles/test_toc.dir/build
 .PHONY : test_toc/fast
 
+#=============================================================================
+# Target rules for targets named test_agent_verbs
+
+# Build rule for target.
+test_agent_verbs: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_agent_verbs
+.PHONY : test_agent_verbs
+
+# fast build rule for target.
+test_agent_verbs/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_agent_verbs.dir/build.make tests/CMakeFiles/test_agent_verbs.dir/build
+.PHONY : test_agent_verbs/fast
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -4277,6 +4290,7 @@ help:
 	@echo "... test_a11y"
 	@echo "... test_a11yannounce"
 	@echo "... test_a11ytree"
+	@echo "... test_agent_verbs"
 	@echo "... test_aislot"
 	@echo "... test_autocomp"
 	@echo "... test_autosave"

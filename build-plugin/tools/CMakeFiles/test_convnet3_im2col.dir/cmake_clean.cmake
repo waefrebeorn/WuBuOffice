@@ -3,6 +3,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/conv_gemm.c.o.d"
   "CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/convnet3.c.o"
   "CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/convnet3.c.o.d"
+  "CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/convnet3_cbam.c.o"
+  "CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/convnet3_cbam.c.o.d"
   "CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/dft.c.o"
   "CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/dft.c.o.d"
   "CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/goldplace.c.o"

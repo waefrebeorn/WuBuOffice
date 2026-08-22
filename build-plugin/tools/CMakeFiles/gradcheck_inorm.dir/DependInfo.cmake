@@ -10,6 +10,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/wubu/WuBuOffice/src/wubuocr/conv_gemm.c" "tools/CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/conv_gemm.c.o" "gcc" "tools/CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/conv_gemm.c.o.d"
   "/home/wubu/WuBuOffice/src/wubuocr/convnet3.c" "tools/CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/convnet3.c.o" "gcc" "tools/CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/convnet3.c.o.d"
+  "/home/wubu/WuBuOffice/src/wubuocr/convnet3_cbam.c" "tools/CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/convnet3_cbam.c.o" "gcc" "tools/CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/convnet3_cbam.c.o.d"
   "/home/wubu/WuBuOffice/src/wubuocr/mlp.c" "tools/CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/mlp.c.o" "gcc" "tools/CMakeFiles/gradcheck_inorm.dir/__/src/wubuocr/mlp.c.o.d"
   "/home/wubu/WuBuOffice/tests/gradcheck_inorm.c" "tools/CMakeFiles/gradcheck_inorm.dir/__/tests/gradcheck_inorm.c.o" "gcc" "tools/CMakeFiles/gradcheck_inorm.dir/__/tests/gradcheck_inorm.c.o.d"
   )

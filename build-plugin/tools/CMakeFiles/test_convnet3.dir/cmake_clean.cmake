@@ -3,6 +3,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/test_convnet3.dir/__/src/wubuocr/conv_gemm.c.o.d"
   "CMakeFiles/test_convnet3.dir/__/src/wubuocr/convnet3.c.o"
   "CMakeFiles/test_convnet3.dir/__/src/wubuocr/convnet3.c.o.d"
+  "CMakeFiles/test_convnet3.dir/__/src/wubuocr/convnet3_cbam.c.o"
+  "CMakeFiles/test_convnet3.dir/__/src/wubuocr/convnet3_cbam.c.o.d"
   "CMakeFiles/test_convnet3.dir/__/src/wubuocr/mlp.c.o"
   "CMakeFiles/test_convnet3.dir/__/src/wubuocr/mlp.c.o.d"
   "CMakeFiles/test_convnet3.dir/__/tests/test_convnet3.c.o"

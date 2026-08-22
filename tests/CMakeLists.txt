@@ -472,3 +472,7 @@ target_include_directories(test_toc PRIVATE
     ${CMAKE_SOURCE_DIR}/src/wubusettings)
 add_test(NAME toc COMMAND test_toc)
 set_property(TEST toc PROPERTY LABELS toc)
+
+add_executable(test_agent_verbs test_agent_verbs.c)
+target_link_libraries(test_agent_verbs PRIVATE wubudoc wubujson wubuoxml wubuzip wubuxml)
+add_test(NAME agent_verbs COMMAND test_agent_verbs)

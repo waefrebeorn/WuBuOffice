@@ -46,4 +46,5 @@ tools/CMakeFiles/test_stylebank.dir/__/src/wubuocr/convnet3.c.o: \
  /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
  /usr/include/x86_64-linux-gnu/bits/stdio2-decl.h \
  /usr/include/x86_64-linux-gnu/bits/stdio.h \
- /usr/include/x86_64-linux-gnu/bits/stdio2.h
+ /usr/include/x86_64-linux-gnu/bits/stdio2.h \
+ /home/wubu/WuBuOffice/src/wubuocr/convnet3_internal.h

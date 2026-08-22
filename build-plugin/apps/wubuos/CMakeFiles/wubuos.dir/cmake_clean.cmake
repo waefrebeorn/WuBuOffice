@@ -75,6 +75,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/wubuos.dir/wuos_frame.c.o.d"
   "CMakeFiles/wubuos.dir/wuos_motion.c.o"
   "CMakeFiles/wubuos.dir/wuos_motion.c.o.d"
+  "CMakeFiles/wubuos.dir/wuos_shell_events.c.o"
+  "CMakeFiles/wubuos.dir/wuos_shell_events.c.o.d"
   "CMakeFiles/wubuos.dir/wuos_toolbar.c.o"
   "CMakeFiles/wubuos.dir/wuos_toolbar.c.o.d"
   "wubuos"

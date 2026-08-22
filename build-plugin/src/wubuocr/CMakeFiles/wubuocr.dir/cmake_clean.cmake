@@ -9,6 +9,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/wubuocr.dir/convnet.c.o.d"
   "CMakeFiles/wubuocr.dir/convnet3.c.o"
   "CMakeFiles/wubuocr.dir/convnet3.c.o.d"
+  "CMakeFiles/wubuocr.dir/convnet3_cbam.c.o"
+  "CMakeFiles/wubuocr.dir/convnet3_cbam.c.o.d"
   "CMakeFiles/wubuocr.dir/crnn_transcribe.c.o"
   "CMakeFiles/wubuocr.dir/crnn_transcribe.c.o.d"
   "CMakeFiles/wubuocr.dir/crnn_transcribe_pre.c.o"

@@ -1162,6 +1162,20 @@ test_toc/fast:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_toc.dir/build.make tests/CMakeFiles/test_toc.dir/build
 .PHONY : test_toc/fast
 
+# Convenience name for target.
+tests/CMakeFiles/test_agent_verbs.dir/rule:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_agent_verbs.dir/rule
+.PHONY : tests/CMakeFiles/test_agent_verbs.dir/rule
+
+# Convenience name for target.
+test_agent_verbs: tests/CMakeFiles/test_agent_verbs.dir/rule
+.PHONY : test_agent_verbs
+
+# fast build rule for target.
+test_agent_verbs/fast:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_agent_verbs.dir/build.make tests/CMakeFiles/test_agent_verbs.dir/build
+.PHONY : test_agent_verbs/fast
+
 __/apps/wubunote/note_controller.o: __/apps/wubunote/note_controller.c.o
 .PHONY : __/apps/wubunote/note_controller.o
 
@@ -1335,6 +1349,30 @@ test_a11y.s: test_a11y.c.s
 test_a11y.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_a11y.dir/build.make tests/CMakeFiles/test_a11y.dir/test_a11y.c.s
 .PHONY : test_a11y.c.s
+
+test_agent_verbs.o: test_agent_verbs.c.o
+.PHONY : test_agent_verbs.o
+
+# target to build an object file
+test_agent_verbs.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_agent_verbs.dir/build.make tests/CMakeFiles/test_agent_verbs.dir/test_agent_verbs.c.o
+.PHONY : test_agent_verbs.c.o
+
+test_agent_verbs.i: test_agent_verbs.c.i
+.PHONY : test_agent_verbs.i
+
+# target to preprocess a source file
+test_agent_verbs.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_agent_verbs.dir/build.make tests/CMakeFiles/test_agent_verbs.dir/test_agent_verbs.c.i
+.PHONY : test_agent_verbs.c.i
+
+test_agent_verbs.s: test_agent_verbs.c.s
+.PHONY : test_agent_verbs.s
+
+# target to generate assembly for a file
+test_agent_verbs.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_agent_verbs.dir/build.make tests/CMakeFiles/test_agent_verbs.dir/test_agent_verbs.c.s
+.PHONY : test_agent_verbs.c.s
 
 test_autosave.o: test_autosave.c.o
 .PHONY : test_autosave.o
@@ -3098,6 +3136,7 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... test"
 	@echo "... test_a11y"
+	@echo "... test_agent_verbs"
 	@echo "... test_autosave"
 	@echo "... test_base"
 	@echo "... test_cell_cycle"
@@ -3192,6 +3231,9 @@ help:
 	@echo "... test_a11y.o"
 	@echo "... test_a11y.i"
 	@echo "... test_a11y.s"
+	@echo "... test_agent_verbs.o"
+	@echo "... test_agent_verbs.i"
+	@echo "... test_agent_verbs.s"
 	@echo "... test_autosave.o"
 	@echo "... test_autosave.i"
 	@echo "... test_autosave.s"

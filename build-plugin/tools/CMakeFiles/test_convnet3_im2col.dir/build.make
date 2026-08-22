@@ -97,10 +97,24 @@ tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/convnet3.c.s: cmake_for
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/convnet3.c.s"
 	cd /home/wubu/WuBuOffice/build-plugin/tools && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/wubu/WuBuOffice/src/wubuocr/convnet3.c -o CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/convnet3.c.s
 
+tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/convnet3_cbam.c.o: tools/CMakeFiles/test_convnet3_im2col.dir/flags.make
+tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/convnet3_cbam.c.o: /home/wubu/WuBuOffice/src/wubuocr/convnet3_cbam.c
+tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/convnet3_cbam.c.o: tools/CMakeFiles/test_convnet3_im2col.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/convnet3_cbam.c.o"
+	cd /home/wubu/WuBuOffice/build-plugin/tools && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/convnet3_cbam.c.o -MF CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/convnet3_cbam.c.o.d -o CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/convnet3_cbam.c.o -c /home/wubu/WuBuOffice/src/wubuocr/convnet3_cbam.c
+
+tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/convnet3_cbam.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/convnet3_cbam.c.i"
+	cd /home/wubu/WuBuOffice/build-plugin/tools && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/wubu/WuBuOffice/src/wubuocr/convnet3_cbam.c > CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/convnet3_cbam.c.i
+
+tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/convnet3_cbam.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/convnet3_cbam.c.s"
+	cd /home/wubu/WuBuOffice/build-plugin/tools && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/wubu/WuBuOffice/src/wubuocr/convnet3_cbam.c -o CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/convnet3_cbam.c.s
+
 tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/mlp.c.o: tools/CMakeFiles/test_convnet3_im2col.dir/flags.make
 tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/mlp.c.o: /home/wubu/WuBuOffice/src/wubuocr/mlp.c
 tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/mlp.c.o: tools/CMakeFiles/test_convnet3_im2col.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/mlp.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/mlp.c.o"
 	cd /home/wubu/WuBuOffice/build-plugin/tools && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/mlp.c.o -MF CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/mlp.c.o.d -o CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/mlp.c.o -c /home/wubu/WuBuOffice/src/wubuocr/mlp.c
 
 tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/mlp.c.i: cmake_force
@@ -114,7 +128,7 @@ tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/mlp.c.s: cmake_force
 tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/conv_gemm.c.o: tools/CMakeFiles/test_convnet3_im2col.dir/flags.make
 tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/conv_gemm.c.o: /home/wubu/WuBuOffice/src/wubuocr/conv_gemm.c
 tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/conv_gemm.c.o: tools/CMakeFiles/test_convnet3_im2col.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/conv_gemm.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/conv_gemm.c.o"
 	cd /home/wubu/WuBuOffice/build-plugin/tools && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/conv_gemm.c.o -MF CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/conv_gemm.c.o.d -o CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/conv_gemm.c.o -c /home/wubu/WuBuOffice/src/wubuocr/conv_gemm.c
 
 tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/conv_gemm.c.i: cmake_force
@@ -128,7 +142,7 @@ tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/conv_gemm.c.s: cmake_fo
 tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/dft.c.o: tools/CMakeFiles/test_convnet3_im2col.dir/flags.make
 tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/dft.c.o: /home/wubu/WuBuOffice/src/wubuocr/dft.c
 tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/dft.c.o: tools/CMakeFiles/test_convnet3_im2col.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/dft.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building C object tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/dft.c.o"
 	cd /home/wubu/WuBuOffice/build-plugin/tools && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/dft.c.o -MF CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/dft.c.o.d -o CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/dft.c.o -c /home/wubu/WuBuOffice/src/wubuocr/dft.c
 
 tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/dft.c.i: cmake_force
@@ -142,7 +156,7 @@ tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/dft.c.s: cmake_force
 tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/goldplace.c.o: tools/CMakeFiles/test_convnet3_im2col.dir/flags.make
 tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/goldplace.c.o: /home/wubu/WuBuOffice/src/wubuocr/goldplace.c
 tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/goldplace.c.o: tools/CMakeFiles/test_convnet3_im2col.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building C object tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/goldplace.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building C object tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/goldplace.c.o"
 	cd /home/wubu/WuBuOffice/build-plugin/tools && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/goldplace.c.o -MF CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/goldplace.c.o.d -o CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/goldplace.c.o -c /home/wubu/WuBuOffice/src/wubuocr/goldplace.c
 
 tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/goldplace.c.i: cmake_force
@@ -156,7 +170,7 @@ tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/goldplace.c.s: cmake_fo
 tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/stylebank.c.o: tools/CMakeFiles/test_convnet3_im2col.dir/flags.make
 tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/stylebank.c.o: /home/wubu/WuBuOffice/src/wubuocr/stylebank.c
 tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/stylebank.c.o: tools/CMakeFiles/test_convnet3_im2col.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building C object tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/stylebank.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building C object tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/stylebank.c.o"
 	cd /home/wubu/WuBuOffice/build-plugin/tools && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/stylebank.c.o -MF CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/stylebank.c.o.d -o CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/stylebank.c.o -c /home/wubu/WuBuOffice/src/wubuocr/stylebank.c
 
 tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/stylebank.c.i: cmake_force
@@ -170,7 +184,7 @@ tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/stylebank.c.s: cmake_fo
 tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/zoning.c.o: tools/CMakeFiles/test_convnet3_im2col.dir/flags.make
 tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/zoning.c.o: /home/wubu/WuBuOffice/src/wubuocr/zoning.c
 tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/zoning.c.o: tools/CMakeFiles/test_convnet3_im2col.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building C object tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/zoning.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building C object tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/zoning.c.o"
 	cd /home/wubu/WuBuOffice/build-plugin/tools && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/zoning.c.o -MF CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/zoning.c.o.d -o CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/zoning.c.o -c /home/wubu/WuBuOffice/src/wubuocr/zoning.c
 
 tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/zoning.c.i: cmake_force
@@ -185,6 +199,7 @@ tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/zoning.c.s: cmake_force
 test_convnet3_im2col_OBJECTS = \
 "CMakeFiles/test_convnet3_im2col.dir/test_convnet3_im2col.c.o" \
 "CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/convnet3.c.o" \
+"CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/convnet3_cbam.c.o" \
 "CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/mlp.c.o" \
 "CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/conv_gemm.c.o" \
 "CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/dft.c.o" \
@@ -197,6 +212,7 @@ test_convnet3_im2col_EXTERNAL_OBJECTS =
 
 tools/test_convnet3_im2col: tools/CMakeFiles/test_convnet3_im2col.dir/test_convnet3_im2col.c.o
 tools/test_convnet3_im2col: tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/convnet3.c.o
+tools/test_convnet3_im2col: tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/convnet3_cbam.c.o
 tools/test_convnet3_im2col: tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/mlp.c.o
 tools/test_convnet3_im2col: tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/conv_gemm.c.o
 tools/test_convnet3_im2col: tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/dft.c.o
@@ -205,7 +221,7 @@ tools/test_convnet3_im2col: tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wub
 tools/test_convnet3_im2col: tools/CMakeFiles/test_convnet3_im2col.dir/__/src/wubuocr/zoning.c.o
 tools/test_convnet3_im2col: tools/CMakeFiles/test_convnet3_im2col.dir/build.make
 tools/test_convnet3_im2col: tools/CMakeFiles/test_convnet3_im2col.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Linking C executable test_convnet3_im2col"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Linking C executable test_convnet3_im2col"
 	cd /home/wubu/WuBuOffice/build-plugin/tools && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/test_convnet3_im2col.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

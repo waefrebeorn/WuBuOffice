@@ -133,6 +133,122 @@ char *doc_agent_handle(DocSession *s, const char *command_json) {
         j_obj_put(res, "bytes", j_str(b ? b : ""));
         free(b);
     }
+    else if (strcmp(name, "find") == 0) {
+        /* find {id, query} -> matches with line + context window. Agents
+         * need grounded search (not just boolean hit) to cite locations. */
+        const JVal *idv = j_obj_get(cmd, "id");
+        const JVal *qv  = j_obj_get(cmd, "query");
+        if (!idv || !qv || j_type(qv) != J_STR) {
+            j_free(cmd); return agent_err("find: id,query required");
+        }
+        long id = (long)j_as_num(idv);
+        const char *tx = doc_text(s, id);
+        char *tx_owned = NULL;
+        if (!tx) {
+            /* model-backed docs (md/docx/...): flatten the normalized JSON
+             * model's "text" fields into one searchable buffer so agents get
+             * the SAME grounded find on every kind, not just plain text. */
+            char *mjson = doc_json(s, id);
+            if (mjson) {
+                size_t cap = strlen(mjson) + 1, len = 0;
+                tx_owned = malloc(cap);
+                const char *p = mjson;
+                while ((p = strstr(p, "\"text\"")) != NULL) {
+                    p = strchr(p + 6, '"');          /* open quote of value */
+                    if (!p) break;
+                    p++;
+                    while (*p && *p != '"') {
+                        if (*p == '\\' && p[1]) p++;  /* skip escapes */
+                        else if (len + 1 < cap) tx_owned[len++] = *p;
+                        p++;
+                    }
+                    if (len + 1 < cap) tx_owned[len++] = '\n';
+                }
+                tx_owned[len] = 0;
+                free(mjson);
+                if (len) tx = tx_owned;
+            }
+        }
+        if (!tx) {
+            free(tx_owned);
+            res = j_obj();
+            j_obj_put(res, "id", j_num((double)id));
+            j_obj_put(res, "supported", j_bool(0));
+        } else {
+            JVal *arr = j_arr();
+            const char *q = j_as_str(qv);
+            const char *p = tx;
+            int n = 0;
+            while ((p = strstr(p, q)) != NULL && n < 200) {
+                long line = 1;
+                for (const char *c = tx; c < p; c++) if (*c == '\n') line++;
+                size_t ctx0 = (size_t)(p - tx > 40 ? p - tx - 40 : 0);
+                size_t rem = strlen(p);
+                size_t clen = (rem < strlen(q) + 80) ? rem : strlen(q) + 80;
+                char *ctx = malloc(clen + 1);
+                memcpy(ctx, tx + ctx0, clen); ctx[clen] = 0;
+                JVal *m = j_obj();
+                j_obj_put(m, "line", j_num((double)line));
+                j_obj_put(m, "offset", j_num((double)(p - tx)));
+                j_obj_put(m, "context", j_str(ctx));
+                free(ctx);
+                j_arr_push(arr, m);
+                n++;
+                p += strlen(q);
+            }
+            res = j_obj();
+            j_obj_put(res, "id", j_num((double)id));
+            j_obj_put(res, "count", j_num((double)n));
+            j_obj_put(res, "matches", arr);
+            free(tx_owned);
+        }
+    }
+    else if (strcmp(name, "structure") == 0) {
+        /* structure {id} -> headings/tables/figures outline from the model.
+         * The agent's table of contents: semantic anchors without GUI. */
+        const JVal *idv = j_obj_get(cmd, "id");
+        if (!idv) { j_free(cmd); return agent_err("structure: id required"); }
+        long id = (long)j_as_num(idv);
+        char *mjson = doc_json(s, id);
+        if (!mjson) { j_free(cmd); return agent_err("structure: no such id"); }
+        JVal *model = j_parse(mjson, NULL);
+        free(mjson);
+        JVal *out = j_arr();
+        if (model) {
+            /* walk nodes collecting kind+text summary (depth-first) */
+            /* iterative stack-free walk over the JSON object arrays */
+            /* nodes live under {"nodes":[...]} or {"body":[...]} */
+            JVal *nodes = j_obj_get(model, "nodes");
+            if (!nodes) nodes = j_obj_get(model, "body");
+            if (nodes && j_type(nodes) == J_ARR) {
+                for (size_t i = 0; i < j_len(nodes); i++) {
+                    JVal *nd = (JVal *)j_arr_at(nodes, i);
+                    if (!nd || j_type(nd) != J_OBJ) continue;
+                    const JVal *kind = j_obj_get(nd, "kind");
+                    const JVal *txt  = j_obj_get(nd, "text");
+                    if (!kind) continue;
+                    const char *ks = j_as_str(kind);
+                    int interesting = strstr(ks, "head") || strstr(ks, "table")
+                                   || strstr(ks, "figure") || strstr(ks, "image")
+                                   || strstr(ks, "caption");
+                    if (!interesting) continue;
+                    JVal *e = j_obj();
+                    j_obj_put(e, "kind", j_str(ks));
+                    j_obj_put(e, "index", j_num((double)i));
+                    char sum[80] = "";
+                    if (txt && j_type(txt) == J_STR) {
+                        snprintf(sum, sizeof sum, "%.70s", j_as_str(txt));
+                    }
+                    j_obj_put(e, "summary", j_str(sum));
+                    j_arr_push(out, e);
+                }
+            }
+            j_free(model);
+        }
+        res = j_obj();
+        j_obj_put(res, "id", j_num((double)id));
+        j_obj_put(res, "outline", out);
+    }
     else if (strcmp(name, "list") == 0) {
         JVal *arr = j_arr();
         for (size_t i = 0; i < doc_count(s); i++) {

@@ -3,6 +3,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/conv_gemm.c.o.d"
   "CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/convnet3.c.o"
   "CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/convnet3.c.o.d"
+  "CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/convnet3_cbam.c.o"
+  "CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/convnet3_cbam.c.o.d"
   "CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/dft.c.o"
   "CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/dft.c.o.d"
   "CMakeFiles/emnist_infer_conv.dir/__/src/wubuocr/goldplace.c.o"
