@@ -38,6 +38,8 @@ int main(void){
     CK(fmtpaint_pick(f, bare)==0, "bare pick 0");
     CK(fmtpaint_loaded(f)==0, "brush cleared");
     fmtpaint_destroy(f);
+    /* drop creator refs: node_set_style took a ref (refcount 2) */
+    wubumodel_style_destroy(s);
     wubumodel_doc_destroy(d);
     if(fails){ printf("FAILED (%d)\n",fails); return 1; }
     printf("PASS: fmtpaint (pick/apply/no-alias)\n"); return 0;
