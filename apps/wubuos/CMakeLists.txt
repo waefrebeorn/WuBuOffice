@@ -8,7 +8,7 @@ find_package(Freetype REQUIRED)
 set(WUBUPAD_SRC ${CMAKE_SOURCE_DIR}/../WuBuPad/src)
 
 add_executable(wubuos
-    main.c
+    main.c wuos_frame.c
     wuos_font.c
     wuos_file.c
     plugin.c
@@ -514,7 +514,7 @@ set_tests_properties(font PROPERTIES LABELS "font;apps")
 # Headless screenshot tool: composes the full wubuos window (tab bar + active
 # view + status bar) into an in-memory RGBA buffer and writes a pixel-faithful
 # PNG. Used to produce documentation images without a display. Mirrors the
-# live shell's exact composite code (main.c) but draws into a buffer.
+# live shell's exact composite code (main.c wuos_frame.c) but draws into a buffer.
 add_executable(viewshot viewshot.c wuos_font.c wuos_file.c plugin.c toast.c palette.c hive.c
     view_doc.c view_cell.c view_slide.c view_ocr.c view_editor.c view_compare.c
     view_settings.c findbar.c autocomp.c bkmk.c codefold.c doccmd_core.c doccmd_wave1.c doccmd_wave2.c macro.c gotoline.c)
