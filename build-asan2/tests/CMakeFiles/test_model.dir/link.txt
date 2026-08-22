@@ -1,1 +1,0 @@
-/usr/bin/cc -fsanitize=address,undefined -g -g -fsanitize=address,undefined -fno-sanitize-recover=all CMakeFiles/test_model.dir/test_model.c.o -o test_model  ../src/wubumodel/libwubumodel.a ../src/wubuoxml/libwubuoxml.a ../src/wubuzip/libwubuzip.a -lpthread 

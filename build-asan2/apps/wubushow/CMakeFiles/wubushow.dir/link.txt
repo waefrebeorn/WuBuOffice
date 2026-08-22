@@ -1,1 +1,0 @@
-/usr/bin/cc -fsanitize=address,undefined -g -g -fsanitize=address,undefined -fno-sanitize-recover=all CMakeFiles/wubushow.dir/entry.c.o CMakeFiles/wubushow_app.dir/main.c.o CMakeFiles/wubushow_app.dir/show_model.c.o CMakeFiles/wubushow_app.dir/show_io.c.o CMakeFiles/wubushow_app.dir/show_read.c.o -o wubushow  ../../src/wubuoxml/libwubuoxml.a ../../src/wubuzip/libwubuzip.a 

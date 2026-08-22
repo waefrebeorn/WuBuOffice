@@ -1,1 +1,0 @@
-/usr/bin/cc -fsanitize=address,undefined -g -g -fsanitize=address,undefined -fno-sanitize-recover=all CMakeFiles/test_wubumath.dir/test_math.c.o -o test_wubumath  ../src/wubumath/libwubumath.a ../src/wubusvg/libwubusvg.a ../src/wubuxml/libwubuxml.a ../src/wubujson/libwubujson.a ../src/wububase/libwububase.a -lm 

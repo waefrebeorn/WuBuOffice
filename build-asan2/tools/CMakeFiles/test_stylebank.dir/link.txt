@@ -1,1 +1,0 @@
-/usr/bin/cc -fsanitize=address,undefined -g -g -fsanitize=address,undefined -fno-sanitize-recover=all CMakeFiles/test_stylebank.dir/__/tests/test_stylebank.c.o CMakeFiles/test_stylebank.dir/__/src/wubuocr/stylebank.c.o CMakeFiles/test_stylebank.dir/__/src/wubuocr/convnet3.c.o CMakeFiles/test_stylebank.dir/__/src/wubuocr/mlp.c.o -o test_stylebank  -lm 

@@ -1,2 +1,0 @@
-/usr/bin/ar qc libwubupad_bridge.a CMakeFiles/wubupad_bridge.dir/wubupad_bridge.c.o
-/usr/bin/ranlib libwubupad_bridge.a

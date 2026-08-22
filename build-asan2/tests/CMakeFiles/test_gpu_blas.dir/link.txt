@@ -1,1 +1,0 @@
-/usr/bin/cc -fsanitize=address,undefined -g -g -fsanitize=address,undefined -fno-sanitize-recover=all CMakeFiles/test_gpu_blas.dir/test_gpu_blas.c.o -o test_gpu_blas  ../src/gpu/libgpublas.a -lm 

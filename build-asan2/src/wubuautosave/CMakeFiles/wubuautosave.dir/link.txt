@@ -1,2 +1,0 @@
-/usr/bin/ar qc libwubuautosave.a CMakeFiles/wubuautosave.dir/autosave.c.o
-/usr/bin/ranlib libwubuautosave.a

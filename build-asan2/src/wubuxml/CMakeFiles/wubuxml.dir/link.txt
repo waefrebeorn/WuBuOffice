@@ -1,2 +1,0 @@
-/usr/bin/ar qc libwubuxml.a CMakeFiles/wubuxml.dir/xml.c.o
-/usr/bin/ranlib libwubuxml.a

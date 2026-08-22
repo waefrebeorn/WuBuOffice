@@ -1,1 +1,0 @@
-/usr/bin/cc -fsanitize=address,undefined -g -g -fsanitize=address,undefined -fno-sanitize-recover=all CMakeFiles/test_script.dir/test_script.c.o -o test_script  ../src/wubuscript/libwubuscript.a ../src/wubuformula/libwubuformula.a -lm 

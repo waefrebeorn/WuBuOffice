@@ -1,2 +1,0 @@
-/usr/bin/ar qc libwubusvg.a CMakeFiles/wubusvg.dir/wubusvg.c.o CMakeFiles/wubusvg.dir/agent.c.o CMakeFiles/wubusvg.dir/rast.c.o CMakeFiles/wubusvg.dir/__/wubuxml/parser.c.o
-/usr/bin/ranlib libwubusvg.a

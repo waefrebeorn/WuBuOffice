@@ -1,2 +1,0 @@
-/usr/bin/ar qc libwubujson.a CMakeFiles/wubujson.dir/json.c.o
-/usr/bin/ranlib libwubujson.a

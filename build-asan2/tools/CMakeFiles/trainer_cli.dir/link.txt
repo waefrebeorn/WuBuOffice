@@ -1,1 +1,0 @@
-/usr/bin/cc -fsanitize=address,undefined -g -g -fsanitize=address,undefined -fno-sanitize-recover=all CMakeFiles/trainer_cli.dir/trainer_cli.c.o CMakeFiles/trainer_cli.dir/__/src/wubuocr/trainer.c.o CMakeFiles/trainer_cli.dir/__/src/wubuocr/convnet3.c.o CMakeFiles/trainer_cli.dir/__/src/wubuocr/mlp.c.o -o trainer_cli  -lm -lpthread 

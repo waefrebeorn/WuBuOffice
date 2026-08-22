@@ -1,2 +1,0 @@
-/usr/bin/ar qc libwubudoc.a CMakeFiles/wubudoc.dir/wubudoc.c.o CMakeFiles/wubudoc.dir/b64.c.o CMakeFiles/wubudoc.dir/agent.c.o ../../apps/wuburead/CMakeFiles/wuburead_app.dir/main.c.o ../../apps/wuburead/CMakeFiles/wuburead_app.dir/read_rtf.c.o ../../apps/wuburead/CMakeFiles/wuburead_app.dir/read_html.c.o ../../apps/wuburead/CMakeFiles/wuburead_app.dir/read_epub.c.o
-/usr/bin/ranlib libwubudoc.a

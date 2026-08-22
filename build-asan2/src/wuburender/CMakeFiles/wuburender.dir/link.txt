@@ -1,2 +1,0 @@
-/usr/bin/ar qc libwuburender.a CMakeFiles/wuburender.dir/wuburender.c.o
-/usr/bin/ranlib libwuburender.a

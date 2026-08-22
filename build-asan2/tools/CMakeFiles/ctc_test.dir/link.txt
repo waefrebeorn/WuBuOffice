@@ -1,1 +1,0 @@
-/usr/bin/cc -fsanitize=address,undefined -g -g -fsanitize=address,undefined -fno-sanitize-recover=all CMakeFiles/ctc_test.dir/ctc_test.c.o CMakeFiles/ctc_test.dir/__/src/wubuocr/ctc.c.o -o ctc_test  -lm 

@@ -1,2 +1,0 @@
-/usr/bin/ar qc libwubuspell.a CMakeFiles/wubuspell.dir/spell.c.o CMakeFiles/wubuspell.dir/spell_seed.c.o
-/usr/bin/ranlib libwubuspell.a

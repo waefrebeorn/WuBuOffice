@@ -1,2 +1,0 @@
-/usr/bin/ar qc libwubusettings.a CMakeFiles/wubusettings.dir/settings.c.o
-/usr/bin/ranlib libwubusettings.a

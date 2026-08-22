@@ -1,2 +1,0 @@
-/usr/bin/ar qc libwubuzip.a CMakeFiles/wubuzip.dir/crc.c.o CMakeFiles/wubuzip.dir/zip.c.o CMakeFiles/wubuzip.dir/reader.c.o CMakeFiles/wubuzip.dir/bit.c.o CMakeFiles/wubuzip.dir/bitw.c.o CMakeFiles/wubuzip.dir/canon.c.o CMakeFiles/wubuzip.dir/huffman.c.o CMakeFiles/wubuzip.dir/fixed.c.o CMakeFiles/wubuzip.dir/fixedcode.c.o CMakeFiles/wubuzip.dir/limitcode.c.o CMakeFiles/wubuzip.dir/lz77.c.o CMakeFiles/wubuzip.dir/deflate.c.o CMakeFiles/wubuzip.dir/block.c.o CMakeFiles/wubuzip.dir/inflate.c.o
-/usr/bin/ranlib libwubuzip.a

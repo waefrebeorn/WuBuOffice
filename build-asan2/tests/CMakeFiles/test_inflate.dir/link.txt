@@ -1,1 +1,0 @@
-/usr/bin/cc -fsanitize=address,undefined -g -g -fsanitize=address,undefined -fno-sanitize-recover=all CMakeFiles/test_inflate.dir/test_inflate.c.o -o test_inflate  ../src/wubuzip/libwubuzip.a -lz 

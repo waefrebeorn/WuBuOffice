@@ -1,1 +1,0 @@
-/usr/bin/cc -fsanitize=address,undefined -g -g -fsanitize=address,undefined -fno-sanitize-recover=all CMakeFiles/test_epub.dir/test_epub.c.o -o test_epub  ../src/wubuepub/libwubuepub.a ../src/wubumodel/libwubumodel.a ../src/wubuoxml/libwubuoxml.a -lpthread ../src/wubuzip/libwubuzip.a ../src/wububase/libwububase.a 

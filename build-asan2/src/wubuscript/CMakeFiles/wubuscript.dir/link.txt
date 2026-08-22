@@ -1,2 +1,0 @@
-/usr/bin/ar qc libwubuscript.a CMakeFiles/wubuscript.dir/script.c.o
-/usr/bin/ranlib libwubuscript.a

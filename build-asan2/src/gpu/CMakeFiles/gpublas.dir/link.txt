@@ -1,2 +1,0 @@
-/usr/bin/ar qc libgpublas.a CMakeFiles/gpublas.dir/gpu_blas_stub.c.o
-/usr/bin/ranlib libgpublas.a

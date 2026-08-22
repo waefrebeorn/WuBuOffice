@@ -1,1 +1,0 @@
-/usr/bin/cc -fsanitize=address,undefined -g -g -fsanitize=address,undefined -fno-sanitize-recover=all CMakeFiles/test_convnet3.dir/__/tests/test_convnet3.c.o CMakeFiles/test_convnet3.dir/__/src/wubuocr/convnet3.c.o CMakeFiles/test_convnet3.dir/__/src/wubuocr/mlp.c.o -o test_convnet3  -lm 

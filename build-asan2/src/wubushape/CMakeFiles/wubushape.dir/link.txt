@@ -1,2 +1,0 @@
-/usr/bin/ar qc libwubushape.a CMakeFiles/wubushape.dir/shape.c.o
-/usr/bin/ranlib libwubushape.a

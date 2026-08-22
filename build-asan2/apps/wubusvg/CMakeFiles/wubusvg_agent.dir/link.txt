@@ -1,1 +1,0 @@
-/usr/bin/cc -fsanitize=address,undefined -g -g -fsanitize=address,undefined -fno-sanitize-recover=all CMakeFiles/wubusvg_agent.dir/agent_main.c.o -o wubusvg_agent  ../../src/wubusvg/libwubusvg.a ../../src/wubuxml/libwubuxml.a ../../src/wubujson/libwubujson.a 

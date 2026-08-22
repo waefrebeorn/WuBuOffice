@@ -1,2 +1,0 @@
-/usr/bin/ar qc libwubucfb.a CMakeFiles/wubucfb.dir/cfb.c.o CMakeFiles/wubucfb.dir/cfb_write.c.o
-/usr/bin/ranlib libwubucfb.a

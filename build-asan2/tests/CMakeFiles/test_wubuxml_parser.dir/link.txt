@@ -1,1 +1,0 @@
-/usr/bin/cc -fsanitize=address,undefined -g -g -fsanitize=address,undefined -fno-sanitize-recover=all CMakeFiles/test_wubuxml_parser.dir/test_wubuxml_parser.c.o -o test_wubuxml_parser  ../src/wubuoxml/libwubuoxml.a ../src/wubuzip/libwubuzip.a 

@@ -1,2 +1,0 @@
-/usr/bin/ar qc libwubulayout.a CMakeFiles/wubulayout.dir/layout.c.o
-/usr/bin/ranlib libwubulayout.a

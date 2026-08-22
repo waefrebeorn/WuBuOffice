@@ -1,1 +1,0 @@
-/usr/bin/cc -fsanitize=address,undefined -g -g -fsanitize=address,undefined -fno-sanitize-recover=all CMakeFiles/test_shell_ui.dir/test_shell_ui.c.o CMakeFiles/test_shell_ui.dir/toast.c.o CMakeFiles/test_shell_ui.dir/palette.c.o -o test_shell_ui 

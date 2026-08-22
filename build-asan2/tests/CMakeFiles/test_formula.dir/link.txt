@@ -1,1 +1,0 @@
-/usr/bin/cc -fsanitize=address,undefined -g -g -fsanitize=address,undefined -fno-sanitize-recover=all CMakeFiles/test_formula.dir/test_formula.c.o -o test_formula  ../src/wubuformula/libwubuformula.a -lm 

@@ -1,1 +1,0 @@
-/usr/bin/cc -fPIC -fsanitize=address,undefined -g -g -fsanitize=address,undefined -fno-sanitize-recover=all -shared  -o plugins/sample_plugin.so CMakeFiles/sample_plugin.dir/plugins/sample/sample_plugin.c.o 
