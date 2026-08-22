@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include <math.h>
 
-static double *row(int n) { return (double *)malloc((size_t)n * n * sizeof(double)); }
-
 int wubusolver_solve(const double *A, int n, const double *b, double *x) {
     if (!A || !b || !x || n < 1) return -1;
     /* augmented copy with partial pivoting + back substitution */

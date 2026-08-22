@@ -46,10 +46,13 @@ char *cite_inline(Cite *c, const char *key){
         }
         if (*p=='\0') break;
     }
-    char *out = malloc(64);
-    if (!out) return NULL;
-    sprintf(out, "(%s, %d)", sur[0]?sur:"?", e->year);
-    return out;
+    char out[64];
+    snprintf(out, sizeof out, "(%s, %d)", sur[0] ? sur : "?", e->year);
+    size_t n = strlen(out) + 1;
+    char *o = malloc(n);
+    if (!o) return NULL;
+    memcpy(o, out, n);
+    return o;
 }
 
 char *cite_bibliography(Cite *c){

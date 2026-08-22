@@ -152,7 +152,6 @@ int rs_decode(uint8_t *recv, int n, int nroots){
     for (int e = 0; e < nerr; e++) {
         int p = errs[e];
         uint8_t X = gf_exp[(n - 1 - p) % 255];
-        uint8_t Xinv = gf_exp[(255 - gf_log[X]) % 255];
         uint8_t Om[64]; rs_pmul_mod(syn, nroots, Lrev, L + 1, Om, nroots);
         uint8_t omega = 0;
         for (int i = 0; i < nroots; i++) omega ^= gf_mul(Om[i], gf_exp[(i * (255 - gf_log[X])) % 255]);
@@ -647,7 +646,9 @@ int qr_detect_blocks(const unsigned char *pix, int W, int H, int bg,
     }
     if (qr_decode_matrix(matrix, N, dec, sizeof dec) == 0 && dec[0]) {
         if (found < maxn) {
-            strncpy(text[found], dec, 255); text[found][255] = 0;
+            strncpy(text[found], dec, 254);
+            text[found][254] = 0;
+            text[found][255] = 0;
             if (x0) {
                 int minx = TL->x, miny = TL->y, maxx = TR->x, maxy = BL->y;
                 x0[found] = minx - 3 * (int)ms; y0[found] = miny - 3 * (int)ms;

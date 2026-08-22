@@ -34,7 +34,7 @@ int wubugoalseek(wubugoalseek_fn f, double target, double lo, double hi,
         r->x = lo; r->f_of_x = target; r->iters = 0; r->converged = 1; return 0;
     }
 
-    double a = lo, b = hi, fa = flo, fb = fhi, c = a, fc = fa;
+    double a = lo, b = hi, fa = flo, fb = fhi;
     int iters = 0;
     for (iters = 0; iters < 200; iters++) {
         if (fabs(b - a) < eps) { r->x = (a + b) / 2; r->f_of_x = f(r->x, ud); r->iters = iters; r->converged = 1; return 0; }
@@ -46,7 +46,6 @@ int wubugoalseek(wubugoalseek_fn f, double target, double lo, double hi,
         double m = (a + b) / 2, fm = f(m, ud) - target;
         if (fabs(fm) <= tol) { r->x = m; r->f_of_x = fm + target; r->iters = iters; r->converged = 1; return 0; }
         if (fa * fm < 0) { b = m; fb = fm; } else { a = m; fa = fm; }
-        c = s; fc = fs;
     }
     r->x = (a + b) / 2; r->f_of_x = f(r->x, ud); r->iters = iters;
     return 0;

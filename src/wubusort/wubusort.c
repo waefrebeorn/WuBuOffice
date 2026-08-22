@@ -18,7 +18,8 @@ int wubusort_numcmp(const char *a, const char *b) {
 }
 
 static int lc_lt(const char *a, const char *b) {
-    if (!a) a = ""; if (!b) b = "";
+    if (!a) a = "";
+    if (!b) b = "";
     while (*a && *b) {
         unsigned char ca = (unsigned char)tolower((unsigned char)*a);
         unsigned char cb = (unsigned char)tolower((unsigned char)*b);
