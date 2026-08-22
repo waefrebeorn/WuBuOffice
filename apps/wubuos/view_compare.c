@@ -30,6 +30,7 @@ static char **split_lines(char *copy, size_t *n){
     return arr;
 }
 
+static int title_y0(int fh){ return WUOS_SPACE_16 + fh; }
 static int render(WuView *v, int w, int h, int scroll,
                   unsigned char **rgba, int *rw, int *rh){
     CmpV *e = v->priv;
@@ -53,7 +54,20 @@ static int render(WuView *v, int w, int h, int scroll,
     int margin_x = WUOS_SPACE_16;    /* 16px left margin */
 
     if (!e->text){
-        wuos_font_draw("Compare: wubuos compare <a> <b>  (no files)", margin_x, WUOS_SPACE_16 + fh, 1, cmp_hdr.r,cmp_hdr.g,cmp_hdr.b, fb,w,h);
+        /* Guided empty state (GUI_EXCELLENCE paradigm 8): tell the user WHAT
+         * this view does and THREE ways to populate it, instead of one terse
+         * status line over a blank pane. */
+        wuos_font_draw("Compare two files side by side", margin_x, WUOS_SPACE_16 + fh, 1, cmp_hdr.r,cmp_hdr.g,cmp_hdr.b, fb,w,h);
+        int ly = title_y0(fh);
+        const char *steps[] = {
+            "1.  Open the first file:  File > Open  (or drag it onto the window)",
+            "2.  Open the second file, then pick  View > Compare with...",
+            "3.  Or from a terminal:   wubos compare <a> <b>",
+            "",
+            "Differences render here: green = added, red = removed." };
+        for (int i=0; i<5; i++){
+            if (steps[i][0]) wuos_font_draw(steps[i], margin_x, ly + i*line_h*2, 0, cmp_txt.r,cmp_txt.g,cmp_txt.b, fb,w,h);
+        }
         *rgba=fb; *rw=w; *rh=h; return 0;
     }
     /* title */
