@@ -27,7 +27,7 @@ add_executable(wubuos
     autocomp.c
     bkmk.c
     codefold.c
-    doccmd.c
+    doccmd_core.c doccmd_wave1.c doccmd_wave2.c
     macro.c
     gotoline.c
     dialog.c)
@@ -154,7 +154,7 @@ target_compile_options(wubuos PRIVATE -Wall -Wextra -Wpedantic)
 # Headless smoke test: create + render every view (real engines, no GUI).
 # Verifies each WuView adapter renders without crashing and returns a buffer.
 add_executable(test_view test_view.c wuos_font.c wuos_file.c plugin.c toast.c palette.c view_doc.c view_cell.c
-    view_slide.c view_ocr.c view_editor.c view_compare.c view_settings.c findbar.c autocomp.c bkmk.c codefold.c doccmd.c macro.c gotoline.c hive.c)
+    view_slide.c view_ocr.c view_editor.c view_compare.c view_settings.c findbar.c autocomp.c bkmk.c codefold.c doccmd_core.c doccmd_wave1.c doccmd_wave2.c macro.c gotoline.c hive.c)
 target_include_directories(test_view PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}/src/wubumodel
@@ -384,9 +384,9 @@ add_test(NAME findbar COMMAND test_findbar)
 set_tests_properties(findbar PROPERTIES LABELS "findbar;apps")
 
 # Unit test for the extracted opaque doccmd module.
-# Layout-based exporters use a font-free measure callback (see doccmd.c),
+# Layout-based exporters use a font-free measure callback (see doccmd_core.c doccmd_wave1.c doccmd_wave2.c),
 # so no app-font object is needed here.
-add_executable(test_doccmd test_doccmd.c doccmd.c)
+add_executable(test_doccmd test_doccmd.c doccmd_core.c doccmd_wave1.c doccmd_wave2.c)
 target_include_directories(test_doccmd PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}/src/wubumodel
@@ -517,7 +517,7 @@ set_tests_properties(font PROPERTIES LABELS "font;apps")
 # live shell's exact composite code (main.c) but draws into a buffer.
 add_executable(viewshot viewshot.c wuos_font.c wuos_file.c plugin.c toast.c palette.c hive.c
     view_doc.c view_cell.c view_slide.c view_ocr.c view_editor.c view_compare.c
-    view_settings.c findbar.c autocomp.c bkmk.c codefold.c doccmd.c macro.c gotoline.c)
+    view_settings.c findbar.c autocomp.c bkmk.c codefold.c doccmd_core.c doccmd_wave1.c doccmd_wave2.c macro.c gotoline.c)
 target_include_directories(viewshot PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}/src/wubumodel
