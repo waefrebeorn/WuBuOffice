@@ -2493,6 +2493,32 @@ viewshot/fast:
 .PHONY : viewshot/fast
 
 #=============================================================================
+# Target rules for targets named test_cjk_fallback
+
+# Build rule for target.
+test_cjk_fallback: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cjk_fallback
+.PHONY : test_cjk_fallback
+
+# fast build rule for target.
+test_cjk_fallback/fast:
+	$(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_cjk_fallback.dir/build.make apps/wubuos/CMakeFiles/test_cjk_fallback.dir/build
+.PHONY : test_cjk_fallback/fast
+
+#=============================================================================
+# Target rules for targets named test_run_toggle
+
+# Build rule for target.
+test_run_toggle: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_run_toggle
+.PHONY : test_run_toggle
+
+# fast build rule for target.
+test_run_toggle/fast:
+	$(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/build
+.PHONY : test_run_toggle/fast
+
+#=============================================================================
 # Target rules for targets named wubucell_app
 
 # Build rule for target.
@@ -4273,6 +4299,214 @@ test_grabbag/fast:
 	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_grabbag.dir/build.make tests/CMakeFiles/test_grabbag.dir/build
 .PHONY : test_grabbag/fast
 
+#=============================================================================
+# Target rules for targets named test_fidelity_matrix
+
+# Build rule for target.
+test_fidelity_matrix: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_fidelity_matrix
+.PHONY : test_fidelity_matrix
+
+# fast build rule for target.
+test_fidelity_matrix/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_fidelity_matrix.dir/build.make tests/CMakeFiles/test_fidelity_matrix.dir/build
+.PHONY : test_fidelity_matrix/fast
+
+#=============================================================================
+# Target rules for targets named test_shortcut_conformance
+
+# Build rule for target.
+test_shortcut_conformance: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_shortcut_conformance
+.PHONY : test_shortcut_conformance
+
+# fast build rule for target.
+test_shortcut_conformance/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_shortcut_conformance.dir/build.make tests/CMakeFiles/test_shortcut_conformance.dir/build
+.PHONY : test_shortcut_conformance/fast
+
+#=============================================================================
+# Target rules for targets named test_float_wrap
+
+# Build rule for target.
+test_float_wrap: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_float_wrap
+.PHONY : test_float_wrap
+
+# fast build rule for target.
+test_float_wrap/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_float_wrap.dir/build.make tests/CMakeFiles/test_float_wrap.dir/build
+.PHONY : test_float_wrap/fast
+
+#=============================================================================
+# Target rules for targets named test_odttf
+
+# Build rule for target.
+test_odttf: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_odttf
+.PHONY : test_odttf
+
+# fast build rule for target.
+test_odttf/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_odttf.dir/build.make tests/CMakeFiles/test_odttf.dir/build
+.PHONY : test_odttf/fast
+
+#=============================================================================
+# Target rules for targets named test_table_styles
+
+# Build rule for target.
+test_table_styles: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_table_styles
+.PHONY : test_table_styles
+
+# fast build rule for target.
+test_table_styles/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_table_styles.dir/build.make tests/CMakeFiles/test_table_styles.dir/build
+.PHONY : test_table_styles/fast
+
+#=============================================================================
+# Target rules for targets named test_docx_cell_merge
+
+# Build rule for target.
+test_docx_cell_merge: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_docx_cell_merge
+.PHONY : test_docx_cell_merge
+
+# fast build rule for target.
+test_docx_cell_merge/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_docx_cell_merge.dir/build.make tests/CMakeFiles/test_docx_cell_merge.dir/build
+.PHONY : test_docx_cell_merge/fast
+
+#=============================================================================
+# Target rules for targets named test_pdf_geometry
+
+# Build rule for target.
+test_pdf_geometry: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_pdf_geometry
+.PHONY : test_pdf_geometry
+
+# fast build rule for target.
+test_pdf_geometry/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_pdf_geometry.dir/build.make tests/CMakeFiles/test_pdf_geometry.dir/build
+.PHONY : test_pdf_geometry/fast
+
+#=============================================================================
+# Target rules for targets named test_tbl_styles_e2e
+
+# Build rule for target.
+test_tbl_styles_e2e: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_tbl_styles_e2e
+.PHONY : test_tbl_styles_e2e
+
+# fast build rule for target.
+test_tbl_styles_e2e/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_tbl_styles_e2e.dir/build.make tests/CMakeFiles/test_tbl_styles_e2e.dir/build
+.PHONY : test_tbl_styles_e2e/fast
+
+#=============================================================================
+# Target rules for targets named test_pptx_roundtrip
+
+# Build rule for target.
+test_pptx_roundtrip: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_pptx_roundtrip
+.PHONY : test_pptx_roundtrip
+
+# fast build rule for target.
+test_pptx_roundtrip/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_pptx_roundtrip.dir/build.make tests/CMakeFiles/test_pptx_roundtrip.dir/build
+.PHONY : test_pptx_roundtrip/fast
+
+#=============================================================================
+# Target rules for targets named test_pdf_i18n
+
+# Build rule for target.
+test_pdf_i18n: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_pdf_i18n
+.PHONY : test_pdf_i18n
+
+# fast build rule for target.
+test_pdf_i18n/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_pdf_i18n.dir/build.make tests/CMakeFiles/test_pdf_i18n.dir/build
+.PHONY : test_pdf_i18n/fast
+
+#=============================================================================
+# Target rules for targets named test_pptx_multi
+
+# Build rule for target.
+test_pptx_multi: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_pptx_multi
+.PHONY : test_pptx_multi
+
+# fast build rule for target.
+test_pptx_multi/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_pptx_multi.dir/build.make tests/CMakeFiles/test_pptx_multi.dir/build
+.PHONY : test_pptx_multi/fast
+
+#=============================================================================
+# Target rules for targets named test_pptx_app_roundtrip
+
+# Build rule for target.
+test_pptx_app_roundtrip: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_pptx_app_roundtrip
+.PHONY : test_pptx_app_roundtrip
+
+# fast build rule for target.
+test_pptx_app_roundtrip/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_pptx_app_roundtrip.dir/build.make tests/CMakeFiles/test_pptx_app_roundtrip.dir/build
+.PHONY : test_pptx_app_roundtrip/fast
+
+#=============================================================================
+# Target rules for targets named test_font_subset
+
+# Build rule for target.
+test_font_subset: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_font_subset
+.PHONY : test_font_subset
+
+# fast build rule for target.
+test_font_subset/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_font_subset.dir/build.make tests/CMakeFiles/test_font_subset.dir/build
+.PHONY : test_font_subset/fast
+
+#=============================================================================
+# Target rules for targets named test_pptx_deck_cycle
+
+# Build rule for target.
+test_pptx_deck_cycle: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_pptx_deck_cycle
+.PHONY : test_pptx_deck_cycle
+
+# fast build rule for target.
+test_pptx_deck_cycle/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_pptx_deck_cycle.dir/build.make tests/CMakeFiles/test_pptx_deck_cycle.dir/build
+.PHONY : test_pptx_deck_cycle/fast
+
+#=============================================================================
+# Target rules for targets named test_a11y_tables
+
+# Build rule for target.
+test_a11y_tables: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_a11y_tables
+.PHONY : test_a11y_tables
+
+# fast build rule for target.
+test_a11y_tables/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_a11y_tables.dir/build.make tests/CMakeFiles/test_a11y_tables.dir/build
+.PHONY : test_a11y_tables/fast
+
+#=============================================================================
+# Target rules for targets named test_cell_kbd
+
+# Build rule for target.
+test_cell_kbd: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test_cell_kbd
+.PHONY : test_cell_kbd
+
+# fast build rule for target.
+test_cell_kbd/fast:
+	$(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_cell_kbd.dir/build.make tests/CMakeFiles/test_cell_kbd.dir/build
+.PHONY : test_cell_kbd/fast
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -4314,6 +4548,7 @@ help:
 	@echo "... rnn_test"
 	@echo "... sample_plugin"
 	@echo "... test_a11y"
+	@echo "... test_a11y_tables"
 	@echo "... test_a11yannounce"
 	@echo "... test_a11ytree"
 	@echo "... test_agent_verbs"
@@ -4325,10 +4560,12 @@ help:
 	@echo "... test_caption"
 	@echo "... test_cell_cycle"
 	@echo "... test_cell_edit"
+	@echo "... test_cell_kbd"
 	@echo "... test_cell_merge"
 	@echo "... test_cell_read"
 	@echo "... test_chart"
 	@echo "... test_cite"
+	@echo "... test_cjk_fallback"
 	@echo "... test_codefold"
 	@echo "... test_col"
 	@echo "... test_cold_start"
@@ -4349,6 +4586,7 @@ help:
 	@echo "... test_doccmd"
 	@echo "... test_docfmt"
 	@echo "... test_docfmt2"
+	@echo "... test_docx_cell_merge"
 	@echo "... test_draw"
 	@echo "... test_drop"
 	@echo "... test_dyslexia"
@@ -4359,11 +4597,14 @@ help:
 	@echo "... test_exp"
 	@echo "... test_exp_png"
 	@echo "... test_extract"
+	@echo "... test_fidelity_matrix"
 	@echo "... test_findbar"
 	@echo "... test_flat_epub"
+	@echo "... test_float_wrap"
 	@echo "... test_fmtpaint"
 	@echo "... test_focus"
 	@echo "... test_font"
+	@echo "... test_font_subset"
 	@echo "... test_fontbank"
 	@echo "... test_foreign"
 	@echo "... test_form"
@@ -4398,27 +4639,38 @@ help:
 	@echo "... test_nfc"
 	@echo "... test_ocr_realpage"
 	@echo "... test_odf"
+	@echo "... test_odttf"
 	@echo "... test_pasteplain"
+	@echo "... test_pdf_geometry"
+	@echo "... test_pdf_i18n"
 	@echo "... test_pdfextract"
 	@echo "... test_pdfform"
 	@echo "... test_pdfua"
 	@echo "... test_plugin_abi"
 	@echo "... test_png"
+	@echo "... test_pptx_app_roundtrip"
+	@echo "... test_pptx_deck_cycle"
+	@echo "... test_pptx_multi"
+	@echo "... test_pptx_roundtrip"
 	@echo "... test_qr"
 	@echo "... test_reader"
 	@echo "... test_readers"
 	@echo "... test_redact"
 	@echo "... test_rtf"
 	@echo "... test_rtf_json"
+	@echo "... test_run_toggle"
 	@echo "... test_sandbox"
 	@echo "... test_scope"
 	@echo "... test_script"
 	@echo "... test_settings"
 	@echo "... test_shell_ui"
+	@echo "... test_shortcut_conformance"
 	@echo "... test_sig"
 	@echo "... test_spell"
 	@echo "... test_stylebank"
 	@echo "... test_sync"
+	@echo "... test_table_styles"
+	@echo "... test_tbl_styles_e2e"
 	@echo "... test_toc"
 	@echo "... test_vars"
 	@echo "... test_view"

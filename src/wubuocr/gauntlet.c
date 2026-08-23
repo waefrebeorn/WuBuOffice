@@ -269,12 +269,23 @@ size_t ocr_gauntlet_sweep(const OcrFontBank *bank, const Font *probe,
                                                    (void *)bank);
                 if (pg) {
                     size_t total = strlen(text);
+                    /* Compare against the space-stripped source: the layout
+                     * stage segments INK blocks only, so inter-word spaces
+                     * never produce a block. The old positional compare used
+                     * the raw string, so every character after the first
+                     * space misaligned and scored as wrong (30% for a page
+                     * the recognizer reads nearly perfectly). */
+                    char nospace[256]; size_t nn = 0;
+                    for (const char *q = text; *q && nn < sizeof nospace - 1; q++)
+                        if (*q != ' ') nospace[nn++] = *q;
+                    nospace[nn] = '\0';
+                    total = nn;
                     size_t nb = ocr_page_block_count(pg);
                     size_t correct = 0, pos = 0;
                     for (size_t bi = 0; bi < nb && pos < total; bi++) {
                         const char *t = ocr_page_block_text(pg, bi);
-                        if (t && t[0] == text[pos]) correct++;
-                        if (getenv("GA_DBG")) printf("    blk[%zu]=[%s] (pos %zu -> %c)\n", bi, t?t:"", pos, text[pos]);
+                        if (t && t[0] == nospace[pos]) correct++;
+                        if (getenv("GA_DBG")) printf("    blk[%zu]=[%s] (pos %zu -> %c)\n", bi, t?t:"", pos, nospace[pos]);
                         /* advance past this block's glyph run: count its chars */
                         size_t adv = t ? strlen(t) : 1;
                         if (adv == 0) adv = 1;

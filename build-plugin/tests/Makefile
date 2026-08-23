@@ -1190,6 +1190,230 @@ test_grabbag/fast:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_grabbag.dir/build.make tests/CMakeFiles/test_grabbag.dir/build
 .PHONY : test_grabbag/fast
 
+# Convenience name for target.
+tests/CMakeFiles/test_fidelity_matrix.dir/rule:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_fidelity_matrix.dir/rule
+.PHONY : tests/CMakeFiles/test_fidelity_matrix.dir/rule
+
+# Convenience name for target.
+test_fidelity_matrix: tests/CMakeFiles/test_fidelity_matrix.dir/rule
+.PHONY : test_fidelity_matrix
+
+# fast build rule for target.
+test_fidelity_matrix/fast:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_fidelity_matrix.dir/build.make tests/CMakeFiles/test_fidelity_matrix.dir/build
+.PHONY : test_fidelity_matrix/fast
+
+# Convenience name for target.
+tests/CMakeFiles/test_shortcut_conformance.dir/rule:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_shortcut_conformance.dir/rule
+.PHONY : tests/CMakeFiles/test_shortcut_conformance.dir/rule
+
+# Convenience name for target.
+test_shortcut_conformance: tests/CMakeFiles/test_shortcut_conformance.dir/rule
+.PHONY : test_shortcut_conformance
+
+# fast build rule for target.
+test_shortcut_conformance/fast:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_shortcut_conformance.dir/build.make tests/CMakeFiles/test_shortcut_conformance.dir/build
+.PHONY : test_shortcut_conformance/fast
+
+# Convenience name for target.
+tests/CMakeFiles/test_float_wrap.dir/rule:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_float_wrap.dir/rule
+.PHONY : tests/CMakeFiles/test_float_wrap.dir/rule
+
+# Convenience name for target.
+test_float_wrap: tests/CMakeFiles/test_float_wrap.dir/rule
+.PHONY : test_float_wrap
+
+# fast build rule for target.
+test_float_wrap/fast:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_float_wrap.dir/build.make tests/CMakeFiles/test_float_wrap.dir/build
+.PHONY : test_float_wrap/fast
+
+# Convenience name for target.
+tests/CMakeFiles/test_odttf.dir/rule:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_odttf.dir/rule
+.PHONY : tests/CMakeFiles/test_odttf.dir/rule
+
+# Convenience name for target.
+test_odttf: tests/CMakeFiles/test_odttf.dir/rule
+.PHONY : test_odttf
+
+# fast build rule for target.
+test_odttf/fast:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_odttf.dir/build.make tests/CMakeFiles/test_odttf.dir/build
+.PHONY : test_odttf/fast
+
+# Convenience name for target.
+tests/CMakeFiles/test_table_styles.dir/rule:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_table_styles.dir/rule
+.PHONY : tests/CMakeFiles/test_table_styles.dir/rule
+
+# Convenience name for target.
+test_table_styles: tests/CMakeFiles/test_table_styles.dir/rule
+.PHONY : test_table_styles
+
+# fast build rule for target.
+test_table_styles/fast:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_table_styles.dir/build.make tests/CMakeFiles/test_table_styles.dir/build
+.PHONY : test_table_styles/fast
+
+# Convenience name for target.
+tests/CMakeFiles/test_docx_cell_merge.dir/rule:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_docx_cell_merge.dir/rule
+.PHONY : tests/CMakeFiles/test_docx_cell_merge.dir/rule
+
+# Convenience name for target.
+test_docx_cell_merge: tests/CMakeFiles/test_docx_cell_merge.dir/rule
+.PHONY : test_docx_cell_merge
+
+# fast build rule for target.
+test_docx_cell_merge/fast:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_docx_cell_merge.dir/build.make tests/CMakeFiles/test_docx_cell_merge.dir/build
+.PHONY : test_docx_cell_merge/fast
+
+# Convenience name for target.
+tests/CMakeFiles/test_pdf_geometry.dir/rule:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_pdf_geometry.dir/rule
+.PHONY : tests/CMakeFiles/test_pdf_geometry.dir/rule
+
+# Convenience name for target.
+test_pdf_geometry: tests/CMakeFiles/test_pdf_geometry.dir/rule
+.PHONY : test_pdf_geometry
+
+# fast build rule for target.
+test_pdf_geometry/fast:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_pdf_geometry.dir/build.make tests/CMakeFiles/test_pdf_geometry.dir/build
+.PHONY : test_pdf_geometry/fast
+
+# Convenience name for target.
+tests/CMakeFiles/test_tbl_styles_e2e.dir/rule:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_tbl_styles_e2e.dir/rule
+.PHONY : tests/CMakeFiles/test_tbl_styles_e2e.dir/rule
+
+# Convenience name for target.
+test_tbl_styles_e2e: tests/CMakeFiles/test_tbl_styles_e2e.dir/rule
+.PHONY : test_tbl_styles_e2e
+
+# fast build rule for target.
+test_tbl_styles_e2e/fast:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_tbl_styles_e2e.dir/build.make tests/CMakeFiles/test_tbl_styles_e2e.dir/build
+.PHONY : test_tbl_styles_e2e/fast
+
+# Convenience name for target.
+tests/CMakeFiles/test_pptx_roundtrip.dir/rule:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_pptx_roundtrip.dir/rule
+.PHONY : tests/CMakeFiles/test_pptx_roundtrip.dir/rule
+
+# Convenience name for target.
+test_pptx_roundtrip: tests/CMakeFiles/test_pptx_roundtrip.dir/rule
+.PHONY : test_pptx_roundtrip
+
+# fast build rule for target.
+test_pptx_roundtrip/fast:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_pptx_roundtrip.dir/build.make tests/CMakeFiles/test_pptx_roundtrip.dir/build
+.PHONY : test_pptx_roundtrip/fast
+
+# Convenience name for target.
+tests/CMakeFiles/test_pdf_i18n.dir/rule:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_pdf_i18n.dir/rule
+.PHONY : tests/CMakeFiles/test_pdf_i18n.dir/rule
+
+# Convenience name for target.
+test_pdf_i18n: tests/CMakeFiles/test_pdf_i18n.dir/rule
+.PHONY : test_pdf_i18n
+
+# fast build rule for target.
+test_pdf_i18n/fast:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_pdf_i18n.dir/build.make tests/CMakeFiles/test_pdf_i18n.dir/build
+.PHONY : test_pdf_i18n/fast
+
+# Convenience name for target.
+tests/CMakeFiles/test_pptx_multi.dir/rule:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_pptx_multi.dir/rule
+.PHONY : tests/CMakeFiles/test_pptx_multi.dir/rule
+
+# Convenience name for target.
+test_pptx_multi: tests/CMakeFiles/test_pptx_multi.dir/rule
+.PHONY : test_pptx_multi
+
+# fast build rule for target.
+test_pptx_multi/fast:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_pptx_multi.dir/build.make tests/CMakeFiles/test_pptx_multi.dir/build
+.PHONY : test_pptx_multi/fast
+
+# Convenience name for target.
+tests/CMakeFiles/test_pptx_app_roundtrip.dir/rule:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_pptx_app_roundtrip.dir/rule
+.PHONY : tests/CMakeFiles/test_pptx_app_roundtrip.dir/rule
+
+# Convenience name for target.
+test_pptx_app_roundtrip: tests/CMakeFiles/test_pptx_app_roundtrip.dir/rule
+.PHONY : test_pptx_app_roundtrip
+
+# fast build rule for target.
+test_pptx_app_roundtrip/fast:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_pptx_app_roundtrip.dir/build.make tests/CMakeFiles/test_pptx_app_roundtrip.dir/build
+.PHONY : test_pptx_app_roundtrip/fast
+
+# Convenience name for target.
+tests/CMakeFiles/test_font_subset.dir/rule:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_font_subset.dir/rule
+.PHONY : tests/CMakeFiles/test_font_subset.dir/rule
+
+# Convenience name for target.
+test_font_subset: tests/CMakeFiles/test_font_subset.dir/rule
+.PHONY : test_font_subset
+
+# fast build rule for target.
+test_font_subset/fast:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_font_subset.dir/build.make tests/CMakeFiles/test_font_subset.dir/build
+.PHONY : test_font_subset/fast
+
+# Convenience name for target.
+tests/CMakeFiles/test_pptx_deck_cycle.dir/rule:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_pptx_deck_cycle.dir/rule
+.PHONY : tests/CMakeFiles/test_pptx_deck_cycle.dir/rule
+
+# Convenience name for target.
+test_pptx_deck_cycle: tests/CMakeFiles/test_pptx_deck_cycle.dir/rule
+.PHONY : test_pptx_deck_cycle
+
+# fast build rule for target.
+test_pptx_deck_cycle/fast:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_pptx_deck_cycle.dir/build.make tests/CMakeFiles/test_pptx_deck_cycle.dir/build
+.PHONY : test_pptx_deck_cycle/fast
+
+# Convenience name for target.
+tests/CMakeFiles/test_a11y_tables.dir/rule:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_a11y_tables.dir/rule
+.PHONY : tests/CMakeFiles/test_a11y_tables.dir/rule
+
+# Convenience name for target.
+test_a11y_tables: tests/CMakeFiles/test_a11y_tables.dir/rule
+.PHONY : test_a11y_tables
+
+# fast build rule for target.
+test_a11y_tables/fast:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_a11y_tables.dir/build.make tests/CMakeFiles/test_a11y_tables.dir/build
+.PHONY : test_a11y_tables/fast
+
+# Convenience name for target.
+tests/CMakeFiles/test_cell_kbd.dir/rule:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_cell_kbd.dir/rule
+.PHONY : tests/CMakeFiles/test_cell_kbd.dir/rule
+
+# Convenience name for target.
+test_cell_kbd: tests/CMakeFiles/test_cell_kbd.dir/rule
+.PHONY : test_cell_kbd
+
+# fast build rule for target.
+test_cell_kbd/fast:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_cell_kbd.dir/build.make tests/CMakeFiles/test_cell_kbd.dir/build
+.PHONY : test_cell_kbd/fast
+
 __/apps/wubunote/note_controller.o: __/apps/wubunote/note_controller.c.o
 .PHONY : __/apps/wubunote/note_controller.o
 
@@ -1364,6 +1588,30 @@ test_a11y.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_a11y.dir/build.make tests/CMakeFiles/test_a11y.dir/test_a11y.c.s
 .PHONY : test_a11y.c.s
 
+test_a11y_tables.o: test_a11y_tables.c.o
+.PHONY : test_a11y_tables.o
+
+# target to build an object file
+test_a11y_tables.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_a11y_tables.dir/build.make tests/CMakeFiles/test_a11y_tables.dir/test_a11y_tables.c.o
+.PHONY : test_a11y_tables.c.o
+
+test_a11y_tables.i: test_a11y_tables.c.i
+.PHONY : test_a11y_tables.i
+
+# target to preprocess a source file
+test_a11y_tables.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_a11y_tables.dir/build.make tests/CMakeFiles/test_a11y_tables.dir/test_a11y_tables.c.i
+.PHONY : test_a11y_tables.c.i
+
+test_a11y_tables.s: test_a11y_tables.c.s
+.PHONY : test_a11y_tables.s
+
+# target to generate assembly for a file
+test_a11y_tables.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_a11y_tables.dir/build.make tests/CMakeFiles/test_a11y_tables.dir/test_a11y_tables.c.s
+.PHONY : test_a11y_tables.c.s
+
 test_agent_verbs.o: test_agent_verbs.c.o
 .PHONY : test_agent_verbs.o
 
@@ -1483,6 +1731,30 @@ test_cell_edit.s: test_cell_edit.c.s
 test_cell_edit.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_cell_edit.dir/build.make tests/CMakeFiles/test_cell_edit.dir/test_cell_edit.c.s
 .PHONY : test_cell_edit.c.s
+
+test_cell_kbd.o: test_cell_kbd.c.o
+.PHONY : test_cell_kbd.o
+
+# target to build an object file
+test_cell_kbd.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_cell_kbd.dir/build.make tests/CMakeFiles/test_cell_kbd.dir/test_cell_kbd.c.o
+.PHONY : test_cell_kbd.c.o
+
+test_cell_kbd.i: test_cell_kbd.c.i
+.PHONY : test_cell_kbd.i
+
+# target to preprocess a source file
+test_cell_kbd.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_cell_kbd.dir/build.make tests/CMakeFiles/test_cell_kbd.dir/test_cell_kbd.c.i
+.PHONY : test_cell_kbd.c.i
+
+test_cell_kbd.s: test_cell_kbd.c.s
+.PHONY : test_cell_kbd.s
+
+# target to generate assembly for a file
+test_cell_kbd.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_cell_kbd.dir/build.make tests/CMakeFiles/test_cell_kbd.dir/test_cell_kbd.c.s
+.PHONY : test_cell_kbd.c.s
 
 test_cell_merge.o: test_cell_merge.c.o
 .PHONY : test_cell_merge.o
@@ -1844,6 +2116,30 @@ test_docfmt2.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_docfmt2.dir/build.make tests/CMakeFiles/test_docfmt2.dir/test_docfmt2.c.s
 .PHONY : test_docfmt2.c.s
 
+test_docx_cell_merge.o: test_docx_cell_merge.c.o
+.PHONY : test_docx_cell_merge.o
+
+# target to build an object file
+test_docx_cell_merge.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_docx_cell_merge.dir/build.make tests/CMakeFiles/test_docx_cell_merge.dir/test_docx_cell_merge.c.o
+.PHONY : test_docx_cell_merge.c.o
+
+test_docx_cell_merge.i: test_docx_cell_merge.c.i
+.PHONY : test_docx_cell_merge.i
+
+# target to preprocess a source file
+test_docx_cell_merge.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_docx_cell_merge.dir/build.make tests/CMakeFiles/test_docx_cell_merge.dir/test_docx_cell_merge.c.i
+.PHONY : test_docx_cell_merge.c.i
+
+test_docx_cell_merge.s: test_docx_cell_merge.c.s
+.PHONY : test_docx_cell_merge.s
+
+# target to generate assembly for a file
+test_docx_cell_merge.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_docx_cell_merge.dir/build.make tests/CMakeFiles/test_docx_cell_merge.dir/test_docx_cell_merge.c.s
+.PHONY : test_docx_cell_merge.c.s
+
 test_draw.o: test_draw.c.o
 .PHONY : test_draw.o
 
@@ -2012,6 +2308,30 @@ test_extract.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_extract.dir/build.make tests/CMakeFiles/test_extract.dir/test_extract.c.s
 .PHONY : test_extract.c.s
 
+test_fidelity_matrix.o: test_fidelity_matrix.c.o
+.PHONY : test_fidelity_matrix.o
+
+# target to build an object file
+test_fidelity_matrix.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_fidelity_matrix.dir/build.make tests/CMakeFiles/test_fidelity_matrix.dir/test_fidelity_matrix.c.o
+.PHONY : test_fidelity_matrix.c.o
+
+test_fidelity_matrix.i: test_fidelity_matrix.c.i
+.PHONY : test_fidelity_matrix.i
+
+# target to preprocess a source file
+test_fidelity_matrix.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_fidelity_matrix.dir/build.make tests/CMakeFiles/test_fidelity_matrix.dir/test_fidelity_matrix.c.i
+.PHONY : test_fidelity_matrix.c.i
+
+test_fidelity_matrix.s: test_fidelity_matrix.c.s
+.PHONY : test_fidelity_matrix.s
+
+# target to generate assembly for a file
+test_fidelity_matrix.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_fidelity_matrix.dir/build.make tests/CMakeFiles/test_fidelity_matrix.dir/test_fidelity_matrix.c.s
+.PHONY : test_fidelity_matrix.c.s
+
 test_flat_epub.o: test_flat_epub.c.o
 .PHONY : test_flat_epub.o
 
@@ -2035,6 +2355,54 @@ test_flat_epub.s: test_flat_epub.c.s
 test_flat_epub.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_flat_epub.dir/build.make tests/CMakeFiles/test_flat_epub.dir/test_flat_epub.c.s
 .PHONY : test_flat_epub.c.s
+
+test_float_wrap.o: test_float_wrap.c.o
+.PHONY : test_float_wrap.o
+
+# target to build an object file
+test_float_wrap.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_float_wrap.dir/build.make tests/CMakeFiles/test_float_wrap.dir/test_float_wrap.c.o
+.PHONY : test_float_wrap.c.o
+
+test_float_wrap.i: test_float_wrap.c.i
+.PHONY : test_float_wrap.i
+
+# target to preprocess a source file
+test_float_wrap.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_float_wrap.dir/build.make tests/CMakeFiles/test_float_wrap.dir/test_float_wrap.c.i
+.PHONY : test_float_wrap.c.i
+
+test_float_wrap.s: test_float_wrap.c.s
+.PHONY : test_float_wrap.s
+
+# target to generate assembly for a file
+test_float_wrap.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_float_wrap.dir/build.make tests/CMakeFiles/test_float_wrap.dir/test_float_wrap.c.s
+.PHONY : test_float_wrap.c.s
+
+test_font_subset.o: test_font_subset.c.o
+.PHONY : test_font_subset.o
+
+# target to build an object file
+test_font_subset.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_font_subset.dir/build.make tests/CMakeFiles/test_font_subset.dir/test_font_subset.c.o
+.PHONY : test_font_subset.c.o
+
+test_font_subset.i: test_font_subset.c.i
+.PHONY : test_font_subset.i
+
+# target to preprocess a source file
+test_font_subset.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_font_subset.dir/build.make tests/CMakeFiles/test_font_subset.dir/test_font_subset.c.i
+.PHONY : test_font_subset.c.i
+
+test_font_subset.s: test_font_subset.c.s
+.PHONY : test_font_subset.s
+
+# target to generate assembly for a file
+test_font_subset.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_font_subset.dir/build.make tests/CMakeFiles/test_font_subset.dir/test_font_subset.c.s
+.PHONY : test_font_subset.c.s
 
 test_fontbank.o: test_fontbank.c.o
 .PHONY : test_fontbank.o
@@ -2588,6 +2956,78 @@ test_odf.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_odf.dir/build.make tests/CMakeFiles/test_odf.dir/test_odf.c.s
 .PHONY : test_odf.c.s
 
+test_odttf.o: test_odttf.c.o
+.PHONY : test_odttf.o
+
+# target to build an object file
+test_odttf.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_odttf.dir/build.make tests/CMakeFiles/test_odttf.dir/test_odttf.c.o
+.PHONY : test_odttf.c.o
+
+test_odttf.i: test_odttf.c.i
+.PHONY : test_odttf.i
+
+# target to preprocess a source file
+test_odttf.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_odttf.dir/build.make tests/CMakeFiles/test_odttf.dir/test_odttf.c.i
+.PHONY : test_odttf.c.i
+
+test_odttf.s: test_odttf.c.s
+.PHONY : test_odttf.s
+
+# target to generate assembly for a file
+test_odttf.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_odttf.dir/build.make tests/CMakeFiles/test_odttf.dir/test_odttf.c.s
+.PHONY : test_odttf.c.s
+
+test_pdf_geometry.o: test_pdf_geometry.c.o
+.PHONY : test_pdf_geometry.o
+
+# target to build an object file
+test_pdf_geometry.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_pdf_geometry.dir/build.make tests/CMakeFiles/test_pdf_geometry.dir/test_pdf_geometry.c.o
+.PHONY : test_pdf_geometry.c.o
+
+test_pdf_geometry.i: test_pdf_geometry.c.i
+.PHONY : test_pdf_geometry.i
+
+# target to preprocess a source file
+test_pdf_geometry.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_pdf_geometry.dir/build.make tests/CMakeFiles/test_pdf_geometry.dir/test_pdf_geometry.c.i
+.PHONY : test_pdf_geometry.c.i
+
+test_pdf_geometry.s: test_pdf_geometry.c.s
+.PHONY : test_pdf_geometry.s
+
+# target to generate assembly for a file
+test_pdf_geometry.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_pdf_geometry.dir/build.make tests/CMakeFiles/test_pdf_geometry.dir/test_pdf_geometry.c.s
+.PHONY : test_pdf_geometry.c.s
+
+test_pdf_i18n.o: test_pdf_i18n.c.o
+.PHONY : test_pdf_i18n.o
+
+# target to build an object file
+test_pdf_i18n.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_pdf_i18n.dir/build.make tests/CMakeFiles/test_pdf_i18n.dir/test_pdf_i18n.c.o
+.PHONY : test_pdf_i18n.c.o
+
+test_pdf_i18n.i: test_pdf_i18n.c.i
+.PHONY : test_pdf_i18n.i
+
+# target to preprocess a source file
+test_pdf_i18n.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_pdf_i18n.dir/build.make tests/CMakeFiles/test_pdf_i18n.dir/test_pdf_i18n.c.i
+.PHONY : test_pdf_i18n.c.i
+
+test_pdf_i18n.s: test_pdf_i18n.c.s
+.PHONY : test_pdf_i18n.s
+
+# target to generate assembly for a file
+test_pdf_i18n.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_pdf_i18n.dir/build.make tests/CMakeFiles/test_pdf_i18n.dir/test_pdf_i18n.c.s
+.PHONY : test_pdf_i18n.c.s
+
 test_pdfua.o: test_pdfua.c.o
 .PHONY : test_pdfua.o
 
@@ -2635,6 +3075,102 @@ test_png.s: test_png.c.s
 test_png.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_png.dir/build.make tests/CMakeFiles/test_png.dir/test_png.c.s
 .PHONY : test_png.c.s
+
+test_pptx_app_roundtrip.o: test_pptx_app_roundtrip.c.o
+.PHONY : test_pptx_app_roundtrip.o
+
+# target to build an object file
+test_pptx_app_roundtrip.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_pptx_app_roundtrip.dir/build.make tests/CMakeFiles/test_pptx_app_roundtrip.dir/test_pptx_app_roundtrip.c.o
+.PHONY : test_pptx_app_roundtrip.c.o
+
+test_pptx_app_roundtrip.i: test_pptx_app_roundtrip.c.i
+.PHONY : test_pptx_app_roundtrip.i
+
+# target to preprocess a source file
+test_pptx_app_roundtrip.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_pptx_app_roundtrip.dir/build.make tests/CMakeFiles/test_pptx_app_roundtrip.dir/test_pptx_app_roundtrip.c.i
+.PHONY : test_pptx_app_roundtrip.c.i
+
+test_pptx_app_roundtrip.s: test_pptx_app_roundtrip.c.s
+.PHONY : test_pptx_app_roundtrip.s
+
+# target to generate assembly for a file
+test_pptx_app_roundtrip.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_pptx_app_roundtrip.dir/build.make tests/CMakeFiles/test_pptx_app_roundtrip.dir/test_pptx_app_roundtrip.c.s
+.PHONY : test_pptx_app_roundtrip.c.s
+
+test_pptx_deck_cycle.o: test_pptx_deck_cycle.c.o
+.PHONY : test_pptx_deck_cycle.o
+
+# target to build an object file
+test_pptx_deck_cycle.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_pptx_deck_cycle.dir/build.make tests/CMakeFiles/test_pptx_deck_cycle.dir/test_pptx_deck_cycle.c.o
+.PHONY : test_pptx_deck_cycle.c.o
+
+test_pptx_deck_cycle.i: test_pptx_deck_cycle.c.i
+.PHONY : test_pptx_deck_cycle.i
+
+# target to preprocess a source file
+test_pptx_deck_cycle.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_pptx_deck_cycle.dir/build.make tests/CMakeFiles/test_pptx_deck_cycle.dir/test_pptx_deck_cycle.c.i
+.PHONY : test_pptx_deck_cycle.c.i
+
+test_pptx_deck_cycle.s: test_pptx_deck_cycle.c.s
+.PHONY : test_pptx_deck_cycle.s
+
+# target to generate assembly for a file
+test_pptx_deck_cycle.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_pptx_deck_cycle.dir/build.make tests/CMakeFiles/test_pptx_deck_cycle.dir/test_pptx_deck_cycle.c.s
+.PHONY : test_pptx_deck_cycle.c.s
+
+test_pptx_multi.o: test_pptx_multi.c.o
+.PHONY : test_pptx_multi.o
+
+# target to build an object file
+test_pptx_multi.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_pptx_multi.dir/build.make tests/CMakeFiles/test_pptx_multi.dir/test_pptx_multi.c.o
+.PHONY : test_pptx_multi.c.o
+
+test_pptx_multi.i: test_pptx_multi.c.i
+.PHONY : test_pptx_multi.i
+
+# target to preprocess a source file
+test_pptx_multi.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_pptx_multi.dir/build.make tests/CMakeFiles/test_pptx_multi.dir/test_pptx_multi.c.i
+.PHONY : test_pptx_multi.c.i
+
+test_pptx_multi.s: test_pptx_multi.c.s
+.PHONY : test_pptx_multi.s
+
+# target to generate assembly for a file
+test_pptx_multi.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_pptx_multi.dir/build.make tests/CMakeFiles/test_pptx_multi.dir/test_pptx_multi.c.s
+.PHONY : test_pptx_multi.c.s
+
+test_pptx_roundtrip.o: test_pptx_roundtrip.c.o
+.PHONY : test_pptx_roundtrip.o
+
+# target to build an object file
+test_pptx_roundtrip.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_pptx_roundtrip.dir/build.make tests/CMakeFiles/test_pptx_roundtrip.dir/test_pptx_roundtrip.c.o
+.PHONY : test_pptx_roundtrip.c.o
+
+test_pptx_roundtrip.i: test_pptx_roundtrip.c.i
+.PHONY : test_pptx_roundtrip.i
+
+# target to preprocess a source file
+test_pptx_roundtrip.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_pptx_roundtrip.dir/build.make tests/CMakeFiles/test_pptx_roundtrip.dir/test_pptx_roundtrip.c.i
+.PHONY : test_pptx_roundtrip.c.i
+
+test_pptx_roundtrip.s: test_pptx_roundtrip.c.s
+.PHONY : test_pptx_roundtrip.s
+
+# target to generate assembly for a file
+test_pptx_roundtrip.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_pptx_roundtrip.dir/build.make tests/CMakeFiles/test_pptx_roundtrip.dir/test_pptx_roundtrip.c.s
+.PHONY : test_pptx_roundtrip.c.s
 
 test_reader.o: test_reader.c.o
 .PHONY : test_reader.o
@@ -2756,6 +3292,30 @@ test_settings.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_settings.dir/build.make tests/CMakeFiles/test_settings.dir/test_settings.c.s
 .PHONY : test_settings.c.s
 
+test_shortcut_conformance.o: test_shortcut_conformance.c.o
+.PHONY : test_shortcut_conformance.o
+
+# target to build an object file
+test_shortcut_conformance.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_shortcut_conformance.dir/build.make tests/CMakeFiles/test_shortcut_conformance.dir/test_shortcut_conformance.c.o
+.PHONY : test_shortcut_conformance.c.o
+
+test_shortcut_conformance.i: test_shortcut_conformance.c.i
+.PHONY : test_shortcut_conformance.i
+
+# target to preprocess a source file
+test_shortcut_conformance.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_shortcut_conformance.dir/build.make tests/CMakeFiles/test_shortcut_conformance.dir/test_shortcut_conformance.c.i
+.PHONY : test_shortcut_conformance.c.i
+
+test_shortcut_conformance.s: test_shortcut_conformance.c.s
+.PHONY : test_shortcut_conformance.s
+
+# target to generate assembly for a file
+test_shortcut_conformance.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_shortcut_conformance.dir/build.make tests/CMakeFiles/test_shortcut_conformance.dir/test_shortcut_conformance.c.s
+.PHONY : test_shortcut_conformance.c.s
+
 test_spell.o: test_spell.c.o
 .PHONY : test_spell.o
 
@@ -2779,6 +3339,54 @@ test_spell.s: test_spell.c.s
 test_spell.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_spell.dir/build.make tests/CMakeFiles/test_spell.dir/test_spell.c.s
 .PHONY : test_spell.c.s
+
+test_table_styles.o: test_table_styles.c.o
+.PHONY : test_table_styles.o
+
+# target to build an object file
+test_table_styles.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_table_styles.dir/build.make tests/CMakeFiles/test_table_styles.dir/test_table_styles.c.o
+.PHONY : test_table_styles.c.o
+
+test_table_styles.i: test_table_styles.c.i
+.PHONY : test_table_styles.i
+
+# target to preprocess a source file
+test_table_styles.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_table_styles.dir/build.make tests/CMakeFiles/test_table_styles.dir/test_table_styles.c.i
+.PHONY : test_table_styles.c.i
+
+test_table_styles.s: test_table_styles.c.s
+.PHONY : test_table_styles.s
+
+# target to generate assembly for a file
+test_table_styles.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_table_styles.dir/build.make tests/CMakeFiles/test_table_styles.dir/test_table_styles.c.s
+.PHONY : test_table_styles.c.s
+
+test_tbl_styles_e2e.o: test_tbl_styles_e2e.c.o
+.PHONY : test_tbl_styles_e2e.o
+
+# target to build an object file
+test_tbl_styles_e2e.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_tbl_styles_e2e.dir/build.make tests/CMakeFiles/test_tbl_styles_e2e.dir/test_tbl_styles_e2e.c.o
+.PHONY : test_tbl_styles_e2e.c.o
+
+test_tbl_styles_e2e.i: test_tbl_styles_e2e.c.i
+.PHONY : test_tbl_styles_e2e.i
+
+# target to preprocess a source file
+test_tbl_styles_e2e.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_tbl_styles_e2e.dir/build.make tests/CMakeFiles/test_tbl_styles_e2e.dir/test_tbl_styles_e2e.c.i
+.PHONY : test_tbl_styles_e2e.c.i
+
+test_tbl_styles_e2e.s: test_tbl_styles_e2e.c.s
+.PHONY : test_tbl_styles_e2e.s
+
+# target to generate assembly for a file
+test_tbl_styles_e2e.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f tests/CMakeFiles/test_tbl_styles_e2e.dir/build.make tests/CMakeFiles/test_tbl_styles_e2e.dir/test_tbl_styles_e2e.c.s
+.PHONY : test_tbl_styles_e2e.c.s
 
 test_toc.o: test_toc.c.o
 .PHONY : test_toc.o
@@ -3174,11 +3782,13 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... test"
 	@echo "... test_a11y"
+	@echo "... test_a11y_tables"
 	@echo "... test_agent_verbs"
 	@echo "... test_autosave"
 	@echo "... test_base"
 	@echo "... test_cell_cycle"
 	@echo "... test_cell_edit"
+	@echo "... test_cell_kbd"
 	@echo "... test_cell_merge"
 	@echo "... test_cell_read"
 	@echo "... test_chart"
@@ -3194,6 +3804,7 @@ help:
 	@echo "... test_doc_cache"
 	@echo "... test_docfmt"
 	@echo "... test_docfmt2"
+	@echo "... test_docx_cell_merge"
 	@echo "... test_draw"
 	@echo "... test_drop"
 	@echo "... test_edit"
@@ -3201,7 +3812,10 @@ help:
 	@echo "... test_epub_model_roundtrip"
 	@echo "... test_exp"
 	@echo "... test_extract"
+	@echo "... test_fidelity_matrix"
 	@echo "... test_flat_epub"
+	@echo "... test_float_wrap"
+	@echo "... test_font_subset"
 	@echo "... test_fontbank"
 	@echo "... test_foreign"
 	@echo "... test_formula"
@@ -3224,14 +3838,24 @@ help:
 	@echo "... test_nfc"
 	@echo "... test_ocr_realpage"
 	@echo "... test_odf"
+	@echo "... test_odttf"
+	@echo "... test_pdf_geometry"
+	@echo "... test_pdf_i18n"
 	@echo "... test_pdfua"
 	@echo "... test_png"
+	@echo "... test_pptx_app_roundtrip"
+	@echo "... test_pptx_deck_cycle"
+	@echo "... test_pptx_multi"
+	@echo "... test_pptx_roundtrip"
 	@echo "... test_reader"
 	@echo "... test_readers"
 	@echo "... test_rtf_json"
 	@echo "... test_script"
 	@echo "... test_settings"
+	@echo "... test_shortcut_conformance"
 	@echo "... test_spell"
+	@echo "... test_table_styles"
+	@echo "... test_tbl_styles_e2e"
 	@echo "... test_toc"
 	@echo "... test_word_lists"
 	@echo "... test_wubudoc"
@@ -3270,6 +3894,9 @@ help:
 	@echo "... test_a11y.o"
 	@echo "... test_a11y.i"
 	@echo "... test_a11y.s"
+	@echo "... test_a11y_tables.o"
+	@echo "... test_a11y_tables.i"
+	@echo "... test_a11y_tables.s"
 	@echo "... test_agent_verbs.o"
 	@echo "... test_agent_verbs.i"
 	@echo "... test_agent_verbs.s"
@@ -3285,6 +3912,9 @@ help:
 	@echo "... test_cell_edit.o"
 	@echo "... test_cell_edit.i"
 	@echo "... test_cell_edit.s"
+	@echo "... test_cell_kbd.o"
+	@echo "... test_cell_kbd.i"
+	@echo "... test_cell_kbd.s"
 	@echo "... test_cell_merge.o"
 	@echo "... test_cell_merge.i"
 	@echo "... test_cell_merge.s"
@@ -3330,6 +3960,9 @@ help:
 	@echo "... test_docfmt2.o"
 	@echo "... test_docfmt2.i"
 	@echo "... test_docfmt2.s"
+	@echo "... test_docx_cell_merge.o"
+	@echo "... test_docx_cell_merge.i"
+	@echo "... test_docx_cell_merge.s"
 	@echo "... test_draw.o"
 	@echo "... test_draw.i"
 	@echo "... test_draw.s"
@@ -3351,9 +3984,18 @@ help:
 	@echo "... test_extract.o"
 	@echo "... test_extract.i"
 	@echo "... test_extract.s"
+	@echo "... test_fidelity_matrix.o"
+	@echo "... test_fidelity_matrix.i"
+	@echo "... test_fidelity_matrix.s"
 	@echo "... test_flat_epub.o"
 	@echo "... test_flat_epub.i"
 	@echo "... test_flat_epub.s"
+	@echo "... test_float_wrap.o"
+	@echo "... test_float_wrap.i"
+	@echo "... test_float_wrap.s"
+	@echo "... test_font_subset.o"
+	@echo "... test_font_subset.i"
+	@echo "... test_font_subset.s"
 	@echo "... test_fontbank.o"
 	@echo "... test_fontbank.i"
 	@echo "... test_fontbank.s"
@@ -3423,12 +4065,33 @@ help:
 	@echo "... test_odf.o"
 	@echo "... test_odf.i"
 	@echo "... test_odf.s"
+	@echo "... test_odttf.o"
+	@echo "... test_odttf.i"
+	@echo "... test_odttf.s"
+	@echo "... test_pdf_geometry.o"
+	@echo "... test_pdf_geometry.i"
+	@echo "... test_pdf_geometry.s"
+	@echo "... test_pdf_i18n.o"
+	@echo "... test_pdf_i18n.i"
+	@echo "... test_pdf_i18n.s"
 	@echo "... test_pdfua.o"
 	@echo "... test_pdfua.i"
 	@echo "... test_pdfua.s"
 	@echo "... test_png.o"
 	@echo "... test_png.i"
 	@echo "... test_png.s"
+	@echo "... test_pptx_app_roundtrip.o"
+	@echo "... test_pptx_app_roundtrip.i"
+	@echo "... test_pptx_app_roundtrip.s"
+	@echo "... test_pptx_deck_cycle.o"
+	@echo "... test_pptx_deck_cycle.i"
+	@echo "... test_pptx_deck_cycle.s"
+	@echo "... test_pptx_multi.o"
+	@echo "... test_pptx_multi.i"
+	@echo "... test_pptx_multi.s"
+	@echo "... test_pptx_roundtrip.o"
+	@echo "... test_pptx_roundtrip.i"
+	@echo "... test_pptx_roundtrip.s"
 	@echo "... test_reader.o"
 	@echo "... test_reader.i"
 	@echo "... test_reader.s"
@@ -3444,9 +4107,18 @@ help:
 	@echo "... test_settings.o"
 	@echo "... test_settings.i"
 	@echo "... test_settings.s"
+	@echo "... test_shortcut_conformance.o"
+	@echo "... test_shortcut_conformance.i"
+	@echo "... test_shortcut_conformance.s"
 	@echo "... test_spell.o"
 	@echo "... test_spell.i"
 	@echo "... test_spell.s"
+	@echo "... test_table_styles.o"
+	@echo "... test_table_styles.i"
+	@echo "... test_table_styles.s"
+	@echo "... test_tbl_styles_e2e.o"
+	@echo "... test_tbl_styles_e2e.i"
+	@echo "... test_tbl_styles_e2e.s"
 	@echo "... test_toc.o"
 	@echo "... test_toc.i"
 	@echo "... test_toc.s"

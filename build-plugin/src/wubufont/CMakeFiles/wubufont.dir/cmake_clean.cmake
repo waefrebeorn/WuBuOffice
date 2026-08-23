@@ -1,4 +1,8 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/wubufont.dir/font_subset.c.o"
+  "CMakeFiles/wubufont.dir/font_subset.c.o.d"
+  "CMakeFiles/wubufont.dir/odttf.c.o"
+  "CMakeFiles/wubufont.dir/odttf.c.o.d"
   "CMakeFiles/wubufont.dir/woff.c.o"
   "CMakeFiles/wubufont.dir/woff.c.o.d"
   "CMakeFiles/wubufont.dir/wubufont.c.o"

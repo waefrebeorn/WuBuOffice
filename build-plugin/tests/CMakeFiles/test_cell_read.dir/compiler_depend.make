@@ -6,7 +6,7 @@ tests/CMakeFiles/test_cell_read.dir/test_cell_read.c.o: /home/wubu/WuBuOffice/te
   /home/wubu/WuBuOffice/src/wubuformula/eval.h \
   /home/wubu/WuBuOffice/src/wubuformula/funcs.h \
   /home/wubu/WuBuOffice/src/wubuformula/value.h \
-  /home/wubu/WuBuOffice/src/wubuoxml/package.h \
+  /home/wubu/WuBuOffice/apps/wubuoxml/package.h \
   /home/wubu/WuBuOffice/apps/wubucell/cell.h \
   /home/wubu/WuBuOffice/apps/wubucell/cell_internal.h \
   /home/wubu/WuBuOffice/apps/wubucell/cell_read.h \
@@ -110,8 +110,6 @@ tests/CMakeFiles/test_cell_read.dir/test_cell_read.c.o: /home/wubu/WuBuOffice/te
 
 /home/wubu/WuBuOffice/src/wubuformula/ast.h:
 
-/home/wubu/WuBuOffice/src/wubuoxml/package.h:
-
 /home/wubu/WuBuOffice/apps/wubucell/cell_read.h:
 
 /usr/include/x86_64-linux-gnu/bits/long-double.h:
@@ -185,6 +183,8 @@ tests/CMakeFiles/test_cell_read.dir/test_cell_read.c.o: /home/wubu/WuBuOffice/te
 /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h:
 
 /usr/include/x86_64-linux-gnu/bits/stdlib-float.h:
+
+/home/wubu/WuBuOffice/apps/wubuoxml/package.h:
 
 /usr/include/x86_64-linux-gnu/bits/string_fortified.h:
 

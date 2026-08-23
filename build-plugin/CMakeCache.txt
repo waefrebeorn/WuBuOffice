@@ -295,7 +295,7 @@ wubudraw_LIB_DEPENDS:STATIC=general;wubusvg;general;wububase;
 wubuepub_LIB_DEPENDS:STATIC=general;wubumodel;general;wubuzip;general;wububase;
 
 //Dependencies for the target
-wubuexp_LIB_DEPENDS:STATIC=general;wubulayout;
+wubuexp_LIB_DEPENDS:STATIC=general;wubulayout;general;wubufont;general;wubuzip;
 
 //Dependencies for the target
 wubuexp_png_LIB_DEPENDS:STATIC=general;wubupng;

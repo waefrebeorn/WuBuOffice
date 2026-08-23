@@ -97,19 +97,51 @@ src/wubufont/CMakeFiles/wubufont.dir/woff.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/wubufont.dir/woff.c.s"
 	cd /home/wubu/WuBuOffice/build-plugin/src/wubufont && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/wubu/WuBuOffice/src/wubufont/woff.c -o CMakeFiles/wubufont.dir/woff.c.s
 
+src/wubufont/CMakeFiles/wubufont.dir/odttf.c.o: src/wubufont/CMakeFiles/wubufont.dir/flags.make
+src/wubufont/CMakeFiles/wubufont.dir/odttf.c.o: /home/wubu/WuBuOffice/src/wubufont/odttf.c
+src/wubufont/CMakeFiles/wubufont.dir/odttf.c.o: src/wubufont/CMakeFiles/wubufont.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object src/wubufont/CMakeFiles/wubufont.dir/odttf.c.o"
+	cd /home/wubu/WuBuOffice/build-plugin/src/wubufont && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT src/wubufont/CMakeFiles/wubufont.dir/odttf.c.o -MF CMakeFiles/wubufont.dir/odttf.c.o.d -o CMakeFiles/wubufont.dir/odttf.c.o -c /home/wubu/WuBuOffice/src/wubufont/odttf.c
+
+src/wubufont/CMakeFiles/wubufont.dir/odttf.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/wubufont.dir/odttf.c.i"
+	cd /home/wubu/WuBuOffice/build-plugin/src/wubufont && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/wubu/WuBuOffice/src/wubufont/odttf.c > CMakeFiles/wubufont.dir/odttf.c.i
+
+src/wubufont/CMakeFiles/wubufont.dir/odttf.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/wubufont.dir/odttf.c.s"
+	cd /home/wubu/WuBuOffice/build-plugin/src/wubufont && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/wubu/WuBuOffice/src/wubufont/odttf.c -o CMakeFiles/wubufont.dir/odttf.c.s
+
+src/wubufont/CMakeFiles/wubufont.dir/font_subset.c.o: src/wubufont/CMakeFiles/wubufont.dir/flags.make
+src/wubufont/CMakeFiles/wubufont.dir/font_subset.c.o: /home/wubu/WuBuOffice/src/wubufont/font_subset.c
+src/wubufont/CMakeFiles/wubufont.dir/font_subset.c.o: src/wubufont/CMakeFiles/wubufont.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object src/wubufont/CMakeFiles/wubufont.dir/font_subset.c.o"
+	cd /home/wubu/WuBuOffice/build-plugin/src/wubufont && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT src/wubufont/CMakeFiles/wubufont.dir/font_subset.c.o -MF CMakeFiles/wubufont.dir/font_subset.c.o.d -o CMakeFiles/wubufont.dir/font_subset.c.o -c /home/wubu/WuBuOffice/src/wubufont/font_subset.c
+
+src/wubufont/CMakeFiles/wubufont.dir/font_subset.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/wubufont.dir/font_subset.c.i"
+	cd /home/wubu/WuBuOffice/build-plugin/src/wubufont && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/wubu/WuBuOffice/src/wubufont/font_subset.c > CMakeFiles/wubufont.dir/font_subset.c.i
+
+src/wubufont/CMakeFiles/wubufont.dir/font_subset.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/wubufont.dir/font_subset.c.s"
+	cd /home/wubu/WuBuOffice/build-plugin/src/wubufont && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/wubu/WuBuOffice/src/wubufont/font_subset.c -o CMakeFiles/wubufont.dir/font_subset.c.s
+
 # Object files for target wubufont
 wubufont_OBJECTS = \
 "CMakeFiles/wubufont.dir/wubufont.c.o" \
-"CMakeFiles/wubufont.dir/woff.c.o"
+"CMakeFiles/wubufont.dir/woff.c.o" \
+"CMakeFiles/wubufont.dir/odttf.c.o" \
+"CMakeFiles/wubufont.dir/font_subset.c.o"
 
 # External object files for target wubufont
 wubufont_EXTERNAL_OBJECTS =
 
 src/wubufont/libwubufont.a: src/wubufont/CMakeFiles/wubufont.dir/wubufont.c.o
 src/wubufont/libwubufont.a: src/wubufont/CMakeFiles/wubufont.dir/woff.c.o
+src/wubufont/libwubufont.a: src/wubufont/CMakeFiles/wubufont.dir/odttf.c.o
+src/wubufont/libwubufont.a: src/wubufont/CMakeFiles/wubufont.dir/font_subset.c.o
 src/wubufont/libwubufont.a: src/wubufont/CMakeFiles/wubufont.dir/build.make
 src/wubufont/libwubufont.a: src/wubufont/CMakeFiles/wubufont.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking C static library libwubufont.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking C static library libwubufont.a"
 	cd /home/wubu/WuBuOffice/build-plugin/src/wubufont && $(CMAKE_COMMAND) -P CMakeFiles/wubufont.dir/cmake_clean_target.cmake
 	cd /home/wubu/WuBuOffice/build-plugin/src/wubufont && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/wubufont.dir/link.txt --verbose=$(VERBOSE)
 

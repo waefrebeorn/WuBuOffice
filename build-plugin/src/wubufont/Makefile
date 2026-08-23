@@ -140,6 +140,54 @@ wubufont/fast:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f src/wubufont/CMakeFiles/wubufont.dir/build.make src/wubufont/CMakeFiles/wubufont.dir/build
 .PHONY : wubufont/fast
 
+font_subset.o: font_subset.c.o
+.PHONY : font_subset.o
+
+# target to build an object file
+font_subset.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f src/wubufont/CMakeFiles/wubufont.dir/build.make src/wubufont/CMakeFiles/wubufont.dir/font_subset.c.o
+.PHONY : font_subset.c.o
+
+font_subset.i: font_subset.c.i
+.PHONY : font_subset.i
+
+# target to preprocess a source file
+font_subset.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f src/wubufont/CMakeFiles/wubufont.dir/build.make src/wubufont/CMakeFiles/wubufont.dir/font_subset.c.i
+.PHONY : font_subset.c.i
+
+font_subset.s: font_subset.c.s
+.PHONY : font_subset.s
+
+# target to generate assembly for a file
+font_subset.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f src/wubufont/CMakeFiles/wubufont.dir/build.make src/wubufont/CMakeFiles/wubufont.dir/font_subset.c.s
+.PHONY : font_subset.c.s
+
+odttf.o: odttf.c.o
+.PHONY : odttf.o
+
+# target to build an object file
+odttf.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f src/wubufont/CMakeFiles/wubufont.dir/build.make src/wubufont/CMakeFiles/wubufont.dir/odttf.c.o
+.PHONY : odttf.c.o
+
+odttf.i: odttf.c.i
+.PHONY : odttf.i
+
+# target to preprocess a source file
+odttf.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f src/wubufont/CMakeFiles/wubufont.dir/build.make src/wubufont/CMakeFiles/wubufont.dir/odttf.c.i
+.PHONY : odttf.c.i
+
+odttf.s: odttf.c.s
+.PHONY : odttf.s
+
+# target to generate assembly for a file
+odttf.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f src/wubufont/CMakeFiles/wubufont.dir/build.make src/wubufont/CMakeFiles/wubufont.dir/odttf.c.s
+.PHONY : odttf.c.s
+
 woff.o: woff.c.o
 .PHONY : woff.o
 
@@ -198,6 +246,12 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... test"
 	@echo "... wubufont"
+	@echo "... font_subset.o"
+	@echo "... font_subset.i"
+	@echo "... font_subset.s"
+	@echo "... odttf.o"
+	@echo "... odttf.i"
+	@echo "... odttf.s"
 	@echo "... woff.o"
 	@echo "... woff.i"
 	@echo "... woff.s"

@@ -382,6 +382,23 @@ static void on_key(WuView *v, int key, int down){
 
 static void destroy(WuView *v){ CellV *e = v->priv; wubucell_free(e->b); free(e->path); free(e); free(v); }
 
+/* Mouse: click a grid cell to select it (same geometry as the renderer:
+ * margin_x=40, margin_y=56, cw=88, row height = font height + 8). */
+static void on_click(WuView *v, int x, int y){
+    CellV *e = v->priv;
+    if (!e) return;
+    enum { MGX = 40, MGY = 56, CW = 88 };
+    int rh2 = wuos_font_height() + WUOS_SPACE_8;
+    if (x < MGX || y < MGY) return;                 /* header strips / gutter */
+    int c = (x - MGX) / CW + 1;
+    int r = (y - MGY) / (rh2 ? rh2 : 1) + 1;
+    if (c < 1) c = 1;
+    if (r < 1) r = 1;
+    e->curc = c > e->maxc ? e->maxc : c;
+    e->curr = r > e->maxr ? e->maxr : r;
+    e->editing = 0;
+}
+
 static const char *get_path(WuView *v){ CellV *e = v->priv; return e->path; }
 
 /* Save the spreadsheet back to its loaded path (round-trip). CSV writes sheet
@@ -431,6 +448,7 @@ WuView *wuos_cell_create(const char *path){
     v->status  = status;
     v->sidebar = sidebar;
     v->on_key  = on_key;
+    v->on_click = on_click;
     v->get_path = get_path;
     v->save    = save;   /* round-trip: Ctrl+S writes back to the loaded format */
     return v;

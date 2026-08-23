@@ -1353,6 +1353,7 @@ apps/wubuos/CMakeFiles/test_view.dir/view_doc.c.o: /home/wubu/WuBuOffice/apps/wu
   /home/wubu/WuBuOffice/src/wubushape/shape.h \
   /home/wubu/WuBuOffice/src/wubusvg/rast.h \
   /home/wubu/WuBuOffice/src/wubutoc/toc.h \
+  /usr/include/ctype.h \
   /usr/include/features-time64.h \
   /usr/include/features.h \
   /usr/include/stdc-predef.h \
@@ -1360,6 +1361,8 @@ apps/wubuos/CMakeFiles/test_view.dir/view_doc.c.o: /home/wubu/WuBuOffice/apps/wu
   /usr/include/stdio.h \
   /usr/include/stdlib.h \
   /usr/include/string.h \
+  /usr/include/x86_64-linux-gnu/bits/endian.h \
+  /usr/include/x86_64-linux-gnu/bits/endianness.h \
   /usr/include/x86_64-linux-gnu/bits/floatn-common.h \
   /usr/include/x86_64-linux-gnu/bits/floatn.h \
   /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
@@ -1935,6 +1938,7 @@ apps/wubuos/CMakeFiles/test_view.dir/view_editor_render.c.o: /home/wubu/WuBuOffi
   /home/wubu/WuBuOffice/apps/wubuos/view_editor_internal.h \
   /home/wubu/WuBuOffice/apps/wubuos/wuos.h \
   /home/wubu/WuBuOffice/apps/wubuos/wuos_font.h \
+  /home/wubu/WuBuOffice/apps/wubuos/wuos_theme.h \
   /home/wubu/WuBuOffice/src/wubuautosave/autosave.h \
   /home/wubu/WuBuOffice/src/wubumath/math.h \
   /home/wubu/WuBuOffice/src/wubumodel/model.h \
@@ -2326,6 +2330,7 @@ apps/wubuos/CMakeFiles/test_view.dir/view_settings.c.o: /home/wubu/WuBuOffice/ap
   /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h
 
 apps/wubuos/CMakeFiles/test_view.dir/view_slide.c.o: /home/wubu/WuBuOffice/apps/wubuos/view_slide.c \
+  /home/wubu/WuBuOffice/src/wubuoxml/pptx_write.h \
   /home/wubu/WuBuOffice/apps/wubuos/hive.h \
   /home/wubu/WuBuOffice/apps/wubuos/wuos.h \
   /home/wubu/WuBuOffice/apps/wubuos/wuos_font.h \
@@ -2546,6 +2551,8 @@ apps/wubuos/CMakeFiles/test_view.dir/wuos_font.c.o: /home/wubu/WuBuOffice/apps/w
 /home/wubu/WuBuOffice/src/wububase/wububase.h:
 
 /home/wubu/WuBuOffice/apps/wubuos/wuos_file.c:
+
+/home/wubu/WuBuOffice/src/wubuoxml/pptx_write.h:
 
 /home/wubu/WuBuOffice/apps/wubuos/view_slide.c:
 

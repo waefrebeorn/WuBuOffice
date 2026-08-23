@@ -1,2 +1,2 @@
-/usr/bin/ar qc libwubufont.a CMakeFiles/wubufont.dir/wubufont.c.o CMakeFiles/wubufont.dir/woff.c.o
+/usr/bin/ar qc libwubufont.a CMakeFiles/wubufont.dir/wubufont.c.o CMakeFiles/wubufont.dir/woff.c.o CMakeFiles/wubufont.dir/odttf.c.o CMakeFiles/wubufont.dir/font_subset.c.o
 /usr/bin/ranlib libwubufont.a

@@ -8,6 +8,8 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
+  "/home/wubu/WuBuOffice/src/wubufont/font_subset.c" "src/wubufont/CMakeFiles/wubufont.dir/font_subset.c.o" "gcc" "src/wubufont/CMakeFiles/wubufont.dir/font_subset.c.o.d"
+  "/home/wubu/WuBuOffice/src/wubufont/odttf.c" "src/wubufont/CMakeFiles/wubufont.dir/odttf.c.o" "gcc" "src/wubufont/CMakeFiles/wubufont.dir/odttf.c.o.d"
   "/home/wubu/WuBuOffice/src/wubufont/woff.c" "src/wubufont/CMakeFiles/wubufont.dir/woff.c.o" "gcc" "src/wubufont/CMakeFiles/wubufont.dir/woff.c.o.d"
   "/home/wubu/WuBuOffice/src/wubufont/wubufont.c" "src/wubufont/CMakeFiles/wubufont.dir/wubufont.c.o" "gcc" "src/wubufont/CMakeFiles/wubufont.dir/wubufont.c.o.d"
   )

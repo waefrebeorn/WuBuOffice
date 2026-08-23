@@ -1,4 +1,1 @@
-88:gradcheck_conv3
-92:convnet3
-93:convnet3_im2col
-94:inorm_gradcheck
+155:gauntlet

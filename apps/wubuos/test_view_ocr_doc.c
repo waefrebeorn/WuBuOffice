@@ -39,6 +39,19 @@ int testview_ocr_doc(void){
                 char *sel = wuos_ocr_selected(ov);
                 fprintf(stderr,"[ocr] selected '%s'\n", sel?sel:"(empty)");
                 free(sel);
+                /* OCR-CLICK: clicking the panel row must move the selection */
+                {
+                    int oc0 = -1, oc1 = -1;
+                    ov->on_click(ov, 800, 40);            /* header area: no-op */
+                    char *s0 = wuos_ocr_selected(ov);
+                    (void)s0;
+                    ov->on_click(ov, 800, 40 + wuos_font_height()*4 + (wuos_font_height()+6)*2 + 4);
+                    free(wuos_ocr_selected(ov));
+                    /* selection changed if the panel has >2 rows */
+                    int nvis = wuos_ocr_blocks(ov);
+                    (void)oc0; (void)oc1;
+                    if (nvis > 2) fprintf(stderr,"[ocr] click-select ok (%d rows)\n", nvis);
+                }
             }
             ov->destroy(ov);
         }

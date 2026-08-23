@@ -5,9 +5,15 @@ static int16_t coord_next(coord_cursor *c, uint8_t flag, int is_y) {
     uint8_t shn = is_y ? YSHORT_NEG : XSHORT_NEG;
     int16_t v;
     if (flag & shp) {
-        int8_t b = (int8_t)c->data[c->cp];
-        if (flag & shn) v =  b;   /* short, positive (0x10/0x20 set) */
-        else            v = -b;   /* short, negative */
+        /* Short coordinate: the stored byte is an UNSIGNED MAGNITUDE; the
+         * sign bit in the flag decides the direction (Apple TT spec,
+         * 'glyf' simple-glyph flags). The old code read the byte as SIGNED
+         * and then negated it when the sign bit was clear -- which produced
+         * garbage like +66 where the true delta was -190. That desynced
+         * every subsequent coordinate in curved glyphs ('e','r','d'), which
+         * rendered as corrupted "invented font" shapes. */
+        uint8_t m = c->data[c->cp];
+        v = (int16_t)((flag & shn) ? m : -(int16_t)m);
         c->cp++;
     } else if (flag & shn) {
         v = 0;                                        /* same as previous */

@@ -12,8 +12,10 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/wubu/WuBuOffice/src/wubuoxml/docx_document.c" "src/wubuoxml/CMakeFiles/wubuoxml.dir/docx_document.c.o" "gcc" "src/wubuoxml/CMakeFiles/wubuoxml.dir/docx_document.c.o.d"
   "/home/wubu/WuBuOffice/src/wubuoxml/extract.c" "src/wubuoxml/CMakeFiles/wubuoxml.dir/extract.c.o" "gcc" "src/wubuoxml/CMakeFiles/wubuoxml.dir/extract.c.o.d"
   "/home/wubu/WuBuOffice/src/wubuoxml/package.c" "src/wubuoxml/CMakeFiles/wubuoxml.dir/package.c.o" "gcc" "src/wubuoxml/CMakeFiles/wubuoxml.dir/package.c.o.d"
+  "/home/wubu/WuBuOffice/src/wubuoxml/pptx_write.c" "src/wubuoxml/CMakeFiles/wubuoxml.dir/pptx_write.c.o" "gcc" "src/wubuoxml/CMakeFiles/wubuoxml.dir/pptx_write.c.o.d"
   "/home/wubu/WuBuOffice/src/wubuoxml/reader.c" "src/wubuoxml/CMakeFiles/wubuoxml.dir/reader.c.o" "gcc" "src/wubuoxml/CMakeFiles/wubuoxml.dir/reader.c.o.d"
   "/home/wubu/WuBuOffice/src/wubuoxml/rels_path.c" "src/wubuoxml/CMakeFiles/wubuoxml.dir/rels_path.c.o" "gcc" "src/wubuoxml/CMakeFiles/wubuoxml.dir/rels_path.c.o.d"
+  "/home/wubu/WuBuOffice/src/wubuoxml/table_styles.c" "src/wubuoxml/CMakeFiles/wubuoxml.dir/table_styles.c.o" "gcc" "src/wubuoxml/CMakeFiles/wubuoxml.dir/table_styles.c.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

@@ -139,10 +139,38 @@ src/wubuoxml/CMakeFiles/wubuoxml.dir/docx_document.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/wubuoxml.dir/docx_document.c.s"
 	cd /home/wubu/WuBuOffice/build-plugin/src/wubuoxml && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/wubu/WuBuOffice/src/wubuoxml/docx_document.c -o CMakeFiles/wubuoxml.dir/docx_document.c.s
 
+src/wubuoxml/CMakeFiles/wubuoxml.dir/table_styles.c.o: src/wubuoxml/CMakeFiles/wubuoxml.dir/flags.make
+src/wubuoxml/CMakeFiles/wubuoxml.dir/table_styles.c.o: /home/wubu/WuBuOffice/src/wubuoxml/table_styles.c
+src/wubuoxml/CMakeFiles/wubuoxml.dir/table_styles.c.o: src/wubuoxml/CMakeFiles/wubuoxml.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building C object src/wubuoxml/CMakeFiles/wubuoxml.dir/table_styles.c.o"
+	cd /home/wubu/WuBuOffice/build-plugin/src/wubuoxml && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT src/wubuoxml/CMakeFiles/wubuoxml.dir/table_styles.c.o -MF CMakeFiles/wubuoxml.dir/table_styles.c.o.d -o CMakeFiles/wubuoxml.dir/table_styles.c.o -c /home/wubu/WuBuOffice/src/wubuoxml/table_styles.c
+
+src/wubuoxml/CMakeFiles/wubuoxml.dir/table_styles.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/wubuoxml.dir/table_styles.c.i"
+	cd /home/wubu/WuBuOffice/build-plugin/src/wubuoxml && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/wubu/WuBuOffice/src/wubuoxml/table_styles.c > CMakeFiles/wubuoxml.dir/table_styles.c.i
+
+src/wubuoxml/CMakeFiles/wubuoxml.dir/table_styles.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/wubuoxml.dir/table_styles.c.s"
+	cd /home/wubu/WuBuOffice/build-plugin/src/wubuoxml && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/wubu/WuBuOffice/src/wubuoxml/table_styles.c -o CMakeFiles/wubuoxml.dir/table_styles.c.s
+
+src/wubuoxml/CMakeFiles/wubuoxml.dir/pptx_write.c.o: src/wubuoxml/CMakeFiles/wubuoxml.dir/flags.make
+src/wubuoxml/CMakeFiles/wubuoxml.dir/pptx_write.c.o: /home/wubu/WuBuOffice/src/wubuoxml/pptx_write.c
+src/wubuoxml/CMakeFiles/wubuoxml.dir/pptx_write.c.o: src/wubuoxml/CMakeFiles/wubuoxml.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building C object src/wubuoxml/CMakeFiles/wubuoxml.dir/pptx_write.c.o"
+	cd /home/wubu/WuBuOffice/build-plugin/src/wubuoxml && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT src/wubuoxml/CMakeFiles/wubuoxml.dir/pptx_write.c.o -MF CMakeFiles/wubuoxml.dir/pptx_write.c.o.d -o CMakeFiles/wubuoxml.dir/pptx_write.c.o -c /home/wubu/WuBuOffice/src/wubuoxml/pptx_write.c
+
+src/wubuoxml/CMakeFiles/wubuoxml.dir/pptx_write.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/wubuoxml.dir/pptx_write.c.i"
+	cd /home/wubu/WuBuOffice/build-plugin/src/wubuoxml && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/wubu/WuBuOffice/src/wubuoxml/pptx_write.c > CMakeFiles/wubuoxml.dir/pptx_write.c.i
+
+src/wubuoxml/CMakeFiles/wubuoxml.dir/pptx_write.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/wubuoxml.dir/pptx_write.c.s"
+	cd /home/wubu/WuBuOffice/build-plugin/src/wubuoxml && /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/wubu/WuBuOffice/src/wubuoxml/pptx_write.c -o CMakeFiles/wubuoxml.dir/pptx_write.c.s
+
 src/wubuoxml/CMakeFiles/wubuoxml.dir/__/wubuxml/parser.c.o: src/wubuoxml/CMakeFiles/wubuoxml.dir/flags.make
 src/wubuoxml/CMakeFiles/wubuoxml.dir/__/wubuxml/parser.c.o: /home/wubu/WuBuOffice/src/wubuxml/parser.c
 src/wubuoxml/CMakeFiles/wubuoxml.dir/__/wubuxml/parser.c.o: src/wubuoxml/CMakeFiles/wubuoxml.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building C object src/wubuoxml/CMakeFiles/wubuoxml.dir/__/wubuxml/parser.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building C object src/wubuoxml/CMakeFiles/wubuoxml.dir/__/wubuxml/parser.c.o"
 	cd /home/wubu/WuBuOffice/build-plugin/src/wubuoxml && /usr/bin/ccache /usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT src/wubuoxml/CMakeFiles/wubuoxml.dir/__/wubuxml/parser.c.o -MF CMakeFiles/wubuoxml.dir/__/wubuxml/parser.c.o.d -o CMakeFiles/wubuoxml.dir/__/wubuxml/parser.c.o -c /home/wubu/WuBuOffice/src/wubuxml/parser.c
 
 src/wubuoxml/CMakeFiles/wubuoxml.dir/__/wubuxml/parser.c.i: cmake_force
@@ -160,6 +188,8 @@ wubuoxml_OBJECTS = \
 "CMakeFiles/wubuoxml.dir/reader.c.o" \
 "CMakeFiles/wubuoxml.dir/extract.c.o" \
 "CMakeFiles/wubuoxml.dir/docx_document.c.o" \
+"CMakeFiles/wubuoxml.dir/table_styles.c.o" \
+"CMakeFiles/wubuoxml.dir/pptx_write.c.o" \
 "CMakeFiles/wubuoxml.dir/__/wubuxml/parser.c.o"
 
 # External object files for target wubuoxml
@@ -170,10 +200,12 @@ src/wubuoxml/libwubuoxml.a: src/wubuoxml/CMakeFiles/wubuoxml.dir/rels_path.c.o
 src/wubuoxml/libwubuoxml.a: src/wubuoxml/CMakeFiles/wubuoxml.dir/reader.c.o
 src/wubuoxml/libwubuoxml.a: src/wubuoxml/CMakeFiles/wubuoxml.dir/extract.c.o
 src/wubuoxml/libwubuoxml.a: src/wubuoxml/CMakeFiles/wubuoxml.dir/docx_document.c.o
+src/wubuoxml/libwubuoxml.a: src/wubuoxml/CMakeFiles/wubuoxml.dir/table_styles.c.o
+src/wubuoxml/libwubuoxml.a: src/wubuoxml/CMakeFiles/wubuoxml.dir/pptx_write.c.o
 src/wubuoxml/libwubuoxml.a: src/wubuoxml/CMakeFiles/wubuoxml.dir/__/wubuxml/parser.c.o
 src/wubuoxml/libwubuoxml.a: src/wubuoxml/CMakeFiles/wubuoxml.dir/build.make
 src/wubuoxml/libwubuoxml.a: src/wubuoxml/CMakeFiles/wubuoxml.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking C static library libwubuoxml.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/wubu/WuBuOffice/build-plugin/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Linking C static library libwubuoxml.a"
 	cd /home/wubu/WuBuOffice/build-plugin/src/wubuoxml && $(CMAKE_COMMAND) -P CMakeFiles/wubuoxml.dir/cmake_clean_target.cmake
 	cd /home/wubu/WuBuOffice/build-plugin/src/wubuoxml && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/wubuoxml.dir/link.txt --verbose=$(VERBOSE)
 

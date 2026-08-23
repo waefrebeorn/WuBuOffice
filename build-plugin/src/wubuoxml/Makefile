@@ -236,6 +236,30 @@ package.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f src/wubuoxml/CMakeFiles/wubuoxml.dir/build.make src/wubuoxml/CMakeFiles/wubuoxml.dir/package.c.s
 .PHONY : package.c.s
 
+pptx_write.o: pptx_write.c.o
+.PHONY : pptx_write.o
+
+# target to build an object file
+pptx_write.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f src/wubuoxml/CMakeFiles/wubuoxml.dir/build.make src/wubuoxml/CMakeFiles/wubuoxml.dir/pptx_write.c.o
+.PHONY : pptx_write.c.o
+
+pptx_write.i: pptx_write.c.i
+.PHONY : pptx_write.i
+
+# target to preprocess a source file
+pptx_write.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f src/wubuoxml/CMakeFiles/wubuoxml.dir/build.make src/wubuoxml/CMakeFiles/wubuoxml.dir/pptx_write.c.i
+.PHONY : pptx_write.c.i
+
+pptx_write.s: pptx_write.c.s
+.PHONY : pptx_write.s
+
+# target to generate assembly for a file
+pptx_write.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f src/wubuoxml/CMakeFiles/wubuoxml.dir/build.make src/wubuoxml/CMakeFiles/wubuoxml.dir/pptx_write.c.s
+.PHONY : pptx_write.c.s
+
 reader.o: reader.c.o
 .PHONY : reader.o
 
@@ -284,6 +308,30 @@ rels_path.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f src/wubuoxml/CMakeFiles/wubuoxml.dir/build.make src/wubuoxml/CMakeFiles/wubuoxml.dir/rels_path.c.s
 .PHONY : rels_path.c.s
 
+table_styles.o: table_styles.c.o
+.PHONY : table_styles.o
+
+# target to build an object file
+table_styles.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f src/wubuoxml/CMakeFiles/wubuoxml.dir/build.make src/wubuoxml/CMakeFiles/wubuoxml.dir/table_styles.c.o
+.PHONY : table_styles.c.o
+
+table_styles.i: table_styles.c.i
+.PHONY : table_styles.i
+
+# target to preprocess a source file
+table_styles.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f src/wubuoxml/CMakeFiles/wubuoxml.dir/build.make src/wubuoxml/CMakeFiles/wubuoxml.dir/table_styles.c.i
+.PHONY : table_styles.c.i
+
+table_styles.s: table_styles.c.s
+.PHONY : table_styles.s
+
+# target to generate assembly for a file
+table_styles.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f src/wubuoxml/CMakeFiles/wubuoxml.dir/build.make src/wubuoxml/CMakeFiles/wubuoxml.dir/table_styles.c.s
+.PHONY : table_styles.c.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -306,12 +354,18 @@ help:
 	@echo "... package.o"
 	@echo "... package.i"
 	@echo "... package.s"
+	@echo "... pptx_write.o"
+	@echo "... pptx_write.i"
+	@echo "... pptx_write.s"
 	@echo "... reader.o"
 	@echo "... reader.i"
 	@echo "... reader.s"
 	@echo "... rels_path.o"
 	@echo "... rels_path.i"
 	@echo "... rels_path.s"
+	@echo "... table_styles.o"
+	@echo "... table_styles.i"
+	@echo "... table_styles.s"
 .PHONY : help
 
 

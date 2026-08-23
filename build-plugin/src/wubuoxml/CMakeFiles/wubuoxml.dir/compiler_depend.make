@@ -40,6 +40,7 @@ src/wubuoxml/CMakeFiles/wubuoxml.dir/docx_document.c.o: /home/wubu/WuBuOffice/sr
   /home/wubu/WuBuOffice/src/wubumodel/model.h \
   /home/wubu/WuBuOffice/src/wubuxml/parser.h \
   /home/wubu/WuBuOffice/src/wubuoxml/docx_document.h \
+  /home/wubu/WuBuOffice/src/wubuoxml/table_styles.h \
   /usr/include/features-time64.h \
   /usr/include/features.h \
   /usr/include/stdc-predef.h \
@@ -158,6 +159,56 @@ src/wubuoxml/CMakeFiles/wubuoxml.dir/package.c.o: /home/wubu/WuBuOffice/src/wubu
   /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h \
   /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h
 
+src/wubuoxml/CMakeFiles/wubuoxml.dir/pptx_write.c.o: /home/wubu/WuBuOffice/src/wubuoxml/pptx_write.c \
+  /home/wubu/WuBuOffice/src/wubuoxml/docx_text.h \
+  /home/wubu/WuBuOffice/src/wubuoxml/package.h \
+  /home/wubu/WuBuOffice/src/wubuoxml/pptx_write.h \
+  /home/wubu/WuBuOffice/src/wubuoxml/reader.h \
+  /usr/include/features-time64.h \
+  /usr/include/features.h \
+  /usr/include/stdc-predef.h \
+  /usr/include/stdint.h \
+  /usr/include/stdio.h \
+  /usr/include/stdlib.h \
+  /usr/include/string.h \
+  /usr/include/x86_64-linux-gnu/bits/floatn-common.h \
+  /usr/include/x86_64-linux-gnu/bits/floatn.h \
+  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
+  /usr/include/x86_64-linux-gnu/bits/long-double.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+  /usr/include/x86_64-linux-gnu/bits/stdio.h \
+  /usr/include/x86_64-linux-gnu/bits/stdio2-decl.h \
+  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
+  /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
+  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
+  /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
+  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
+  /usr/include/x86_64-linux-gnu/bits/string_fortified.h \
+  /usr/include/x86_64-linux-gnu/bits/time64.h \
+  /usr/include/x86_64-linux-gnu/bits/timesize.h \
+  /usr/include/x86_64-linux-gnu/bits/types.h \
+  /usr/include/x86_64-linux-gnu/bits/types/FILE.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__FILE.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/locale_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h \
+  /usr/include/x86_64-linux-gnu/bits/typesizes.h \
+  /usr/include/x86_64-linux-gnu/bits/waitflags.h \
+  /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
+  /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
+  /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
+  /usr/include/x86_64-linux-gnu/gnu/stubs.h \
+  /usr/include/x86_64-linux-gnu/sys/cdefs.h \
+  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h \
+  /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h \
+  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h
+
 src/wubuoxml/CMakeFiles/wubuoxml.dir/reader.c.o: /home/wubu/WuBuOffice/src/wubuoxml/reader.c \
   /home/wubu/WuBuOffice/src/wubuzip/io_le.h \
   /home/wubu/WuBuOffice/src/wubuzip/reader.h \
@@ -223,12 +274,68 @@ src/wubuoxml/CMakeFiles/wubuoxml.dir/rels_path.c.o: /home/wubu/WuBuOffice/src/wu
   /usr/include/x86_64-linux-gnu/sys/cdefs.h \
   /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h
 
+src/wubuoxml/CMakeFiles/wubuoxml.dir/table_styles.c.o: /home/wubu/WuBuOffice/src/wubuoxml/table_styles.c \
+  /home/wubu/WuBuOffice/src/wubuxml/parser.h \
+  /home/wubu/WuBuOffice/src/wubuoxml/table_styles.h \
+  /usr/include/features-time64.h \
+  /usr/include/features.h \
+  /usr/include/stdc-predef.h \
+  /usr/include/stdint.h \
+  /usr/include/stdio.h \
+  /usr/include/stdlib.h \
+  /usr/include/string.h \
+  /usr/include/x86_64-linux-gnu/bits/floatn-common.h \
+  /usr/include/x86_64-linux-gnu/bits/floatn.h \
+  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
+  /usr/include/x86_64-linux-gnu/bits/long-double.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+  /usr/include/x86_64-linux-gnu/bits/stdio.h \
+  /usr/include/x86_64-linux-gnu/bits/stdio2-decl.h \
+  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
+  /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
+  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
+  /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
+  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
+  /usr/include/x86_64-linux-gnu/bits/string_fortified.h \
+  /usr/include/x86_64-linux-gnu/bits/time64.h \
+  /usr/include/x86_64-linux-gnu/bits/timesize.h \
+  /usr/include/x86_64-linux-gnu/bits/types.h \
+  /usr/include/x86_64-linux-gnu/bits/types/FILE.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__FILE.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/locale_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h \
+  /usr/include/x86_64-linux-gnu/bits/typesizes.h \
+  /usr/include/x86_64-linux-gnu/bits/waitflags.h \
+  /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
+  /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  /usr/include/x86_64-linux-gnu/bits/wordsize.h \
+  /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
+  /usr/include/x86_64-linux-gnu/gnu/stubs.h \
+  /usr/include/x86_64-linux-gnu/sys/cdefs.h \
+  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h \
+  /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h \
+  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h
+
+
+/home/wubu/WuBuOffice/src/wubuzip/reader.h:
+
+/home/wubu/WuBuOffice/src/wubuoxml/rels_path.c:
+
+/home/wubu/WuBuOffice/src/wubuoxml/reader.c:
 
 /usr/include/x86_64-linux-gnu/bits/waitflags.h:
 
-/usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h:
+/home/wubu/WuBuOffice/src/wubuzip/io_le.h:
 
-/usr/include/x86_64-linux-gnu/bits/wordsize.h:
+/usr/include/x86_64-linux-gnu/bits/typesizes.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/locale_t.h:
 
@@ -241,6 +348,10 @@ src/wubuoxml/CMakeFiles/wubuoxml.dir/rels_path.c.o: /home/wubu/WuBuOffice/src/wu
 /usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h:
 
 /usr/include/x86_64-linux-gnu/bits/waitstatus.h:
+
+/usr/include/x86_64-linux-gnu/bits/wordsize.h:
+
+/home/wubu/WuBuOffice/src/wubuoxml/table_styles.h:
 
 /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h:
 
@@ -284,9 +395,9 @@ src/wubuoxml/CMakeFiles/wubuoxml.dir/rels_path.c.o: /home/wubu/WuBuOffice/src/wu
 
 /usr/include/features-time64.h:
 
-/home/wubu/WuBuOffice/src/wubuoxml/docx_document.h:
+/home/wubu/WuBuOffice/src/wubuoxml/table_styles.c:
 
-/home/wubu/WuBuOffice/src/wubuzip/reader.h:
+/home/wubu/WuBuOffice/src/wubuoxml/docx_document.h:
 
 /usr/include/x86_64-linux-gnu/bits/types.h:
 
@@ -304,15 +415,13 @@ src/wubuoxml/CMakeFiles/wubuoxml.dir/rels_path.c.o: /home/wubu/WuBuOffice/src/wu
 
 /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h:
 
+/home/wubu/WuBuOffice/src/wubuoxml/pptx_write.c:
+
 /home/wubu/WuBuOffice/src/wubuoxml/docx_text.h:
 
 /usr/include/x86_64-linux-gnu/sys/cdefs.h:
 
 /usr/include/x86_64-linux-gnu/bits/stdio2.h:
-
-/usr/include/x86_64-linux-gnu/bits/typesizes.h:
-
-/home/wubu/WuBuOffice/src/wubuzip/io_le.h:
 
 /home/wubu/WuBuOffice/src/wubuoxml/docx_document.c:
 
@@ -342,6 +451,4 @@ src/wubuoxml/CMakeFiles/wubuoxml.dir/rels_path.c.o: /home/wubu/WuBuOffice/src/wu
 
 /usr/include/x86_64-linux-gnu/bits/types/__FILE.h:
 
-/home/wubu/WuBuOffice/src/wubuoxml/rels_path.c:
-
-/home/wubu/WuBuOffice/src/wubuoxml/reader.c:
+/home/wubu/WuBuOffice/src/wubuoxml/pptx_write.h:

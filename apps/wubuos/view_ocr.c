@@ -165,23 +165,32 @@ static int render(WuView *v, int w, int h, int scroll,
         size_t i=((size_t)yy*w+xx)*4; fb[i]=pan_bg.r;fb[i+1]=pan_bg.g;fb[i+2]=pan_bg.b; }
     for (int yy=0; yy<h; yy++){ size_t i=((size_t)yy*w+panel_x)*4; fb[i]=pan_bd.r;fb[i+1]=pan_bd.g;fb[i+2]=pan_bd.b; }
 
-    /* panel header */
-    wuos_font_draw("Recognized (Up/Down, Enter copies):", panel_x+WUOS_SPACE_8, WUOS_SPACE_16+wuos_font_height(), 1, pan_hdr.r,pan_hdr.g,pan_hdr.b, fb,w,h);
-    { int hy = WUOS_SPACE_16 + wuos_font_height() + WUOS_SPACE_8;
+    /* panel header — two lines so it fits the 300px panel without clipping */
+    wuos_font_draw("Recognized", panel_x+WUOS_SPACE_8, WUOS_SPACE_8+wuos_font_height(), 1, pan_hdr.r,pan_hdr.g,pan_hdr.b, fb,w,h);
+    wuos_font_draw("(Up/Down, Enter copies)", panel_x+WUOS_SPACE_8, WUOS_SPACE_8+wuos_font_height()*2, 0, pan_hdr.r,pan_hdr.g,pan_hdr.b, fb,w,h);
+    { int hy = WUOS_SPACE_8 + wuos_font_height()*3;
       for (int xx=panel_x; xx<w; xx++){ size_t i=((size_t)hy*w+xx)*4; fb[i]=pan_bd.r;fb[i+1]=pan_bd.g;fb[i+2]=pan_bd.b; } }
     if (e->pg){
         size_t n = ocr_page_block_count(e->pg);
-        int ty = WUOS_SPACE_16 + wuos_font_height()*2 + WUOS_SPACE_16; int idx=0;
+        int ty = WUOS_SPACE_8 + wuos_font_height()*4; int idx=0;
         for (size_t i=0;i<n && ty<h-60;i++){
             const char *t = ocr_page_block_text(e->pg,i);
             if (!t || !*t){ free((void*)t); continue; }
+            /* clip long lines to the panel width instead of running off-edge */
+            char line[64];
+            snprintf(line, sizeof line, "%.*s", (int)sizeof line - 1, t);
+            while (line[0] && wuos_font_text_width(line, wuos_font_height()) > w-panel_x-WUOS_SPACE_16)
+                line[strlen(line)-1] = '\0';
+            free((void*)t);
+            t = NULL;
+            {
             int on = (idx==e->sel);
             int ry = ty;
             if (on){ for (int xx=panel_x+WUOS_SPACE_4; xx<w-WUOS_SPACE_4; xx++) for(int yy=ry-2; yy<ry+wuos_font_height()+4; yy++)
                         if(xx>=0&&yy>=0&&xx<w&&yy<h){ size_t ii=((size_t)yy*w+xx)*4; fb[ii]=pan_sel.r;fb[ii+1]=pan_sel.g;fb[ii+2]=pan_sel.b; } }
-            wuos_font_draw(t, panel_x+WUOS_SPACE_8, ry, 0, pan_txt.r,pan_txt.g,pan_txt.b, fb,w,h);
+            wuos_font_draw(line, panel_x+WUOS_SPACE_8, ry, 0, pan_txt.r,pan_txt.g,pan_txt.b, fb,w,h);
             ty += wuos_font_height()+6; idx++;
-            free((void*)t);
+            }
         }
         /* detail strip: themed card, not hard-coded dark */
         int dy = h-26;
@@ -232,6 +241,28 @@ static void destroy(WuView *v){
     free(v);
 }
 
+/* Mouse: click a row in the Recognized panel (right 300px) to select it.
+ * Row geometry mirrors the renderer: first entry baseline at
+ * WUOS_SPACE_8 + fh*4, line pitch = fh + 6. */
+static void on_click(WuView *v, int x, int y){
+    OcrV *e = v->priv;
+    if (!e || !e->pg) return;
+    int panel_x = 960 - 300; if (panel_x < 480) panel_x = 480;
+    if (x < panel_x) return;
+    int fh = wuos_font_height();
+    int ty = WUOS_SPACE_8 + fh*4;
+    int pitch = fh + 6;
+    if (y < ty - 2) return;
+    int idx = (y - ty) / pitch;
+    if (idx < 0) idx = 0;
+    /* clamp to visible non-empty block count */
+    size_t n = ocr_page_block_count(e->pg);
+    int visible = 0;
+    for (size_t i=0;i<n;i++){ const char *t=ocr_page_block_text(e->pg,i); if(t&&*t) visible++; free((void*)t); }
+    if (idx > visible-1) idx = visible-1;
+    e->sel = idx;
+}
+
 WuView *wuos_ocr_create(const char *path){
     OcrV *e = calloc(1, sizeof *e);
     const char *src = path ? path : "/tmp/ocr_in.png";
@@ -259,6 +290,7 @@ WuView *wuos_ocr_create(const char *path){
     v->render  = render;
     v->status  = status;
     v->on_key  = on_key;
+    v->on_click = on_click;
     return v;
 }
 

@@ -46,6 +46,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/wubu/WuBuOffice/apps/wubuos/wuos_font.c" "apps/wubuos/CMakeFiles/wubuos.dir/wuos_font.c.o" "gcc" "apps/wubuos/CMakeFiles/wubuos.dir/wuos_font.c.o.d"
   "/home/wubu/WuBuOffice/apps/wubuos/wuos_frame.c" "apps/wubuos/CMakeFiles/wubuos.dir/wuos_frame.c.o" "gcc" "apps/wubuos/CMakeFiles/wubuos.dir/wuos_frame.c.o.d"
   "/home/wubu/WuBuOffice/apps/wubuos/wuos_motion.c" "apps/wubuos/CMakeFiles/wubuos.dir/wuos_motion.c.o" "gcc" "apps/wubuos/CMakeFiles/wubuos.dir/wuos_motion.c.o.d"
+  "/home/wubu/WuBuOffice/apps/wubuos/wuos_shell_a11y.c" "apps/wubuos/CMakeFiles/wubuos.dir/wuos_shell_a11y.c.o" "gcc" "apps/wubuos/CMakeFiles/wubuos.dir/wuos_shell_a11y.c.o.d"
   "/home/wubu/WuBuOffice/apps/wubuos/wuos_shell_events.c" "apps/wubuos/CMakeFiles/wubuos.dir/wuos_shell_events.c.o" "gcc" "apps/wubuos/CMakeFiles/wubuos.dir/wuos_shell_events.c.o.d"
   "/home/wubu/WuBuOffice/apps/wubuos/wuos_toolbar.c" "apps/wubuos/CMakeFiles/wubuos.dir/wuos_toolbar.c.o" "gcc" "apps/wubuos/CMakeFiles/wubuos.dir/wuos_toolbar.c.o.d"
   )

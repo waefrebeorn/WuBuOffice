@@ -392,6 +392,82 @@ viewshot/fast:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/build
 .PHONY : viewshot/fast
 
+# Convenience name for target.
+apps/wubuos/CMakeFiles/test_cjk_fallback.dir/rule:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 apps/wubuos/CMakeFiles/test_cjk_fallback.dir/rule
+.PHONY : apps/wubuos/CMakeFiles/test_cjk_fallback.dir/rule
+
+# Convenience name for target.
+test_cjk_fallback: apps/wubuos/CMakeFiles/test_cjk_fallback.dir/rule
+.PHONY : test_cjk_fallback
+
+# fast build rule for target.
+test_cjk_fallback/fast:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_cjk_fallback.dir/build.make apps/wubuos/CMakeFiles/test_cjk_fallback.dir/build
+.PHONY : test_cjk_fallback/fast
+
+# Convenience name for target.
+apps/wubuos/CMakeFiles/test_run_toggle.dir/rule:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 apps/wubuos/CMakeFiles/test_run_toggle.dir/rule
+.PHONY : apps/wubuos/CMakeFiles/test_run_toggle.dir/rule
+
+# Convenience name for target.
+test_run_toggle: apps/wubuos/CMakeFiles/test_run_toggle.dir/rule
+.PHONY : test_run_toggle
+
+# fast build rule for target.
+test_run_toggle/fast:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/build
+.PHONY : test_run_toggle/fast
+
+__/__/tests/test_cjk_fallback.o: __/__/tests/test_cjk_fallback.c.o
+.PHONY : __/__/tests/test_cjk_fallback.o
+
+# target to build an object file
+__/__/tests/test_cjk_fallback.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_cjk_fallback.dir/build.make apps/wubuos/CMakeFiles/test_cjk_fallback.dir/__/__/tests/test_cjk_fallback.c.o
+.PHONY : __/__/tests/test_cjk_fallback.c.o
+
+__/__/tests/test_cjk_fallback.i: __/__/tests/test_cjk_fallback.c.i
+.PHONY : __/__/tests/test_cjk_fallback.i
+
+# target to preprocess a source file
+__/__/tests/test_cjk_fallback.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_cjk_fallback.dir/build.make apps/wubuos/CMakeFiles/test_cjk_fallback.dir/__/__/tests/test_cjk_fallback.c.i
+.PHONY : __/__/tests/test_cjk_fallback.c.i
+
+__/__/tests/test_cjk_fallback.s: __/__/tests/test_cjk_fallback.c.s
+.PHONY : __/__/tests/test_cjk_fallback.s
+
+# target to generate assembly for a file
+__/__/tests/test_cjk_fallback.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_cjk_fallback.dir/build.make apps/wubuos/CMakeFiles/test_cjk_fallback.dir/__/__/tests/test_cjk_fallback.c.s
+.PHONY : __/__/tests/test_cjk_fallback.c.s
+
+__/__/tests/test_run_toggle.o: __/__/tests/test_run_toggle.c.o
+.PHONY : __/__/tests/test_run_toggle.o
+
+# target to build an object file
+__/__/tests/test_run_toggle.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/__/__/tests/test_run_toggle.c.o
+.PHONY : __/__/tests/test_run_toggle.c.o
+
+__/__/tests/test_run_toggle.i: __/__/tests/test_run_toggle.c.i
+.PHONY : __/__/tests/test_run_toggle.i
+
+# target to preprocess a source file
+__/__/tests/test_run_toggle.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/__/__/tests/test_run_toggle.c.i
+.PHONY : __/__/tests/test_run_toggle.c.i
+
+__/__/tests/test_run_toggle.s: __/__/tests/test_run_toggle.c.s
+.PHONY : __/__/tests/test_run_toggle.s
+
+# target to generate assembly for a file
+__/__/tests/test_run_toggle.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/__/__/tests/test_run_toggle.c.s
+.PHONY : __/__/tests/test_run_toggle.c.s
+
 autocomp.o: autocomp.c.o
 .PHONY : autocomp.o
 
@@ -401,6 +477,7 @@ autocomp.c.o:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/autocomp.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_autocomp.dir/build.make apps/wubuos/CMakeFiles/test_autocomp.dir/autocomp.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/autocomp.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/autocomp.c.o
 .PHONY : autocomp.c.o
 
 autocomp.i: autocomp.c.i
@@ -412,6 +489,7 @@ autocomp.c.i:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/autocomp.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_autocomp.dir/build.make apps/wubuos/CMakeFiles/test_autocomp.dir/autocomp.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/autocomp.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/autocomp.c.i
 .PHONY : autocomp.c.i
 
 autocomp.s: autocomp.c.s
@@ -423,6 +501,7 @@ autocomp.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/autocomp.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_autocomp.dir/build.make apps/wubuos/CMakeFiles/test_autocomp.dir/autocomp.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/autocomp.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/autocomp.c.s
 .PHONY : autocomp.c.s
 
 bkmk.o: bkmk.c.o
@@ -434,6 +513,7 @@ bkmk.c.o:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/bkmk.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_bkmk.dir/build.make apps/wubuos/CMakeFiles/test_bkmk.dir/bkmk.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/bkmk.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/bkmk.c.o
 .PHONY : bkmk.c.o
 
 bkmk.i: bkmk.c.i
@@ -445,6 +525,7 @@ bkmk.c.i:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/bkmk.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_bkmk.dir/build.make apps/wubuos/CMakeFiles/test_bkmk.dir/bkmk.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/bkmk.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/bkmk.c.i
 .PHONY : bkmk.c.i
 
 bkmk.s: bkmk.c.s
@@ -456,6 +537,7 @@ bkmk.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/bkmk.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_bkmk.dir/build.make apps/wubuos/CMakeFiles/test_bkmk.dir/bkmk.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/bkmk.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/bkmk.c.s
 .PHONY : bkmk.c.s
 
 codefold.o: codefold.c.o
@@ -467,6 +549,7 @@ codefold.c.o:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/codefold.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_codefold.dir/build.make apps/wubuos/CMakeFiles/test_codefold.dir/codefold.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/codefold.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/codefold.c.o
 .PHONY : codefold.c.o
 
 codefold.i: codefold.c.i
@@ -478,6 +561,7 @@ codefold.c.i:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/codefold.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_codefold.dir/build.make apps/wubuos/CMakeFiles/test_codefold.dir/codefold.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/codefold.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/codefold.c.i
 .PHONY : codefold.c.i
 
 codefold.s: codefold.c.s
@@ -489,6 +573,7 @@ codefold.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/codefold.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_codefold.dir/build.make apps/wubuos/CMakeFiles/test_codefold.dir/codefold.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/codefold.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/codefold.c.s
 .PHONY : codefold.c.s
 
 dialog.o: dialog.c.o
@@ -527,6 +612,7 @@ doccmd_core.c.o:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/doccmd_core.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_doccmd.dir/build.make apps/wubuos/CMakeFiles/test_doccmd.dir/doccmd_core.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/doccmd_core.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/doccmd_core.c.o
 .PHONY : doccmd_core.c.o
 
 doccmd_core.i: doccmd_core.c.i
@@ -538,6 +624,7 @@ doccmd_core.c.i:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/doccmd_core.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_doccmd.dir/build.make apps/wubuos/CMakeFiles/test_doccmd.dir/doccmd_core.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/doccmd_core.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/doccmd_core.c.i
 .PHONY : doccmd_core.c.i
 
 doccmd_core.s: doccmd_core.c.s
@@ -549,6 +636,7 @@ doccmd_core.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/doccmd_core.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_doccmd.dir/build.make apps/wubuos/CMakeFiles/test_doccmd.dir/doccmd_core.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/doccmd_core.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/doccmd_core.c.s
 .PHONY : doccmd_core.c.s
 
 doccmd_wave1.o: doccmd_wave1.c.o
@@ -560,6 +648,7 @@ doccmd_wave1.c.o:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/doccmd_wave1.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_doccmd.dir/build.make apps/wubuos/CMakeFiles/test_doccmd.dir/doccmd_wave1.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/doccmd_wave1.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/doccmd_wave1.c.o
 .PHONY : doccmd_wave1.c.o
 
 doccmd_wave1.i: doccmd_wave1.c.i
@@ -571,6 +660,7 @@ doccmd_wave1.c.i:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/doccmd_wave1.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_doccmd.dir/build.make apps/wubuos/CMakeFiles/test_doccmd.dir/doccmd_wave1.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/doccmd_wave1.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/doccmd_wave1.c.i
 .PHONY : doccmd_wave1.c.i
 
 doccmd_wave1.s: doccmd_wave1.c.s
@@ -582,6 +672,7 @@ doccmd_wave1.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/doccmd_wave1.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_doccmd.dir/build.make apps/wubuos/CMakeFiles/test_doccmd.dir/doccmd_wave1.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/doccmd_wave1.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/doccmd_wave1.c.s
 .PHONY : doccmd_wave1.c.s
 
 doccmd_wave2.o: doccmd_wave2.c.o
@@ -593,6 +684,7 @@ doccmd_wave2.c.o:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/doccmd_wave2.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_doccmd.dir/build.make apps/wubuos/CMakeFiles/test_doccmd.dir/doccmd_wave2.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/doccmd_wave2.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/doccmd_wave2.c.o
 .PHONY : doccmd_wave2.c.o
 
 doccmd_wave2.i: doccmd_wave2.c.i
@@ -604,6 +696,7 @@ doccmd_wave2.c.i:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/doccmd_wave2.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_doccmd.dir/build.make apps/wubuos/CMakeFiles/test_doccmd.dir/doccmd_wave2.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/doccmd_wave2.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/doccmd_wave2.c.i
 .PHONY : doccmd_wave2.c.i
 
 doccmd_wave2.s: doccmd_wave2.c.s
@@ -615,6 +708,7 @@ doccmd_wave2.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/doccmd_wave2.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_doccmd.dir/build.make apps/wubuos/CMakeFiles/test_doccmd.dir/doccmd_wave2.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/doccmd_wave2.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/doccmd_wave2.c.s
 .PHONY : doccmd_wave2.c.s
 
 findbar.o: findbar.c.o
@@ -626,6 +720,7 @@ findbar.c.o:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/findbar.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_findbar.dir/build.make apps/wubuos/CMakeFiles/test_findbar.dir/findbar.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/findbar.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/findbar.c.o
 .PHONY : findbar.c.o
 
 findbar.i: findbar.c.i
@@ -637,6 +732,7 @@ findbar.c.i:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/findbar.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_findbar.dir/build.make apps/wubuos/CMakeFiles/test_findbar.dir/findbar.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/findbar.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/findbar.c.i
 .PHONY : findbar.c.i
 
 findbar.s: findbar.c.s
@@ -648,6 +744,7 @@ findbar.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/findbar.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_findbar.dir/build.make apps/wubuos/CMakeFiles/test_findbar.dir/findbar.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/findbar.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/findbar.c.s
 .PHONY : findbar.c.s
 
 gotoline.o: gotoline.c.o
@@ -659,6 +756,7 @@ gotoline.c.o:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/gotoline.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_gotoline.dir/build.make apps/wubuos/CMakeFiles/test_gotoline.dir/gotoline.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/gotoline.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/gotoline.c.o
 .PHONY : gotoline.c.o
 
 gotoline.i: gotoline.c.i
@@ -670,6 +768,7 @@ gotoline.c.i:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/gotoline.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_gotoline.dir/build.make apps/wubuos/CMakeFiles/test_gotoline.dir/gotoline.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/gotoline.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/gotoline.c.i
 .PHONY : gotoline.c.i
 
 gotoline.s: gotoline.c.s
@@ -681,6 +780,7 @@ gotoline.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/gotoline.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_gotoline.dir/build.make apps/wubuos/CMakeFiles/test_gotoline.dir/gotoline.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/gotoline.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/gotoline.c.s
 .PHONY : gotoline.c.s
 
 hive.o: hive.c.o
@@ -693,6 +793,7 @@ hive.c.o:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_hive.dir/build.make apps/wubuos/CMakeFiles/test_hive.dir/hive.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_wuos_toolbar.dir/build.make apps/wubuos/CMakeFiles/test_wuos_toolbar.dir/hive.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/hive.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/hive.c.o
 .PHONY : hive.c.o
 
 hive.i: hive.c.i
@@ -705,6 +806,7 @@ hive.c.i:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_hive.dir/build.make apps/wubuos/CMakeFiles/test_hive.dir/hive.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_wuos_toolbar.dir/build.make apps/wubuos/CMakeFiles/test_wuos_toolbar.dir/hive.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/hive.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/hive.c.i
 .PHONY : hive.c.i
 
 hive.s: hive.c.s
@@ -717,6 +819,7 @@ hive.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_hive.dir/build.make apps/wubuos/CMakeFiles/test_hive.dir/hive.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_wuos_toolbar.dir/build.make apps/wubuos/CMakeFiles/test_wuos_toolbar.dir/hive.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/hive.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/hive.c.s
 .PHONY : hive.c.s
 
 home/wubu/WuBuPad/src/buffer.o: home/wubu/WuBuPad/src/buffer.c.o
@@ -730,6 +833,7 @@ home/wubu/WuBuPad/src/buffer.c.o:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_autocomp.dir/build.make apps/wubuos/CMakeFiles/test_autocomp.dir/home/wubu/WuBuPad/src/buffer.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_findbar.dir/build.make apps/wubuos/CMakeFiles/test_findbar.dir/home/wubu/WuBuPad/src/buffer.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/home/wubu/WuBuPad/src/buffer.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/home/wubu/WuBuPad/src/buffer.c.o
 .PHONY : home/wubu/WuBuPad/src/buffer.c.o
 
 home/wubu/WuBuPad/src/buffer.i: home/wubu/WuBuPad/src/buffer.c.i
@@ -743,6 +847,7 @@ home/wubu/WuBuPad/src/buffer.c.i:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_autocomp.dir/build.make apps/wubuos/CMakeFiles/test_autocomp.dir/home/wubu/WuBuPad/src/buffer.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_findbar.dir/build.make apps/wubuos/CMakeFiles/test_findbar.dir/home/wubu/WuBuPad/src/buffer.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/home/wubu/WuBuPad/src/buffer.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/home/wubu/WuBuPad/src/buffer.c.i
 .PHONY : home/wubu/WuBuPad/src/buffer.c.i
 
 home/wubu/WuBuPad/src/buffer.s: home/wubu/WuBuPad/src/buffer.c.s
@@ -756,6 +861,7 @@ home/wubu/WuBuPad/src/buffer.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_autocomp.dir/build.make apps/wubuos/CMakeFiles/test_autocomp.dir/home/wubu/WuBuPad/src/buffer.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_findbar.dir/build.make apps/wubuos/CMakeFiles/test_findbar.dir/home/wubu/WuBuPad/src/buffer.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/home/wubu/WuBuPad/src/buffer.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/home/wubu/WuBuPad/src/buffer.c.s
 .PHONY : home/wubu/WuBuPad/src/buffer.c.s
 
 home/wubu/WuBuPad/src/diff.o: home/wubu/WuBuPad/src/diff.c.o
@@ -769,6 +875,7 @@ home/wubu/WuBuPad/src/diff.c.o:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_autocomp.dir/build.make apps/wubuos/CMakeFiles/test_autocomp.dir/home/wubu/WuBuPad/src/diff.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_findbar.dir/build.make apps/wubuos/CMakeFiles/test_findbar.dir/home/wubu/WuBuPad/src/diff.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/home/wubu/WuBuPad/src/diff.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/home/wubu/WuBuPad/src/diff.c.o
 .PHONY : home/wubu/WuBuPad/src/diff.c.o
 
 home/wubu/WuBuPad/src/diff.i: home/wubu/WuBuPad/src/diff.c.i
@@ -782,6 +889,7 @@ home/wubu/WuBuPad/src/diff.c.i:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_autocomp.dir/build.make apps/wubuos/CMakeFiles/test_autocomp.dir/home/wubu/WuBuPad/src/diff.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_findbar.dir/build.make apps/wubuos/CMakeFiles/test_findbar.dir/home/wubu/WuBuPad/src/diff.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/home/wubu/WuBuPad/src/diff.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/home/wubu/WuBuPad/src/diff.c.i
 .PHONY : home/wubu/WuBuPad/src/diff.c.i
 
 home/wubu/WuBuPad/src/diff.s: home/wubu/WuBuPad/src/diff.c.s
@@ -795,6 +903,7 @@ home/wubu/WuBuPad/src/diff.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_autocomp.dir/build.make apps/wubuos/CMakeFiles/test_autocomp.dir/home/wubu/WuBuPad/src/diff.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_findbar.dir/build.make apps/wubuos/CMakeFiles/test_findbar.dir/home/wubu/WuBuPad/src/diff.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/home/wubu/WuBuPad/src/diff.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/home/wubu/WuBuPad/src/diff.c.s
 .PHONY : home/wubu/WuBuPad/src/diff.c.s
 
 home/wubu/WuBuPad/src/doc.o: home/wubu/WuBuPad/src/doc.c.o
@@ -808,6 +917,7 @@ home/wubu/WuBuPad/src/doc.c.o:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_autocomp.dir/build.make apps/wubuos/CMakeFiles/test_autocomp.dir/home/wubu/WuBuPad/src/doc.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_findbar.dir/build.make apps/wubuos/CMakeFiles/test_findbar.dir/home/wubu/WuBuPad/src/doc.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/home/wubu/WuBuPad/src/doc.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/home/wubu/WuBuPad/src/doc.c.o
 .PHONY : home/wubu/WuBuPad/src/doc.c.o
 
 home/wubu/WuBuPad/src/doc.i: home/wubu/WuBuPad/src/doc.c.i
@@ -821,6 +931,7 @@ home/wubu/WuBuPad/src/doc.c.i:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_autocomp.dir/build.make apps/wubuos/CMakeFiles/test_autocomp.dir/home/wubu/WuBuPad/src/doc.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_findbar.dir/build.make apps/wubuos/CMakeFiles/test_findbar.dir/home/wubu/WuBuPad/src/doc.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/home/wubu/WuBuPad/src/doc.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/home/wubu/WuBuPad/src/doc.c.i
 .PHONY : home/wubu/WuBuPad/src/doc.c.i
 
 home/wubu/WuBuPad/src/doc.s: home/wubu/WuBuPad/src/doc.c.s
@@ -834,6 +945,7 @@ home/wubu/WuBuPad/src/doc.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_autocomp.dir/build.make apps/wubuos/CMakeFiles/test_autocomp.dir/home/wubu/WuBuPad/src/doc.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_findbar.dir/build.make apps/wubuos/CMakeFiles/test_findbar.dir/home/wubu/WuBuPad/src/doc.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/home/wubu/WuBuPad/src/doc.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/home/wubu/WuBuPad/src/doc.c.s
 .PHONY : home/wubu/WuBuPad/src/doc.c.s
 
 home/wubu/WuBuPad/src/docs.o: home/wubu/WuBuPad/src/docs.c.o
@@ -844,6 +956,7 @@ home/wubu/WuBuPad/src/docs.c.o:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/home/wubu/WuBuPad/src/docs.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/docs.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/home/wubu/WuBuPad/src/docs.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/home/wubu/WuBuPad/src/docs.c.o
 .PHONY : home/wubu/WuBuPad/src/docs.c.o
 
 home/wubu/WuBuPad/src/docs.i: home/wubu/WuBuPad/src/docs.c.i
@@ -854,6 +967,7 @@ home/wubu/WuBuPad/src/docs.c.i:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/home/wubu/WuBuPad/src/docs.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/docs.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/home/wubu/WuBuPad/src/docs.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/home/wubu/WuBuPad/src/docs.c.i
 .PHONY : home/wubu/WuBuPad/src/docs.c.i
 
 home/wubu/WuBuPad/src/docs.s: home/wubu/WuBuPad/src/docs.c.s
@@ -864,6 +978,7 @@ home/wubu/WuBuPad/src/docs.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/home/wubu/WuBuPad/src/docs.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/home/wubu/WuBuPad/src/docs.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/home/wubu/WuBuPad/src/docs.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/home/wubu/WuBuPad/src/docs.c.s
 .PHONY : home/wubu/WuBuPad/src/docs.c.s
 
 home/wubu/WuBuPad/src/encode.o: home/wubu/WuBuPad/src/encode.c.o
@@ -877,6 +992,7 @@ home/wubu/WuBuPad/src/encode.c.o:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_autocomp.dir/build.make apps/wubuos/CMakeFiles/test_autocomp.dir/home/wubu/WuBuPad/src/encode.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_findbar.dir/build.make apps/wubuos/CMakeFiles/test_findbar.dir/home/wubu/WuBuPad/src/encode.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/home/wubu/WuBuPad/src/encode.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/home/wubu/WuBuPad/src/encode.c.o
 .PHONY : home/wubu/WuBuPad/src/encode.c.o
 
 home/wubu/WuBuPad/src/encode.i: home/wubu/WuBuPad/src/encode.c.i
@@ -890,6 +1006,7 @@ home/wubu/WuBuPad/src/encode.c.i:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_autocomp.dir/build.make apps/wubuos/CMakeFiles/test_autocomp.dir/home/wubu/WuBuPad/src/encode.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_findbar.dir/build.make apps/wubuos/CMakeFiles/test_findbar.dir/home/wubu/WuBuPad/src/encode.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/home/wubu/WuBuPad/src/encode.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/home/wubu/WuBuPad/src/encode.c.i
 .PHONY : home/wubu/WuBuPad/src/encode.c.i
 
 home/wubu/WuBuPad/src/encode.s: home/wubu/WuBuPad/src/encode.c.s
@@ -903,6 +1020,7 @@ home/wubu/WuBuPad/src/encode.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_autocomp.dir/build.make apps/wubuos/CMakeFiles/test_autocomp.dir/home/wubu/WuBuPad/src/encode.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_findbar.dir/build.make apps/wubuos/CMakeFiles/test_findbar.dir/home/wubu/WuBuPad/src/encode.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/home/wubu/WuBuPad/src/encode.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/home/wubu/WuBuPad/src/encode.c.s
 .PHONY : home/wubu/WuBuPad/src/encode.c.s
 
 home/wubu/WuBuPad/src/json.o: home/wubu/WuBuPad/src/json.c.o
@@ -916,6 +1034,7 @@ home/wubu/WuBuPad/src/json.c.o:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_autocomp.dir/build.make apps/wubuos/CMakeFiles/test_autocomp.dir/home/wubu/WuBuPad/src/json.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_findbar.dir/build.make apps/wubuos/CMakeFiles/test_findbar.dir/home/wubu/WuBuPad/src/json.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/home/wubu/WuBuPad/src/json.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/home/wubu/WuBuPad/src/json.c.o
 .PHONY : home/wubu/WuBuPad/src/json.c.o
 
 home/wubu/WuBuPad/src/json.i: home/wubu/WuBuPad/src/json.c.i
@@ -929,6 +1048,7 @@ home/wubu/WuBuPad/src/json.c.i:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_autocomp.dir/build.make apps/wubuos/CMakeFiles/test_autocomp.dir/home/wubu/WuBuPad/src/json.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_findbar.dir/build.make apps/wubuos/CMakeFiles/test_findbar.dir/home/wubu/WuBuPad/src/json.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/home/wubu/WuBuPad/src/json.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/home/wubu/WuBuPad/src/json.c.i
 .PHONY : home/wubu/WuBuPad/src/json.c.i
 
 home/wubu/WuBuPad/src/json.s: home/wubu/WuBuPad/src/json.c.s
@@ -942,6 +1062,7 @@ home/wubu/WuBuPad/src/json.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_autocomp.dir/build.make apps/wubuos/CMakeFiles/test_autocomp.dir/home/wubu/WuBuPad/src/json.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_findbar.dir/build.make apps/wubuos/CMakeFiles/test_findbar.dir/home/wubu/WuBuPad/src/json.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/home/wubu/WuBuPad/src/json.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/home/wubu/WuBuPad/src/json.c.s
 .PHONY : home/wubu/WuBuPad/src/json.c.s
 
 home/wubu/WuBuPad/src/lex.o: home/wubu/WuBuPad/src/lex.c.o
@@ -955,6 +1076,7 @@ home/wubu/WuBuPad/src/lex.c.o:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_autocomp.dir/build.make apps/wubuos/CMakeFiles/test_autocomp.dir/home/wubu/WuBuPad/src/lex.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_findbar.dir/build.make apps/wubuos/CMakeFiles/test_findbar.dir/home/wubu/WuBuPad/src/lex.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/home/wubu/WuBuPad/src/lex.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/home/wubu/WuBuPad/src/lex.c.o
 .PHONY : home/wubu/WuBuPad/src/lex.c.o
 
 home/wubu/WuBuPad/src/lex.i: home/wubu/WuBuPad/src/lex.c.i
@@ -968,6 +1090,7 @@ home/wubu/WuBuPad/src/lex.c.i:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_autocomp.dir/build.make apps/wubuos/CMakeFiles/test_autocomp.dir/home/wubu/WuBuPad/src/lex.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_findbar.dir/build.make apps/wubuos/CMakeFiles/test_findbar.dir/home/wubu/WuBuPad/src/lex.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/home/wubu/WuBuPad/src/lex.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/home/wubu/WuBuPad/src/lex.c.i
 .PHONY : home/wubu/WuBuPad/src/lex.c.i
 
 home/wubu/WuBuPad/src/lex.s: home/wubu/WuBuPad/src/lex.c.s
@@ -981,6 +1104,7 @@ home/wubu/WuBuPad/src/lex.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_autocomp.dir/build.make apps/wubuos/CMakeFiles/test_autocomp.dir/home/wubu/WuBuPad/src/lex.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_findbar.dir/build.make apps/wubuos/CMakeFiles/test_findbar.dir/home/wubu/WuBuPad/src/lex.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/home/wubu/WuBuPad/src/lex.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/home/wubu/WuBuPad/src/lex.c.s
 .PHONY : home/wubu/WuBuPad/src/lex.c.s
 
 home/wubu/WuBuPad/src/search.o: home/wubu/WuBuPad/src/search.c.o
@@ -994,6 +1118,7 @@ home/wubu/WuBuPad/src/search.c.o:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_autocomp.dir/build.make apps/wubuos/CMakeFiles/test_autocomp.dir/home/wubu/WuBuPad/src/search.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_findbar.dir/build.make apps/wubuos/CMakeFiles/test_findbar.dir/home/wubu/WuBuPad/src/search.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/home/wubu/WuBuPad/src/search.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/home/wubu/WuBuPad/src/search.c.o
 .PHONY : home/wubu/WuBuPad/src/search.c.o
 
 home/wubu/WuBuPad/src/search.i: home/wubu/WuBuPad/src/search.c.i
@@ -1007,6 +1132,7 @@ home/wubu/WuBuPad/src/search.c.i:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_autocomp.dir/build.make apps/wubuos/CMakeFiles/test_autocomp.dir/home/wubu/WuBuPad/src/search.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_findbar.dir/build.make apps/wubuos/CMakeFiles/test_findbar.dir/home/wubu/WuBuPad/src/search.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/home/wubu/WuBuPad/src/search.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/home/wubu/WuBuPad/src/search.c.i
 .PHONY : home/wubu/WuBuPad/src/search.c.i
 
 home/wubu/WuBuPad/src/search.s: home/wubu/WuBuPad/src/search.c.s
@@ -1020,6 +1146,7 @@ home/wubu/WuBuPad/src/search.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_autocomp.dir/build.make apps/wubuos/CMakeFiles/test_autocomp.dir/home/wubu/WuBuPad/src/search.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_findbar.dir/build.make apps/wubuos/CMakeFiles/test_findbar.dir/home/wubu/WuBuPad/src/search.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/home/wubu/WuBuPad/src/search.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/home/wubu/WuBuPad/src/search.c.s
 .PHONY : home/wubu/WuBuPad/src/search.c.s
 
 macro.o: macro.c.o
@@ -1031,6 +1158,7 @@ macro.c.o:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/macro.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_macro.dir/build.make apps/wubuos/CMakeFiles/test_macro.dir/macro.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/macro.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/macro.c.o
 .PHONY : macro.c.o
 
 macro.i: macro.c.i
@@ -1042,6 +1170,7 @@ macro.c.i:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/macro.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_macro.dir/build.make apps/wubuos/CMakeFiles/test_macro.dir/macro.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/macro.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/macro.c.i
 .PHONY : macro.c.i
 
 macro.s: macro.c.s
@@ -1053,6 +1182,7 @@ macro.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/macro.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_macro.dir/build.make apps/wubuos/CMakeFiles/test_macro.dir/macro.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/macro.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/macro.c.s
 .PHONY : macro.c.s
 
 main.o: main.c.o
@@ -1088,6 +1218,7 @@ palette.c.o:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/palette.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_shell_ui.dir/build.make apps/wubuos/CMakeFiles/test_shell_ui.dir/palette.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/palette.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/palette.c.o
 .PHONY : palette.c.o
 
 palette.i: palette.c.i
@@ -1099,6 +1230,7 @@ palette.c.i:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/palette.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_shell_ui.dir/build.make apps/wubuos/CMakeFiles/test_shell_ui.dir/palette.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/palette.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/palette.c.i
 .PHONY : palette.c.i
 
 palette.s: palette.c.s
@@ -1110,6 +1242,7 @@ palette.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/palette.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_shell_ui.dir/build.make apps/wubuos/CMakeFiles/test_shell_ui.dir/palette.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/palette.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/palette.c.s
 .PHONY : palette.c.s
 
 plugin.o: plugin.c.o
@@ -1121,6 +1254,7 @@ plugin.c.o:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/plugin.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_plugin_abi.dir/build.make apps/wubuos/CMakeFiles/test_plugin_abi.dir/plugin.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/plugin.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/plugin.c.o
 .PHONY : plugin.c.o
 
 plugin.i: plugin.c.i
@@ -1132,6 +1266,7 @@ plugin.c.i:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/plugin.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_plugin_abi.dir/build.make apps/wubuos/CMakeFiles/test_plugin_abi.dir/plugin.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/plugin.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/plugin.c.i
 .PHONY : plugin.c.i
 
 plugin.s: plugin.c.s
@@ -1143,6 +1278,7 @@ plugin.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/plugin.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_plugin_abi.dir/build.make apps/wubuos/CMakeFiles/test_plugin_abi.dir/plugin.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/plugin.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/plugin.c.s
 .PHONY : plugin.c.s
 
 plugins/badabi/badabi_plugin.o: plugins/badabi/badabi_plugin.c.o
@@ -1658,6 +1794,7 @@ toast.c.o:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/toast.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_shell_ui.dir/build.make apps/wubuos/CMakeFiles/test_shell_ui.dir/toast.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/toast.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/toast.c.o
 .PHONY : toast.c.o
 
 toast.i: toast.c.i
@@ -1669,6 +1806,7 @@ toast.c.i:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/toast.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_shell_ui.dir/build.make apps/wubuos/CMakeFiles/test_shell_ui.dir/toast.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/toast.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/toast.c.i
 .PHONY : toast.c.i
 
 toast.s: toast.c.s
@@ -1680,6 +1818,7 @@ toast.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/toast.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_shell_ui.dir/build.make apps/wubuos/CMakeFiles/test_shell_ui.dir/toast.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/toast.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/toast.c.s
 .PHONY : toast.c.s
 
 view_cell.o: view_cell.c.o
@@ -1690,6 +1829,7 @@ view_cell.c.o:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/view_cell.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/view_cell.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_cell.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/view_cell.c.o
 .PHONY : view_cell.c.o
 
 view_cell.i: view_cell.c.i
@@ -1700,6 +1840,7 @@ view_cell.c.i:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/view_cell.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/view_cell.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_cell.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/view_cell.c.i
 .PHONY : view_cell.c.i
 
 view_cell.s: view_cell.c.s
@@ -1710,6 +1851,7 @@ view_cell.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/view_cell.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/view_cell.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_cell.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/view_cell.c.s
 .PHONY : view_cell.c.s
 
 view_compare.o: view_compare.c.o
@@ -1720,6 +1862,7 @@ view_compare.c.o:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/view_compare.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/view_compare.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_compare.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/view_compare.c.o
 .PHONY : view_compare.c.o
 
 view_compare.i: view_compare.c.i
@@ -1730,6 +1873,7 @@ view_compare.c.i:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/view_compare.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/view_compare.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_compare.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/view_compare.c.i
 .PHONY : view_compare.c.i
 
 view_compare.s: view_compare.c.s
@@ -1740,6 +1884,7 @@ view_compare.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/view_compare.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/view_compare.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_compare.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/view_compare.c.s
 .PHONY : view_compare.c.s
 
 view_doc.o: view_doc.c.o
@@ -1750,6 +1895,7 @@ view_doc.c.o:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/view_doc.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/view_doc.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_doc.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/view_doc.c.o
 .PHONY : view_doc.c.o
 
 view_doc.i: view_doc.c.i
@@ -1760,6 +1906,7 @@ view_doc.c.i:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/view_doc.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/view_doc.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_doc.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/view_doc.c.i
 .PHONY : view_doc.c.i
 
 view_doc.s: view_doc.c.s
@@ -1770,6 +1917,7 @@ view_doc.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/view_doc.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/view_doc.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_doc.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/view_doc.c.s
 .PHONY : view_doc.c.s
 
 view_doc_render.o: view_doc_render.c.o
@@ -1780,6 +1928,7 @@ view_doc_render.c.o:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/view_doc_render.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/view_doc_render.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_doc_render.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/view_doc_render.c.o
 .PHONY : view_doc_render.c.o
 
 view_doc_render.i: view_doc_render.c.i
@@ -1790,6 +1939,7 @@ view_doc_render.c.i:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/view_doc_render.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/view_doc_render.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_doc_render.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/view_doc_render.c.i
 .PHONY : view_doc_render.c.i
 
 view_doc_render.s: view_doc_render.c.s
@@ -1800,6 +1950,7 @@ view_doc_render.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/view_doc_render.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/view_doc_render.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_doc_render.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/view_doc_render.c.s
 .PHONY : view_doc_render.c.s
 
 view_editor.o: view_editor.c.o
@@ -1810,6 +1961,7 @@ view_editor.c.o:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/view_editor.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/view_editor.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_editor.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/view_editor.c.o
 .PHONY : view_editor.c.o
 
 view_editor.i: view_editor.c.i
@@ -1820,6 +1972,7 @@ view_editor.c.i:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/view_editor.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/view_editor.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_editor.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/view_editor.c.i
 .PHONY : view_editor.c.i
 
 view_editor.s: view_editor.c.s
@@ -1830,6 +1983,7 @@ view_editor.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/view_editor.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/view_editor.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_editor.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/view_editor.c.s
 .PHONY : view_editor.c.s
 
 view_editor_keys.o: view_editor_keys.c.o
@@ -1840,6 +1994,7 @@ view_editor_keys.c.o:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/view_editor_keys.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/view_editor_keys.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_editor_keys.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/view_editor_keys.c.o
 .PHONY : view_editor_keys.c.o
 
 view_editor_keys.i: view_editor_keys.c.i
@@ -1850,6 +2005,7 @@ view_editor_keys.c.i:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/view_editor_keys.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/view_editor_keys.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_editor_keys.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/view_editor_keys.c.i
 .PHONY : view_editor_keys.c.i
 
 view_editor_keys.s: view_editor_keys.c.s
@@ -1860,6 +2016,7 @@ view_editor_keys.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/view_editor_keys.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/view_editor_keys.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_editor_keys.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/view_editor_keys.c.s
 .PHONY : view_editor_keys.c.s
 
 view_editor_render.o: view_editor_render.c.o
@@ -1870,6 +2027,7 @@ view_editor_render.c.o:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/view_editor_render.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/view_editor_render.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_editor_render.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/view_editor_render.c.o
 .PHONY : view_editor_render.c.o
 
 view_editor_render.i: view_editor_render.c.i
@@ -1880,6 +2038,7 @@ view_editor_render.c.i:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/view_editor_render.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/view_editor_render.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_editor_render.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/view_editor_render.c.i
 .PHONY : view_editor_render.c.i
 
 view_editor_render.s: view_editor_render.c.s
@@ -1890,6 +2049,7 @@ view_editor_render.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/view_editor_render.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/view_editor_render.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_editor_render.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/view_editor_render.c.s
 .PHONY : view_editor_render.c.s
 
 view_editor_textops.o: view_editor_textops.c.o
@@ -1900,6 +2060,7 @@ view_editor_textops.c.o:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/view_editor_textops.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/view_editor_textops.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_editor_textops.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/view_editor_textops.c.o
 .PHONY : view_editor_textops.c.o
 
 view_editor_textops.i: view_editor_textops.c.i
@@ -1910,6 +2071,7 @@ view_editor_textops.c.i:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/view_editor_textops.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/view_editor_textops.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_editor_textops.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/view_editor_textops.c.i
 .PHONY : view_editor_textops.c.i
 
 view_editor_textops.s: view_editor_textops.c.s
@@ -1920,6 +2082,7 @@ view_editor_textops.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/view_editor_textops.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/view_editor_textops.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_editor_textops.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/view_editor_textops.c.s
 .PHONY : view_editor_textops.c.s
 
 view_ocr.o: view_ocr.c.o
@@ -1930,6 +2093,7 @@ view_ocr.c.o:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/view_ocr.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/view_ocr.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_ocr.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/view_ocr.c.o
 .PHONY : view_ocr.c.o
 
 view_ocr.i: view_ocr.c.i
@@ -1940,6 +2104,7 @@ view_ocr.c.i:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/view_ocr.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/view_ocr.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_ocr.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/view_ocr.c.i
 .PHONY : view_ocr.c.i
 
 view_ocr.s: view_ocr.c.s
@@ -1950,6 +2115,7 @@ view_ocr.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/view_ocr.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/view_ocr.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_ocr.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/view_ocr.c.s
 .PHONY : view_ocr.c.s
 
 view_settings.o: view_settings.c.o
@@ -1960,6 +2126,7 @@ view_settings.c.o:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/view_settings.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/view_settings.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_settings.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/view_settings.c.o
 .PHONY : view_settings.c.o
 
 view_settings.i: view_settings.c.i
@@ -1970,6 +2137,7 @@ view_settings.c.i:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/view_settings.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/view_settings.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_settings.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/view_settings.c.i
 .PHONY : view_settings.c.i
 
 view_settings.s: view_settings.c.s
@@ -1980,6 +2148,7 @@ view_settings.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/view_settings.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/view_settings.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_settings.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/view_settings.c.s
 .PHONY : view_settings.c.s
 
 view_slide.o: view_slide.c.o
@@ -1990,6 +2159,7 @@ view_slide.c.o:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/view_slide.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/view_slide.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_slide.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/view_slide.c.o
 .PHONY : view_slide.c.o
 
 view_slide.i: view_slide.c.i
@@ -2000,6 +2170,7 @@ view_slide.c.i:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/view_slide.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/view_slide.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_slide.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/view_slide.c.i
 .PHONY : view_slide.c.i
 
 view_slide.s: view_slide.c.s
@@ -2010,6 +2181,7 @@ view_slide.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/view_slide.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/view_slide.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/view_slide.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/view_slide.c.s
 .PHONY : view_slide.c.s
 
 viewshot.o: viewshot.c.o
@@ -2044,6 +2216,7 @@ wuos_file.c.o:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/wuos_file.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/wuos_file.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/wuos_file.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/wuos_file.c.o
 .PHONY : wuos_file.c.o
 
 wuos_file.i: wuos_file.c.i
@@ -2054,6 +2227,7 @@ wuos_file.c.i:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/wuos_file.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/wuos_file.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/wuos_file.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/wuos_file.c.i
 .PHONY : wuos_file.c.i
 
 wuos_file.s: wuos_file.c.s
@@ -2064,6 +2238,7 @@ wuos_file.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/wuos_file.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_view.dir/build.make apps/wubuos/CMakeFiles/test_view.dir/wuos_file.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/wuos_file.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/wuos_file.c.s
 .PHONY : wuos_file.c.s
 
 wuos_font.o: wuos_font.c.o
@@ -2076,6 +2251,8 @@ wuos_font.c.o:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_wuos_toolbar.dir/build.make apps/wubuos/CMakeFiles/test_wuos_toolbar.dir/wuos_font.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_font.dir/build.make apps/wubuos/CMakeFiles/test_font.dir/wuos_font.c.o
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/wuos_font.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_cjk_fallback.dir/build.make apps/wubuos/CMakeFiles/test_cjk_fallback.dir/wuos_font.c.o
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/wuos_font.c.o
 .PHONY : wuos_font.c.o
 
 wuos_font.i: wuos_font.c.i
@@ -2088,6 +2265,8 @@ wuos_font.c.i:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_wuos_toolbar.dir/build.make apps/wubuos/CMakeFiles/test_wuos_toolbar.dir/wuos_font.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_font.dir/build.make apps/wubuos/CMakeFiles/test_font.dir/wuos_font.c.i
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/wuos_font.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_cjk_fallback.dir/build.make apps/wubuos/CMakeFiles/test_cjk_fallback.dir/wuos_font.c.i
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/wuos_font.c.i
 .PHONY : wuos_font.c.i
 
 wuos_font.s: wuos_font.c.s
@@ -2100,6 +2279,8 @@ wuos_font.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_wuos_toolbar.dir/build.make apps/wubuos/CMakeFiles/test_wuos_toolbar.dir/wuos_font.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_font.dir/build.make apps/wubuos/CMakeFiles/test_font.dir/wuos_font.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/viewshot.dir/build.make apps/wubuos/CMakeFiles/viewshot.dir/wuos_font.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_cjk_fallback.dir/build.make apps/wubuos/CMakeFiles/test_cjk_fallback.dir/wuos_font.c.s
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_run_toggle.dir/build.make apps/wubuos/CMakeFiles/test_run_toggle.dir/wuos_font.c.s
 .PHONY : wuos_font.c.s
 
 wuos_frame.o: wuos_frame.c.o
@@ -2152,6 +2333,30 @@ wuos_motion.c.s:
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/wuos_motion.c.s
 	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/test_motion.dir/build.make apps/wubuos/CMakeFiles/test_motion.dir/wuos_motion.c.s
 .PHONY : wuos_motion.c.s
+
+wuos_shell_a11y.o: wuos_shell_a11y.c.o
+.PHONY : wuos_shell_a11y.o
+
+# target to build an object file
+wuos_shell_a11y.c.o:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/wuos_shell_a11y.c.o
+.PHONY : wuos_shell_a11y.c.o
+
+wuos_shell_a11y.i: wuos_shell_a11y.c.i
+.PHONY : wuos_shell_a11y.i
+
+# target to preprocess a source file
+wuos_shell_a11y.c.i:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/wuos_shell_a11y.c.i
+.PHONY : wuos_shell_a11y.c.i
+
+wuos_shell_a11y.s: wuos_shell_a11y.c.s
+.PHONY : wuos_shell_a11y.s
+
+# target to generate assembly for a file
+wuos_shell_a11y.c.s:
+	cd /home/wubu/WuBuOffice/build-plugin && $(MAKE) $(MAKESILENT) -f apps/wubuos/CMakeFiles/wubuos.dir/build.make apps/wubuos/CMakeFiles/wubuos.dir/wuos_shell_a11y.c.s
+.PHONY : wuos_shell_a11y.c.s
 
 wuos_shell_events.o: wuos_shell_events.c.o
 .PHONY : wuos_shell_events.o
@@ -2217,6 +2422,7 @@ help:
 	@echo "... sample_plugin"
 	@echo "... test_autocomp"
 	@echo "... test_bkmk"
+	@echo "... test_cjk_fallback"
 	@echo "... test_codefold"
 	@echo "... test_dialog"
 	@echo "... test_doccmd"
@@ -2227,11 +2433,18 @@ help:
 	@echo "... test_macro"
 	@echo "... test_motion"
 	@echo "... test_plugin_abi"
+	@echo "... test_run_toggle"
 	@echo "... test_shell_ui"
 	@echo "... test_view"
 	@echo "... test_wuos_toolbar"
 	@echo "... viewshot"
 	@echo "... wubuos"
+	@echo "... __/__/tests/test_cjk_fallback.o"
+	@echo "... __/__/tests/test_cjk_fallback.i"
+	@echo "... __/__/tests/test_cjk_fallback.s"
+	@echo "... __/__/tests/test_run_toggle.o"
+	@echo "... __/__/tests/test_run_toggle.i"
+	@echo "... __/__/tests/test_run_toggle.s"
 	@echo "... autocomp.o"
 	@echo "... autocomp.i"
 	@echo "... autocomp.s"
@@ -2412,6 +2625,9 @@ help:
 	@echo "... wuos_motion.o"
 	@echo "... wuos_motion.i"
 	@echo "... wuos_motion.s"
+	@echo "... wuos_shell_a11y.o"
+	@echo "... wuos_shell_a11y.i"
+	@echo "... wuos_shell_a11y.s"
 	@echo "... wuos_shell_events.o"
 	@echo "... wuos_shell_events.i"
 	@echo "... wuos_shell_events.s"

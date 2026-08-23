@@ -21,8 +21,9 @@ apps/wubuos/CMakeFiles/wubuos.dir/view_slide.c.o: \
  /home/wubu/WuBuOffice/src/wubumodel/model.h \
  /home/wubu/WuBuOffice/apps/wubuos/wuos_font.h \
  /home/wubu/WuBuOffice/apps/wubuos/wuos_theme.h \
- /home/wubu/WuBuOffice/apps/wubuos/hive.h /usr/include/stdlib.h \
- /usr/include/x86_64-linux-gnu/bits/waitflags.h \
+ /home/wubu/WuBuOffice/apps/wubuos/hive.h \
+ /home/wubu/WuBuOffice/apps/wubuos/../../src/wubuoxml/pptx_write.h \
+ /usr/include/stdlib.h /usr/include/x86_64-linux-gnu/bits/waitflags.h \
  /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
  /usr/include/x86_64-linux-gnu/bits/floatn.h \
  /usr/include/x86_64-linux-gnu/bits/floatn-common.h \

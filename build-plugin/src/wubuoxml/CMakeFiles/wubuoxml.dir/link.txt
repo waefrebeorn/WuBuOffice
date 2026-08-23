@@ -1,2 +1,2 @@
-/usr/bin/ar qc libwubuoxml.a CMakeFiles/wubuoxml.dir/package.c.o CMakeFiles/wubuoxml.dir/rels_path.c.o CMakeFiles/wubuoxml.dir/reader.c.o CMakeFiles/wubuoxml.dir/extract.c.o CMakeFiles/wubuoxml.dir/docx_document.c.o CMakeFiles/wubuoxml.dir/__/wubuxml/parser.c.o
+/usr/bin/ar qc libwubuoxml.a CMakeFiles/wubuoxml.dir/package.c.o CMakeFiles/wubuoxml.dir/rels_path.c.o CMakeFiles/wubuoxml.dir/reader.c.o CMakeFiles/wubuoxml.dir/extract.c.o CMakeFiles/wubuoxml.dir/docx_document.c.o CMakeFiles/wubuoxml.dir/table_styles.c.o CMakeFiles/wubuoxml.dir/pptx_write.c.o CMakeFiles/wubuoxml.dir/__/wubuxml/parser.c.o
 /usr/bin/ranlib libwubuoxml.a
