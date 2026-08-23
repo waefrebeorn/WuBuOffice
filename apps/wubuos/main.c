@@ -559,6 +559,20 @@ int main(int argc, char **argv){
             }
         }
 
+        /* H4: WUOS_A11Y_DUMP=<path> writes the shell accessibility tree
+         * (structured UI elements with roles+refs) and exits -- the agent /
+         * screen-reader surface. No screenshots, no pixel clicking. */
+        {
+            const char *ap = getenv("WUOS_A11Y_DUMP");
+            if (ap){
+                char *tree = wuos_shell_a11y_tree();
+                FILE *af = fopen(ap, "w");
+                if (af){ fputs(tree, af); fputc('\n', af); fclose(af); }
+                free(tree);
+                running = 0;
+            }
+        }
+
         /* WUOS_DUMP_VIEW: switch to the named view BEFORE the first render so
          * the dump captures that view (not the default Document). */
         {

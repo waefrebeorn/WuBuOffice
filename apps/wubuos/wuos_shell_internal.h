@@ -44,6 +44,9 @@ extern Uint32    g_caret_phase;
 extern int      g_cheat;
 extern int      g_first_run;
 #include "dialog.h"
+
+/* H4: shell accessibility tree (JSON) -- wuos_shell_a11y.c */
+char *wuos_shell_a11y_tree(void);
 extern Dialog *g_dlg;
 extern int      g_dlg_action;
 #include "hive.h"

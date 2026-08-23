@@ -8,7 +8,7 @@ find_package(Freetype REQUIRED)
 set(WUBUPAD_SRC ${CMAKE_SOURCE_DIR}/../WuBuPad/src)
 
 add_executable(wubuos
-    main.c wuos_frame.c wuos_shell_events.c
+    main.c wuos_frame.c wuos_shell_events.c wuos_shell_a11y.c
     wuos_font.c
     wuos_file.c
     plugin.c

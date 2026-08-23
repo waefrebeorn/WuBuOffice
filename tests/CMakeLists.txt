@@ -495,3 +495,5 @@ add_executable(test_float_wrap test_float_wrap.c)
 target_link_libraries(test_float_wrap PRIVATE wubulayout wubuoxml wubumodel wubuxml)
 target_include_directories(test_float_wrap PRIVATE ${CMAKE_SOURCE_DIR}/src)
 add_test(NAME float_wrap COMMAND test_float_wrap)
+
+add_test(NAME a11y_tree COMMAND ${CMAKE_SOURCE_DIR}/tests/test_a11y_tree.sh)
