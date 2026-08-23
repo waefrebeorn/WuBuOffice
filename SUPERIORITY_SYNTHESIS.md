@@ -135,3 +135,13 @@ create/list/close/quit). Upgrade to superiority:
 - doccmd_export_pdf prefers the geometry path, legacy as fallback.
 - pdf_geometry ctest asserts /Helvetica-Bold resource + heading font size
   preserved (not flattened to 12) + text present + valid EOF.
+
+### Hop 9 (2026-08-22): i18n correctness in the agent protocol
+- Research: non-Latin text in exports/agents is a known industry gap
+  (CJK font embedding issues across tools).
+- Found by live CJK probe: (1) text verb returned "" for model-backed docs
+  (same doc_text gap find had); (2) find context windows cut mid-UTF-8
+  sequence (context "Hello \xe4").
+- Fixed: text verb falls back to model flatten (all doc kinds answer);
+  context windows extend forward to char boundaries. Live-verified:
+  ingest/text/find round-trip "世界" cleanly.
