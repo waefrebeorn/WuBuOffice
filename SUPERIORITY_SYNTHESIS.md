@@ -275,3 +275,11 @@ retracted; every shipped claim backed by an executed test.
 - font_subset ctest: subset <25% of original, opens as valid sfnt, all used
   codepoints keep exact advance widths. pdf_i18n updated to the subset size
   band and green.
+
+### Hop N4 (2026-08-23): on-screen CJK rasterization SHIPPED
+- Per-glyph font fallback in wuos_font: when the active FreeType face lacks
+  a glyph, a lazily-loaded CJK fallback face (wqy-zenhei -> gothic ->
+  noto CJK -> unifont) renders it. Wired into both draw and width paths.
+- cjk_fallback ctest proves real pixels: 世界 rasterizes 1888 non-blank
+  bytes through the fallback (previously silently skipped).
+- Closes N4; remaining frontier: N2 multi-slide view UI, N3 cnfStyle UI.
