@@ -16,6 +16,7 @@
 #include "wuos_font.h"
 #include "wuos_theme.h"
 #include "hive.h"        /* data-driven slide template (no hardcoded content) */
+#include "../../src/wubuoxml/pptx_write.h"  /* H13: real .pptx assembly */
 
 #include <stdlib.h>
 #include <string.h>
@@ -143,6 +144,14 @@ static const char *get_path(WuView *v){ return ((SlideV*)v->priv)->path; }
 static void save(WuView *v){
     SlideV *e = v->priv;
     const char *out = e->path ? e->path : "/tmp/wubuos_slide.txt";
+    /* H13: a .pptx path assembles a real PowerPoint package */
+    size_t oL = strlen(out);
+    if (oL > 5 && !strcasecmp(out + oL - 5, ".pptx")){
+        const char *bl[SLIDE_MAX_BULLETS];
+        for (int i = 0; i < e->nbullets; i++) bl[i] = e->bullets[i];
+        wubuoxml_pptx_write(out, e->title, bl, e->nbullets);
+        return;
+    }
     FILE *f = fopen(out, "w");
     if (!f) return;
     fprintf(f, "WuBuSlide 1\n");
