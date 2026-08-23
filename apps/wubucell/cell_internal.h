@@ -69,6 +69,8 @@ int cell_sst_add(sst_t *t, const char *s);
 
 /* model.c */
 sheet_t *cell_book_sheet(wubucell_book *b, int idx);
+wubucell_book *wubucell_book_clone(const wubucell_book *src);
+void wubucell_book_restore(wubucell_book *dst, const wubucell_book *snap);
 void cell_col_letter(int col, char *out);
 char *cell_render_sheet(const wubucell_book *b, const sheet_t *s, size_t sheet_idx, sst_t *sst);
 char *cell_render_chart(const chart_t *c, size_t idx);

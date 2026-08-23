@@ -21,7 +21,28 @@ typedef struct { wubucell_book *b; int maxc, maxr;
                  int curc, curr;            /* active cell (1-based) */
                  char fbuf[256];            /* formula-bar edit buffer */
                  int editing;
-                 char *path;                /* loaded path (NULL = untitled) */ } CellV;
+                 char *path;                /* loaded path (NULL = untitled) */
+                 /* hop 11: undo stack (book snapshots, deepest first) */
+                 wubucell_book *undo[32]; int undo_n;
+                 wubucell_book *redo[32]; int redo_n; } CellV;
+
+/* snapshot the book BEFORE a mutation; clears the redo stack */
+static void cellv_push_undo(CellV *e){
+    if (e->undo_n < 32) e->undo[e->undo_n++] = wubucell_book_clone(e->b);
+    else { wubucell_free(e->undo[0]);
+           memmove(e->undo, e->undo+1, 31*sizeof(*e->undo));
+           e->undo[31] = wubucell_book_clone(e->b); }
+    for (int i = 0; i < e->redo_n; i++) wubucell_free(e->redo[i]);
+    e->redo_n = 0;
+}
+/* Ctrl+Z: restore last snapshot (current state goes to redo) */
+static void cellv_undo(CellV *e){
+    if (!e->undo_n) return;
+    if (e->redo_n < 32) e->redo[e->redo_n++] = wubucell_book_clone(e->b);
+    wubucell_book_restore(e->b, e->undo[--e->undo_n]);
+    wubucell_free(e->undo[e->undo_n]); e->undo[e->undo_n]=NULL;
+    cell_eval_all(e->b);
+}
 
 /* Expose referenced-cell refs for testing (test_view.c). */
 int wuos_cell_test_refs(const wubucell_book *b, int curc, int curr,
@@ -256,8 +277,10 @@ static void on_key(WuView *v, int key, int down){
         if (key==WUOS_KEY_RETURN || key==WUOS_KEY_TAB){
             /* commit */
             if (e->fbuf[0]=='=' || strchr(e->fbuf,'+') || strchr(e->fbuf,'*') || strchr(e->fbuf,'(')){
+                cellv_push_undo(e);
                 wubucell_cell_f(e->b, 1, e->curc, e->curr, e->fbuf[0]=='='?e->fbuf+1:e->fbuf, 0);
             } else if (e->fbuf[0] && (e->fbuf[0]=='-'||(e->fbuf[0]>='0'&&e->fbuf[0]<='9'))){
+                cellv_push_undo(e);
                 wubucell_cell_n(e->b, 1, e->curc, e->curr, atof(e->fbuf));
             } else if (e->fbuf[0]){
                 wubucell_cell_s(e->b, 1, e->curc, e->curr, e->fbuf);
@@ -276,6 +299,17 @@ static void on_key(WuView *v, int key, int down){
         }
         if (key>=32 && key<128 && strlen(e->fbuf)<(sizeof e->fbuf-1)){
             size_t L=strlen(e->fbuf); e->fbuf[L]=(char)key; e->fbuf[L+1]=0; return;
+        }
+        return;
+    }
+    /* hop 11: undo / redo (Ctrl+Z / Ctrl+Y arrive as translated codes) */
+    if (key==WUOS_KEY_UNDO){ cellv_undo(e); return; }
+    if (key==WUOS_KEY_REDO){
+        if (e->redo_n){
+            if (e->undo_n < 32) e->undo[e->undo_n++] = wubucell_book_clone(e->b);
+            wubucell_book_restore(e->b, e->redo[--e->redo_n]);
+            wubucell_free(e->redo[e->redo_n]); e->redo[e->redo_n]=NULL;
+            cell_eval_all(e->b);
         }
         return;
     }

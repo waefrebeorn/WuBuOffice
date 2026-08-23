@@ -104,6 +104,57 @@ void wubucell_merge(wubucell_book *b, int sheet, int c0, int r0, int c1, int r1)
     s->nmerge++;
 }
 
+/* ---- snapshot clone for undo (hop 11): deep-copy sheets+cells ---- */
+wubucell_book *wubucell_book_clone(const wubucell_book *src) {
+    if (!src) return NULL;
+    wubucell_book *b = calloc(1, sizeof *b);
+    if (!b) return NULL;
+    b->use_sst = src->use_sst;
+    b->cap = src->n ? src->n : 1;
+    b->sheets = calloc(b->cap, sizeof(sheet_t));
+    if (!b->sheets){ free(b); return NULL; }
+    b->n = src->n;
+    for (size_t sh = 0; sh < src->n; sh++){
+        sheet_t *d = &b->sheets[sh];
+        const sheet_t *s = &src->sheets[sh];
+        d->name = s->name ? strdup(s->name) : NULL;
+        d->cap = s->n; d->n = s->n;
+        d->cells = s->n ? calloc(s->n, sizeof(cell_t)) : NULL;
+        for (size_t i = 0; i < s->n && d->cells; i++){
+            d->cells[i] = s->cells[i];   /* shallow: fix pointers below */
+            if (s->cells[i].text)    d->cells[i].text = strdup(s->cells[i].text);
+            if (s->cells[i].formula) d->cells[i].formula = strdup(s->cells[i].formula);
+        }
+        /* merges + styles arrays */
+        d->merges = s->merges; d->nmerge = s->nmerge; d->capm = 0;
+        if (s->nmerge){
+            d->capm = s->nmerge;
+            d->merges = malloc(s->nmerge * sizeof(*d->merges));
+            if (d->merges) memcpy(d->merges, s->merges, s->nmerge * sizeof(*d->merges));
+            else d->nmerge = 0;
+        }
+    }
+    return b;
+}
+void wubucell_book_restore(wubucell_book *dst, const wubucell_book *snap) {
+    /* replace dst contents with the snapshot's (snapshot is consumed copy) */
+    if (!dst || !snap) return;
+    wubucell_book *tmp = wubucell_book_clone(snap);
+    if (!tmp) return;
+    /* free old dynamic content */
+    for (size_t sh = 0; sh < dst->n; sh++){
+        sheet_t *s2 = &dst->sheets[sh];
+        free(s2->name);
+        for (size_t i = 0; i < s2->n; i++){
+            free(s2->cells[i].text); free(s2->cells[i].formula);
+        }
+        free(s2->cells); free(s2->merges);
+    }
+    free(dst->sheets);
+    *dst = *tmp;
+    free(tmp);   /* shallow struct; sheets now owned by dst */
+}
+
 void cell_col_letter(int col, char *out) {
     int n = col; char tmp[8]; int k = 0;
     while (n > 0) { int r = (n - 1) % 26; tmp[k++] = (char)('A' + r); n = (n - 1) / 26; }
