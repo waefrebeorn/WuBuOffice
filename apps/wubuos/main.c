@@ -559,6 +559,31 @@ int main(int argc, char **argv){
             }
         }
 
+        /* H4b: WUOS_ACT=<ref> acts on the semantic tree BEFORE dumping --
+         * refs: "tab:N" (switch), "tb:N" (toolbar button), "menu:M:item:I"
+         * (menu command). Agents get a full read-act-read loop headlessly. */
+        {
+            const char *act = getenv("WUOS_ACT");
+            if (act && *act){
+                if (strncmp(act, "tab:", 4) == 0){
+                    int ti = atoi(act + 4);
+                    if (ti >= 0 && ti < nviews){ active = ti; g_scroll = 0; }
+                } else if (strncmp(act, "tb:", 3) == 0){
+                    int bi = atoi(act + 3);
+                    if (bi >= 0 && (size_t)bi < wuos_tb_count
+                        && wuos_tb_buttons[bi].label)
+                        run_tb_cmd(wuos_tb_buttons[bi].cmd);
+                } else if (strncmp(act, "menu:", 5) == 0){
+                    int mi = 0, ii = 0;
+                    if (sscanf(act + 5, "%d:item:%d", &mi, &ii) == 2
+                        && mi >= 0 && (size_t)mi < g_nmenus
+                        && g_menus[mi].items && ii >= 0 && (size_t)ii < g_menus[mi].n){
+                        run_menu_cmd(g_menus[mi].items[ii].cmd);
+                    }
+                }
+            }
+        }
+
         /* H4: WUOS_A11Y_DUMP=<path> writes the shell accessibility tree
          * (structured UI elements with roles+refs) and exits -- the agent /
          * screen-reader surface. No screenshots, no pixel clicking. */
