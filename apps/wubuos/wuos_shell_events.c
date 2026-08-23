@@ -219,6 +219,8 @@ int shell_keydown(SDL_Keycode k, SDL_Keymod mod, int *running){
     else if (k==SDLK_1 && (mod & KMOD_CTRL) && (mod & KMOD_ALT)) code=WUOS_KEY_STYLE_H1; /* DOC-58 */
     else if (k==SDLK_2 && (mod & KMOD_CTRL) && (mod & KMOD_ALT)) code=WUOS_KEY_STYLE_H2; /* DOC-58 */
     else if (k==SDLK_3 && (mod & KMOD_CTRL) && (mod & KMOD_ALT)) code=WUOS_KEY_STYLE_H3; /* DOC-58 */
+    else if (k==SDLK_b && (mod & KMOD_CTRL)) code=WUOS_KEY_BOLD;     /* N3 MS convention */
+    else if (k==SDLK_i && (mod & KMOD_CTRL)) code=WUOS_KEY_ITALIC;   /* N3 MS convention */
     else if (k==SDLK_UP && (mod & KMOD_CTRL) && (mod & KMOD_SHIFT)) code=WUOS_KEY_PARA_PREV; /* DOC-58 */
     else if (k==SDLK_DOWN && (mod & KMOD_CTRL) && (mod & KMOD_SHIFT)) code=WUOS_KEY_PARA_NEXT; /* DOC-58 */
     else if (k==SDLK_F1) code=WUOS_KEY_CHEAT;   /* UI-36 */

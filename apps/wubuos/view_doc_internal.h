@@ -35,6 +35,7 @@ typedef struct { Wurender *r; wubumodel_doc *doc; char *path;
 int  doc_chrome_fs(DocV *e, int base);
 wubumodel_node *doc_nth_paragraph(DocV *e, int idx);
 void doc_apply_named_style(DocV *e, const char *name);
+void doc_toggle_run_prop(DocV *e, const char *prop);   /* N3: bold/italic */
 void doc_move_para(DocV *e, int dx);
 
 #endif /* VIEW_DOC_INTERNAL_H */

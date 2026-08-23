@@ -628,3 +628,115 @@ target_include_directories(test_cjk_fallback PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}/src/wububase ${FREETYPE_INCLUDE_DIRS})
 target_link_libraries(test_cjk_fallback PRIVATE ${FREETYPE_LIBRARIES} wububase m)
 add_test(NAME cjk_fallback COMMAND test_cjk_fallback)
+
+add_executable(test_run_toggle ${CMAKE_SOURCE_DIR}/tests/test_run_toggle.c
+    wuos_font.c wuos_file.c plugin.c toast.c palette.c
+    view_doc.c view_doc_render.c view_cell.c view_slide.c view_ocr.c
+    view_editor.c view_editor_textops.c view_editor_render.c view_editor_keys.c
+    view_compare.c view_settings.c
+    findbar.c autocomp.c bkmk.c codefold.c doccmd_core.c doccmd_wave1.c doccmd_wave2.c
+    macro.c gotoline.c hive.c
+    ${WUBUPAD_SRC}/buffer.c ${WUBUPAD_SRC}/doc.c ${WUBUPAD_SRC}/search.c
+    ${WUBUPAD_SRC}/encode.c ${WUBUPAD_SRC}/diff.c ${WUBUPAD_SRC}/docs.c
+    ${WUBUPAD_SRC}/json.c ${WUBUPAD_SRC}/lex.c)
+target_include_directories(test_run_toggle PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_SOURCE_DIR}/src/wubumodel
+    ${CMAKE_SOURCE_DIR}/src/wuburender
+    ${CMAKE_SOURCE_DIR}/src/wubuocr
+    ${CMAKE_SOURCE_DIR}/src/wubufont
+    ${CMAKE_SOURCE_DIR}/apps/wubucell
+    ${CMAKE_SOURCE_DIR}/src/wubudoc
+    ${CMAKE_SOURCE_DIR}/src/wubuautosave
+    ${CMAKE_SOURCE_DIR}/src/wubuspell
+    ${CMAKE_SOURCE_DIR}/src/wubuchart
+    ${CMAKE_SOURCE_DIR}/src/wubudraw
+    ${CMAKE_SOURCE_DIR}/src/wubumath
+    ${CMAKE_SOURCE_DIR}/src/wubuepub
+    ${CMAKE_SOURCE_DIR}/src/wubupasteplain
+    ${CMAKE_SOURCE_DIR}/src/wubua11y
+    ${CMAKE_SOURCE_DIR}/src/wubusvg
+    ${CMAKE_SOURCE_DIR}/src/wubusettings
+    ${CMAKE_SOURCE_DIR}/src/wubushape
+    ${CMAKE_SOURCE_DIR}/src/wubulayout
+    ${CMAKE_SOURCE_DIR}/src/wubuexp
+    ${CMAKE_SOURCE_DIR}/src/wubutoc
+    ${CMAKE_SOURCE_DIR}/src/wubuscript
+    ${CMAKE_SOURCE_DIR}/src/wubucite
+    ${CMAKE_SOURCE_DIR}/src/wubucaption
+    ${CMAKE_SOURCE_DIR}/src/wubuheading
+    ${CMAKE_SOURCE_DIR}/src/wubueqnum
+    ${CMAKE_SOURCE_DIR}/src/wubuvars
+    ${CMAKE_SOURCE_DIR}/src/wubuhash
+    ${CMAKE_SOURCE_DIR}/src/wubusig
+    ${CMAKE_SOURCE_DIR}/src/wubucrdt
+    ${CMAKE_SOURCE_DIR}/src/wubucsv
+    ${CMAKE_SOURCE_DIR}/src/wubufocus
+    ${CMAKE_SOURCE_DIR}/src/wubuwatermark
+    ${CMAKE_SOURCE_DIR}/src/wubudyslexia
+    ${CMAKE_SOURCE_DIR}/src/wubufmtpaint
+    ${CMAKE_SOURCE_DIR}/src/wubusandbox
+    ${CMAKE_SOURCE_DIR}/src/wubuform
+    ${CMAKE_SOURCE_DIR}/src/wubuhistory
+    ${CMAKE_SOURCE_DIR}/src/wubulang
+    ${CMAKE_SOURCE_DIR}/src/wubunesttab
+    ${CMAKE_SOURCE_DIR}/src/wubupdfextract
+    ${CMAKE_SOURCE_DIR}/src/wubupdfform
+    ${CMAKE_SOURCE_DIR}/src/wubuscope
+    ${CMAKE_SOURCE_DIR}/src/wubusync
+    ${CMAKE_SOURCE_DIR}/src/wubuxps
+    ${CMAKE_SOURCE_DIR}/src/wubuaislot
+    ${CMAKE_SOURCE_DIR}/src/wuburtf
+    ${CMAKE_SOURCE_DIR}/src/wuburedact
+    ${CMAKE_SOURCE_DIR}/src/wubucol
+    ${CMAKE_SOURCE_DIR}/src/wubusort
+    ${CMAKE_SOURCE_DIR}/src/wubufilter
+    ${CMAKE_SOURCE_DIR}/src/wubusubtotal
+    ${CMAKE_SOURCE_DIR}/src/wubugoalseek
+    ${CMAKE_SOURCE_DIR}/src/wubusolver
+    ${CMAKE_SOURCE_DIR}/src/wubupivot
+    ${CMAKE_SOURCE_DIR}/src/wubuscenario
+    ${CMAKE_SOURCE_DIR}/src/wubufreeze
+    ${CMAKE_SOURCE_DIR}/src/wubuhyperlink
+    ${CMAKE_SOURCE_DIR}/src/wubuthesaurus
+    ${CMAKE_SOURCE_DIR}/src/wubugrammar
+    ${CMAKE_SOURCE_DIR}/src/wubuindex
+    ${CMAKE_SOURCE_DIR}/src/wubumailmerge
+    ${CMAKE_SOURCE_DIR}/src/wubudiff
+    ${CMAKE_SOURCE_DIR}/src/wubumasterdoc
+    ${CMAKE_SOURCE_DIR}/src/wubudropcap
+    ${CMAKE_SOURCE_DIR}/src/wuburuler
+    ${CMAKE_SOURCE_DIR}/src/wubugridline
+    ${CMAKE_SOURCE_DIR}/src/wubuicon
+    ${CMAKE_SOURCE_DIR}/src/wubugallery
+    ${CMAKE_SOURCE_DIR}/src/wubusidebar
+    ${CMAKE_SOURCE_DIR}/src/wubutransition
+    ${CMAKE_SOURCE_DIR}/src/wubuanimation
+    ${CMAKE_SOURCE_DIR}/src/wubumasterslide
+    ${CMAKE_SOURCE_DIR}/src/wubuconnector
+    ${CMAKE_SOURCE_DIR}/src/wubuencrypt
+    ${CMAKE_SOURCE_DIR}/src/wubumailexport
+    ${CMAKE_SOURCE_DIR}/src/wubunotebookbar
+    ${CMAKE_SOURCE_DIR}/src/wubuqr
+    ${CMAKE_SOURCE_DIR}/src/wubusmartart
+    ${CMAKE_SOURCE_DIR}/src/wububasic
+    ${CMAKE_SOURCE_DIR}/src/wubu3d
+    ${WUBUPAD_SRC})
+target_link_libraries(test_run_toggle PRIVATE
+    wubumodel wuburender wubuocr wubufont wubucell_app wubudoc wubuautosave
+    wubuspell wubuchart wubudraw wubumath wubuepub wubua11y wubusvg
+    wubusettings wubujson wubushape wubulayout wubuexp wubutoc wubuscript wubupasteplain
+    wuburtf wuburedact wubucol
+    wubucite wubucaption wubuheading wubueqnum wubuvars wubuhash wubusig wubucrdt
+    wubucsv wubufocus wubuwatermark wubudyslexia wubufmtpaint wubusandbox
+    wubuform wubuhistory wubulang wubunesttab wubupdfextract wubupdfform wubuscope wubusync wubuxps wubuaislot
+    wubusort wubufilter wubusubtotal wubugoalseek wubusolver
+    wubupivot wubuscenario wubufreeze wubuhyperlink wubuthesaurus
+    wubugrammar wubuindex wubumailmerge wubudiff wubumasterdoc
+    wubudropcap wuburuler wubugridline wubuicon wubugallery wubusidebar
+    wubutransition wubuanimation wubumasterslide wubuconnector wubuencrypt
+    wubumailexport wubunotebookbar wubuqr wubusmartart
+    wububasic wubu3d
+    ${SDL2_LIBRARIES} ${FREETYPE_LIBRARIES} m dl)
+target_compile_definitions(test_run_toggle PRIVATE lex_free=wubupad_lex_free doc_create=wubupad_doc_create doc_text=wubupad_doc_text)
+add_test(NAME run_toggle COMMAND test_run_toggle)

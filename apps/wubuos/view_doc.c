@@ -181,6 +181,9 @@ static void on_key(WuView *v, int key, int down){
     if (key==WUOS_KEY_STYLE_BODY){ doc_apply_named_style(e, "Body"); return; }
     if (key==WUOS_KEY_STYLE_QUOTE){ doc_apply_named_style(e, "Quote"); return; }
     if (key==WUOS_KEY_STYLE_CODE){ doc_apply_named_style(e, "Code"); return; }
+    /* N3: direct character formatting (Ctrl+B / Ctrl+I) */
+    if (key==WUOS_KEY_BOLD){ doc_toggle_run_prop(e, "bold"); return; }
+    if (key==WUOS_KEY_ITALIC){ doc_toggle_run_prop(e, "italic"); return; }
     if (key==WUOS_KEY_PARA_PREV){ doc_move_para(e, -1); return; }
     if (key==WUOS_KEY_PARA_NEXT){ doc_move_para(e, +1); return; }
     /* DOC-54: jump to a TOC entry with Ctrl+[1..6] */

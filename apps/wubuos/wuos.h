@@ -94,7 +94,9 @@ enum { WUOS_KEY_UP=2000, WUOS_KEY_DOWN, WUOS_KEY_LEFT, WUOS_KEY_RIGHT,
  WUOS_KEY_STYLE_QUOTE,
  WUOS_KEY_STYLE_CODE,
  WUOS_KEY_PARA_PREV,
- WUOS_KEY_PARA_NEXT };
+ WUOS_KEY_PARA_NEXT,
+ WUOS_KEY_BOLD,
+ WUOS_KEY_ITALIC };
 
 /* ---- view factories ----
  * `path` is an optional file to load (NULL = use the bundled sample). */

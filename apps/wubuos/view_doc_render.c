@@ -46,17 +46,27 @@ static int doc_layout_style(void *user, void *run, int *fs, int *bold, int *ital
     return 1;
 }
 
-wubumodel_node * doc_nth_paragraph(DocV *e, int idx){
-    if (!e->doc) return NULL;
-    wubumodel_node *sec = wubumodel_node_first_child(wubumodel_doc_root(e->doc));
-    if (!sec) return NULL;
-    int i = 0;
-    for (wubumodel_node *n = wubumodel_node_first_child(sec); n;
-         n = wubumodel_node_next_sibling(n)){
+static wubumodel_node *nth_para_in(wubumodel_node *n, int *i, int idx){
+    for (; n; n = wubumodel_node_next_sibling(n)){
         if (wubumodel_node_kind(n) == WUBUMODEL_PARAGRAPH){
-            if (i == idx) return n;
-            i++;
+            if (*i == idx) return n;
+            (*i)++;
+        } else {
+            wubumodel_node *hit = nth_para_in(
+                wubumodel_node_first_child(n), i, idx);
+            if (hit) return hit;
         }
+    }
+    return NULL;
+}
+wubumodel_node * doc_nth_paragraph(DocV *e, int idx){
+    if (!e->doc || idx < 0) return NULL;
+    /* walk all sections/blocks recursively (markdown nests paras in blocks) */
+    int i = 0;
+    for (wubumodel_node *sec = wubumodel_node_first_child(wubumodel_doc_root(e->doc));
+         sec; sec = wubumodel_node_next_sibling(sec)){
+        wubumodel_node *hit = nth_para_in(sec, &i, idx);
+        if (hit) return hit;
     }
     return NULL;
 }
@@ -66,6 +76,44 @@ void doc_apply_named_style(DocV *e, const char *name){
     wubumodel_node *p = doc_nth_paragraph(e, e->cur_para);
     if (!p) return;
     wubumodel_node_apply_named_style(p, name);
+    e->toc_dirty = 1;
+}
+/* N3: toggle a direct character prop (bold/italic) on all runs of the
+ * current paragraph. Clone-on-write: each run gets its own style copy with
+ * the prop flipped; runs with no style get a fresh one. This is exactly the
+ * surface cnfStyle resolves INTO (H6d), so table cells styled by cnf flags
+ * can be overridden here too. */
+void doc_toggle_run_prop(DocV *e, const char *prop){
+    if (!e->doc) return;
+    wubumodel_node *p = doc_nth_paragraph(e, e->cur_para);
+    if (!p) return;
+    int any_on = 0, nruns = 0;
+    for (wubumodel_node *n = wubumodel_node_first_child(p); n;
+         n = wubumodel_node_next_sibling(n)){
+        if (wubumodel_node_kind(n) != WUBUMODEL_RUN) continue;
+        nruns++;
+        const wubumodel_style *st = wubumodel_node_style(n);
+        if (st && wubumodel_style_get_prop(st, prop) &&
+            !strcmp(wubumodel_style_get_prop(st, prop), "1")) any_on++;
+    }
+    int turn_on = (nruns == 0 || any_on < nruns);  /* on if any run lacks it */
+    for (wubumodel_node *n = wubumodel_node_first_child(p); n;
+         n = wubumodel_node_next_sibling(n)){
+        if (wubumodel_node_kind(n) != WUBUMODEL_RUN) continue;
+        wubumodel_style *ns = wubumodel_style_create();
+        const wubumodel_style *old = wubumodel_node_style(n);
+        if (old){
+            /* copy existing props (prop_at fails past the end) */
+            for (int i = 0;; i++){
+                const char *nm = NULL, *vl = NULL;
+                if (wubumodel_style_prop_at(old, i, &nm, &vl) == 0) break;
+                if (nm && vl) wubumodel_style_set_prop(ns, nm, vl);
+            }
+        }
+        wubumodel_style_set_prop(ns, prop, turn_on ? "1" : "0");
+        wubumodel_node_set_style(n, ns);   /* node owns the ref */
+        /* NOTE: no destroy -- set_style transfers ownership (refcount++) */
+    }
     e->toc_dirty = 1;
 }
 /* DOC-58: move the current-paragraph cursor (for the style picker target). */
