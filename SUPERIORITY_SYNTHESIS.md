@@ -214,3 +214,10 @@ create/list/close/quit). Upgrade to superiority:
   in-tree from-scratch wubuzip_deflate (no external zlib).
 - Measured: embedded DejaVuSans 760KB -> 434KB (~43% reduction), PDF stays
   valid (pdf_i18n green). Subsetting remains tracked for a future hop.
+
+### Hop 17 (2026-08-22): multi-slide pptx shipped
+- wubuoxml_pptx_write_multi: N slides -> sldIdLst with N entries, one
+  slide part + rels per slide, master linked to all. Single-slide
+  wubuoxml_pptx_write kept as a wrapper.
+- pptx_multi ctest: 3-slide deck verified (parts present, titles extract,
+  sldIdLst has entry 3).
