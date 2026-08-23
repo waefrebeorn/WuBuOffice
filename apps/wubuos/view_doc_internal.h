@@ -15,6 +15,10 @@
 typedef struct { Wurender *r; wubumodel_doc *doc; char *path;
                  char *text;          /* recognized/raw text (for find) */
                  char *find_q; int find_hit;
+                 /* hop 22: match navigation + icase */
+                 int find_ix;      /* current match index (0-based) */
+                 int find_total;   /* total matches for the query */
+                 int find_icase;   /* case-insensitive mode */
                  /* inserted objects (chart/draw/math) rasterized to RGBA (INT-1,3) */
                  unsigned char *obj[ DOC_MAX_OBJS ]; int objw[ DOC_MAX_OBJS ]; int objh[ DOC_MAX_OBJS ];
                  int nobj;

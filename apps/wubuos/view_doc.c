@@ -29,6 +29,7 @@ int doc_render(WuView *v, int w, int h, int scroll, unsigned char **rgba, int *r
 
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include <stdio.h>
 
 /* forward declarations (defined below) */
@@ -204,7 +205,26 @@ static void on_key(WuView *v, int key, int down){
             /* search loaded text */
             e->find_hit = 0;
             if (e->text && e->find_q && e->find_q[0]){
-                if (strstr(e->text, e->find_q)) e->find_hit = 1;
+                /* hop 22: count matches (icase-aware), reset index */
+                e->find_ix = 0;
+                e->find_total = 0;
+                const char *hay = e->text;
+                size_t qlen = strlen(e->find_q);
+                if (!e->find_icase){
+                    while ((hay = strstr(hay, e->find_q))){ e->find_total++; hay += qlen; }
+                    e->find_hit = e->find_total > 0;
+                } else {
+                    /* case-insensitive scan */
+                    size_t tl = strlen(e->text);
+                    for (size_t a = 0; a + qlen <= tl; a++){
+                        size_t b2 = 0;
+                        while (b2 < qlen &&
+                               tolower((unsigned char)e->text[a+b2]) ==
+                               tolower((unsigned char)e->find_q[b2])) b2++;
+                        if (b2 == qlen){ e->find_total++; a += qlen - 1; }
+                    }
+                    e->find_hit = e->find_total > 0;
+                }
             }
             return;
         }
