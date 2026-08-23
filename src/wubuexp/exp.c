@@ -233,3 +233,118 @@ int wubuexp_pdf(const wubulayout_doc *L, const char *out){
     fclose(f);
     return 0;
 }
+
+
+/* ---- hop 8: geometry-aware PDF export ----
+ * Walks line boxes + runs so font size, bold/italic (Helvetica vs
+ * Helvetica-Bold/Oblique), and per-run x/y survive. Falls back to the same
+ * xref/PDF structure as the legacy path. */
+int wubuexp_pdf_geometry(const wubulayout_doc *L, const char *out){
+    FILE *f = fopen(out, "wb"); if (!f) return -1;
+    int pg = wubulayout_page_count(L);
+    const wubulayout_page_info *pi = wubulayout_page(L, 0);
+    int page_w = pi ? pi->w : 794, page_h = pi ? pi->h : 1123;
+
+    long off[8192]; int nobj = 0;
+    fputs("%PDF-1.4\n", f);
+
+    off[nobj++] = ftell(f);
+    fputs("1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n", f);
+    long pages_pos = ftell(f);
+    fputs("2 0 obj\n<< /Type /Pages /Kids [", f);
+    int *page_ids = malloc(sizeof(int) * (pg > 0 ? pg : 1));
+
+    /* fonts: F1 Helvetica, F2 Helvetica-Bold, F3 Helvetica-Oblique */
+    int font_base = 3;
+    int nfonts = 3;
+
+    for (int p = 0; p < pg; p++){
+        /* build content stream from runs */
+        size_t cap = 8192, len = 0;
+        char *content = malloc(cap); content[0] = 0;
+        int nruns = wubulayout_run_count(L, p);
+        for (int r = 0; r < nruns; r++){
+            const wubulayout_run *run = wubulayout_run_at(L, p, r);
+            if (!run || !run->text || run->text_len == 0) continue;
+            int fid = run->bold ? font_base + 1 : (run->italic ? font_base + 2 : font_base);
+            int fs = run->font_size > 0 ? run->font_size : 12;
+            /* PDF y is bottom-up: flip baseline */
+            int py = page_h - run->y;
+            int px = run->x;
+            len += (size_t)snprintf(content + len, cap - len,
+                    "BT /F%d %d Tf %d %d Td ", fid, fs, px, py);
+            /* escaped string */
+            if (len + run->text_len * 4 + 32 > cap){
+                cap = (len + run->text_len * 4 + 64) * 2;
+                char *nb = realloc(content, cap);
+                if (!nb){ free(content); free(page_ids); fclose(f); return -1; }
+                content = nb;
+            }
+            content[len++] = '(';
+            for (size_t k = 0; k < run->text_len && len + 8 < cap; k++){
+                char ch = run->text[k];
+                if (ch == '(' || ch == ')' || ch == '\\') content[len++] = '\\';
+                if ((unsigned char)ch >= 32 && (unsigned char)ch < 127)
+                    content[len++] = ch;
+                else content[len++] = '?';   /* non-latin1: placeholder */
+            }
+            content[len++] = ')';
+            len += (size_t)snprintf(content + len, cap - len, " Tj ET\n");
+        }
+        /* draw object boxes as rectangles (tables/images/floats) */
+        int nboxes = wubulayout_box_count(L, p);
+        for (int b = 0; b < nboxes; b++){
+            const wubulayout_box *bo = wubulayout_box_at(L, p, b);
+            if (!bo) continue;
+            int by = page_h - bo->y - bo->h;
+            len += (size_t)snprintf(content + len, cap - len,
+                    "0.8 0.85 0.95 RG %d %d %d %d re S\n",
+                    bo->x, by, bo->w, bo->h);
+            if (len + 256 > cap){
+                cap = (len + 512) * 2;
+                char *nb = realloc(content, cap);
+                if (!nb){ free(content); free(page_ids); fclose(f); return -1; }
+                content = nb;
+            }
+        }
+
+        int cid = 10 + p * 2;
+        off[nobj++] = ftell(f);
+        fprintf(f, "%d 0 obj\n<< /Length %zu >>\nstream\n%s\nendstream\nendobj\n",
+                cid, len, content);
+        free(content);
+        int pid = cid + 1;
+        off[nobj++] = ftell(f);
+        fprintf(f, "%d 0 obj\n<< /Type /Page /Parent 2 0 R "
+                   "/MediaBox [0 0 %d %d] /Resources << /Font << /F%d %d 0 R "
+                   "/F%d %d 0 R /F%d %d 0 R >> >> /Contents %d 0 R >>\nendobj\n",
+                pid, page_w, page_h,
+                font_base,     font_base,
+                font_base + 1, font_base + 1,
+                font_base + 2, font_base + 2, cid);
+        page_ids[p] = pid;
+    }
+    /* font objects */
+    static const char *fnames[3] = { "Helvetica", "Helvetica-Bold", "Helvetica-Oblique" };
+    for (int i = 0; i < nfonts; i++){
+        off[nobj++] = ftell(f);
+        fprintf(f, "%d 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /%s >>\nendobj\n",
+                font_base + i, fnames[i]);
+    }
+    /* fix page ids: they were computed assuming cid=10+p*2; rewrite Kids */
+    fseek(f, pages_pos, SEEK_SET);
+    fprintf(f, "2 0 obj\n<< /Type /Pages /Kids [");
+    for (int p = 0; p < pg; p++) fprintf(f, " %d 0 R", page_ids[p]);
+    fprintf(f, " ] /Count %d >>\nendobj\n", pg);
+    fseek(f, 0, SEEK_END);
+
+    long xref = ftell(f);
+    fprintf(f, "xref\n0 %d\n", nobj + 1);
+    fputs("0000000000 65535 f \n", f);
+    for (int i = 0; i < nobj; i++) fprintf(f, "%010ld 00000 n \n", off[i]);
+    fprintf(f, "trailer\n<< /Size %d /Root 1 0 R >>\nstartxref\n%ld\n%%%%EOF\n",
+            nobj + 1, xref);
+    free(page_ids);
+    fclose(f);
+    return 0;
+}

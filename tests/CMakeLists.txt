@@ -509,3 +509,7 @@ add_test(NAME table_styles COMMAND test_table_styles)
 add_executable(test_docx_cell_merge test_docx_cell_merge.c)
 target_link_libraries(test_docx_cell_merge PRIVATE wubuoxml wubumodel wubuxml)
 add_test(NAME docx_cell_merge COMMAND test_docx_cell_merge)
+
+add_executable(test_pdf_geometry test_pdf_geometry.c)
+target_link_libraries(test_pdf_geometry PRIVATE wubuexp wubulayout wubumodel wubuxml wubuzip m)
+add_test(NAME pdf_geometry COMMAND test_pdf_geometry)

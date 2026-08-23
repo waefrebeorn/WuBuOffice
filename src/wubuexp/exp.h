@@ -22,6 +22,11 @@ int wubuexp_latex(  const wubulayout_doc *L, const char *out);
 int wubuexp_rtf(    const wubulayout_doc *L, const char *out);
 /* PDF: one page per layout page, Helvetica, logical text (no embedding of
  * fonts beyond the base-14). Good enough for archive/preview. */
+/* Geometry-aware PDF export (hop 8): uses line boxes + runs so font sizes,
+ * bold/italic, and per-run positioning survive (old path reflowed plain text
+ * through page_text()). Same PDF structure; per-run text operators. */
+int wubuexp_pdf_geometry(const wubulayout_doc *L, const char *out);
+
 int wubuexp_pdf(    const wubulayout_doc *L, const char *out);
 
 #ifdef __cplusplus

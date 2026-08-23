@@ -451,7 +451,8 @@ char *doccmd_export_pdf(wubumodel_doc *doc){
     if (!doc) return strdup("no model doc to export");
     wubulayout_doc *L = doccmd_layout(doc);
     if (!L) return strdup("layout build failed (model empty?)");
-    int rc = wubuexp_pdf(L, "/tmp/wubuos_export.pdf");
+    int rc = wubuexp_pdf_geometry(L, "/tmp/wubuos_export.pdf");
+    if (rc != 0) rc = wubuexp_pdf(L, "/tmp/wubuos_export.pdf");   /* legacy fallback */
     wubulayout_destroy(L);
     if (rc == 0){ char b[128]; snprintf(b, sizeof b, "PDF written: /tmp/wubuos_export.pdf"); return strdup(b); }
     return strdup("PDF export failed");
