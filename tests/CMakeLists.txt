@@ -529,3 +529,7 @@ add_test(NAME pdf_i18n COMMAND test_pdf_i18n)
 add_executable(test_pptx_multi test_pptx_multi.c)
 target_link_libraries(test_pptx_multi PRIVATE wubuoxml wubuxml wubuzip)
 add_test(NAME pptx_multi COMMAND test_pptx_multi)
+
+add_executable(test_pptx_app_roundtrip test_pptx_app_roundtrip.c)
+target_link_libraries(test_pptx_app_roundtrip PRIVATE wubuoxml wubuxml wubuzip)
+add_test(NAME pptx_app_roundtrip COMMAND test_pptx_app_roundtrip)

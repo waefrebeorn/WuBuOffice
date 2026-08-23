@@ -163,6 +163,17 @@ static void save(WuView *v){
 }
 
 static void load_slide(SlideV *e, const char *path){
+    /* H18: real .pptx files load through the OOXML reader */
+    size_t pl = strlen(path);
+    if (pl > 5 && !strcasecmp(path + pl - 5, ".pptx")){
+        e->nbullets = 0;
+        char tmp_t[SLIDE_MAX_TITLE];
+        if (wubuoxml_pptx_read(path, tmp_t, sizeof tmp_t,
+                               e->bullets, SLIDE_MAX_BULLETS,
+                               &e->nbullets) == 0)
+            snprintf(e->title, sizeof e->title, "%s", tmp_t);
+        return;
+    }
     FILE *f = fopen(path, "r");
     if (!f) return;
     char line[256];

@@ -1,3 +1,4 @@
+#include <stddef.h>
 /* pptx_write.h -- H13/H17: .pptx assembly from the slide model.
  * H17 adds multi-slide support (sldIdLst with N entries, one part per
  * slide, per-slide rels). */
@@ -19,5 +20,10 @@ typedef struct {
 /* Assemble a multi-slide .pptx. nslides >= 1. Returns 0 on success. */
 int wubuoxml_pptx_write_multi(const char *out, const PptxSlide *slides,
                               int nslides);
+
+/* Read the first slide of `path` back: title + up to maxb bullets.
+ * Returns 0 on success. */
+int wubuoxml_pptx_read(const char *path, char *title, size_t tcap,
+                       char bullets[][96], int maxb, int *nbullets);
 
 #endif /* WUBUOXML_PPTX_WRITE_H */

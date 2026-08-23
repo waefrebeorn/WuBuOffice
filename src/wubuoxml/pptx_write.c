@@ -7,6 +7,7 @@
  * package writer. */
 #include "pptx_write.h"
 #include "package.h"
+#include "reader.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -147,4 +148,72 @@ int wubuoxml_pptx_write(const char *out, const char *title,
                         const char **bullets, int nbullets){
     PptxSlide s = { title, bullets, nbullets };
     return wubuoxml_pptx_write_multi(out, &s, 1);
+}
+
+
+/* ---- H18: read a .pptx slide back into the model ----
+ * Extracts text runs from the first slide part: first <a:t> = title,
+ * subsequent <a:t> = bullets. Works on decks written by us and by
+ * PowerPoint (both use <a:t> inside <p:txBody>). */
+int wubuoxml_pptx_read(const char *path, char *title, size_t tcap,
+                       char bullets[][96], int maxb, int *nbullets){
+    if (!path || !title || !bullets || !nbullets) return -1;
+    *nbullets = 0; if (tcap) title[0] = 0;
+
+    FILE *f = fopen(path, "rb");
+    if (!f) return -1;
+    fseek(f, 0, SEEK_END); long sz = ftell(f); fseek(f, 0, SEEK_SET);
+    uint8_t *buf = malloc((size_t)sz + 1);
+    if (!buf){ fclose(f); return -1; }
+    size_t rd = fread(buf, 1, (size_t)sz, f); fclose(f);
+
+    wubuoxml_package pkg;
+    if (wubuoxml_read(buf, rd, &pkg) != 0){ free(buf); return -1; }
+
+    /* first part whose path contains "slides/slide" */
+    const wubuoxml_part *slide = NULL;
+    for (size_t i = 0; i < wubuoxml_part_count(&pkg) && !slide; i++){
+        const wubuoxml_part *p = wubuoxml_part_at(&pkg, i);
+        if (p && p->name && strstr(p->name, "slides/slide")) slide = p;
+    }
+    if (!slide){ wubuoxml_free(&pkg); free(buf); return -1; }
+
+    /* walk <a:t>...</a:t> spans */
+    const char *x = (const char*)slide->bytes;
+    size_t xl = slide->len, pos = 0;
+    int got_title = 0;
+    while (pos + 9 < xl){
+        const char *open = strstr(x + pos, "<a:t>");
+        const char *close = NULL;
+        if (!open && pos + 6 < xl) open = strstr(x + pos, "<a:t ");
+        if (!open) break;
+        const char *vend = strchr(open, '>');
+        if (!vend) break;
+        const char *t0 = vend + 1;
+        close = strstr(t0, "</a:t>");
+        if (!close) break;
+        size_t tl = (size_t)(close - t0);
+        /* decode basic entities into dst */
+        char dst[256]; size_t di = 0;
+        for (size_t k = 0; k < tl && di < sizeof dst - 1; k++){
+            if (t0[k] == '&'){
+                if (!strncmp(t0+k, "&amp;", 5)){ dst[di++]='&'; k+=4; }
+                else if (!strncmp(t0+k,"&lt;",4)) { dst[di++]='<'; k+=3; }
+                else if (!strncmp(t0+k,"&gt;",4)) { dst[di++]='>'; k+=3; }
+                else dst[di++] = t0[k];
+            } else dst[di++] = t0[k];
+        }
+        dst[di] = 0;
+        if (!got_title){
+            snprintf(title, tcap, "%s", dst);
+            got_title = 1;
+        } else if (*nbullets < maxb){
+            snprintf(bullets[*nbullets], 96, "%s", dst);
+            (*nbullets)++;
+        }
+        pos = (size_t)(close - x) + 6;
+    }
+    wubuoxml_free(&pkg);
+    free(buf);
+    return 0;
 }
