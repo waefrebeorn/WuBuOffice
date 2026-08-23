@@ -123,3 +123,15 @@ create/list/close/quit). Upgrade to superiority:
   origin cell (span2+restart), plain cell, and continue cells.
 - Process note: a careless `mv` clobbered the pre-existing XLSX cell_merge
   test source; restored from git, both tests now coexist.
+
+### Hop 8 (2026-08-22): geometry-aware PDF export shipped
+- Research: "export a PDF alongside the editable file" is the universal
+  fidelity escape hatch (tech-insider 2026 suite comparison).
+- Gap found: wubuexp_pdf used page_text() -- reflowed everything to plain
+  12pt Helvetica, dropping bold/sizes/tables/images entirely.
+- Shipped: wubuexp_pdf_geometry() walks line boxes + runs so font size,
+  bold/italic (3 font resources), per-run positioning, and object boxes
+  (tables/images/floats drawn as rects) survive into the PDF.
+- doccmd_export_pdf prefers the geometry path, legacy as fallback.
+- pdf_geometry ctest asserts /Helvetica-Bold resource + heading font size
+  preserved (not flattened to 12) + text present + valid EOF.
