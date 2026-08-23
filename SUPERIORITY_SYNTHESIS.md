@@ -293,3 +293,21 @@ retracted; every shipped claim backed by an executed test.
   assembles the WHOLE deck via write_multi.
 - deck_cycle ctest: 3-slide write -> read round-trip with per-slide data
   integrity. Closes N2; remaining frontier: N3 cnfStyle UI editing only.
+
+### Hop N3 (2026-08-23): N3 SHIPPED -- direct character formatting (cnfStyle UI)
+- doc_toggle_run_prop: Ctrl+B / Ctrl+I toggle bold/italic on every run of
+  the current paragraph via clone-on-write style props -- the same surface
+  cnfStyle resolves into, so table cells styled by cnf flags can be
+  overridden. MS-convention keys wired in the shell keymap.
+- THREE real bugs found by execution:
+  1. doc_nth_paragraph missed paragraphs nested in BLOCKs (all markdown
+     docs) -- now recursive with per-section index continuation.
+  2. Inverted prop_at check in the copy loop (broke on success) --
+     props were silently never copied.
+  3. Ownership bug: style_destroy after node_set_style dropped the
+     node's ref (set_style transfers ownership).
+- run_toggle ctest: bold on/off cycles, italic independent of bold.
+
+## FRONTIER CLEAR
+N1 subsetting / N2 multi-slide UI / N3 char formatting / N4 CJK fallback --
+all shipped and tested. The tracked goal list is complete; 189/189 green.
