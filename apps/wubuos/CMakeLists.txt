@@ -622,3 +622,9 @@ target_link_libraries(viewshot PRIVATE
     wububasic wubu3d
     ${SDL2_LIBRARIES} ${FREETYPE_LIBRARIES} m dl)
 target_compile_options(viewshot PRIVATE -Wall -Wextra -Wpedantic)
+
+add_executable(test_cjk_fallback ${CMAKE_SOURCE_DIR}/tests/test_cjk_fallback.c wuos_font.c)
+target_include_directories(test_cjk_fallback PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_SOURCE_DIR}/src/wububase ${FREETYPE_INCLUDE_DIRS})
+target_link_libraries(test_cjk_fallback PRIVATE ${FREETYPE_LIBRARIES} wububase m)
+add_test(NAME cjk_fallback COMMAND test_cjk_fallback)

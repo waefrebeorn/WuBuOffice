@@ -15,6 +15,7 @@
 
 static FT_Library g_ft;
 static FT_Face    g_reg, g_bold;
+static FT_Face    g_fb;          /* N4: CJK fallback face (lazy) */
 static int        g_size = 20;
 static int        g_inited = 0;
 static int        g_family = -1;      /* INT-15: active family index */
@@ -145,6 +146,8 @@ int wuos_font_init(void){
     for (int i=0;cands_b[i];i++) if (FT_New_Face(g_ft,cands_b[i],0,&g_bold)==0) break;
     if (!g_reg) return -1;
     if (!g_bold) g_bold = g_reg;
+    /* N4: lazy CJK fallback face (loaded on first missing glyph) */
+    g_fb = NULL;
     FT_Set_Pixel_Sizes(g_reg, 0, (FT_UInt)g_size);
     FT_Set_Pixel_Sizes(g_bold,0, (FT_UInt)g_size);
     g_inited = 1;
@@ -179,6 +182,33 @@ void wuos_font_set_size(int size){
     if (g_bold) FT_Set_Pixel_Sizes(g_bold,0, (FT_UInt)g_size);
 }
 
+
+/* N4: per-glyph CJK fallback. Returns a face containing cp, or NULL. */
+static FT_Face font_fallback(uint32_t cp){
+    static const char *cands[] = {
+        "/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc",
+        "/usr/share/fonts/truetype/wqy/wqy-microhei.ttc",
+        "/usr/share/fonts/truetype/fonts-japanese-gothic.ttf",
+        "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
+        "/usr/share/fonts/opentype/unifont/unifont.otf", NULL };
+    if (!g_inited) return NULL;
+    if (!g_fb){
+        for (int i=0; cands[i]; i++){
+            FT_Face f = NULL;
+            if (FT_New_Face(g_ft, cands[i], 0, &f) == 0){
+                if (FT_Get_Char_Index(f, cp)){
+                    g_fb = f;
+                    FT_Set_Pixel_Sizes(g_fb, 0, (FT_UInt)g_size);
+                    return g_fb;
+                }
+                FT_Done_Face(f);
+            }
+        }
+        return NULL;
+    }
+    return FT_Get_Char_Index(g_fb, cp) ? g_fb : NULL;
+}
+
 /* Pixel width of `s` at the current font size (no rasterization). */
 int wuos_font_text_width(const char *s, int size){
     FT_Face face = g_reg;  /* width uses the regular face */
@@ -190,8 +220,13 @@ int wuos_font_text_width(const char *s, int size){
         int k = wububase_utf8_decode(p, &cp);
         if (k <= 0){ p++; continue; }
         p += k;
-        if (FT_Load_Char(face, (FT_ULong)cp, FT_LOAD_DEFAULT)) continue;
-        ox += (int)face->glyph->advance.x >> 6;
+        FT_Face use = face;
+        if (!FT_Get_Char_Index(face, cp)){
+            FT_Face fb = font_fallback(cp);
+            if (fb) use = fb;
+        }
+        if (FT_Load_Char(use, (FT_ULong)cp, FT_LOAD_DEFAULT)) continue;
+        ox += (int)use->glyph->advance.x >> 6;
     }
     (void)size;  /* size is applied via the global font size; kept for API symmetry */
     return ox;
@@ -209,8 +244,14 @@ int wuos_font_draw(const char *s, int x, int y, int bold,
         int k = wububase_utf8_decode(p, &cp);
         if (k <= 0){ p++; continue; }
         p += k;
-        if (FT_Load_Char(face, (FT_ULong)cp, FT_LOAD_RENDER)) continue;
-        FT_GlyphSlot gl = face->glyph;
+        FT_Face use = face;
+        if (!FT_Get_Char_Index(face, cp)){
+            FT_Face fb = font_fallback(cp);
+            if (fb){ use = fb;
+                FT_Set_Pixel_Sizes(use, 0, (FT_UInt)g_size); }
+        }
+        if (FT_Load_Char(use, (FT_ULong)cp, FT_LOAD_RENDER)) continue;
+        FT_GlyphSlot gl = use->glyph;
         int gx = ox + gl->bitmap_left;
         int gy = y - gl->bitmap_top;
         int pp = gl->bitmap.pitch;
