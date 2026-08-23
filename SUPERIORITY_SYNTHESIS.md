@@ -196,3 +196,13 @@ create/list/close/quit). Upgrade to superiority:
   viewers substitute glyphs until full CIDFont embedding lands (tracked).
 - pdf_i18n ctest asserts F4 declaration, Identity-H encoding, and the exact
   hex encoding of the CJK run.
+
+### Hop 15 (2026-08-22): H15 shipped -- CIDFontType2 embedding
+- Non-Latin runs now embed the REAL DejaVuSans font program (FontFile2,
+  ~760KB) with FontDescriptor + CIDFontType2 descendant + Identity CIDToGIDMap.
+  Glyphs RENDER correctly in viewers, not just extract.
+- Two bugs caught by execution: (1) use-after-free -- fdata freed before
+  fwrite (font_open_owned borrows in this path); fixed by keeping ownership.
+  (2) test read only first 64KB so %%EOF assertion failed on embedded-binary
+  PDFs; fixed to whole-file + tail search. Also added public font_advance()
+  to wubufont (hmtx-based).
