@@ -321,3 +321,12 @@ all shipped and tested. The tracked goal list is complete; 189/189 green.
 - Bug found while building: doc_root is the first PARENTLESS node (often the
   SECTION), not a special DOC wrapper -- walk fixed to recurse from it.
 - a11y_tables ctest: 4 scenarios (merged/blank/single-row/clean) green.
+
+### Hop 21 (2026-08-23): spreadsheet keyboard conformance shipped
+- Research: Excel keyboard model -- F2 edits the active cell (prefilled),
+  Ctrl+Arrow jumps to the data-region edge.
+- Shipped: WUOS_KEY_EDIT_CELL/EDGE_* codes in the shell map; view_cell F2
+  prefills fbuf from wubucell_get; Ctrl+Arrow scans toward the used extent
+  (wubucell_sheet_dims) stopping at the last non-empty cell, or sheet edge
+  when the row/column is empty.
+- cell_kbd ctest pins the engine queries (dims + edge lookups).
