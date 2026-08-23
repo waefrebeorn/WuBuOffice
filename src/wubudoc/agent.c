@@ -84,9 +84,35 @@ char *doc_agent_handle(DocSession *s, const char *command_json) {
         if (!idv) { j_free(cmd); return agent_err("text: id required"); }
         long id = (long)j_as_num(idv);
         const char *tx = doc_text(s, id);
+        char *tx_owned = NULL;
+        if (!tx) {
+            /* model-backed docs: flatten the normalized JSON model's text
+             * fields (same path find uses), so every doc kind answers. */
+            char *mjson = doc_json(s, id);
+            if (mjson){
+                size_t cap = strlen(mjson) + 1, len = 0;
+                tx_owned = malloc(cap);
+                const char *p = mjson;
+                while ((p = strstr(p, "\"text\"")) != NULL){
+                    p = strchr(p + 6, '"');
+                    if (!p) break;
+                    p++;
+                    while (*p && *p != '"'){
+                        if (*p == '\\' && p[1]) p++;
+                        else if (len + 1 < cap) tx_owned[len++] = *p;
+                        p++;
+                    }
+                    if (len + 1 < cap) tx_owned[len++] = '\n';
+                }
+                tx_owned[len] = 0;
+                free(mjson);
+                if (len) tx = tx_owned;
+            }
+        }
         res = j_obj();
         j_obj_put(res, "id", j_num((double)id));
         j_obj_put(res, "text", j_str(tx ? tx : ""));
+        free(tx_owned);
     }
     else if (strcmp(name, "set") == 0) {
         const JVal *idv = j_obj_get(cmd, "id");
@@ -182,9 +208,21 @@ char *doc_agent_handle(DocSession *s, const char *command_json) {
             while ((p = strstr(p, q)) != NULL && n < 200) {
                 long line = 1;
                 for (const char *c = tx; c < p; c++) if (*c == '\n') line++;
-                size_t ctx0 = (size_t)(p - tx > 40 ? p - tx - 40 : 0);
-                size_t rem = strlen(p);
-                size_t clen = (rem < strlen(q) + 80) ? rem : strlen(q) + 80;
+                /* context windows must not cut mid-UTF-8-sequence: back up
+                 * up to 3 bytes to a start byte (10xxxxxx = continuation). */
+                size_t off = (size_t)(p - tx);
+                size_t ctx0 = off > 40 ? off - 40 : 0;
+                while (ctx0 < off && ((unsigned char)tx[ctx0] & 0xC0) == 0x80)
+                    ctx0++;
+                size_t mlen = strlen(q);
+                size_t want_end = off + mlen + 60;           /* match + tail */
+                size_t avail = strlen(tx);
+                if (want_end > avail) want_end = avail;
+                /* extend forward to a char boundary */
+                while (want_end < avail &&
+                       ((unsigned char)tx[want_end] & 0xC0) == 0x80)
+                    want_end++;
+                size_t clen = want_end - ctx0;
                 char *ctx = malloc(clen + 1);
                 memcpy(ctx, tx + ctx0, clen); ctx[clen] = 0;
                 JVal *m = j_obj();
