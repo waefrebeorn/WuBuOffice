@@ -308,11 +308,15 @@ int doc_agent_serve(DocSession *s, FILE *in, FILE *out) {
     while ((len = getline(&line, &cap, in)) != -1) {
         while (len > 0 && (line[len - 1] == '\n' || line[len - 1] == '\r')) line[--len] = '\0';
         if (len == 0) continue;
+        if (strncmp(line, "{\"cmd\":\"quit\"", 12) == 0
+            || strcmp(line, "quit") == 0 || strcmp(line, "q") == 0){
+            fputs("{\"ok\":true,\"bye\":true}", out); fputc('\n', out); fflush(out);
+            break;
+        }
         char *resp = doc_agent_handle(s, line);
         if (!resp) { rc = -1; break; }
         fputs(resp, out); fputc('\n', out); fflush(out);
         free(resp);
-        if (strncmp(line, "{\"cmd\":\"quit\"", 12) == 0) break;
     }
     free(line);
     return rc;
