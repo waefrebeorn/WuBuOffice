@@ -159,3 +159,10 @@ create/list/close/quit). Upgrade to superiority:
   <calcPr fullCalcOnLoad="1"/> or Excel shows stale cached values on open.
 - Shipped: wubucell_assemble now emits it; verified present in the assembled
   workbook.xml inside the zip. Closes the "stale formulas in Excel" gap.
+
+### Hop 11 (2026-08-22): spreadsheet undo/redo shipped
+- Gap: the spreadsheet view had ZERO undo (Office standard = ~100 actions).
+- Shipped: wubucell_book_clone/restore (deep copy of sheets/cells/merges),
+  CellV undo/redo stacks (depth 32), snapshot-before-commit on Enter, and
+  Ctrl+Z / Ctrl+Y wired through the shell keymap with formula re-eval on
+  restore so dependents stay correct after undo.
