@@ -235,6 +235,13 @@ int wubuexp_pdf(const wubulayout_doc *L, const char *out){
 }
 
 
+/* hop 14: does this run need the Unicode path? */
+static int run_has_nonlatin(const char *t, size_t len){
+    for (size_t k = 0; k < len; k++)
+        if ((unsigned char)t[k] >= 0x80) return 1;
+    return 0;
+}
+
 /* ---- hop 8: geometry-aware PDF export ----
  * Walks line boxes + runs so font size, bold/italic (Helvetica vs
  * Helvetica-Bold/Oblique), and per-run x/y survive. Falls back to the same
@@ -266,13 +273,41 @@ int wubuexp_pdf_geometry(const wubulayout_doc *L, const char *out){
         for (int r = 0; r < nruns; r++){
             const wubulayout_run *run = wubulayout_run_at(L, p, r);
             if (!run || !run->text || run->text_len == 0) continue;
-            int fid = run->bold ? font_base + 1 : (run->italic ? font_base + 2 : font_base);
+            int uni = run_has_nonlatin(run->text, run->text_len);
+            /* F4 = Type0 Identity-H for non-Latin runs: correct text layer
+             * for extraction/search; viewers substitute glyphs until full
+             * CIDFont embedding lands. */
+            int fid = uni ? (font_base + 3)
+                    : (run->bold ? font_base + 1
+                    : (run->italic ? font_base + 2 : font_base));
             int fs = run->font_size > 0 ? run->font_size : 12;
             /* PDF y is bottom-up: flip baseline */
             int py = page_h - run->y;
             int px = run->x;
             len += (size_t)snprintf(content + len, cap - len,
                     "BT /F%d %d Tf %d %d Td ", fid, fs, px, py);
+            if (uni){
+                content[len++] = '<';
+                for (size_t k = 0; k < run->text_len; ){
+                    unsigned char b0 = (unsigned char)run->text[k];
+                    uint32_t cp;
+                    if (b0 < 0x80){ cp = b0; k += 1; }
+                    else if ((b0 & 0xE0) == 0xC0 && k+1 < run->text_len){
+                        cp = ((b0 & 0x1F) << 6) | ((unsigned char)run->text[k+1] & 0x3F); k += 2;
+                    }
+                    else if ((b0 & 0xF0) == 0xE0 && k+2 < run->text_len){
+                        cp = ((b0 & 0x0F) << 12) | (((unsigned char)run->text[k+1] & 0x3F) << 6)
+                           | ((unsigned char)run->text[k+2] & 0x3F); k += 3;
+                    }
+                    else { cp = 0xFFFD; k += 1; }
+                    if (cp >= 0x10000) cp = 0xFFFD;
+                    if (len + 8 > cap){ cap = (len + 128) * 2; content = realloc(content, cap); }
+                    len += (size_t)snprintf(content + len, cap - len, "%04X", cp);
+                }
+                content[len++] = '>';
+                len += (size_t)snprintf(content + len, cap - len, " Tj ET\n");
+                continue;
+            }
             /* escaped string */
             if (len + run->text_len * 4 + 32 > cap){
                 cap = (len + run->text_len * 4 + 64) * 2;
@@ -286,7 +321,7 @@ int wubuexp_pdf_geometry(const wubulayout_doc *L, const char *out){
                 if (ch == '(' || ch == ')' || ch == '\\') content[len++] = '\\';
                 if ((unsigned char)ch >= 32 && (unsigned char)ch < 127)
                     content[len++] = ch;
-                else content[len++] = '?';   /* non-latin1: placeholder */
+                else content[len++] = '?';   /* latin path: placeholder */
             }
             content[len++] = ')';
             len += (size_t)snprintf(content + len, cap - len, " Tj ET\n");
@@ -315,13 +350,14 @@ int wubuexp_pdf_geometry(const wubulayout_doc *L, const char *out){
         free(content);
         int pid = cid + 1;
         off[nobj++] = ftell(f);
+        int f4id = font_base + 3;
         fprintf(f, "%d 0 obj\n<< /Type /Page /Parent 2 0 R "
                    "/MediaBox [0 0 %d %d] /Resources << /Font << /F%d %d 0 R "
-                   "/F%d %d 0 R /F%d %d 0 R >> >> /Contents %d 0 R >>\nendobj\n",
+                   "/F%d %d 0 R /F%d %d 0 R /F4 %d 0 R >> >> /Contents %d 0 R >>\nendobj\n",
                 pid, page_w, page_h,
                 font_base,     font_base,
                 font_base + 1, font_base + 1,
-                font_base + 2, font_base + 2, cid);
+                font_base + 2, font_base + 2, f4id, cid);
         page_ids[p] = pid;
     }
     /* font objects */
@@ -331,6 +367,18 @@ int wubuexp_pdf_geometry(const wubulayout_doc *L, const char *out){
         fprintf(f, "%d 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /%s >>\nendobj\n",
                 font_base + i, fnames[i]);
     }
+    /* F4: Type0 Identity-H for non-Latin runs. Text layer is correct
+     * (ToUnicode-style UTF-16BE hex); viewers substitute glyphs since no
+     * font program is embedded yet (tracked frontier). */
+    off[nobj++] = ftell(f);
+    fprintf(f, "%d 0 obj\n<< /Type /Font /Subtype /Type0 /BaseFont /Arial-Unicode-MS "
+               "/Encoding /Identity-H /DescendantFonts [ %d 0 R ] >>\nendobj\n",
+            font_base + 3, font_base + nfonts + 1);
+    off[nobj++] = ftell(f);
+    fprintf(f, "%d 0 obj\n<< /Type /Font /Subtype /CIDFontType2 /BaseFont /Arial-Unicode-MS "
+               "/CIDSystemInfo << /Registry (Adobe) /Ordering (Identity) /Supplement 0 >> "
+               "/CIDToGIDMap /Identity >>\nendobj\n",
+            font_base + nfonts + 1);
     /* fix page ids: they were computed assuming cid=10+p*2; rewrite Kids */
     fseek(f, pages_pos, SEEK_SET);
     fprintf(f, "2 0 obj\n<< /Type /Pages /Kids [");

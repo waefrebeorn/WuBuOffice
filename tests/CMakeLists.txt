@@ -521,3 +521,7 @@ add_test(NAME tbl_styles_e2e COMMAND test_tbl_styles_e2e)
 add_executable(test_pptx_roundtrip test_pptx_roundtrip.c)
 target_link_libraries(test_pptx_roundtrip PRIVATE wubuoxml wubuxml wubuzip)
 add_test(NAME pptx_roundtrip COMMAND test_pptx_roundtrip)
+
+add_executable(test_pdf_i18n test_pdf_i18n.c)
+target_link_libraries(test_pdf_i18n PRIVATE wubuexp wubulayout wubumodel wubuxml wubuzip m)
+add_test(NAME pdf_i18n COMMAND test_pdf_i18n)
