@@ -153,3 +153,9 @@ create/list/close/quit). Upgrade to superiority:
   visit[] cycle guarding -- B1=11 OK, chained C1=12 OK. NOT a bug; retracted.
 - Lesson (re-affirmed): reproduce before fixing; the resolver design
   (recursive + cycle guard) is the same pattern the research recommends.
+
+### Hop 10b (2026-08-22): H6c shipped -- calcPr fullCalcOnLoad
+- Research (PhpSpreadsheet #456, SO): xlsx writers must emit
+  <calcPr fullCalcOnLoad="1"/> or Excel shows stale cached values on open.
+- Shipped: wubucell_assemble now emits it; verified present in the assembled
+  workbook.xml inside the zip. Closes the "stale formulas in Excel" gap.
