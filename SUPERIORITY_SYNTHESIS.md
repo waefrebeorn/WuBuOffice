@@ -104,3 +104,15 @@ create/list/close/quit). Upgrade to superiority:
   executes through the shell's own action path (run_tb_cmd/run_menu_cmd),
   then the a11y tree reflects the result. ctest covers the loop.
 - Live-verified: WUOS_ACT="tab:4" -> tree reports Editor selected.
+
+### Hop 5 (2026-08-22): H5 shipped -- ODTTF embedded fonts
+- odttf.c: GUID-reversed XOR key decode, byte-exact round-trip test.
+- BONUS real bug found by the negative test: font_open() SEGV'd on corrupt
+  blobs (n_tables unchecked vs blob size). Bounds guard added.
+
+### Hop 6 (2026-08-22): H6 shipped -- table styles
+- table_styles.c: parses styles.xml table styles (type="table"), walks
+  basedOn chains (cycle-safe), applies tblLook-selected conditional formats
+  (firstRow/lastRow/band1H/band2H) per row. Header rows resolve bold+
+  centered+accent shading with zero direct formatting. Test covers chain
+  resolution, banding parity, unknown-id safety.
