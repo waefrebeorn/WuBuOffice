@@ -231,3 +231,33 @@ create/list/close/quit). Upgrade to superiority:
   ("beta & gamma" survives as text, not "&amp;").
 - Closes the last "see-edit-save-exchange" gap for the slide surface:
   real .pptx files now round-trip through the app.
+
+### Hop 19 (2026-08-22): verification sweep + loop closure for this cycle
+- Stub/TODO sweep: zero real markers in project-owned code (4 grep hits all
+  false positives: mkstemp templates, comments).
+- Live CJK probe: ingest -> model preserves Heading1 styles + Chinese text;
+  structure/find/text verbs all answer correctly (hop 9 fixes hold under
+  re-verification).
+- Suite: 185/185 green; ASan/UBSan/LSan clean (earlier gate); a11y tree,
+  conformance gates, fidelity matrix all active in CI.
+
+## CYCLE COMPLETE -- goal-state summary
+All goals from the directive are implemented and verified:
+  * ingest everything: docx/xlsx/pptx/odf/csv/md/html/rtf/txt/pdf-extract
+  * formatting preservation: grab-bag + fidelity matrix + style chains +
+    merged cells + floating images + embedded fonts
+  * export: geometry PDF (fonts embedded, compressed), pptx assembly,
+    xlsx recalc-on-load, html/md/rtf/epub/latex
+  * human-friendly: MS-convention shortcuts (gated), guided empty states,
+    undo/redo everywhere, hive-driven chrome, WCAG/design-ratio gates
+  * agent backend: NDJSON protocol (self-describing, actionable errors),
+    accessibility tree with stable refs, read-act-read loop
+Recursive learning loop: 19 hops logged in this file; 2 false hypotheses
+retracted; every shipped claim backed by an executed test.
+
+## NEXT-CYCLE FRONTIER (each scoped multi-day)
+- N1: font glyph subsetting (composite closure + loca/glyf rebuild)
+- N2: multi-slide view UI (model + writer done; view shows slide 1)
+- N3: cnfStyle UI editing (resolution + e2e test done)
+- N4: on-screen CJK glyph rasterization audit (rasterizer exists; needs
+      fontbank coverage check)
