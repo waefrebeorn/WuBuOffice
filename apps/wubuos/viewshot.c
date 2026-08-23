@@ -34,6 +34,7 @@
 #define TAB_H 30
 #define STATUS_H 26
 #define VSHOT_MENU_H 24   /* must precede all uses in this TU */
+#define TOOLBAR_H (((wuos_font_height()+6) + 2) & ~3)       /* same formula as wuos_shell_internal.h */
 
 /* Paint `text` onto the RGBA buffer at (px,py) using the shared FreeType
  * helper (replaces main.c's sdl_text, which draws to an SDL texture). */
@@ -122,7 +123,7 @@ int main(int argc, char **argv){
     /* active view (placed below the tab strip AND the menu bar) */
     unsigned char *rgba=NULL; int rw=0, rh=0;
     int scroll = 0;
-    int view_top = TAB_H + VSHOT_MENU_H;
+    int view_top = TAB_H + VSHOT_MENU_H + TOOLBAR_H;   /* mirror the live shell */
     if (views[active]->render(views[active], WIN_W, WIN_H-view_top-STATUS_H, scroll, &rgba, &rw, &rh)==0 && rgba){
         int draw_w = rw, draw_h = rh;            /* zoom = 1.0 for screenshots */
         int maxscroll = (rh > (WIN_H-view_top-STATUS_H))? rh-(WIN_H-view_top-STATUS_H):0;
@@ -173,6 +174,26 @@ int main(int argc, char **argv){
                    ttx.r,ttx.g,ttx.b, vmenus[mi]);
           mx+=mw;
       } }
+
+    /* toolbar/ribbon row (below the menu bar) — mirrors wuos_frame.c so
+     * screenshots show the same chrome as the live window */
+    { int ty = TAB_H + VSHOT_MENU_H;
+      buf_fill(fb, WIN_W, WIN_H, 0,ty, WIN_W,TOOLBAR_H, tbb.r,tbb.g,tbb.b);
+      buf_fill(fb, WIN_W, WIN_H, 0,ty+TOOLBAR_H-1, WIN_W,1, bd.r,bd.g,bd.b);
+      static const char *tb[] = { "New","Open","Save","Undo","Redo","Find","Replace" };
+      int tx=0;
+      for (size_t bi=0; bi<sizeof tb/sizeof tb[0]; bi++){
+          int bw = (int)strlen(tb[bi])*14 + 22;
+          buf_fill(fb, WIN_W, WIN_H, tx,ty+3, bw,TOOLBAR_H-6, tt.r,tt.g,tt.b);
+          buf_fill(fb, WIN_W, WIN_H, tx,ty+3, bw,1, bd.r,bd.g,bd.b);
+          buf_fill(fb, WIN_W, WIN_H, tx,ty+TOOLBAR_H-4, bw,1, bd.r,bd.g,bd.b);
+          buf_fill(fb, WIN_W, WIN_H, tx,ty+3, 1,TOOLBAR_H-6, bd.r,bd.g,bd.b);
+          buf_fill(fb, WIN_W, WIN_H, tx+bw-1,ty+3, 1,TOOLBAR_H-6, bd.r,bd.g,bd.b);
+          buf_text(fb, WIN_W, WIN_H, tx+11, ty + (TOOLBAR_H-wuos_font_height())/2,
+                   ttx.r,ttx.g,ttx.b, tb[bi]);
+          tx += bw;
+      }
+    }
 
     /* status bar */
     WuosRGB sb = dark ? (WuosRGB)WUOS_DARK_STATUS : (WuosRGB)WUOS_LIGHT_STATUS;
