@@ -211,7 +211,11 @@ static int render(WuView *v, int w, int h, int scroll,
                     }
                 }
             }
-            if (has){
+            /* wubucell_get returns 0 when a cell EXISTS here. The old code did
+             * `if (has)` -- which painted EMPTY slots (reading uninitialized
+             * kind/text -> spurious "0" everywhere) and hid every real value.
+             * Inverted-check bug: draw only when get() SUCCEEDS. */
+            if (has == 0){
                 char buf[64];
                 if (k==WUBUCELL_NUM||k==WUBUCELL_FORM){
                     double v = (k==WUBUCELL_FORM && cached)? cached : num;

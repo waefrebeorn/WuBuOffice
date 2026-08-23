@@ -454,11 +454,24 @@ int doc_render(WuView *v, int w, int h, int scroll,
             wuos_font_draw("(nothing to display)", WUOS_SPACE_8*2, WUOS_SPACE_8*6, 0, ink.r,ink.g,ink.b, fb,w,h);
         }
     }
-    /* ---- inserted objects overlay (chart/draw/math) on the right gutter ---- */
+    /* ---- inserted objects overlay (chart/draw/math) on the right gutter.
+     * GUI_SPEC: a themed CARD with border + heading, and it must NOT cover
+     * the page sheet: it lives strictly right of the TOC separator. ---- */
     if (e->nobj){
         int ox = W - 340; if (ox < 8) ox = 8;
-        wuos_font_draw("Inserted objects:", ox, 16, 1, 30,34,42, fb, W, H);
-        int oy = 40;
+        WuosRGB obj_bg = dark ? WUOS_DARK(OVERLAY_SURFACE) : WUOS_LIGHT(OVERLAY_SURFACE);
+        WuosRGB obj_bd = dark ? WUOS_DARK(OVERLAY_BD)     : WUOS_LIGHT(OVERLAY_BD);
+        WuosRGB obj_tx = dark ? WUOS_DARK(OVERLINE_TEXT)  : WUOS_LIGHT(OVERLINE_TEXT);
+        int oy0 = WUOS_SPACE_8;
+        int oh = H - oy0 - WUOS_SPACE_32;
+        for (int yy=oy0; yy<oy0+oh && yy<H; yy++)
+            for (int xx=ox; xx<W-WUOS_SPACE_8 && xx<W; xx++){
+                size_t di=((size_t)yy*W+xx)*4;
+                fb[di]=obj_bg.r; fb[di+1]=obj_bg.g; fb[di+2]=obj_bg.b;
+            }
+        for (int xx=ox; xx<W-WUOS_SPACE_8; xx++){ size_t di=((size_t)oy0*W+xx)*4; fb[di]=obj_bd.r;fb[di+1]=obj_bd.g;fb[di+2]=obj_bd.b; }
+        wuos_font_draw("Inserted objects:", ox+WUOS_SPACE_8, oy0+WUOS_SPACE_16+wuos_font_height(), 1, obj_tx.r,obj_tx.g,obj_tx.b, fb, W, H);
+        int oy = oy0 + WUOS_SPACE_16 + wuos_font_height()*2;
         for (int i=0;i<e->nobj;i++){
             int pw = e->objw[i], ph = e->objh[i];
             if (ox+pw > W) pw = W-ox;
