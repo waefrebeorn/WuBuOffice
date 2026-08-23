@@ -42,7 +42,10 @@ int main(void){
     FILE *f = fopen("/tmp/wb_i18n.pdf", "rb");
     ck(f != NULL, "pdf written");
     fseek(f, 0, SEEK_END); long fsz = ftell(f); fseek(f, 0, SEEK_SET);
-    ck(fsz > 700000, "embedded font makes the PDF substantial");
+    /* hop 16: FontFile2 is Flate-compressed -- expect ~55-60% of raw
+     * (raw DejaVuSans ~760KB -> ~430KB). Assert compression happened. */
+    ck(fsz > 300000 && fsz < 700000,
+       "compressed embedded font keeps PDF substantial but smaller");
     char buf[32768]; size_t n = fread(buf,1,sizeof buf-1,f); buf[n]=0; fclose(f);
     n = 0; (void)n;
 

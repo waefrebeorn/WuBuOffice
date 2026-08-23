@@ -5,6 +5,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "../wubufont/wubufont.h"
+#include "../wubuzip/deflate.h"
 
 /* ---- helpers ---- */
 static void escape_html(FILE *f, const char *s){
@@ -409,12 +410,22 @@ int wubuexp_pdf_geometry(const wubulayout_doc *L, const char *out){
                    "/FontFile2 %ld 0 R /MissingWidth 500 >>\nendobj\n",
                 descriptor_id, ef ? font_ascent(ef) : 900,
                 ef ? font_descent(ef) : -200, fontfile_id);
-        /* font file */
+        /* font file -- Flate-compressed (hop 16): the raw TTF is ~760KB;
+         * deflate typically halves it. /Length1 preserves the original size
+         * per PDF spec so viewers can validate. */
+        uint8_t *zbuf = NULL; size_t zlen = 0;
+        int compressed = (wubuzip_deflate(fdata, flen, &zbuf, &zlen) == 0
+                          && zlen > 0 && zlen < flen);
         off[nobj++] = ftell(f);
-        fprintf(f, "%ld 0 obj\n<< /Length %zu /Length1 %zu >>\nstream\n",
-                fontfile_id, flen, flen);
-        fwrite(fdata, 1, flen, f);
+        if (compressed)
+            fprintf(f, "%ld 0 obj\n<< /Length %zu /Length1 %zu /Filter /FlateDecode >>\nstream\n",
+                    fontfile_id, zlen, flen);
+        else
+            fprintf(f, "%ld 0 obj\n<< /Length %zu /Length1 %zu >>\nstream\n",
+                    fontfile_id, flen, flen);
+        fwrite(compressed ? zbuf : fdata, 1, compressed ? zlen : flen, f);
         fputs("\nendstream\nendobj\n", f);
+        free(zbuf);
     } else {
         off[nobj++] = ftell(f);
         fprintf(f, "%d 0 obj\n<< /Type /Font /Subtype /CIDFontType2 /BaseFont /Arial-Unicode-MS "
