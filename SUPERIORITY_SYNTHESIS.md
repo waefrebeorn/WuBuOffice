@@ -283,3 +283,13 @@ retracted; every shipped claim backed by an executed test.
 - cjk_fallback ctest proves real pixels: 世界 rasterizes 1888 non-blank
   bytes through the fallback (previously silently skipped).
 - Closes N4; remaining frontier: N2 multi-slide view UI, N3 cnfStyle UI.
+
+### Hop N2 (2026-08-23): multi-slide view UI SHIPPED
+- wubuoxml_pptx_read_multi: reads ALL slide parts of a deck into
+  PptxSlideData array (title + bullets each, capacity 12/96 per slide).
+- Slide view now holds deck state (deck[16], ndeck, deck_ix): opening a
+  .pptx fills the whole deck; Left/Right navigate (store/load around the
+  switch); header shows "2/3  Title"; save flushes current edits and
+  assembles the WHOLE deck via write_multi.
+- deck_cycle ctest: 3-slide write -> read round-trip with per-slide data
+  integrity. Closes N2; remaining frontier: N3 cnfStyle UI editing only.
