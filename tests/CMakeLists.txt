@@ -501,3 +501,7 @@ add_test(NAME a11y_tree COMMAND ${CMAKE_SOURCE_DIR}/tests/test_a11y_tree.sh)
 add_executable(test_odttf test_odttf.c)
 target_link_libraries(test_odttf PRIVATE wubufont wubuzip m)
 add_test(NAME odttf COMMAND test_odttf)
+
+add_executable(test_table_styles test_table_styles.c)
+target_link_libraries(test_table_styles PRIVATE wubuoxml wubuxml)
+add_test(NAME table_styles COMMAND test_table_styles)
