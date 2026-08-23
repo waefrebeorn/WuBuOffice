@@ -311,3 +311,13 @@ retracted; every shipped claim backed by an executed test.
 ## FRONTIER CLEAR
 N1 subsetting / N2 multi-slide UI / N3 char formatting / N4 CJK fallback --
 all shipped and tested. The tracked goal list is complete; 189/189 green.
+
+### Hop 20 (2026-08-23): table accessibility audit shipped
+- Research: MS Word accessibility checker flags merged cells, blank table
+  rows, missing header rows (screen readers lose cell count across merges).
+- a11y_check_doc now walks tables recursively from doc_root and flags:
+  merged/split cells (gridSpan/vMerge), completely blank rows, tables with
+  fewer than 2 rows (no header).
+- Bug found while building: doc_root is the first PARENTLESS node (often the
+  SECTION), not a special DOC wrapper -- walk fixed to recurse from it.
+- a11y_tables ctest: 4 scenarios (merged/blank/single-row/clean) green.
