@@ -21,7 +21,7 @@ tests/CMakeFiles/test_rtf_json.dir/test_rtf_json.c.o: \
  /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
  /home/wubu/WuBuOffice/tests/../apps/wubudoc/model_json.h \
  /home/wubu/WuBuOffice/tests/../apps/wubudoc/../wubucell/cell.h \
- /home/wubu/WuBuOffice/src/wubuoxml/../wubuoxml/package.h \
+ /home/wubu/WuBuOffice/tests/../apps/wubudoc/../wubucell/../wubuoxml/package.h \
  /usr/include/stdio.h /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h \
  /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \
@@ -36,11 +36,14 @@ tests/CMakeFiles/test_rtf_json.dir/test_rtf_json.c.o: \
  /usr/include/x86_64-linux-gnu/bits/stdio.h \
  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
  /home/wubu/WuBuOffice/tests/../apps/wubudoc/../wubushow/show.h \
+ /home/wubu/WuBuOffice/tests/../apps/wubudoc/../wubushow/../wubuoxml/package.h \
  /home/wubu/WuBuOffice/tests/../apps/wubudoc/doc_md.h \
  /home/wubu/WuBuOffice/tests/../apps/wubudoc/../wubuword/word.h \
+ /home/wubu/WuBuOffice/tests/../apps/wubudoc/../wubuword/../wubuoxml/package.h \
  /home/wubu/WuBuOffice/src/wubuoxml/../wubuxml/xml.h \
  /home/wubu/WuBuOffice/tests/../apps/wubuword/word.h \
  /home/wubu/WuBuOffice/tests/../apps/wubuword/assemble.h \
+ /home/wubu/WuBuOffice/tests/../apps/wubuword/../wubuoxml/package.h \
  /home/wubu/WuBuOffice/tests/../apps/wubuword/word.h \
  /home/wubu/WuBuOffice/tests/../apps/wubuedit/docmodel.h \
  /home/wubu/WuBuOffice/tests/../apps/wubucell/cell.h \

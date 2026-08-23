@@ -3,7 +3,7 @@ apps/wubulegacy/CMakeFiles/wubulegacy_app.dir/ppt_bin.c.o: \
  /usr/include/stdc-predef.h \
  /home/wubu/WuBuOffice/apps/wubulegacy/legacy.h \
  /home/wubu/WuBuOffice/apps/wubulegacy/../wubucell/cell.h \
- /home/wubu/WuBuOffice/src/wubucfb/../wubuoxml/package.h \
+ /home/wubu/WuBuOffice/apps/wubulegacy/../wubucell/../wubuoxml/package.h \
  /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h \
  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h /usr/include/stdint.h \
  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
@@ -35,6 +35,7 @@ apps/wubulegacy/CMakeFiles/wubulegacy_app.dir/ppt_bin.c.o: \
  /usr/include/x86_64-linux-gnu/bits/stdio.h \
  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
  /home/wubu/WuBuOffice/apps/wubulegacy/../wubushow/show.h \
+ /home/wubu/WuBuOffice/apps/wubulegacy/../wubushow/../wubuoxml/package.h \
  /home/wubu/WuBuOffice/apps/wubulegacy/../wubuedit/docmodel.h \
  /home/wubu/WuBuOffice/apps/wubulegacy/legacy_internal.h \
  /usr/include/stdlib.h /usr/include/x86_64-linux-gnu/bits/waitflags.h \

@@ -32,6 +32,24 @@ int wubucell_sheet(wubucell_book *b, const char *name) {
 
 void wubucell_use_shared_strings(wubucell_book *b, int enable) { b->use_sst = enable; }
 
+void wubucell_col_width_set(wubucell_book *b, int sheet, int col, double w) {
+    sheet_t *s = book_sheet(b, sheet); if (!s || col < 1 || col > 4096) return;
+    if (s->ncolw < (size_t)col) {
+        size_t ncap = s->capw ? s->capw : 16;
+        while (ncap < (size_t)col) ncap *= 2;
+        s->colw = realloc(s->colw, ncap * sizeof(double));
+        for (size_t i = s->ncolw; i < ncap; i++) s->colw[i] = 0.0;
+        s->ncolw = (size_t)col; s->capw = ncap;
+    }
+    s->colw[col - 1] = (w > 0) ? w : 0.0;
+}
+
+double wubucell_col_width_get(const wubucell_book *b, int sheet, int col) {
+    const sheet_t *s = book_sheet(b, sheet);
+    if (!s || col < 1 || (size_t)col > s->ncolw) return 0.0;
+    return s->colw[col - 1];
+}
+
 static void set_cell(wubucell_book *b, int sheet, int col, int row, cell_kind kind,
                      double num, const char *text, const char *formula, double cached, int style) {
     sheet_t *s = book_sheet(b, sheet); if (!s) return;
@@ -133,6 +151,14 @@ wubucell_book *wubucell_book_clone(const wubucell_book *src) {
             if (d->merges) memcpy(d->merges, s->merges, s->nmerge * sizeof(*d->merges));
             else d->nmerge = 0;
         }
+        /* per-column widths */
+        d->colw = NULL; d->ncolw = s->ncolw; d->capw = 0;
+        if (s->ncolw){
+            d->capw = s->ncolw;
+            d->colw = malloc(s->ncolw * sizeof(double));
+            if (d->colw) memcpy(d->colw, s->colw, s->ncolw * sizeof(double));
+            else d->ncolw = 0;
+        }
     }
     return b;
 }
@@ -149,6 +175,7 @@ void wubucell_book_restore(wubucell_book *dst, const wubucell_book *snap) {
             free(s2->cells[i].text); free(s2->cells[i].formula);
         }
         free(s2->cells); free(s2->merges);
+        free(s2->colw); s2->colw = NULL; s2->ncolw = 0; s2->capw = 0;
     }
     free(dst->sheets);
     *dst = *tmp;
@@ -180,6 +207,16 @@ char *cell_render_sheet(const wubucell_book *b, const sheet_t *s, size_t sheet_i
     char *out = NULL; size_t n = 0; FILE *m = open_memstream(&out, &n);
     fprintf(m, "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n");
     fprintf(m, "<worksheet xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\">\n");
+    /* per-column width overrides (<cols> must precede <sheetData>) */
+    if (s->ncolw) {
+        fprintf(m, "<cols>\n");
+        for (size_t c = 0; c < s->ncolw; c++) {
+            if (s->colw[c] <= 0.0) continue;
+            fprintf(m, "<col min=\"%d\" max=\"%d\" width=\"%.4g\" customWidth=\"1\"/>\n",
+                    (int)c + 1, (int)c + 1, s->colw[c]);
+        }
+        fprintf(m, "</cols>\n");
+    }
     for (size_t ci = 0; ci < b->ncharts; ci++) {
         if (b->charts[ci].sheet != (int)(sheet_idx + 1)) continue;
         size_t which = 0;

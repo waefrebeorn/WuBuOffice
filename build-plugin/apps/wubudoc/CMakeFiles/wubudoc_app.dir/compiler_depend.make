@@ -151,11 +151,12 @@ apps/wubudoc/CMakeFiles/wubudoc_app.dir/epub.c.o: /home/wubu/WuBuOffice/apps/wub
   /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h
 
 apps/wubudoc/CMakeFiles/wubudoc_app.dir/model_json.c.o: /home/wubu/WuBuOffice/apps/wubudoc/model_json.c \
+  /home/wubu/WuBuOffice/apps/wubuoxml/package.h \
   /home/wubu/WuBuOffice/apps/wubucell/cell.h \
   /home/wubu/WuBuOffice/apps/wubuedit/docmodel.h \
+  /home/wubu/WuBuOffice/apps/wubuoxml/package.h \
   /home/wubu/WuBuOffice/apps/wubushow/show.h \
   /home/wubu/WuBuOffice/apps/wubudoc/model_json.h \
-  /home/wubu/WuBuOffice/src/wubuoxml/package.h \
   /usr/include/features-time64.h \
   /usr/include/features.h \
   /usr/include/stdc-predef.h \
@@ -297,6 +298,8 @@ apps/wubudoc/CMakeFiles/wubudoc_app.dir/model_json.c.o: /home/wubu/WuBuOffice/ap
 /usr/include/x86_64-linux-gnu/gnu/stubs-64.h:
 
 /usr/include/x86_64-linux-gnu/bits/stdlib.h:
+
+/home/wubu/WuBuOffice/apps/wubuoxml/package.h:
 
 /usr/include/x86_64-linux-gnu/bits/string_fortified.h:
 

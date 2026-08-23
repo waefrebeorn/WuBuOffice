@@ -40,17 +40,19 @@ apps/wubuedit/CMakeFiles/wubuedit_app.dir/docmodel.c.o
 
 apps/wubuedit/CMakeFiles/wubuedit_app.dir/edit.c.o
  /home/wubu/WuBuOffice/apps/wubuedit/edit.c
+ /home/wubu/WuBuOffice/apps/wubuoxml/package.h
  /home/wubu/WuBuOffice/apps/wubucell/cell.h
  /home/wubu/WuBuOffice/apps/wubucell/cell_read.h
+ /home/wubu/WuBuOffice/apps/wubuoxml/docx_text.h
+ /home/wubu/WuBuOffice/apps/wubuoxml/reader.h
+ /home/wubu/WuBuOffice/apps/wubuoxml/package.h
  /home/wubu/WuBuOffice/apps/wubushow/show.h
  /home/wubu/WuBuOffice/apps/wubushow/show_read.h
  /home/wubu/WuBuOffice/apps/wubuedit/docmodel.h
  /home/wubu/WuBuOffice/apps/wubuedit/edit.h
+ /home/wubu/WuBuOffice/apps/wubuoxml/package.h
  /home/wubu/WuBuOffice/apps/wubuword/assemble.h
  /home/wubu/WuBuOffice/apps/wubuword/word.h
- /home/wubu/WuBuOffice/src/wubuoxml/docx_text.h
- /home/wubu/WuBuOffice/src/wubuoxml/package.h
- /home/wubu/WuBuOffice/src/wubuoxml/reader.h
  /home/wubu/WuBuOffice/src/wubuxml/xml.h
  /usr/include/features-time64.h
  /usr/include/features.h

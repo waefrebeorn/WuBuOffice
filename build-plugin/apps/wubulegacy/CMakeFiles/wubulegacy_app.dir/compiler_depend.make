@@ -3,12 +3,13 @@
 
 apps/wubulegacy/CMakeFiles/wubulegacy_app.dir/doc_bin.c.o: /home/wubu/WuBuOffice/apps/wubulegacy/doc_bin.c \
   /home/wubu/WuBuOffice/src/wubucfb/cfb.h \
+  /home/wubu/WuBuOffice/apps/wubuoxml/package.h \
   /home/wubu/WuBuOffice/apps/wubucell/cell.h \
   /home/wubu/WuBuOffice/apps/wubuedit/docmodel.h \
+  /home/wubu/WuBuOffice/apps/wubuoxml/package.h \
   /home/wubu/WuBuOffice/apps/wubushow/show.h \
   /home/wubu/WuBuOffice/apps/wubulegacy/legacy.h \
   /home/wubu/WuBuOffice/apps/wubulegacy/legacy_internal.h \
-  /home/wubu/WuBuOffice/src/wubuoxml/package.h \
   /usr/include/features-time64.h \
   /usr/include/features.h \
   /usr/include/stdc-predef.h \
@@ -56,12 +57,13 @@ apps/wubulegacy/CMakeFiles/wubulegacy_app.dir/doc_bin.c.o: /home/wubu/WuBuOffice
 
 apps/wubulegacy/CMakeFiles/wubulegacy_app.dir/legacy_doc_write.c.o: /home/wubu/WuBuOffice/apps/wubulegacy/legacy_doc_write.c \
   /home/wubu/WuBuOffice/src/wubucfb/cfb_write.h \
+  /home/wubu/WuBuOffice/apps/wubuoxml/package.h \
   /home/wubu/WuBuOffice/apps/wubucell/cell.h \
   /home/wubu/WuBuOffice/apps/wubuedit/docmodel.h \
+  /home/wubu/WuBuOffice/apps/wubuoxml/package.h \
   /home/wubu/WuBuOffice/apps/wubushow/show.h \
   /home/wubu/WuBuOffice/apps/wubulegacy/legacy.h \
   /home/wubu/WuBuOffice/apps/wubulegacy/legacy_internal.h \
-  /home/wubu/WuBuOffice/src/wubuoxml/package.h \
   /usr/include/features-time64.h \
   /usr/include/features.h \
   /usr/include/stdc-predef.h \
@@ -109,12 +111,13 @@ apps/wubulegacy/CMakeFiles/wubulegacy_app.dir/legacy_doc_write.c.o: /home/wubu/W
 
 apps/wubulegacy/CMakeFiles/wubulegacy_app.dir/legacy_ppt_write.c.o: /home/wubu/WuBuOffice/apps/wubulegacy/legacy_ppt_write.c \
   /home/wubu/WuBuOffice/src/wubucfb/cfb_write.h \
+  /home/wubu/WuBuOffice/apps/wubuoxml/package.h \
   /home/wubu/WuBuOffice/apps/wubucell/cell.h \
   /home/wubu/WuBuOffice/apps/wubuedit/docmodel.h \
+  /home/wubu/WuBuOffice/apps/wubuoxml/package.h \
   /home/wubu/WuBuOffice/apps/wubushow/show.h \
   /home/wubu/WuBuOffice/apps/wubulegacy/legacy.h \
   /home/wubu/WuBuOffice/apps/wubulegacy/legacy_internal.h \
-  /home/wubu/WuBuOffice/src/wubuoxml/package.h \
   /usr/include/features-time64.h \
   /usr/include/features.h \
   /usr/include/stdc-predef.h \
@@ -162,12 +165,13 @@ apps/wubulegacy/CMakeFiles/wubulegacy_app.dir/legacy_ppt_write.c.o: /home/wubu/W
 
 apps/wubulegacy/CMakeFiles/wubulegacy_app.dir/legacy_xls_write.c.o: /home/wubu/WuBuOffice/apps/wubulegacy/legacy_xls_write.c \
   /home/wubu/WuBuOffice/src/wubucfb/cfb_write.h \
+  /home/wubu/WuBuOffice/apps/wubuoxml/package.h \
   /home/wubu/WuBuOffice/apps/wubucell/cell.h \
   /home/wubu/WuBuOffice/apps/wubuedit/docmodel.h \
+  /home/wubu/WuBuOffice/apps/wubuoxml/package.h \
   /home/wubu/WuBuOffice/apps/wubushow/show.h \
   /home/wubu/WuBuOffice/apps/wubulegacy/legacy.h \
   /home/wubu/WuBuOffice/apps/wubulegacy/legacy_internal.h \
-  /home/wubu/WuBuOffice/src/wubuoxml/package.h \
   /usr/include/features-time64.h \
   /usr/include/features.h \
   /usr/include/stdc-predef.h \
@@ -215,12 +219,13 @@ apps/wubulegacy/CMakeFiles/wubulegacy_app.dir/legacy_xls_write.c.o: /home/wubu/W
 
 apps/wubulegacy/CMakeFiles/wubulegacy_app.dir/ppt_bin.c.o: /home/wubu/WuBuOffice/apps/wubulegacy/ppt_bin.c \
   /home/wubu/WuBuOffice/src/wubucfb/cfb.h \
+  /home/wubu/WuBuOffice/apps/wubuoxml/package.h \
   /home/wubu/WuBuOffice/apps/wubucell/cell.h \
   /home/wubu/WuBuOffice/apps/wubuedit/docmodel.h \
+  /home/wubu/WuBuOffice/apps/wubuoxml/package.h \
   /home/wubu/WuBuOffice/apps/wubushow/show.h \
   /home/wubu/WuBuOffice/apps/wubulegacy/legacy.h \
   /home/wubu/WuBuOffice/apps/wubulegacy/legacy_internal.h \
-  /home/wubu/WuBuOffice/src/wubuoxml/package.h \
   /usr/include/features-time64.h \
   /usr/include/features.h \
   /usr/include/stdc-predef.h \
@@ -268,12 +273,13 @@ apps/wubulegacy/CMakeFiles/wubulegacy_app.dir/ppt_bin.c.o: /home/wubu/WuBuOffice
 
 apps/wubulegacy/CMakeFiles/wubulegacy_app.dir/xls_biff.c.o: /home/wubu/WuBuOffice/apps/wubulegacy/xls_biff.c \
   /home/wubu/WuBuOffice/src/wubucfb/cfb.h \
+  /home/wubu/WuBuOffice/apps/wubuoxml/package.h \
   /home/wubu/WuBuOffice/apps/wubucell/cell.h \
   /home/wubu/WuBuOffice/apps/wubuedit/docmodel.h \
+  /home/wubu/WuBuOffice/apps/wubuoxml/package.h \
   /home/wubu/WuBuOffice/apps/wubushow/show.h \
   /home/wubu/WuBuOffice/apps/wubulegacy/legacy.h \
   /home/wubu/WuBuOffice/apps/wubulegacy/legacy_internal.h \
-  /home/wubu/WuBuOffice/src/wubuoxml/package.h \
   /usr/include/features-time64.h \
   /usr/include/features.h \
   /usr/include/stdc-predef.h \
@@ -360,8 +366,6 @@ apps/wubulegacy/CMakeFiles/wubulegacy_app.dir/xls_biff.c.o: /home/wubu/WuBuOffic
 
 /home/wubu/WuBuOffice/apps/wubulegacy/legacy_internal.h:
 
-/home/wubu/WuBuOffice/src/wubuoxml/package.h:
-
 /usr/include/stdio.h:
 
 /home/wubu/WuBuOffice/apps/wubulegacy/legacy.h:
@@ -383,6 +387,8 @@ apps/wubulegacy/CMakeFiles/wubulegacy_app.dir/xls_biff.c.o: /home/wubu/WuBuOffic
 /home/wubu/WuBuOffice/apps/wubulegacy/legacy_xls_write.c:
 
 /usr/include/x86_64-linux-gnu/bits/libc-header-start.h:
+
+/home/wubu/WuBuOffice/apps/wubuoxml/package.h:
 
 /home/wubu/WuBuOffice/apps/wubulegacy/doc_bin.c:
 

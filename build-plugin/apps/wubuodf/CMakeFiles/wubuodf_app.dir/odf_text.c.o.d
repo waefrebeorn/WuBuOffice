@@ -20,7 +20,7 @@ apps/wubuodf/CMakeFiles/wubuodf_app.dir/odf_text.c.o: \
  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
  /home/wubu/WuBuOffice/apps/wubuodf/../wubucell/cell.h \
- /home/wubu/WuBuOffice/src/wubuoxml/../wubuoxml/package.h \
+ /home/wubu/WuBuOffice/apps/wubuodf/../wubucell/../wubuoxml/package.h \
  /usr/include/stdio.h /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h \
  /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \
@@ -35,6 +35,7 @@ apps/wubuodf/CMakeFiles/wubuodf_app.dir/odf_text.c.o: \
  /usr/include/x86_64-linux-gnu/bits/stdio.h \
  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
  /home/wubu/WuBuOffice/apps/wubuodf/../wubushow/show.h \
+ /home/wubu/WuBuOffice/apps/wubuodf/../wubushow/../wubuoxml/package.h \
  /home/wubu/WuBuOffice/apps/wubuodf/odf_body.h \
  /home/wubu/WuBuOffice/apps/wubuodf/../../src/wubuxml/parser.h \
  /home/wubu/WuBuOffice/apps/wubuodf/../../src/wubuoxml/reader.h \

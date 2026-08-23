@@ -2,7 +2,7 @@ tests/CMakeFiles/test_conformance.dir/test_conformance.c.o: \
  /home/wubu/WuBuOffice/tests/test_conformance.c \
  /usr/include/stdc-predef.h \
  /home/wubu/WuBuOffice/tests/../apps/wubuword/word.h \
- /home/wubu/WuBuOffice/src/wubuoxml/../wubuoxml/package.h \
+ /home/wubu/WuBuOffice/tests/../apps/wubuword/../wubuoxml/package.h \
  /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h \
  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h /usr/include/stdint.h \
  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
@@ -37,7 +37,9 @@ tests/CMakeFiles/test_conformance.dir/test_conformance.c.o: \
  /home/wubu/WuBuOffice/tests/../apps/wubuword/assemble.h \
  /home/wubu/WuBuOffice/tests/../apps/wubuword/word.h \
  /home/wubu/WuBuOffice/tests/../apps/wubucell/cell.h \
+ /home/wubu/WuBuOffice/tests/../apps/wubucell/../wubuoxml/package.h \
  /home/wubu/WuBuOffice/tests/../apps/wubushow/show.h \
+ /home/wubu/WuBuOffice/tests/../apps/wubushow/../wubuoxml/package.h \
  /usr/include/stdlib.h /usr/include/x86_64-linux-gnu/bits/waitflags.h \
  /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \

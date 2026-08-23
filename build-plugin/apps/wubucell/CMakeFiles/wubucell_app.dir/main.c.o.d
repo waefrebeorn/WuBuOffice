@@ -1,7 +1,7 @@
 apps/wubucell/CMakeFiles/wubucell_app.dir/main.c.o: \
  /home/wubu/WuBuOffice/apps/wubucell/main.c /usr/include/stdc-predef.h \
  /home/wubu/WuBuOffice/apps/wubucell/cell.h \
- /home/wubu/WuBuOffice/src/wubuoxml/../wubuoxml/package.h \
+ /home/wubu/WuBuOffice/apps/wubucell/../wubuoxml/package.h \
  /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h \
  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h /usr/include/stdint.h \
  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \

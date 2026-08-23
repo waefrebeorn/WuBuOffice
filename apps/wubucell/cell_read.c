@@ -81,6 +81,17 @@ static int on_event(wubuxml_event evt, const wubuxml_info *info, void *user) {
             } else if (strcmp(name, "f") == 0) { st->in_f = 1; st->f_len = 0; }
             else if (strcmp(name, "v") == 0) { st->in_v = 1; st->v_len = 0; }
             else if (strcmp(name, "is") == 0) { st->in_is = 1; }
+            else if (strcmp(name, "col") == 0) {
+                /* <col min max width> -> per-column width override */
+                int cmin = 0, cmax = 0; double w = 0.0;
+                for (int a = 0; a < info->attr_count; a++) {
+                    if (strcmp(info->attr_name[a], "min") == 0) cmin = atoi(info->attr_val[a]);
+                    else if (strcmp(info->attr_name[a], "max") == 0) cmax = atoi(info->attr_val[a]);
+                    else if (strcmp(info->attr_name[a], "width") == 0) w = atof(info->attr_val[a]);
+                }
+                for (int c = cmin; c <= cmax && c > 0 && c <= 4096; c++)
+                    wubucell_col_width_set(st->book, st->sheet_idx, c, w);
+            }
             else if (strcmp(name, "mergeCell") == 0) {
                 const char *ref = NULL;
                 for (int a = 0; a < info->attr_count; a++)

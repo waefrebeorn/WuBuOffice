@@ -21,7 +21,7 @@ apps/wubudoc/CMakeFiles/wubudoc_app.dir/model_json.c.o: \
  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
  /home/wubu/WuBuOffice/apps/wubudoc/../wubucell/cell.h \
- /home/wubu/WuBuOffice/src/wubuoxml/../wubuoxml/package.h \
+ /home/wubu/WuBuOffice/apps/wubudoc/../wubucell/../wubuoxml/package.h \
  /usr/include/stdio.h /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h \
  /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \
@@ -36,6 +36,7 @@ apps/wubudoc/CMakeFiles/wubudoc_app.dir/model_json.c.o: \
  /usr/include/x86_64-linux-gnu/bits/stdio.h \
  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
  /home/wubu/WuBuOffice/apps/wubudoc/../wubushow/show.h \
+ /home/wubu/WuBuOffice/apps/wubudoc/../wubushow/../wubuoxml/package.h \
  /usr/include/string.h \
  /usr/include/x86_64-linux-gnu/bits/types/locale_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h \

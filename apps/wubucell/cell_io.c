@@ -185,6 +185,7 @@ void wubucell_free(wubucell_book *b) {
         for (size_t j = 0; j < b->sheets[i].n; j++) { free(b->sheets[i].cells[j].text); free(b->sheets[i].cells[j].formula); }
         free(b->sheets[i].cells);
         free(b->sheets[i].merges);
+        free(b->sheets[i].colw);
     }
     for (size_t i = 0; i < b->ncharts; i++) { free(b->charts[i].title); free(b->charts[i].cats); free(b->charts[i].vals); }
     free(b->sheets);

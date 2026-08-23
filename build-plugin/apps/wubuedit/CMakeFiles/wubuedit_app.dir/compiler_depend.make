@@ -38,17 +38,19 @@ apps/wubuedit/CMakeFiles/wubuedit_app.dir/docmodel.c.o: /home/wubu/WuBuOffice/ap
   /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h
 
 apps/wubuedit/CMakeFiles/wubuedit_app.dir/edit.c.o: /home/wubu/WuBuOffice/apps/wubuedit/edit.c \
+  /home/wubu/WuBuOffice/apps/wubuoxml/package.h \
   /home/wubu/WuBuOffice/apps/wubucell/cell.h \
   /home/wubu/WuBuOffice/apps/wubucell/cell_read.h \
+  /home/wubu/WuBuOffice/apps/wubuoxml/docx_text.h \
+  /home/wubu/WuBuOffice/apps/wubuoxml/reader.h \
+  /home/wubu/WuBuOffice/apps/wubuoxml/package.h \
   /home/wubu/WuBuOffice/apps/wubushow/show.h \
   /home/wubu/WuBuOffice/apps/wubushow/show_read.h \
   /home/wubu/WuBuOffice/apps/wubuedit/docmodel.h \
   /home/wubu/WuBuOffice/apps/wubuedit/edit.h \
+  /home/wubu/WuBuOffice/apps/wubuoxml/package.h \
   /home/wubu/WuBuOffice/apps/wubuword/assemble.h \
   /home/wubu/WuBuOffice/apps/wubuword/word.h \
-  /home/wubu/WuBuOffice/src/wubuoxml/docx_text.h \
-  /home/wubu/WuBuOffice/src/wubuoxml/package.h \
-  /home/wubu/WuBuOffice/src/wubuoxml/reader.h \
   /home/wubu/WuBuOffice/src/wubuxml/xml.h \
   /usr/include/features-time64.h \
   /usr/include/features.h \
@@ -110,9 +112,11 @@ apps/wubuedit/CMakeFiles/wubuedit_app.dir/edit.c.o: /home/wubu/WuBuOffice/apps/w
 
 /home/wubu/WuBuOffice/apps/wubushow/show.h:
 
-/home/wubu/WuBuOffice/src/wubuoxml/package.h:
+/home/wubu/WuBuOffice/apps/wubuoxml/docx_text.h:
 
 /home/wubu/WuBuOffice/apps/wubucell/cell_read.h:
+
+/home/wubu/WuBuOffice/apps/wubuoxml/package.h:
 
 /home/wubu/WuBuOffice/apps/wubuedit/edit.c:
 
@@ -140,9 +144,9 @@ apps/wubuedit/CMakeFiles/wubuedit_app.dir/edit.c.o: /home/wubu/WuBuOffice/apps/w
 
 /usr/include/x86_64-linux-gnu/bits/floatn-common.h:
 
-/home/wubu/WuBuOffice/src/wubuoxml/docx_text.h:
-
 /usr/include/features-time64.h:
+
+/home/wubu/WuBuOffice/apps/wubuoxml/reader.h:
 
 /home/wubu/WuBuOffice/src/wubuxml/parser.h:
 
@@ -167,8 +171,6 @@ apps/wubuedit/CMakeFiles/wubuedit_app.dir/edit.c.o: /home/wubu/WuBuOffice/apps/w
 /usr/include/x86_64-linux-gnu/bits/stdint-intn.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h:
-
-/home/wubu/WuBuOffice/src/wubuoxml/reader.h:
 
 /usr/include/x86_64-linux-gnu/gnu/stubs-64.h:
 

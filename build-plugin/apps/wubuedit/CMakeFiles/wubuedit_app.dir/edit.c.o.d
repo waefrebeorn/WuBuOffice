@@ -19,11 +19,11 @@ apps/wubuedit/CMakeFiles/wubuedit_app.dir/edit.c.o: \
  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
  /home/wubu/WuBuOffice/apps/wubuedit/docmodel.h \
- /home/wubu/WuBuOffice/src/wubuoxml/../wubuoxml/reader.h \
- /home/wubu/WuBuOffice/src/wubuoxml/../wubuoxml/docx_text.h \
- /home/wubu/WuBuOffice/src/wubuoxml/../wubuoxml/docx_text.h \
+ /home/wubu/WuBuOffice/apps/wubuedit/../wubuoxml/reader.h \
+ /home/wubu/WuBuOffice/apps/wubuedit/../wubuoxml/docx_text.h \
+ /home/wubu/WuBuOffice/apps/wubuedit/../wubuoxml/docx_text.h \
  /home/wubu/WuBuOffice/apps/wubuword/word.h \
- /home/wubu/WuBuOffice/src/wubuoxml/../wubuoxml/package.h \
+ /home/wubu/WuBuOffice/apps/wubuword/../wubuoxml/package.h \
  /usr/include/stdio.h /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h \
  /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \
@@ -41,9 +41,11 @@ apps/wubuedit/CMakeFiles/wubuedit_app.dir/edit.c.o: \
  /home/wubu/WuBuOffice/apps/wubuword/assemble.h \
  /home/wubu/WuBuOffice/apps/wubuword/word.h \
  /home/wubu/WuBuOffice/apps/wubuedit/../wubucell/cell.h \
+ /home/wubu/WuBuOffice/apps/wubuedit/../wubucell/../wubuoxml/package.h \
  /home/wubu/WuBuOffice/apps/wubuedit/../wubucell/cell_read.h \
  /home/wubu/WuBuOffice/apps/wubuedit/../wubucell/cell.h \
  /home/wubu/WuBuOffice/apps/wubuedit/../wubushow/show.h \
+ /home/wubu/WuBuOffice/apps/wubuedit/../wubushow/../wubuoxml/package.h \
  /home/wubu/WuBuOffice/apps/wubuedit/../wubushow/show_read.h \
  /home/wubu/WuBuOffice/apps/wubuedit/../wubushow/show.h \
  /usr/include/stdlib.h /usr/include/x86_64-linux-gnu/bits/waitflags.h \

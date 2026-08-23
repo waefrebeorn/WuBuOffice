@@ -39,6 +39,8 @@ typedef struct {
     char *name;
     cell_t *cells; size_t n, cap;
     struct { int c0, r0, c1, r1; } *merges; size_t nmerge, capm;
+    double *colw; size_t ncolw, capw;   /* per-column width, 1-based index
+                                           (colw[0] = column A); 0 = default */
 } sheet_t;
 
 typedef struct {

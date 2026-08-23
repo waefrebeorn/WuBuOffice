@@ -1,7 +1,7 @@
 tests/CMakeFiles/test_edit.dir/test_edit.c.o: \
  /home/wubu/WuBuOffice/tests/test_edit.c /usr/include/stdc-predef.h \
  /home/wubu/WuBuOffice/tests/../apps/wubuword/word.h \
- /home/wubu/WuBuOffice/src/wubuoxml/../wubuoxml/package.h \
+ /home/wubu/WuBuOffice/tests/../apps/wubuword/../wubuoxml/package.h \
  /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h \
  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h /usr/include/stdint.h \
  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
@@ -38,9 +38,11 @@ tests/CMakeFiles/test_edit.dir/test_edit.c.o: \
  /home/wubu/WuBuOffice/tests/../apps/wubuedit/edit.h \
  /home/wubu/WuBuOffice/tests/../apps/wubuedit/docmodel.h \
  /home/wubu/WuBuOffice/tests/../apps/wubucell/cell.h \
+ /home/wubu/WuBuOffice/tests/../apps/wubucell/../wubuoxml/package.h \
  /home/wubu/WuBuOffice/tests/../apps/wubucell/cell_read.h \
  /home/wubu/WuBuOffice/tests/../apps/wubucell/cell.h \
  /home/wubu/WuBuOffice/tests/../apps/wubushow/show.h \
+ /home/wubu/WuBuOffice/tests/../apps/wubushow/../wubuoxml/package.h \
  /home/wubu/WuBuOffice/tests/../apps/wubushow/show_read.h \
  /home/wubu/WuBuOffice/tests/../apps/wubushow/show.h \
  /home/wubu/WuBuOffice/tests/../src/wubuoxml/reader.h \

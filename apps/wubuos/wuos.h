@@ -33,6 +33,12 @@ struct WuView {
     /* Mouse left-click: x,y in view-local px (below the tab/status chrome).
      * Optional; used for clickable links/objects. May be NULL. */
     void      (*on_click)(WuView *, int x, int y);
+    /* Optional drag interaction (column resize, marquee select...).
+     * drag_start returns 1 to CLAIM the drag for this press position;
+     * move/end follow while claimed. Any may be NULL (no dragging). */
+    int       (*drag_start)(WuView *, int x, int y);
+    void      (*drag_move)(WuView *, int x, int y);
+    void      (*drag_end)(WuView *, int x, int y);
     /* Optional status string builder (caller frees). May be NULL. */
     char     *(*status)(WuView *);
     /* Optional Navigator/sidebar content: returns a malloc'd, NUL-terminated
@@ -159,6 +165,9 @@ int wuos_doc_insert_image_alt(WuView *v, const char *alt);  /* UXA-47 */
 int wuos_doc_insert_qr(WuView *v, const char *text);        /* EXP-89 */
 /* Cell view inspection: active cell + editing state + cell value as string. */
 int  wuos_cell_active(WuView *v, int *col, int *row);
+struct wubucell_book;
+struct wubucell_book *wubucell_view_book(WuView *v);   /* test: view's workbook */
+int cellv_test_col_x(WuView *v, int c);                /* test: column left edge */
 int  wuos_cell_editing(WuView *v);
 void wuos_cell_value(WuView *v, char *out, int outn);   /* current active cell text */
 int  wuos_cell_kind(WuView *v);                         /* -1 empty, 0 str,1 num,2 form */

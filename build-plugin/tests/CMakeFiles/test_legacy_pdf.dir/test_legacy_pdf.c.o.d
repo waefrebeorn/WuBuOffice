@@ -2,7 +2,7 @@ tests/CMakeFiles/test_legacy_pdf.dir/test_legacy_pdf.c.o: \
  /home/wubu/WuBuOffice/tests/test_legacy_pdf.c /usr/include/stdc-predef.h \
  /home/wubu/WuBuOffice/tests/../apps/wubulegacy/legacy.h \
  /home/wubu/WuBuOffice/tests/../apps/wubulegacy/../wubucell/cell.h \
- /home/wubu/WuBuOffice/src/wubucfb/../wubuoxml/package.h \
+ /home/wubu/WuBuOffice/tests/../apps/wubulegacy/../wubucell/../wubuoxml/package.h \
  /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h \
  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h /usr/include/stdint.h \
  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
@@ -34,6 +34,7 @@ tests/CMakeFiles/test_legacy_pdf.dir/test_legacy_pdf.c.o: \
  /usr/include/x86_64-linux-gnu/bits/stdio.h \
  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
  /home/wubu/WuBuOffice/tests/../apps/wubulegacy/../wubushow/show.h \
+ /home/wubu/WuBuOffice/tests/../apps/wubulegacy/../wubushow/../wubuoxml/package.h \
  /home/wubu/WuBuOffice/tests/../apps/wubulegacy/../wubuedit/docmodel.h \
  /home/wubu/WuBuOffice/tests/../apps/wubupdf/pdf.h \
  /home/wubu/WuBuOffice/tests/../apps/wubupdf/../wubuedit/docmodel.h \

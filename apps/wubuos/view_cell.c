@@ -24,7 +24,8 @@ typedef struct { wubucell_book *b; int maxc, maxr;
                  char *path;                /* loaded path (NULL = untitled) */
                  /* hop 11: undo stack (book snapshots, deepest first) */
                  wubucell_book *undo[32]; int undo_n;
-                 wubucell_book *redo[32]; int redo_n; } CellV;
+                 wubucell_book *redo[32]; int redo_n;
+                 int drag_col;              /* column being width-dragged (0=none) */ } CellV;
 
 /* snapshot the book BEFORE a mutation; clears the redo stack */
 static void cellv_push_undo(CellV *e){
@@ -106,8 +107,16 @@ static int render(WuView *v, int w, int h, int scroll,
     int lh = fh + WUOS_SPACE_8;
     int margin_x = WUOS_SPACE_8 * 5;    /* 40px */
     int margin_y = WUOS_SPACE_8 * 7;    /* 56px */
-    int cw = WUOS_SPACE_8 * 11;         /* 88px cell width */
+    int cw_def = WUOS_SPACE_8 * 11;     /* default column width (px) */
+    /* Per-column pixel width: model override (Excel char units, ~8px/unit)
+     * wins; otherwise the default. Column x is the running sum — columns are
+     * no longer one ecstatic hardcoded shape. */
+#define CELL_COL_PX(c) ((int)(wubucell_col_width_get(e->b,1,c) * 8.0) > 0 \
+                        ? (int)(wubucell_col_width_get(e->b,1,c) * 8.0) : cw_def)
+    int cw = cw_def;   /* representative width for fill-count estimates */
     int rh2 = lh;
+    /* helper: left edge of column c (1-based), relative to margin_x */
+    #define CELL_COL_X(c) ({ int _x = 0; for (int _c = 1; _c < (c); _c++) _x += CELL_COL_PX(_c); _x; })
 
     /* Render a grid that FILLS the visible area (Excel-like), not just the
      * data extent: at least enough columns/rows to cover the viewport so a
@@ -166,12 +175,21 @@ static int render(WuView *v, int w, int h, int scroll,
     }
     wuos_font_draw(shown, fx_x0 + WUOS_SPACE_8 * 6, fx_y0 + WUOS_SPACE_4 + fh, 0, cel_fx_text.r,cel_fx_text.g,cel_fx_text.b, fb,w,h);
 
-    /* column headers (A, B, C...) */
+    /* column headers (A, B, C...) — centered in each variable-width column */
     for (int c=1; c<=gmaxc; c++){
         char lab[8]; int cc=c-1; lab[0]=(cc<26)?'A'+cc:(('A'+(cc/26)-1)); if(cc>=26) lab[1]='A'+(cc%26); else lab[1]=0;
         int on=(c==e->curc);
         WuosRGB hdr_col = on ? cel_active : cel_hdr;
-        wuos_font_draw(lab, margin_x + c*cw + WUOS_SPACE_4, margin_y + fh, 0, hdr_col.r,hdr_col.g,hdr_col.b, fb,w,h);
+        int hx = margin_x + CELL_COL_X(c);
+        int cpw = CELL_COL_PX(c);
+        /* header band + resize-divider affordance at the column's right edge */
+        for (int xx=hx; xx<hx+cpw && xx<w; xx++)
+            for (int yy=margin_y; yy<margin_y+fh+4 && yy<h; yy++){
+                size_t i=((size_t)yy*w+xx)*4;
+                int edge = (xx == hx+cpw-1 || yy == margin_y+fh+3);
+                fb[i] = edge ? cel_edge.r : cel_bg.r; fb[i+1]=edge?cel_edge.g:cel_bg.g; fb[i+2]=edge?cel_edge.b:cel_bg.b;
+            }
+        wuos_font_draw(lab, hx + WUOS_SPACE_4, margin_y + fh, 0, hdr_col.r,hdr_col.g,hdr_col.b, fb,w,h);
     }
 
     /* row headers + cells */
@@ -188,16 +206,17 @@ static int render(WuView *v, int w, int h, int scroll,
         for (int c=1; c<=gmaxc; c++){
             wubucell_ckind k; const char *t=NULL; double num=0, cached=0;
             int has = wubucell_get(e->b, 1, c, r, &k, &t, &num, &cached);
-            int x = margin_x + c*cw;
+            int x = margin_x + CELL_COL_X(c);
+            int cpw = CELL_COL_PX(c);
             int y = margin_y + r*rh2;
             int active = (c==e->curc && r==e->curr);
             int referenced = 0;
             for (int ri=0; ri<nref; ri++) if (refcol[ri]==c && refrow[ri]==r){ referenced=1; break; }
             for (int yy=y; yy<y+rh2; yy++) {
-                for (int xx=x; xx<x+cw; xx++) {
+                for (int xx=x; xx<x+cpw; xx++) {
                     if (xx>=w||yy>=h) continue;
                     size_t i=((size_t)yy*w+xx)*4;
-                    int edge = (xx==x||yy==y||xx==x+cw-1||yy==y+rh2-1);
+                    int edge = (xx==x||yy==y||xx==x+cpw-1||yy==y+rh2-1);
                     if (active){
                         fb[i]=cel_active.r; fb[i+1]=cel_active.g; fb[i+2]=cel_active.b;
                     } else {
@@ -206,7 +225,7 @@ static int render(WuView *v, int w, int h, int scroll,
                     }
                     /* overlay a 2px referenced-cell ring */
                     if (referenced && (xx==x||xx==x+1||yy==y||yy==y+1||
-                                       xx==x+cw-2||xx==x+cw-1||yy==y+rh2-2||yy==y+rh2-1)){
+                                       xx==x+cpw-2||xx==x+cpw-1||yy==y+rh2-2||yy==y+rh2-1)){
                         fb[i]=cel_ref.r; fb[i+1]=cel_ref.g; fb[i+2]=cel_ref.b;
                     }
                 }
@@ -225,7 +244,7 @@ static int render(WuView *v, int w, int h, int scroll,
                 }
                 /* clip the value to the cell width so long strings ("Total
                  * revenue") don't bleed into the neighbor cell */
-                int avail = cw - WUOS_SPACE_8;
+                int avail = cpw - WUOS_SPACE_8;
                 while (buf[0] && wuos_font_text_width(buf, wuos_font_height()) > avail)
                     buf[strlen(buf)-1] = '\0';
                 wuos_font_draw(buf, x+WUOS_SPACE_4, y+fh, 0, cel_body.r,cel_body.g,cel_body.b, fb,w,h);
@@ -387,21 +406,71 @@ static void on_key(WuView *v, int key, int down){
 
 static void destroy(WuView *v){ CellV *e = v->priv; wubucell_free(e->b); free(e->path); free(e); free(v); }
 
-/* Mouse: click a grid cell to select it (same geometry as the renderer:
- * margin_x=40, margin_y=56, cw=88, row height = font height + 8). */
+/* Column geometry shared by render/click/drag. Default width 88px; a model
+ * override is Excel char-units (~8px per unit). */
+#define CELL_MGX 40
+#define CELL_CW_DEF (WUOS_SPACE_8 * 11)
+static int cellv_col_px(const CellV *e, int c){
+    double w = wubucell_col_width_get(e->b, 1, c);
+    return (w > 0) ? (int)(w * 8.0) : CELL_CW_DEF;
+}
+static int cellv_col_x(const CellV *e, int c){   /* left edge, view-local */
+    int x = CELL_MGX;
+    for (int i = 1; i < c; i++) x += cellv_col_px(e, i);
+    return x;
+}
+/* which column's resize divider sits at x? (-1 none). Divider = rightmost
+ * 4px of a column header. */
+static int cellv_divider_at(const CellV *e, int x){
+    for (int c = 1; c <= e->maxc + 24 && cellv_col_x(e, c) < 4000; c++){
+        int right = cellv_col_x(e, c) + cellv_col_px(e, c);
+        if (x >= right - 2 && x <= right + 2) return c;
+    }
+    return -1;
+}
+
+/* Mouse: click a grid cell to select it. */
 static void on_click(WuView *v, int x, int y){
     CellV *e = v->priv;
     if (!e) return;
-    enum { MGX = 40, MGY = 56, CW = 88 };
+    enum { MGY = 56 };
     int rh2 = wuos_font_height() + WUOS_SPACE_8;
-    if (x < MGX || y < MGY) return;                 /* header strips / gutter */
-    int c = (x - MGX) / CW + 1;
+    if (x < CELL_MGX || y < MGY) return;            /* header strips / gutter */
+    /* column = first c whose [left,right) contains x */
+    int c = 1;
+    while (cellv_col_x(e, c + 1) <= x) c++;
     int r = (y - MGY) / (rh2 ? rh2 : 1) + 1;
     if (c < 1) c = 1;
     if (r < 1) r = 1;
     e->curc = c > e->maxc ? e->maxc : c;
     e->curr = r > e->maxr ? e->maxr : r;
     e->editing = 0;
+}
+
+/* Drag on a column-header divider resizes that column (Excel behavior). */
+static int drag_start(WuView *v, int x, int y){
+    CellV *e = v->priv;
+    if (!e || y > wuos_font_height() + WUOS_SPACE_16) return 0;  /* must be in header band */
+    int c = cellv_divider_at(e, x);
+    if (c <= 0) return 0;
+    e->drag_col = c;
+    return 1;
+}
+
+static void drag_move(WuView *v, int x, int y){
+    (void)y;
+    CellV *e = v->priv;
+    if (!e || e->drag_col < 1) return;
+    int px = x - CELL_MGX;
+    for (int i = 1; i < e->drag_col; i++) px -= cellv_col_px(e, i);
+    if (px < 24) px = 24;                    /* sane minimum width */
+    wubucell_col_width_set(e->b, 1, e->drag_col, px / 8.0);
+}
+
+static void drag_end(WuView *v, int x, int y){
+    (void)x; (void)y;
+    CellV *e = v->priv;
+    if (e) e->drag_col = 0;
 }
 
 static const char *get_path(WuView *v){ CellV *e = v->priv; return e->path; }
@@ -454,12 +523,26 @@ WuView *wuos_cell_create(const char *path){
     v->sidebar = sidebar;
     v->on_key  = on_key;
     v->on_click = on_click;
+    v->drag_start = drag_start;
+    v->drag_move  = drag_move;
+    v->drag_end   = drag_end;
     v->get_path = get_path;
     v->save    = save;   /* round-trip: Ctrl+S writes back to the loaded format */
     return v;
 }
 
 /* ---- test accessors ---- */
+wubucell_book *wubucell_view_book(WuView *v){
+    CellV *e = v ? v->priv : NULL;
+    return e ? e->b : NULL;
+}
+
+/* test hook: left edge (view-local px) of 1-based column c */
+int cellv_test_col_x(WuView *v, int c){
+    CellV *e = v ? v->priv : NULL;
+    return e ? cellv_col_x(e, c) : 0;
+}
+
 int wuos_cell_active(WuView *v, int *col, int *row){
     CellV *e = v->priv; if(col)*col=e->curc; if(row)*row=e->curr; return 0;
 }

@@ -51,6 +51,12 @@ int  wubucell_merge_count(const wubucell_book *b, int sheet);
 int  wubucell_merge_get(const wubucell_book *b, int sheet, int i,
                         int *c0, int *r0, int *c1, int *r1);
 
+/* Per-column width (1-based col). Width is in Excel character units (the
+ * value stored in <col width="...">), default 0 = unset (view picks its
+ * default). Setting width 0 clears the override. */
+void   wubucell_col_width_set(wubucell_book *b, int sheet, int col, double w);
+double wubucell_col_width_get(const wubucell_book *b, int sheet, int col);
+
 /* Add a bar chart to a sheet referencing a cell range. `title` may be NULL.
  * cats = "Sheet1!A2:A5" style range of category labels, vals = numeric range.
  * Returns a 1-based chart index (used only for bookkeeping). */

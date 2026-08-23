@@ -41,6 +41,7 @@ int     tab_drag_from = -1;  /* index of tab being dragged, -1 none */
 int     tab_drag_x = 0;      /* pointer x at drag start */
 float   g_zoom = 1.0f;       /* UI-24: shell-level zoom */
 int     g_zoom_drag = 0;     /* zoom slider being dragged */
+int     view_drag = 0;       /* a view claimed the drag (column resize...) */
 int     g_sidebar = 1;       /* docked Navigator panel shown? */
 int     g_ctx = 0;           /* UI-27: context menu open? */
 int     g_ctx_item = 0;      /* highlighted item */
@@ -518,7 +519,14 @@ int main(int argc, char **argv){
                 else if (views[active]->on_click){  /* clickable links/objects */
                     int lx = e.button.x;
                     int ly = e.button.y - TAB_H - MENU_H - TOOLBAR_H;
-                    if (ly >= 0) views[active]->on_click(views[active], lx, ly);
+                    if (ly >= 0){
+                        /* a view drag (column resize...) claims the press first */
+                        if (views[active]->drag_start &&
+                            views[active]->drag_start(views[active], lx, ly))
+                            view_drag = 1;
+                        else if (views[active]->on_click)
+                            views[active]->on_click(views[active], lx, ly);
+                    }
                 }
             }
             else if (e.type==SDL_MOUSEBUTTONDOWN && e.button.button==SDL_BUTTON_RIGHT){
@@ -545,9 +553,21 @@ int main(int argc, char **argv){
                     tab_drag_from = target;   /* follow the tab we're dragging */
                 }
             }
+            else if (e.type==SDL_MOUSEMOTION && view_drag &&
+                     views[active] && views[active]->drag_move){
+                int lx = e.motion.x;
+                int ly = e.motion.y - TAB_H - MENU_H - TOOLBAR_H;
+                views[active]->drag_move(views[active], lx, ly);
+            }
             else if (e.type==SDL_MOUSEBUTTONUP && e.button.button==SDL_BUTTON_LEFT){
                 g_zoom_drag = 0;   /* release zoom drag */
                 tab_drag_from = -1; /* release tab drag */
+                if (view_drag && views[active] && views[active]->drag_end){
+                    int lx = e.button.x;
+                    int ly = e.button.y - TAB_H - MENU_H - TOOLBAR_H;
+                    views[active]->drag_end(views[active], lx, ly);
+                }
+                view_drag = 0;
             }
             else if (e.type==SDL_DROPFILE){   /* UI-28: drag-drop open */
                 char *dropped = e.drop.file;

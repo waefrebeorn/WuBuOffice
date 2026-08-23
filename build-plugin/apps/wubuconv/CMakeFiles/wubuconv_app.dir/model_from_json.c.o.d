@@ -21,7 +21,7 @@ apps/wubuconv/CMakeFiles/wubuconv_app.dir/model_from_json.c.o: \
  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
  /home/wubu/WuBuOffice/apps/wubuconv/../wubucell/cell.h \
- /home/wubu/WuBuOffice/src/wubuoxml/../wubuoxml/package.h \
+ /home/wubu/WuBuOffice/apps/wubuconv/../wubucell/../wubuoxml/package.h \
  /usr/include/stdio.h /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h \
  /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \
@@ -36,6 +36,7 @@ apps/wubuconv/CMakeFiles/wubuconv_app.dir/model_from_json.c.o: \
  /usr/include/x86_64-linux-gnu/bits/stdio.h \
  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
  /home/wubu/WuBuOffice/apps/wubuconv/../wubushow/show.h \
+ /home/wubu/WuBuOffice/apps/wubuconv/../wubushow/../wubuoxml/package.h \
  /home/wubu/WuBuOffice/src/wubujson/json.h /usr/include/stdlib.h \
  /usr/include/x86_64-linux-gnu/bits/waitflags.h \
  /usr/include/x86_64-linux-gnu/bits/waitstatus.h \

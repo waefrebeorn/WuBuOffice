@@ -58,6 +58,30 @@ int testview_cell(void){
                 if (strcmp(f,"A1+A1")!=0){ fprintf(stderr,"[cell] formula stored='%s' want 'A1+A1'\n",f); bad++; }
                 else fprintf(stderr,"[cell] ok (live edit at %c%d formula='%s')\n", 'A'+c-1, r, f);
             }
+            /* ---- CELL column widths: model set/get + drag-resize + click
+             * geometry must all agree (columns are no longer hardcoded). */
+            {
+                wubucell_col_width_set(wubucell_view_book(cv), 1, 2, 20.0);  /* col B = 160px */
+                if (wubucell_col_width_get(wubucell_view_book(cv),1,2) != 20.0){
+                    fprintf(stderr,"[cell] col width set/get FAILED\\n"); bad++;
+                } else fprintf(stderr,"[cell] ok (col width model round-trip)\\n");
+                /* drag on B's header divider: B spans [128,288); divider at ~x=290 */
+                int claimed = cv->drag_start(cv, 289, wuos_font_height()+4);
+                if (!claimed){ fprintf(stderr,"[cell] resize drag not claimed at divider\\n"); bad++; }
+                else {
+                    /* B's new right edge at x=288 => B width = 288-40-88(A) = 160px = 20 units */
+                    cv->drag_move(cv, 288, 20);
+                    cv->drag_end(cv, 288, 20);
+                    double wd = wubucell_col_width_get(wubucell_view_book(cv),1,2);
+                    if (wd < 19.0 || wd > 21.0){ fprintf(stderr,"[cell] drag width %.2f want ~20\\n", wd); bad++; }
+                    else fprintf(stderr,"[cell] ok (drag resize col B -> %.0f units)\\n", wd);
+                }
+                /* click inside the widened B column selects B; click in C stays right of it */
+                cv->on_click(cv, cellv_test_col_x(cv,3) + 8, 100);
+                int cc=0,rr=0; wuos_cell_active(cv,&cc,&rr);
+                if (cc!=3){ fprintf(stderr,"[cell] click after widen: col %d want 3\\n",cc); bad++; }
+                else fprintf(stderr,"[cell] ok (click geometry follows variable widths)\\n");
+            }
             cv->destroy(cv);
 
             /* ---- CELL round-trip: save the edited book to CSV and reload it

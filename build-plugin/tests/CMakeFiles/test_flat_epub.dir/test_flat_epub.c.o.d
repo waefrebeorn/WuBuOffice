@@ -20,7 +20,7 @@ tests/CMakeFiles/test_flat_epub.dir/test_flat_epub.c.o: \
  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
  /home/wubu/WuBuOffice/tests/../apps/wubuodf/../wubucell/cell.h \
- /home/wubu/WuBuOffice/src/wubuoxml/../wubuoxml/package.h \
+ /home/wubu/WuBuOffice/tests/../apps/wubuodf/../wubucell/../wubuoxml/package.h \
  /usr/include/stdio.h /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h \
  /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \
@@ -35,6 +35,7 @@ tests/CMakeFiles/test_flat_epub.dir/test_flat_epub.c.o: \
  /usr/include/x86_64-linux-gnu/bits/stdio.h \
  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
  /home/wubu/WuBuOffice/tests/../apps/wubuodf/../wubushow/show.h \
+ /home/wubu/WuBuOffice/tests/../apps/wubuodf/../wubushow/../wubuoxml/package.h \
  /home/wubu/WuBuOffice/tests/../apps/wubudoc/epub.h \
  /home/wubu/WuBuOffice/tests/../apps/wubudoc/../wubuedit/docmodel.h \
  /home/wubu/WuBuOffice/tests/../apps/wubuedit/docmodel.h \

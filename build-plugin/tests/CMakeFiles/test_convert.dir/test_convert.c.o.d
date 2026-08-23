@@ -19,7 +19,7 @@ tests/CMakeFiles/test_convert.dir/test_convert.c.o: \
  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-least.h \
  /home/wubu/WuBuOffice/tests/../apps/wubuword/assemble.h \
- /home/wubu/WuBuOffice/src/wubuoxml/../wubuoxml/package.h \
+ /home/wubu/WuBuOffice/tests/../apps/wubuword/../wubuoxml/package.h \
  /usr/include/stdio.h /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h \
  /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \
@@ -37,7 +37,9 @@ tests/CMakeFiles/test_convert.dir/test_convert.c.o: \
  /home/wubu/WuBuOffice/src/wubuoxml/../wubuxml/xml.h \
  /home/wubu/WuBuOffice/tests/../apps/wubuword/word.h \
  /home/wubu/WuBuOffice/tests/../apps/wubucell/cell.h \
+ /home/wubu/WuBuOffice/tests/../apps/wubucell/../wubuoxml/package.h \
  /home/wubu/WuBuOffice/tests/../apps/wubushow/show.h \
+ /home/wubu/WuBuOffice/tests/../apps/wubushow/../wubuoxml/package.h \
  /usr/include/stdlib.h /usr/include/x86_64-linux-gnu/bits/waitflags.h \
  /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
