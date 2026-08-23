@@ -98,3 +98,9 @@ create/list/close/quit). Upgrade to superiority:
   JSON structure. Agents and screen readers share one semantic surface.
 - Live-verified: 7 tabs, 30+ menu items with shortcuts+cmd ids, toolbar
   buttons all present in the dump.
+
+### Hop 4 (2026-08-22): H4b shipped -- WUOS_ACT read-act-read loop
+- Agents act on semantic refs: WUOS_ACT="tab:N"|"tb:N"|"menu:M:item:I"
+  executes through the shell's own action path (run_tb_cmd/run_menu_cmd),
+  then the a11y tree reflects the result. ctest covers the loop.
+- Live-verified: WUOS_ACT="tab:4" -> tree reports Editor selected.
