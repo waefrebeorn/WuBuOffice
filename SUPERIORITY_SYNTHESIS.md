@@ -261,3 +261,17 @@ retracted; every shipped claim backed by an executed test.
 - N3: cnfStyle UI editing (resolution + e2e test done)
 - N4: on-screen CJK glyph rasterization audit (rasterizer exists; needs
       fontbank coverage check)
+
+### Hop N1 (2026-08-23): font glyph subsetting SHIPPED
+- wubufont_subset: cmap seed -> composite closure (raw glyf component walk)
+  -> glyph renumber -> glyf/loca(long)/hmtx/cmap(format 4) rebuild -> sfnt
+  assembly with checksums. Self-contained C11 on top of wubufont tables.
+- PDF exporter now embeds the SUBSET for the document's actual codepoints:
+  measured 760KB full DejaVuSans -> 43KB embedded in the PDF (~17x).
+- Bugs found by execution: cmap header wrote numTables=3 (version/numTables
+  confusion) + encoding record at wrong offset; idDelta used FULL-font gids
+  instead of remapped new gids; test had a stack overflow (66 cps into a
+  64-slot array) that manifested as an "impossible" assertion.
+- font_subset ctest: subset <25% of original, opens as valid sfnt, all used
+  codepoints keep exact advance widths. pdf_i18n updated to the subset size
+  band and green.
