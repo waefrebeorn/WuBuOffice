@@ -145,3 +145,11 @@ create/list/close/quit). Upgrade to superiority:
 - Fixed: text verb falls back to model flatten (all doc kinds answer);
   context windows extend forward to char boundaries. Live-verified:
   ingest/text/find round-trip "世界" cleanly.
+
+### Hop 10 (2026-08-22): spreadsheet recalc audit -- hypothesis RETRACTED
+- Suspected: creation-order evaluation would go stale for out-of-order
+  dependencies (B1=A1+1 created before A1 exists).
+- Measured: sub-evaluation resolver resolves dependencies recursively with
+  visit[] cycle guarding -- B1=11 OK, chained C1=12 OK. NOT a bug; retracted.
+- Lesson (re-affirmed): reproduce before fixing; the resolver design
+  (recursive + cycle guard) is the same pattern the research recommends.

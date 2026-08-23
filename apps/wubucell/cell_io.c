@@ -40,7 +40,12 @@ int wubucell_assemble(wubucell_book *b, const char *outpath) {
         fprintf(m, "<workbook xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\">\n<sheets>\n");
         for (size_t i = 0; i < b->n; i++)
             fprintf(m, "  <sheet name=\"%s\" sheetId=\"%zu\" r:id=\"rId%zu\"/>\n", b->sheets[i].name, i + 1, i + 1);
-        fprintf(m, "</sheets>\n</workbook>\n");
+        fprintf(m, "</sheets>\n");
+        /* H6 fidelity: force a full recalculation when Excel/LibreOffice
+         * opens the file -- our cached values may be stale relative to the
+         * formulas if the book was edited externally between saves. */
+        fprintf(m, "<calcPr calcId=\"124519\" fullCalcOnLoad=\"1\"/>\n");
+        fprintf(m, "</workbook>\n");
         fflush(m); fclose(m);
         wubuoxml_add_part(pkg, "xl/workbook.xml", bb, bn);
         free(bb);
