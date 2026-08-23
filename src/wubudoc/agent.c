@@ -271,7 +271,29 @@ char *doc_agent_handle(DocSession *s, const char *command_json) {
     else if (strcmp(name, "quit") == 0) {
         res = j_obj(); j_obj_put(res, "ok", j_bool(1));
     }
-    else { j_free(cmd); return agent_err("unknown command"); }
+    else if (strcmp(name, "help") == 0) {
+        /* AX principle: an agent encountering the protocol for the first time
+         * must be able to discover the verb set without external docs. */
+        static const char *verbs =
+            "{\"verbs\":["
+            "\"open{path}\",\"ingest{type,text|bytes}\",\"json{id}\","
+            "\"text{id}\",\"set{id,model}\",\"media{id,name,bytes}\","
+            "\"create{id,format,path}\",\"find{id,query}\","
+            "\"structure{id}\",\"list\",\"close\",\"quit\"]}";
+        res = j_parse(verbs, NULL);
+        if (!res) res = j_obj();
+    }
+    else if (strcmp(name, "list") == 0) {
+        JVal *arr = j_arr();
+        for (size_t i = 0; i < doc_count(s); i++) {
+            j_arr_push(arr, agent_summary(s, (long)i));
+        }
+        res = j_obj(); j_obj_put(res, "docs", arr);
+    }
+    else {
+        j_free(cmd);
+        return agent_err("unknown command: send {\"cmd\":\"help\"} for the verb list");
+    }
 
     char *s_out = j_emit(res);
     j_free(res);

@@ -56,9 +56,16 @@ int main(void){
     ck(r && strstr(r,"outline"), "structure returns outline");
     free(r);
 
-    /* unknown verb still errors cleanly (protocol stability) */
+    /* unknown verb still errors cleanly + ACTIONABLE (AX principle) */
     r = doc_agent_handle(s, "{\"cmd\":\"teleport\"}");
     ck(r && strstr(r,"unknown command"), "unknown verb -> clean error");
+    ck(r && strstr(r,"help"), "error tells the agent how to recover");
+    free(r);
+
+    /* help: self-describing verb set (AX principle / Karpathy CLI lesson) */
+    r = doc_agent_handle(s, "{\"cmd\":\"help\"}");
+    ck(r && strstr(r,"verbs"), "help lists verbs");
+    ck(r && strstr(r,"find") && strstr(r,"structure"), "help includes new verbs");
     free(r);
 
     doc_session_free(s);
