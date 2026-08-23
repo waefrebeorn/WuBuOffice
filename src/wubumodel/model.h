@@ -129,6 +129,8 @@ const char *wubumodel_node_foreign_name(const wubumodel_node *n);
 const char *wubumodel_node_foreign_raw(const wubumodel_node *n);
 
 int  wubumodel_node_set_tc(wubumodel_node *n, int t);   /* TRACKCHANGE 0=ins,1=del */
+void wubumodel_serialize_body(const wubumodel_doc *doc, char **dst,
+                              size_t *cap, size_t *len); /* WordprocessingML body */
 int  wubumodel_node_tc(const wubumodel_node *n);
 int  wubumodel_node_set_break(wubumodel_node *n, int b); /* PAGEBREAK=0, SECTIONBREAK=1 */
 int  wubumodel_node_break(const wubumodel_node *n);

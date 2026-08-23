@@ -481,3 +481,8 @@ add_executable(test_grabbag test_grabbag.c)
 target_link_libraries(test_grabbag PRIVATE wubuoxml wubumodel wubuxml)
 target_include_directories(test_grabbag PRIVATE ${CMAKE_SOURCE_DIR}/src)
 add_test(NAME grabbag COMMAND test_grabbag)
+
+add_executable(test_fidelity_matrix test_fidelity_matrix.c)
+target_link_libraries(test_fidelity_matrix PRIVATE wubuoxml wubumodel wubuxml)
+target_include_directories(test_fidelity_matrix PRIVATE ${CMAKE_SOURCE_DIR}/src)
+add_test(NAME fidelity_matrix COMMAND test_fidelity_matrix)

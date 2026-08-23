@@ -94,6 +94,24 @@ static void serialize_node(wubumodel_node *n, char **dst, size_t *cap,
             }
             break;
         }
+        case WUBUMODEL_FOREIGN: {
+            /* grab-bag re-emission (F1): the preserved construct goes back
+             * into the document VERBATIM, closing the round-trip loop. */
+            const char *raw = n->text;   /* verbatim captured XML */
+            if (raw && *raw) {
+                size_t rlen = strlen(raw);
+                if (*len + rlen + 1 > *cap) { *cap = (*len + rlen + 512); *dst = realloc(*dst, *cap); }
+                memcpy(*dst + *len, raw, rlen); *len += rlen;
+            } else {
+                /* no raw captured (e.g. built programmatically): emit a
+                 * comment marker so the loss is VISIBLE, not silent. */
+                const char *marker = "<!--wubu:foreign-lost-->";
+                size_t mlen = strlen(marker);
+                if (*len + mlen + 1 > *cap) { *cap = (*len + mlen + 512); *dst = realloc(*dst, *cap); }
+                memcpy(*dst + *len, marker, mlen); *len += mlen;
+            }
+            break;
+        }
         default:
             /* DOC/SECTION/BLOCK/SHAPE/CHART/FIELD/LINK: grouping or
              * not yet represented in v1 docx output; recurse children. */
@@ -101,6 +119,37 @@ static void serialize_node(wubumodel_node *n, char **dst, size_t *cap,
                 serialize_node(c, dst, cap, len, tbl);
             break;
     }
+}
+
+/* Public body serializer (fidelity matrix / agent export): serialize the
+ * document tree into WordprocessingML body XML. */
+void wubumodel_serialize_body(const wubumodel_doc *doc, char **dst,
+                              size_t *cap, size_t *len) {
+    if (!doc || !dst || !cap || !len) return;
+    *dst = NULL; *cap = 0; *len = 0;
+    /* top-level nodes in creation order (by id), matching write_docx */
+    wubumodel_node **top = NULL;
+    size_t ntop = 0, tcap = 0;
+    for (size_t b = 0; b < WUBUMODEL_BUCKETS; b++)
+        for (wubumodel_node *n = doc->nodes[b]; n; n = n->next)
+            if (!n->parent) {
+                if (ntop == tcap) {
+                    tcap = tcap ? tcap * 2 : 16;
+                    wubumodel_node **nt = realloc(top, tcap * sizeof *nt);
+                    if (!nt) { free(top); return; }
+                    top = nt;
+                }
+                top[ntop++] = n;
+            }
+    for (size_t i = 0; i < ntop; i++) {
+        /* order by id: selection sort over the small top-level set */
+        size_t min = i;
+        for (size_t k = i + 1; k < ntop; k++)
+            if (wubumodel_node_id(top[k]) < wubumodel_node_id(top[min])) min = k;
+        wubumodel_node *tmp = top[i]; top[i] = top[min]; top[min] = tmp;
+        serialize_node(top[i], dst, cap, len, 0);
+    }
+    free(top);
 }
 
 int wubumodel_write_docx(const wubumodel_doc *doc, const char *path) {
