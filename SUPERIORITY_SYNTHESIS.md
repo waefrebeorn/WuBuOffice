@@ -332,3 +332,13 @@ all shipped and tested. The tracked goal list is complete; 189/189 green.
 - cell_kbd ctest pins the engine queries (dims + edge lookups).
 
 ### Hop 22 (2026-08-23): doc-view find upgraded -- icase + match counting
+
+### Hop 23 (2026-08-23): performance baseline established (SOTA = measured)
+- wubudoc_serve round-trip (400KB markdown ingest -> model json + structure):
+  8.3 ms
+- wubucell: 10,000-cell fill 19.3 ms; xlsx assemble 33.6 ms
+- PDF export incl. font subset + Flate compress: ~12.7 ms per document
+- pptx 3-slide deck write_multi + read_multi cycle: 3.0 ms
+All operations are single-digit-to-tens of milliseconds at realistic sizes;
+no hot spots warrant optimization this cycle. Baseline recorded for future
+regression comparison.
