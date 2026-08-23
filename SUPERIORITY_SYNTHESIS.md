@@ -174,3 +174,13 @@ create/list/close/quit). Upgrade to superiority:
   props land as direct style on the cell's runs (bold/center/shading).
 - model_io passes word/styles.xml through. E2E test tbl_styles_e2e proves
   the header run carries resolved bold after a full ingest.
+
+### Hop 13 (2026-08-22): H13 shipped -- pptx assembler
+- pptx_write.c: assembles a minimal VALID .pptx (presentation.xml, slide
+  master, slide1 with title placeholder + bullet body, content types, all
+  rels) from the slide model via the wubuoxml package writer.
+- Verified: package reads back, all XML parts well-formed (ElementTree),
+  content types correct, and wubuoxml_pptx_text round-trips title+bullets.
+- The slide deck can now be exchanged with PowerPoint/LibreOffice/Keynote --
+  closes the "slides save only as line-based text" gap noted in the depth
+  check.
