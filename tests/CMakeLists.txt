@@ -490,3 +490,8 @@ add_test(NAME fidelity_matrix COMMAND test_fidelity_matrix)
 add_executable(test_shortcut_conformance test_shortcut_conformance.c)
 target_compile_definitions(test_shortcut_conformance PRIVATE WUBUOS_SRC="${CMAKE_SOURCE_DIR}/apps/wubuos")
 add_test(NAME shortcut_conformance COMMAND test_shortcut_conformance)
+
+add_executable(test_float_wrap test_float_wrap.c)
+target_link_libraries(test_float_wrap PRIVATE wubulayout wubuoxml wubumodel wubuxml)
+target_include_directories(test_float_wrap PRIVATE ${CMAKE_SOURCE_DIR}/src)
+add_test(NAME float_wrap COMMAND test_float_wrap)

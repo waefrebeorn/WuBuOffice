@@ -20,6 +20,9 @@ typedef struct {
     int capture_depth0;           /* stack depth when capture started */
     char *capbuf; size_t capcap, caplen;
     char capname[64];
+    wubumodel_node *float_node;   /* H3: open wp:anchor image */
+    int anchor_cx, anchor_cy;     /* H3: extent in px */
+    int float_side, float_wrap;   /* H3: side/wrap collected from anchor */
 } ctx_t;
 
 static wubumodel_node *top(ctx_t *c) {
@@ -112,6 +115,61 @@ static int on_event(wubuxml_event evt, const wubuxml_info *info, void *user) {
         return 0;
     }
 
+    /* ---- H3: floating image anchor (wp:anchor) ----
+     * Record side/wrap/extent from the anchor's attrs + children so the
+     * layout can square-wrap body text around the image. The image node
+     * itself is emitted when the anchor closes. */
+    if (evt == WUBUXML_EVT_START
+        && (strcmp(info->name, "wp:anchor") == 0
+            || strcmp(info->name, "anchor") == 0)){
+        flush_text(c);
+        c->anchor_cx = c->anchor_cy = 0;
+        c->float_side = 2; c->float_wrap = 1;   /* defaults: right, square */
+        c->float_node = (wubumodel_node *)1;    /* collecting */
+        return 0;
+    }
+    if (c->float_node && evt == WUBUXML_EVT_START){
+        if (info->name && strcmp(info->name, "wp:positionH") == 0){
+            for (int i = 0; i < info->attr_count; i++)
+                if (strcmp(info->attr_name[i], "relativeFrom") == 0
+                    && strstr(info->attr_val[i], "left"))
+                    c->float_side = 1;
+        }
+        /* extent cx/cy are in EMUs: 914400 per inch, 96 px/inch */
+        if (strcmp(info->name, "wp:extent") == 0 || strcmp(info->name, "extent") == 0){
+            for (int i = 0; i < info->attr_count; i++){
+                if (strcmp(info->attr_name[i], "cx") == 0)
+                    c->anchor_cx = (int)(atoll(info->attr_val[i]) * 96 / 914400);
+                else if (strcmp(info->attr_name[i], "cy") == 0)
+                    c->anchor_cy = (int)(atoll(info->attr_val[i]) * 96 / 914400);
+            }
+        }
+        else if (strcmp(info->name, "wp:wrapNone") == 0
+              || strcmp(info->name, "wrapNone") == 0){
+            wubumodel_node_set_float(c->float_node, 0, 0, 0, 0);
+        }
+        else if (strcmp(info->name, "wp:wrapTopAndBottom") == 0
+              || strcmp(info->name, "wrapTopAndBottom") == 0){
+            wubumodel_node_set_float(c->float_node, 0, 2, 0, 0);
+        }
+        return 0;   /* swallow anchor children from text flow */
+    }
+    if (c->float_node && evt == WUBUXML_EVT_END
+        && (strcmp(info->name, "wp:anchor") == 0
+            || strcmp(info->name, "anchor") == 0)){
+        /* emit the floating image node now that extent/wrap are known */
+        wubumodel_node *parent = top(c);
+        if (parent){
+            wubumodel_node *im = wubumodel_node_create(c->doc, WUBUMODEL_IMAGE);
+            wubumodel_node_set_float(im, c->float_side, c->float_wrap,
+                                     c->anchor_cx ? c->anchor_cx : 120,
+                                     c->anchor_cy ? c->anchor_cy : 120);
+            wubumodel_node_append(c->doc, parent, im);
+        }
+        c->float_node = NULL;
+        return 0;
+    }
+
     /* entering capture: a namespaced element we do not model */
     if (evt == WUBUXML_EVT_START && strncmp(info->name, "w:", 2) == 0
         && !known_w(info->name + 2)){
@@ -119,7 +177,8 @@ static int on_event(wubuxml_event evt, const wubuxml_info *info, void *user) {
         const char *l = info->name + 2;
         if (!strcmp(l,"rPr") || !strcmp(l,"pPr") || !strcmp(l,"tblPr")
             || !strcmp(l,"tcPr") || !strcmp(l,"trPr") || !strcmp(l,"sectPr")
-            || !strcmp(l,"bookmarkStart") || !strcmp(l,"bookmarkEnd")){
+            || !strcmp(l,"bookmarkStart") || !strcmp(l,"bookmarkEnd")
+            || !strcmp(l,"drawing")){   /* H3: handled by the anchor branch */
             return 0;   /* silently ignore property wrappers */
         }
         flush_text(c);

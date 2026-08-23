@@ -212,6 +212,19 @@ const char *wubumodel_node_foreign_name(const wubumodel_node *n){
 const char *wubumodel_node_foreign_raw(const wubumodel_node *n){
     return (n && n->kind == WUBUMODEL_FOREIGN) ? n->text : NULL;
 }
+
+int  wubumodel_node_set_float(wubumodel_node *n, int side, int wrap,
+                              int w, int h){
+    if (!n) return -1;
+    n->float_side = side; n->float_wrap = wrap;
+    if (w > 0) n->img_w = w;
+    if (h > 0) n->img_h = h;
+    return 0;
+}
+int wubumodel_node_float_side(const wubumodel_node *n){ return n?n->float_side:0; }
+int wubumodel_node_float_wrap(const wubumodel_node *n){ return n?n->float_wrap:0; }
+int wubumodel_node_float_w(const wubumodel_node *n){ return n?n->img_w:0; }
+int wubumodel_node_float_h(const wubumodel_node *n){ return n?n->img_h:0; }
 int  wubumodel_node_set_tc(wubumodel_node *n, int t){ if(!n)return -1; n->tc=t; return 0; }
 int  wubumodel_node_tc(const wubumodel_node *n){ return n?(n->tc):0; }
 int  wubumodel_node_set_break(wubumodel_node *n, int b){ if(!n)return -1; n->brk=b; return 0; }

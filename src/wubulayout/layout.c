@@ -53,6 +53,11 @@ struct wubulayout_doc {
     int npages;
     int total_runs;
     LCheck *checks; int nchecks, capchecks;
+    /* H3 floating-image wrap: active exclusion zone (square wrap) */
+    int fl_active;        /* 0 none, else active */
+    int fl_side;          /* 1 left, 2 right */
+    int fl_w;             /* reserved width px */
+    int fl_until_y;       /* absolute y where the zone ends */
 };
 
 /* ---- internal helpers ---- */
@@ -131,6 +136,9 @@ static LOb *push_obj(LPage *p){
 /* lay a single paragraph node: gather runs -> word-wrap -> emit lines.
  * Word-level greedy wrapping: each word carries the style of its source run.
  * For an RTL paragraph the WORD ORDER on a line is reversed (words stay LTR). */
+static void fl_tick(wubulayout_doc *L, int pen_y){
+    if (L->fl_active && pen_y >= L->fl_until_y) L->fl_active = 0;
+}
 static int lay_paragraph(wubulayout_doc *L, void *para, int *pen_y){
     /* DOC-59: list paragraphs get a bullet / number prefix run. */
     static int list_seq = 0;
@@ -192,6 +200,15 @@ static int lay_paragraph(wubulayout_doc *L, void *para, int *pen_y){
     LPage *pg = cur_page(L);
     int content_w = L->pw - L->ml - L->mr;
     int x0 = L->ml;
+    /* H3: shrink the text band inside an active float exclusion zone */
+    if (L->fl_active && *pen_y < L->fl_until_y){
+        if (L->fl_side == 1){ x0 = L->ml + L->fl_w; content_w -= L->fl_w; }
+        else                { content_w -= L->fl_w; }
+        if (content_w < 80) { /* too narrow beside the float: skip past it */
+            *pen_y = L->fl_until_y; L->fl_active = 0;
+            content_w = L->pw - L->ml - L->mr; x0 = L->ml;
+        }
+    }
     int line_h = 0;
 
     /* paragraph base direction: first strong codepoint */
@@ -276,6 +293,7 @@ static int lay_paragraph(wubulayout_doc *L, void *para, int *pen_y){
 static int lay_node(wubulayout_doc *L, void *node, int *pen_y){
     wubumodel_kind k = wubumodel_node_kind((wubumodel_node*)node);
     if (k == WUBUMODEL_PARAGRAPH){
+        fl_tick(L, *pen_y);   /* H3: float zone expires when text passes it */
         return lay_paragraph(L, node, pen_y);
     }
     if (k == WUBUMODEL_TABLE){
@@ -304,6 +322,29 @@ static int lay_node(wubulayout_doc *L, void *node, int *pen_y){
         return 0;
     }
     if (k == WUBUMODEL_SHAPE || k == WUBUMODEL_CHART || k == WUBUMODEL_IMAGE){
+        /* H3: a FLOATING image (side 1/2) reserves a side band; body text
+         * wraps around it for its height. Inline images keep the old
+         * full-width box. */
+        int fside = wubumodel_node_float_side(node);
+        if (fside == 1 || fside == 2){
+            int fw = wubumodel_node_float_w(node);
+            int fh = wubumodel_node_float_h(node);
+            if (fw < 40) fw = 120;
+            if (fh < 40) fh = 120;
+            LPage *pg = cur_page(L);
+            LOb *o = push_obj(pg);
+            if (o){
+                o->page = L->npages-1;
+                o->w = fw; o->h = fh;
+                o->x = (fside == 1) ? L->ml : (L->pw - L->mr - fw);
+                o->y = *pen_y;
+                o->user = node;
+            }
+            /* activate exclusion zone until image bottom */
+            L->fl_active = 1; L->fl_side = fside; L->fl_w = fw;
+            L->fl_until_y = *pen_y + fh;
+            return 0;   /* no vertical advance: text flows beside it */
+        }
         /* object box: reserve space, view overlays it (image blitted by view) */
         LPage *pg = cur_page(L);
         LOb *o = push_obj(pg);

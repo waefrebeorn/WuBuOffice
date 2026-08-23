@@ -40,6 +40,8 @@ struct wubumodel_node {
     char *field;                /* FIELD kind/value, e.g. "date" (DOC-65) */
     int tc;                     /* TRACKCHANGE type: 0 insert,1 delete (DOC-64) */
     int brk;                    /* PAGEBREAK/SECTIONBREAK type (DOC-57) */
+    int float_side;             /* IMAGE: 0 inline, 1 left, 2 right (H3) */
+    int float_wrap;             /* IMAGE: 0 none, 1 square, 2 top-bottom (H3) */
     wubumodel_style *style;     /* shared, may be NULL */
     struct wubumodel_node *next;/* bucket chain in doc->nodes */
     struct wubumodel_node *parent;     /* back-link (weak) */

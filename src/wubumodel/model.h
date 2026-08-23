@@ -115,6 +115,17 @@ wubumodel_node *wubumodel_node_parent(const wubumodel_node *n); /* RUN->owning b
  * layout box for an IMAGE node. w/h returned via out params. */
 int  wubumodel_node_set_image(wubumodel_node *n, const uint8_t *rgba, int w, int h);
 const uint8_t *wubumodel_node_image(const wubumodel_node *n, int *w, int *h);
+
+/* ---- floating image (H3: wp:anchor / text wrapping) ----
+ * A floating image is anchored to its paragraph but positioned to the side;
+ * body text wraps around it (square wrap). side: 0=inline, 1=left, 2=right.
+ * wrap: 0=none(inline), 1=square, 2=top-and-bottom. w/h are display px. */
+int         wubumodel_node_set_float(wubumodel_node *n, int side, int wrap,
+                                     int w, int h);
+int         wubumodel_node_float_side(const wubumodel_node *n);
+int         wubumodel_node_float_wrap(const wubumodel_node *n);
+int         wubumodel_node_float_w(const wubumodel_node *n);
+int         wubumodel_node_float_h(const wubumodel_node *n);
 /* ---- review / field / break metadata (DOC-56..65) ---- */
 int  wubumodel_node_set_author(wubumodel_node *n, const char *a);  /* COMMENT/TRACKCHANGE */
 const char *wubumodel_node_author(const wubumodel_node *n);
