@@ -223,6 +223,11 @@ static int render(WuView *v, int w, int h, int scroll,
                 } else {
                     snprintf(buf,sizeof buf,"%s", t?t:"");
                 }
+                /* clip the value to the cell width so long strings ("Total
+                 * revenue") don't bleed into the neighbor cell */
+                int avail = cw - WUOS_SPACE_8;
+                while (buf[0] && wuos_font_text_width(buf, wuos_font_height()) > avail)
+                    buf[strlen(buf)-1] = '\0';
                 wuos_font_draw(buf, x+WUOS_SPACE_4, y+fh, 0, cel_body.r,cel_body.g,cel_body.b, fb,w,h);
             }
         }
