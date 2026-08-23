@@ -206,3 +206,11 @@ create/list/close/quit). Upgrade to superiority:
   (2) test read only first 64KB so %%EOF assertion failed on embedded-binary
   PDFs; fixed to whole-file + tail search. Also added public font_advance()
   to wubufont (hmtx-based).
+
+### Hop 16 (2026-08-22): FontFile2 Flate compression shipped
+- Full glyph subsetting (composite closure + loca rebuild) scoped and
+  deferred as a multi-day feature; shipped the spec-valid size win instead:
+  FontFile2 streams are now /Filter /FlateDecode-compressed via the
+  in-tree from-scratch wubuzip_deflate (no external zlib).
+- Measured: embedded DejaVuSans 760KB -> 434KB (~43% reduction), PDF stays
+  valid (pdf_i18n green). Subsetting remains tracked for a future hop.
