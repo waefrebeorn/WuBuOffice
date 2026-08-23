@@ -189,3 +189,10 @@ create/list/close/quit). Upgrade to superiority:
 - Slide view save() now assembles a real .pptx when the path ends .pptx
   (previously only line-based text). open_doc_path already routed .pptx to
   the slide view, so the full see->edit->save->exchange loop is closed.
+
+### Hop 14 (2026-08-22): PDF i18n text layer shipped
+- Non-Latin runs now export via a Type0/Identity-H font (F4) as UTF-16BE
+  hex strings: 世界 -> <4E16754C>. Copy/paste and search work correctly;
+  viewers substitute glyphs until full CIDFont embedding lands (tracked).
+- pdf_i18n ctest asserts F4 declaration, Identity-H encoding, and the exact
+  hex encoding of the CJK run.
