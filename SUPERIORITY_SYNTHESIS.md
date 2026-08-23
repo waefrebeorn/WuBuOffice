@@ -116,3 +116,10 @@ create/list/close/quit). Upgrade to superiority:
   (firstRow/lastRow/band1H/band2H) per row. Header rows resolve bold+
   centered+accent shading with zero direct formatting. Test covers chain
   resolution, banding parity, unknown-id safety.
+
+### Hop 7 (2026-08-22): H6b shipped -- merged cells
+- gridSpan (horizontal span) + vMerge restart/continue parsed from w:tcPr
+  onto CELL nodes; col_span getter defaults >=1. docx_cell_merge test covers
+  origin cell (span2+restart), plain cell, and continue cells.
+- Process note: a careless `mv` clobbered the pre-existing XLSX cell_merge
+  test source; restored from git, both tests now coexist.
