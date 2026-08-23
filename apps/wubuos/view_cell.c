@@ -314,6 +314,60 @@ static void on_key(WuView *v, int key, int down){
         return;
     }
     /* navigation / start edit */
+    /* hop 21: F2 edits the active cell with its current content */
+    if (key==WUOS_KEY_EDIT_CELL){
+        e->editing = 1;
+        wubucell_ckind kind; const char *txt = NULL; double num = 0, cached = 0;
+        if (wubucell_get(e->b, 1, e->curc, e->curr,
+                         &kind, &txt, &num, &cached) == 0 && txt)
+            snprintf(e->fbuf, sizeof e->fbuf, "%.*s",
+                     (int)sizeof e->fbuf - 1, txt);
+        else
+            e->fbuf[0] = 0;
+        return;
+    }
+    /* hop 21: Ctrl+Arrow jumps to the data-region edge */
+    if (key==WUOS_KEY_EDGE_LEFT || key==WUOS_KEY_EDGE_RIGHT ||
+        key==WUOS_KEY_EDGE_UP   || key==WUOS_KEY_EDGE_DOWN){
+        int mc = 0, mr = 0;
+        wubucell_sheet_dims(e->b, 1, &mc, &mr);
+        if (key==WUOS_KEY_EDGE_LEFT){
+            int c = e->curc;
+            while (c > 1){
+                wubucell_ckind k; const char *t; double n2, ca;
+                if (wubucell_get(e->b, 1, c-1, e->curr, &k,&t,&n2,&ca) == 0) break;
+                c--;
+            }
+            e->curc = c;
+        } else if (key==WUOS_KEY_EDGE_RIGHT){
+            int c = e->curc;
+            while (c < mc){
+                wubucell_ckind k; const char *t; double n2, ca;
+                if (wubucell_get(e->b, 1, c+1, e->curr, &k,&t,&n2,&ca) == 0) break;
+                c++;
+            }
+            if (c == e->curc) c = mc > e->curc ? mc : e->curc;  /* empty row: to end */
+            e->curc = c;
+        } else if (key==WUOS_KEY_EDGE_UP){
+            int r = e->curr;
+            while (r > 1){
+                wubucell_ckind k; const char *t; double n2, ca;
+                if (wubucell_get(e->b, 1, e->curc, r-1, &k,&t,&n2,&ca) == 0) break;
+                r--;
+            }
+            e->curr = r;
+        } else {
+            int r = e->curr;
+            while (r < mr){
+                wubucell_ckind k; const char *t; double n2, ca;
+                if (wubucell_get(e->b, 1, e->curc, r+1, &k,&t,&n2,&ca) == 0) break;
+                r++;
+            }
+            if (r == e->curr) r = mr > e->curr ? mr : e->curr;
+            e->curr = r;
+        }
+        return;
+    }
     if (key==WUOS_KEY_LEFT)  { if(e->curc>1) e->curc--; return; }
     if (key==WUOS_KEY_RIGHT) { if(e->curc<e->maxc) e->curc++; return; }
     if (key==WUOS_KEY_UP)    { if(e->curr>1) e->curr--; return; }

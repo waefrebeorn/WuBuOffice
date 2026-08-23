@@ -220,6 +220,12 @@ int shell_keydown(SDL_Keycode k, SDL_Keymod mod, int *running){
     else if (k==SDLK_2 && (mod & KMOD_CTRL) && (mod & KMOD_ALT)) code=WUOS_KEY_STYLE_H2; /* DOC-58 */
     else if (k==SDLK_3 && (mod & KMOD_CTRL) && (mod & KMOD_ALT)) code=WUOS_KEY_STYLE_H3; /* DOC-58 */
     else if (k==SDLK_b && (mod & KMOD_CTRL)) code=WUOS_KEY_BOLD;     /* N3 MS convention */
+    /* hop 21: spreadsheet keyboard conformance */
+    else if (k==SDLK_F2) code=WUOS_KEY_EDIT_CELL;
+    else if (k==SDLK_LEFT  && (mod & KMOD_CTRL)) code=WUOS_KEY_EDGE_LEFT;
+    else if (k==SDLK_RIGHT && (mod & KMOD_CTRL)) code=WUOS_KEY_EDGE_RIGHT;
+    else if (k==SDLK_UP    && (mod & KMOD_CTRL)) code=WUOS_KEY_EDGE_UP;
+    else if (k==SDLK_DOWN  && (mod & KMOD_CTRL)) code=WUOS_KEY_EDGE_DOWN;
     else if (k==SDLK_i && (mod & KMOD_CTRL)) code=WUOS_KEY_ITALIC;   /* N3 MS convention */
     else if (k==SDLK_UP && (mod & KMOD_CTRL) && (mod & KMOD_SHIFT)) code=WUOS_KEY_PARA_PREV; /* DOC-58 */
     else if (k==SDLK_DOWN && (mod & KMOD_CTRL) && (mod & KMOD_SHIFT)) code=WUOS_KEY_PARA_NEXT; /* DOC-58 */

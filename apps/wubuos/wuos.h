@@ -96,7 +96,12 @@ enum { WUOS_KEY_UP=2000, WUOS_KEY_DOWN, WUOS_KEY_LEFT, WUOS_KEY_RIGHT,
  WUOS_KEY_PARA_PREV,
  WUOS_KEY_PARA_NEXT,
  WUOS_KEY_BOLD,
- WUOS_KEY_ITALIC };
+ WUOS_KEY_ITALIC,
+ WUOS_KEY_EDIT_CELL,      /* F2: edit active cell (hop 21) */
+ WUOS_KEY_EDGE_LEFT,      /* Ctrl+Left: data-region edge (hop 21) */
+ WUOS_KEY_EDGE_RIGHT,
+ WUOS_KEY_EDGE_UP,
+ WUOS_KEY_EDGE_DOWN };
 
 /* ---- view factories ----
  * `path` is an optional file to load (NULL = use the bundled sample). */

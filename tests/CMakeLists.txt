@@ -547,3 +547,7 @@ add_test(NAME pptx_deck_cycle COMMAND test_pptx_deck_cycle)
 add_executable(test_a11y_tables test_a11y_tables.c)
 target_link_libraries(test_a11y_tables PRIVATE wubua11y wubumodel)
 add_test(NAME a11y_tables COMMAND test_a11y_tables)
+
+add_executable(test_cell_kbd test_cell_kbd.c)
+target_link_libraries(test_cell_kbd PRIVATE wubucell_app m)
+add_test(NAME cell_kbd COMMAND test_cell_kbd)
