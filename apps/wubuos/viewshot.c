@@ -68,21 +68,9 @@ int main(int argc, char **argv){
     const char *file_for_editor= (want && !strcmp(want,"editor"))? file
                               : (auto_tab && !strcmp(auto_tab,"editor"))? file : NULL;
     const char *file_for_ocr   = (want && !strcmp(want,"ocr"))? file : NULL;
-    /* "cellwide" mode: prove variable column widths render (B=30, C=6 units) */
-    if (want && !strcmp(want,"cellwide")){
-        WuView *cv = wuos_cell_create(file);
-        wubucell_col_width_set(wubucell_view_book(cv),1,2,30.0);
-        wubucell_col_width_set(wubucell_view_book(cv),1,3,6.0);
-        unsigned char *px=NULL; int rw=0,rh=0;
-        cv->render(cv,960,664,0,&px,&rw,&rh);
-        FILE*o2=fopen(out,"wb");
-        fprintf(o2,"P6\n%d %d\n255\n",rw,rh);
-        for(int i=0;i<rw*rh;i++) fwrite(px+(size_t)i*4,1,3,o2);
-        fclose(o2);
-        printf("wrote %s [cellwide]\n", out);
-        return 0;
-    }
     const char *file_for_cell  = (want && !strcmp(want,"cell"))? file : NULL;
+    int cellwide = (want && !strcmp(want,"cellwide"));   /* demo variable widths */
+    if (cellwide) file_for_cell = file;
 
     if (SDL_Init(SDL_INIT_VIDEO)!=0){ fprintf(stderr,"SDL init: %s\n",SDL_GetError()); return 1; }
     if (wuos_font_init()!=0){ fprintf(stderr,"font init failed\n"); SDL_Quit(); return 1; }
@@ -98,7 +86,6 @@ int main(int argc, char **argv){
     ADD(wuos_settings_create());
     #undef ADD
     if (nviews==0){ fprintf(stderr,"no views\n"); return 1; }
-
     for (int i=0;i<nviews;i++){
         const char *t = want? want : auto_tab;
         int hit = 0;
@@ -106,13 +93,23 @@ int main(int argc, char **argv){
             /* exact (case-insensitive) name match, plus friendly aliases */
             if (strcasecmp(views[i]->name, t)==0) hit=1;
             else if (strcasecmp(t,"doc")==0    && strcasecmp(views[i]->name,"document")==0)    hit=1;
-            else if (strcasecmp(t,"cell")==0   && strcasecmp(views[i]->name,"spreadsheet")==0) hit=1;
+            else if ((strcasecmp(t,"cell")==0||strcasecmp(t,"cellwide")==0)
+                                             && strcasecmp(views[i]->name,"spreadsheet")==0) hit=1;
             else if (strcasecmp(t,"document")==0 && strcasecmp(views[i]->name,"document")==0)  hit=1;
             else if (strcasecmp(t,"spreadsheet")==0 && strcasecmp(views[i]->name,"spreadsheet")==0) hit=1;
             else if (strcasecmp(t,"editor")==0 && strcasecmp(views[i]->name,"editor")==0)      hit=1;
             else if (strcasecmp(t,"compare")==0 && strcasecmp(views[i]->name,"compare")==0)    hit=1;
         }
         if (hit){ active=i; break; }
+    }
+
+    if (cellwide){
+        /* demo: variable column widths inside the FULL shell composite.
+         * Must run AFTER tab matching so views[active] is the spreadsheet —
+         * before it, views[active] is the DOC view and its priv is not a
+         * workbook (the earlier misplacement corrupted the heap on exit). */
+        wubucell_col_width_set(wubucell_view_book(views[active]),1,2,30.0);
+        wubucell_col_width_set(wubucell_view_book(views[active]),1,3,6.0);
     }
 
     /* ---- composite the window into an RGBA buffer (mirrors main.c) ---- */
