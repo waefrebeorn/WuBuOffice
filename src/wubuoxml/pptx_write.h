@@ -21,6 +21,18 @@ typedef struct {
 int wubuoxml_pptx_write_multi(const char *out, const PptxSlide *slides,
                               int nslides);
 
+/* One slide read back from a deck. */
+typedef struct {
+    char title[96];
+    char bullets[12][96];
+    int nbullets;
+} PptxSlideData;
+
+/* Read ALL slides of `path` into slides[] (capacity maxslides).
+ * Returns the slide count, or -1 on error. */
+int wubuoxml_pptx_read_multi(const char *path, PptxSlideData *slides,
+                             int maxslides);
+
 /* Read the first slide of `path` back: title + up to maxb bullets.
  * Returns 0 on success. */
 int wubuoxml_pptx_read(const char *path, char *title, size_t tcap,

@@ -26,6 +26,15 @@
 #define SLIDE_MAX_TITLE   96
 #define SLIDE_MAX_CHART   8
 
+/* N2: per-slide content snapshot for multi-slide decks */
+typedef struct {
+    char title[SLIDE_MAX_TITLE];
+    char bullets[SLIDE_MAX_BULLETS][96];
+    int  nbullets;
+} SlideData;
+
+#define SLIDE_DECK_MAX 16
+
 typedef struct {
     char title[SLIDE_MAX_TITLE];
     char bullets[SLIDE_MAX_BULLETS][96];
@@ -36,7 +45,30 @@ typedef struct {
     int  caret;
     int  editing;
     char *path;            /* loaded path (NULL = untitled) */
+    /* N2: deck state */
+    SlideData deck[SLIDE_DECK_MAX];
+    int ndeck;             /* 0 = single-slide mode (no deck) */
+    int deck_ix;           /* current slide index when ndeck > 0 */
 } SlideV;
+
+/* copy view state -> deck slot */
+static void deck_store(SlideV *e){
+    if (e->ndeck <= 0 || e->deck_ix < 0 || e->deck_ix >= e->ndeck) return;
+    SlideData *sd = &e->deck[e->deck_ix];
+    snprintf(sd->title, sizeof sd->title, "%s", e->title);
+    sd->nbullets = e->nbullets;
+    for (int i = 0; i < e->nbullets && i < SLIDE_MAX_BULLETS; i++)
+        snprintf(sd->bullets[i], sizeof sd->bullets[0], "%s", e->bullets[i]);
+}
+/* load deck slot -> view state */
+static void deck_load(SlideV *e){
+    if (e->ndeck <= 0 || e->deck_ix < 0 || e->deck_ix >= e->ndeck) return;
+    SlideData *sd = &e->deck[e->deck_ix];
+    snprintf(e->title, sizeof e->title, "%s", sd->title);
+    e->nbullets = sd->nbullets;
+    for (int i = 0; i < sd->nbullets && i < SLIDE_MAX_BULLETS; i++)
+        snprintf(e->bullets[i], sizeof e->bullets[0], "%s", sd->bullets[i]);
+}
 
 static int dark_mode(void){ return wubusettings_dark(wubusettings_shared()); }
 
@@ -66,8 +98,14 @@ static int render(WuView *v, int w, int h, int scroll,
     /* edit indicator on the title/bullet being edited */
     int seldim = (e->editing && e->sel == 0) ? 160 : 0;
     if (seldim){ for (int x=0; x<w; x++){ size_t i=((size_t)title_y*w+x)*4; fb[i]=seldim; fb[i+1]=seldim; fb[i+2]=seldim; } }
-    wuos_font_draw(e->title[0] ? e->title : "(untitled slide — press Enter to edit title)",
-                   margin_x, title_y, 1, sld_hd.r,sld_hd.g,sld_hd.b, fb,w,h);
+    char hdr[SLIDE_MAX_TITLE + 16];
+    if (e->ndeck > 1)
+        snprintf(hdr, sizeof hdr, "%d/%d  %s", e->deck_ix+1, e->ndeck,
+                 e->title[0] ? e->title : "(untitled slide — Enter to edit)");
+    else
+        snprintf(hdr, sizeof hdr, "%s",
+                 e->title[0] ? e->title : "(untitled slide — press Enter to edit title)");
+    wuos_font_draw(hdr, margin_x, title_y, 1, sld_hd.r,sld_hd.g,sld_hd.b, fb,w,h);
 
     int y = title_y + WUOS_SPACE_8 * 4;
     for (int i=0; i<e->nbullets; i++){
@@ -136,6 +174,19 @@ static void on_key(WuView *v, int key, int down){
         return;
     }
     if (key == WUOS_KEY_UP){ if (e->sel > 0) e->sel--; return; }
+    /* N2: deck navigation -- PageUp/PageDn style via Left/Right when not editing */
+    if (e->ndeck > 1){
+        if (key == WUOS_KEY_LEFT && e->deck_ix > 0){
+            deck_store(e); e->deck_ix--; deck_load(e);
+            e->sel = 0; e->editing = 0;
+            return;
+        }
+        if (key == WUOS_KEY_RIGHT && e->deck_ix < e->ndeck - 1){
+            deck_store(e); e->deck_ix++; deck_load(e);
+            e->sel = 0; e->editing = 0;
+            return;
+        }
+    }
 }
 
 /* ---- persistence ---- */
@@ -147,6 +198,20 @@ static void save(WuView *v){
     /* H13: a .pptx path assembles a real PowerPoint package */
     size_t oL = strlen(out);
     if (oL > 5 && !strcasecmp(out + oL - 5, ".pptx")){
+        /* N2: persist the WHOLE deck when in deck mode */
+        if (e->ndeck > 1){
+            deck_store(e);   /* flush current edits into the deck */
+            PptxSlide sl[SLIDE_DECK_MAX];
+            const char *blall[SLIDE_DECK_MAX][SLIDE_MAX_BULLETS];
+            for (int i = 0; i < e->ndeck; i++){
+                for (int b = 0; b < e->deck[i].nbullets; b++) blall[i][b] = e->deck[i].bullets[b];
+                sl[i].title = e->deck[i].title;
+                sl[i].bullets = blall[i];
+                sl[i].nbullets = e->deck[i].nbullets;
+            }
+            wubuoxml_pptx_write_multi(out, sl, e->ndeck);
+            return;
+        }
         const char *bl[SLIDE_MAX_BULLETS];
         for (int i = 0; i < e->nbullets; i++) bl[i] = e->bullets[i];
         wubuoxml_pptx_write(out, e->title, bl, e->nbullets);
@@ -163,15 +228,24 @@ static void save(WuView *v){
 }
 
 static void load_slide(SlideV *e, const char *path){
-    /* H18: real .pptx files load through the OOXML reader */
+    /* H18/N2: real .pptx files load through the OOXML reader -- full deck */
     size_t pl = strlen(path);
     if (pl > 5 && !strcasecmp(path + pl - 5, ".pptx")){
-        e->nbullets = 0;
-        char tmp_t[SLIDE_MAX_TITLE];
-        if (wubuoxml_pptx_read(path, tmp_t, sizeof tmp_t,
-                               e->bullets, SLIDE_MAX_BULLETS,
-                               &e->nbullets) == 0)
-            snprintf(e->title, sizeof e->title, "%s", tmp_t);
+        PptxSlideData sd[SLIDE_DECK_MAX];
+        int n = wubuoxml_pptx_read_multi(path, sd, SLIDE_DECK_MAX);
+        if (n > 0){
+            e->ndeck = n > SLIDE_DECK_MAX ? SLIDE_DECK_MAX : n;
+            e->deck_ix = 0;
+            for (int i = 0; i < e->ndeck; i++) e->deck[i] = *(SlideData*)&sd[i];
+            deck_load(e);
+        } else {
+            e->nbullets = 0;
+            char tmp_t[SLIDE_MAX_TITLE];
+            if (wubuoxml_pptx_read(path, tmp_t, sizeof tmp_t,
+                                   e->bullets, SLIDE_MAX_BULLETS,
+                                   &e->nbullets) == 0)
+                snprintf(e->title, sizeof e->title, "%s", tmp_t);
+        }
         return;
     }
     FILE *f = fopen(path, "r");

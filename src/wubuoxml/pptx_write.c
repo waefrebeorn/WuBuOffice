@@ -217,3 +217,58 @@ int wubuoxml_pptx_read(const char *path, char *title, size_t tcap,
     free(buf);
     return 0;
 }
+
+
+/* ---- N2: read ALL slides of a deck ---- */
+int wubuoxml_pptx_read_multi(const char *path, PptxSlideData *slides,
+                             int maxslides){
+    if (!path || !slides || maxslides <= 0) return -1;
+    FILE *f = fopen(path, "rb");
+    if (!f) return -1;
+    fseek(f, 0, SEEK_END); long sz = ftell(f); fseek(f, 0, SEEK_SET);
+    uint8_t *buf = malloc((size_t)sz + 1);
+    if (!buf){ fclose(f); return -1; }
+    size_t rd = fread(buf, 1, (size_t)sz, f); fclose(f);
+
+    wubuoxml_package pkg;
+    if (wubuoxml_read(buf, rd, &pkg) != 0){ free(buf); return -1; }
+
+    int nsl = 0;
+    for (size_t i = 0; i < wubuoxml_part_count(&pkg) && nsl < maxslides; i++){
+        const wubuoxml_part *p = wubuoxml_part_at(&pkg, i);
+        if (!p || !p->name || !strstr(p->name, "slides/slide")) continue;
+        const char *x = (const char*)p->bytes;
+        size_t xl = p->len, pos = 0;
+        PptxSlideData *sd = &slides[nsl];
+        sd->nbullets = 0; sd->title[0] = 0;
+        int got_title = 0;
+        while (pos + 9 < xl){
+            const char *open = strstr(x + pos, "<a:t>");
+            if (!open && pos + 6 < xl) open = strstr(x + pos, "<a:t ");
+            if (!open) break;
+            const char *vend = strchr(open, '>');
+            if (!vend) break;
+            const char *t0 = vend + 1;
+            const char *close = strstr(t0, "</a:t>");
+            if (!close) break;
+            size_t tl = (size_t)(close - t0);
+            char dst[256]; size_t di = 0;
+            for (size_t k = 0; k < tl && di < sizeof dst - 1; k++){
+                if (t0[k] == '&'){
+                    if (!strncmp(t0+k, "&amp;", 5)){ dst[di++]='&'; k+=4; }
+                    else if (!strncmp(t0+k,"&lt;",4)) { dst[di++]='<'; k+=3; }
+                    else if (!strncmp(t0+k,"&gt;",4)) { dst[di++]='>'; k+=3; }
+                    else dst[di++] = t0[k];
+                } else dst[di++] = t0[k];
+            }
+            dst[di] = 0;
+            if (!got_title){ snprintf(sd->title, sizeof sd->title, "%s", dst); got_title = 1; }
+            else if (sd->nbullets < 12){ snprintf(sd->bullets[sd->nbullets], 96, "%s", dst); sd->nbullets++; }
+            pos = (size_t)(close - x) + 6;
+        }
+        nsl++;
+    }
+    wubuoxml_free(&pkg);
+    free(buf);
+    return nsl;
+}

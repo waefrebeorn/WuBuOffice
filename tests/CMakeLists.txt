@@ -539,3 +539,7 @@ target_link_libraries(test_font_subset PRIVATE wubufont wubuzip m)
 add_test(NAME font_subset COMMAND test_font_subset)
 set_tests_properties(font_subset PROPERTIES TIMEOUT 300)
 
+
+add_executable(test_pptx_deck_cycle test_pptx_deck_cycle.c)
+target_link_libraries(test_pptx_deck_cycle PRIVATE wubuoxml wubuxml wubuzip)
+add_test(NAME pptx_deck_cycle COMMAND test_pptx_deck_cycle)
