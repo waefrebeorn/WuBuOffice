@@ -104,7 +104,9 @@ int main(int argc, char **argv){
     /* ---- composite the window into an RGBA buffer (mirrors main.c) ---- */
     unsigned char *fb = calloc((size_t)WIN_W*WIN_H*4, 1);
     if (!fb){ fprintf(stderr,"oom\n"); return 1; }
-    buf_fill(fb, WIN_W, WIN_H, 0,0, WIN_W,WIN_H, 235,237,240);  /* base bg */
+    int dark = wubusettings_dark(wubusettings_shared());   /* theme once */
+    WuosRGB CONTENT_BG = dark ? (WuosRGB)WUOS_DARK_STATUS : (WuosRGB)WUOS_LIGHT_CONTENT;
+    buf_fill(fb, WIN_W, WIN_H, 0,0, WIN_W,WIN_H, CONTENT_BG.r,CONTENT_BG.g,CONTENT_BG.b);  /* base bg */
 
     /* active view (placed below the tab strip AND the menu bar) */
     unsigned char *rgba=NULL; int rw=0, rh=0;
@@ -126,14 +128,15 @@ int main(int argc, char **argv){
     }
 
     /* tab bar: neutral chrome ground; active tab rises + accent underline
-     * (spec §5). Mirrors main.c exactly so screenshots match the live GUI. */
-    WuosRGB tbb = (WuosRGB)WUOS_DARK_TAB_BAR;
-    WuosRGB tt  = (WuosRGB)WUOS_DARK_TAB;
-    WuosRGB tto = (WuosRGB)WUOS_DARK_TAB_ON;
-    WuosRGB ttx = (WuosRGB)WUOS_DARK_TABTEXT;
-    WuosRGB ttxo= (WuosRGB)WUOS_DARK_TABTEXT_ON;
-    WuosRGB bd  = (WuosRGB)WUOS_DARK_BORDER;
-    WuosRGB ac  = (WuosRGB)WUOS_DARK_ACCENT;
+     * (spec §5). Mirrors main.c exactly so screenshots match the live GUI.
+     * Theme follows settings (dark default; light via settings.json). */
+    WuosRGB tbb = dark ? (WuosRGB)WUOS_DARK_TAB_BAR     : (WuosRGB)WUOS_LIGHT_TAB_BAR;
+    WuosRGB tt  = dark ? (WuosRGB)WUOS_DARK_TAB         : (WuosRGB)WUOS_LIGHT_TAB;
+    WuosRGB tto = dark ? (WuosRGB)WUOS_DARK_TAB_ON      : (WuosRGB)WUOS_LIGHT_TAB_ON;
+    WuosRGB ttx = dark ? (WuosRGB)WUOS_DARK_TABTEXT     : (WuosRGB)WUOS_LIGHT_TABTEXT;
+    WuosRGB ttxo= dark ? (WuosRGB)WUOS_DARK_TABTEXT_ON  : (WuosRGB)WUOS_LIGHT_TABTEXT_ON;
+    WuosRGB bd  = dark ? (WuosRGB)WUOS_DARK_BORDER      : (WuosRGB)WUOS_LIGHT_BORDER;
+    WuosRGB ac  = dark ? (WuosRGB)WUOS_DARK_ACCENT      : (WuosRGB)WUOS_LIGHT_ACCENT;
     buf_fill(fb, WIN_W, WIN_H, 0,0, WIN_W,TAB_H, tbb.r,tbb.g,tbb.b);
     int x=0;
     for (int i=0;i<nviews;i++){
@@ -161,8 +164,8 @@ int main(int argc, char **argv){
       } }
 
     /* status bar */
-    WuosRGB sb = (WuosRGB)WUOS_DARK_STATUS;
-    WuosRGB stx= (WuosRGB)WUOS_DARK_STATUSTX;
+    WuosRGB sb = dark ? (WuosRGB)WUOS_DARK_STATUS : (WuosRGB)WUOS_LIGHT_STATUS;
+    WuosRGB stx= dark ? (WuosRGB)WUOS_DARK_STATUSTX : (WuosRGB)WUOS_LIGHT_STATUSTX;
     buf_fill(fb, WIN_W, WIN_H, 0,WIN_H-STATUS_H, WIN_W,STATUS_H, sb.r,sb.g,sb.b);
     buf_fill(fb, WIN_W, WIN_H, 0,WIN_H-STATUS_H, WIN_W,1, bd.r,bd.g,bd.b);
     char *st = views[active]->status? views[active]->status(views[active]) : NULL;

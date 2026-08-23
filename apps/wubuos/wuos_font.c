@@ -236,7 +236,11 @@ int wuos_font_draw(const char *s, int x, int y, int bold,
                    unsigned char r, unsigned char g, unsigned char b,
                    unsigned char *fb, int fbw, int fbh){
     FT_Face face = (bold && g_bold)? g_bold : g_reg;
-    if (!face || !fb) return 0;
+    /* fb == NULL is a legal MEASURE call: advance through the string and
+     * return its pixel width WITHOUT blitting. Callers rely on this for
+     * word-wrap layout + caret x (render loop does x += returned width).
+     * Returning 0 here made every word stack at the same x (ghosting). */
+    if (!face) return 0;
     int ox = x;
     const char *p = s;
     while (*p){
@@ -246,8 +250,8 @@ int wuos_font_draw(const char *s, int x, int y, int bold,
         p += k;
         FT_Face use = face;
         if (!FT_Get_Char_Index(face, cp)){
-            FT_Face fb = font_fallback(cp);
-            if (fb){ use = fb;
+            FT_Face fbf = font_fallback(cp);
+            if (fbf){ use = fbf;
                 FT_Set_Pixel_Sizes(use, 0, (FT_UInt)g_size); }
         }
         if (FT_Load_Char(use, (FT_ULong)cp, FT_LOAD_RENDER)) continue;
@@ -257,6 +261,7 @@ int wuos_font_draw(const char *s, int x, int y, int bold,
         int pp = gl->bitmap.pitch;
         int abw = gl->bitmap.width;
         int rows = (int)gl->bitmap.rows;
+        if (fb)
         for (int row=0; row<rows; row++)
             for (int col=0; col<abw; col++){
                 int src = (pp<0)? (rows-1-row)*(-pp)+col : row*pp+col;
