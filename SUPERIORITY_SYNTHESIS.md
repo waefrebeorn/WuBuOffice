@@ -221,3 +221,13 @@ create/list/close/quit). Upgrade to superiority:
   wubuoxml_pptx_write kept as a wrapper.
 - pptx_multi ctest: 3-slide deck verified (parts present, titles extract,
   sldIdLst has entry 3).
+
+### Hop 18 (2026-08-22): H18 shipped -- pptx READ into the slide view
+- wubuoxml_pptx_read: opens the package, finds the first slide part,
+  extracts <a:t> text runs (XML-unescape) -- first = title, rest = bullets.
+- view_slide load_slide routes .pptx paths through it: opening a real
+  PowerPoint file now shows its title/bullets in the Slide view.
+- pptx_app_roundtrip ctest: write -> read full loop incl. escaped entities
+  ("beta & gamma" survives as text, not "&amp;").
+- Closes the last "see-edit-save-exchange" gap for the slide surface:
+  real .pptx files now round-trip through the app.
