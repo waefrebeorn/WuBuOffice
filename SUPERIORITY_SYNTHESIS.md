@@ -68,3 +68,25 @@ create/list/close/quit). Upgrade to superiority:
   P0: F1 grab-bag (stop data loss) + A1 expand agent verbs
   P1: F2 fidelity matrix tests; U1 shortcut conformance gate
   P2: A2 shell a11y tree; U4 empty-state sweep; F3 floating-image wrap
+
+
+---
+## RECURSIVE LEARNING LOOP LOG
+### Hop 1 (2026-08-22): AX principles (apideck AX article, Karpathy CLI lesson)
+- Learned: agents are terminal-native; self-describing interfaces beat docs;
+  errors must tell the agent how to recover.
+- Applied: `help` verb (self-describing verb list); unknown-command errors now
+  actionable ("send {"cmd":"help"}"); serve accepts bare `quit`/`q` and
+  answers {"ok":true,"bye":true}. Tests: agent_verbs extended.
+- Verified: live NDJSON pipeline help->ingest->structure->find->error->quit.
+
+### Hop 2 (2026-08-22): TDF fidelity doctrine applied (F1/F2 shipped)
+- Grab-bag preservation (WUBUMODEL_FOREIGN) + verbatim re-emission on save;
+  fidelity matrix ctest (fidelity_matrix) gates silent data loss.
+
+### NEXT HOPS (tracked, not faked)
+- H3: FLOATING IMAGES w/ text wrapping (docx anchor tblpPr/wp:anchor ->
+  model float fields -> layout wrap-around pass). Biggest remaining breaker.
+- H4: shell accessibility tree over NDJSON (tabs/menus/buttons with roles+refs).
+- H5: embedded font de-obfuscation on load (word/fonts).
+- H6: table styles via basedOn chain + tblLook/cnfStyle resolution.
