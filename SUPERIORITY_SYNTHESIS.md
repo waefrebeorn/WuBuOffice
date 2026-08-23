@@ -184,3 +184,8 @@ create/list/close/quit). Upgrade to superiority:
 - The slide deck can now be exchanged with PowerPoint/LibreOffice/Keynote --
   closes the "slides save only as line-based text" gap noted in the depth
   check.
+
+### Hop 13b (2026-08-22): H13 wired into the app
+- Slide view save() now assembles a real .pptx when the path ends .pptx
+  (previously only line-based text). open_doc_path already routed .pptx to
+  the slide view, so the full see->edit->save->exchange loop is closed.
