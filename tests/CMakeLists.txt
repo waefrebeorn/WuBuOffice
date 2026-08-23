@@ -497,3 +497,7 @@ target_include_directories(test_float_wrap PRIVATE ${CMAKE_SOURCE_DIR}/src)
 add_test(NAME float_wrap COMMAND test_float_wrap)
 
 add_test(NAME a11y_tree COMMAND ${CMAKE_SOURCE_DIR}/tests/test_a11y_tree.sh)
+
+add_executable(test_odttf test_odttf.c)
+target_link_libraries(test_odttf PRIVATE wubufont wubuzip m)
+add_test(NAME odttf COMMAND test_odttf)

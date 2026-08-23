@@ -27,6 +27,12 @@ Font *font_open_owned(const uint8_t *data, size_t size, int take_ownership) {
     const uint8_t *base = f->data;
     f->size = size;
     f->n_tables = rd16(base + 4);
+    /* robustness (H5): a decoded-but-corrupt embedded font must be rejected,
+     * never read past the blob. Directory must fit: 12 + n*16 bytes. */
+    if ((size_t)f->n_tables > (size - 12) / 16){
+        free(f);
+        return NULL;
+    }
     f->tags = xrealloc(NULL, f->n_tables * sizeof *f->tags);
     f->off  = xrealloc(NULL, f->n_tables * sizeof *f->off);
     f->len  = xrealloc(NULL, f->n_tables * sizeof *f->len);
