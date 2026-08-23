@@ -225,6 +225,15 @@ int wubumodel_node_float_side(const wubumodel_node *n){ return n?n->float_side:0
 int wubumodel_node_float_wrap(const wubumodel_node *n){ return n?n->float_wrap:0; }
 int wubumodel_node_float_w(const wubumodel_node *n){ return n?n->img_w:0; }
 int wubumodel_node_float_h(const wubumodel_node *n){ return n?n->img_h:0; }
+
+int wubumodel_node_set_span(wubumodel_node *n, int col_span, int vmerge){
+    if (!n) return -1;
+    n->col_span = col_span > 0 ? col_span : 1;
+    n->vmerge = vmerge;
+    return 0;
+}
+int wubumodel_node_col_span(const wubumodel_node *n){ return (n && n->col_span > 0) ? n->col_span : 1; }
+int wubumodel_node_vmerge(const wubumodel_node *n){ return n?n->vmerge:0; }
 int  wubumodel_node_set_tc(wubumodel_node *n, int t){ if(!n)return -1; n->tc=t; return 0; }
 int  wubumodel_node_tc(const wubumodel_node *n){ return n?(n->tc):0; }
 int  wubumodel_node_set_break(wubumodel_node *n, int b){ if(!n)return -1; n->brk=b; return 0; }

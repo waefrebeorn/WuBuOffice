@@ -505,3 +505,7 @@ add_test(NAME odttf COMMAND test_odttf)
 add_executable(test_table_styles test_table_styles.c)
 target_link_libraries(test_table_styles PRIVATE wubuoxml wubuxml)
 add_test(NAME table_styles COMMAND test_table_styles)
+
+add_executable(test_docx_cell_merge test_docx_cell_merge.c)
+target_link_libraries(test_docx_cell_merge PRIVATE wubuoxml wubumodel wubuxml)
+add_test(NAME docx_cell_merge COMMAND test_docx_cell_merge)

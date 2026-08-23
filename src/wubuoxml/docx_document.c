@@ -170,6 +170,35 @@ static int on_event(wubuxml_event evt, const wubuxml_info *info, void *user) {
         return 0;
     }
 
+    /* ---- H6b: merged cells (w:gridSpan / w:vMerge inside w:tcPr) ----
+     * tcPr is swallowed by the property-wrapper rule below; intercept these
+     * two first so the open CELL records its span geometry. */
+    if (evt == WUBUXML_EVT_START && c->sp > 0
+        && wubumodel_node_kind(top(c)) == WUBUMODEL_CELL){
+        if (!strcmp(info->name, "w:gridSpan") || !strcmp(info->name, "gridSpan")){
+            for (int i = 0; i < info->attr_count; i++)
+                if (!strcmp(info->attr_name[i], "w:val")
+                    || !strcmp(info->attr_name[i], "val")){
+                    int sp = atoi(info->attr_val[i]);
+                    if (sp > 1)
+                        wubumodel_node_set_span(top(c), sp,
+                                                wubumodel_node_vmerge(top(c)));
+                }
+            return 0;
+        }
+        if (!strcmp(info->name, "w:vMerge") || !strcmp(info->name, "vMerge")){
+            int vm = 2;   /* absent val = "continue" per spec */
+            for (int i = 0; i < info->attr_count; i++)
+                if ((!strcmp(info->attr_name[i], "w:val")
+                     || !strcmp(info->attr_name[i], "val"))
+                    && !strcmp(info->attr_val[i], "restart"))
+                    vm = 1;
+            wubumodel_node_set_span(top(c),
+                                    wubumodel_node_col_span(top(c)), vm);
+            return 0;
+        }
+    }
+
     /* entering capture: a namespaced element we do not model */
     if (evt == WUBUXML_EVT_START && strncmp(info->name, "w:", 2) == 0
         && !known_w(info->name + 2)){

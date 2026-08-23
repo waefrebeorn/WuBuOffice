@@ -126,6 +126,11 @@ int         wubumodel_node_float_side(const wubumodel_node *n);
 int         wubumodel_node_float_wrap(const wubumodel_node *n);
 int         wubumodel_node_float_w(const wubumodel_node *n);
 int         wubumodel_node_float_h(const wubumodel_node *n);
+
+/* ---- merged cells (H6b: w:gridSpan / w:vMerge) ---- */
+int wubumodel_node_set_span(wubumodel_node *n, int col_span, int vmerge);
+int wubumodel_node_col_span(const wubumodel_node *n);
+int wubumodel_node_vmerge(const wubumodel_node *n);   /* 0/1=restart/2=continue */
 /* ---- review / field / break metadata (DOC-56..65) ---- */
 int  wubumodel_node_set_author(wubumodel_node *n, const char *a);  /* COMMENT/TRACKCHANGE */
 const char *wubumodel_node_author(const wubumodel_node *n);
