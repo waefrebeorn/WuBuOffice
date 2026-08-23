@@ -330,3 +330,5 @@ all shipped and tested. The tracked goal list is complete; 189/189 green.
   (wubucell_sheet_dims) stopping at the last non-empty cell, or sheet edge
   when the row/column is empty.
 - cell_kbd ctest pins the engine queries (dims + edge lookups).
+
+### Hop 22 (2026-08-23): doc-view find upgraded -- icase + match counting
