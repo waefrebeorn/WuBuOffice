@@ -59,6 +59,13 @@ uint16_t font_cmap(const Font *f, uint32_t codepoint);
  * Returns -1 if the font has no hmtx/cmap. */
 int font_advance(const Font *f, uint32_t codepoint);
 
+/* Raw blob access (for subsetting/embedding): the font's data pointer and
+ * total size. Valid while the Font is alive. */
+const uint8_t *font_data(const Font *f);
+size_t         font_data_size(const Font *f);
+/* glyph id for a codepoint (like font_cmap but explicit about the id). */
+uint16_t       font_gid(const Font *f, uint32_t codepoint);
+
 /* Glyph outline as an SVG path 'd' string. Flips Y so the coordinate system
  * matches SVG (glyph space has +Y up). Returns a malloc'd string (caller
  * frees) or NULL on failure. contours are separated by Z. */

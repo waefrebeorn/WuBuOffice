@@ -42,10 +42,10 @@ int main(void){
     FILE *f = fopen("/tmp/wb_i18n.pdf", "rb");
     ck(f != NULL, "pdf written");
     fseek(f, 0, SEEK_END); long fsz = ftell(f); fseek(f, 0, SEEK_SET);
-    /* hop 16: FontFile2 is Flate-compressed -- expect ~55-60% of raw
-     * (raw DejaVuSans ~760KB -> ~430KB). Assert compression happened. */
-    ck(fsz > 300000 && fsz < 700000,
-       "compressed embedded font keeps PDF substantial but smaller");
+    /* N1: FontFile2 is now SUBSET to used codepoints + Flate-compressed.
+     * Full font was 760KB; subset for a small doc lands ~40-60KB. */
+    ck(fsz > 20000 && fsz < 300000,
+       "subset+compressed embedded font keeps PDF small");
     char buf[32768]; size_t n = fread(buf,1,sizeof buf-1,f); buf[n]=0; fclose(f);
     n = 0; (void)n;
 

@@ -40,3 +40,8 @@ int font_advance(const Font *f, uint32_t codepoint) {
     const uint8_t *hm = f->data + ho;
     return rd16(hm + (size_t)gi * 4);
 }
+
+/* ---- public: raw accessors (hop N1 subsetting support) ---- */
+const uint8_t *font_data(const Font *f){ return f ? f->data : NULL; }
+size_t         font_data_size(const Font *f){ return f ? f->size : 0; }
+uint16_t       font_gid(const Font *f, uint32_t cp){ return f ? font_cmap(f, cp) : 0; }

@@ -249,6 +249,7 @@ static int run_has_nonlatin(const char *t, size_t len){
  * Helvetica-Bold/Oblique), and per-run x/y survive. Falls back to the same
  * xref/PDF structure as the legacy path. */
 int wubuexp_pdf_geometry(const wubulayout_doc *L, const char *out){
+    uint32_t used_cps[512]; size_t n_used_cps = 0;
     FILE *f = fopen(out, "wb"); if (!f) return -1;
     int pg = wubulayout_page_count(L);
     const wubulayout_page_info *pi = wubulayout_page(L, 0);
@@ -276,6 +277,17 @@ int wubuexp_pdf_geometry(const wubulayout_doc *L, const char *out){
             const wubulayout_run *run = wubulayout_run_at(L, p, r);
             if (!run || !run->text || run->text_len == 0) continue;
             int uni = run_has_nonlatin(run->text, run->text_len);
+            /* N1: collect codepoints for font subsetting */
+            for (size_t k2 = 0; k2 < run->text_len && n_used_cps < 512; k2++){
+                const unsigned char *u = (const unsigned char*)run->text + k2;
+                uint32_t cp = 0; int adv2 = 1;
+                if ((*u & 0x80) == 0){ cp = *u; }
+                else if ((*u & 0xE0) == 0xC0){ cp = ((*u & 0x1F) << 6) | (u[1] & 0x3F); adv2 = 2; }
+                else if ((*u & 0xF0) == 0xE0){ cp = ((*u & 0x0F) << 12) | ((u[1] & 0x3F) << 6) | (u[2] & 0x3F); adv2 = 3; }
+                else if ((*u & 0xF8) == 0xF0){ cp = ((*u & 0x07) << 18) | ((u[1] & 0x3F) << 12) | ((u[2] & 0x3F) << 6) | (u[3] & 0x3F); adv2 = 4; }
+                if (cp && n_used_cps < 512) used_cps[n_used_cps++] = cp;
+                if (adv2 > 1) k2 += adv2 - 1;
+            }
             /* F4 = Type0 Identity-H for non-Latin runs: correct text layer
              * for extraction/search; viewers substitute glyphs until full
              * CIDFont embedding lands. */
@@ -392,6 +404,17 @@ int wubuexp_pdf_geometry(const wubulayout_doc *L, const char *out){
         ef = font_open_owned(fdata, flen, 0);   /* borrow; we own fdata */
         if (ef) have_font = 1;
         else { free(fdata); fdata = NULL; have_font = 0; }
+    }
+    /* N1: subset the font to the codepoints actually used -- typically an
+     * 8x size win over embedding the full program. Falls back to the full
+     * font if subsetting fails. */
+    if (have_font && used_cps && n_used_cps > 0){
+        uint8_t *sub = NULL; size_t sub_len = 0;
+        if (wubufont_subset(ef, used_cps, n_used_cps, &sub, &sub_len) == 0
+            && sub && sub_len < flen){
+            free(fdata);
+            fdata = sub; flen = sub_len;   /* ownership transfers */
+        } else if (sub) free(sub);
     }
     long descendant_id = font_base + nfonts + 1;
     long descriptor_id = descendant_id + 1;

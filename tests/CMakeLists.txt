@@ -533,3 +533,8 @@ add_test(NAME pptx_multi COMMAND test_pptx_multi)
 add_executable(test_pptx_app_roundtrip test_pptx_app_roundtrip.c)
 target_link_libraries(test_pptx_app_roundtrip PRIVATE wubuoxml wubuxml wubuzip)
 add_test(NAME pptx_app_roundtrip COMMAND test_pptx_app_roundtrip)
+
+add_executable(test_font_subset test_font_subset.c)
+target_link_libraries(test_font_subset PRIVATE wubufont wubuzip m)
+add_test(NAME font_subset COMMAND test_font_subset)
+set_tests_properties(font_subset PROPERTIES TIMEOUT 300)
