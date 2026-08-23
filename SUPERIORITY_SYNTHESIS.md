@@ -90,3 +90,11 @@ create/list/close/quit). Upgrade to superiority:
 - H4: shell accessibility tree over NDJSON (tabs/menus/buttons with roles+refs).
 - H5: embedded font de-obfuscation on load (word/fonts).
 - H6: table styles via basedOn chain + tblLook/cnfStyle resolution.
+
+### Hop 3 (2026-08-22): H4 shipped -- shell accessibility tree
+- wuos_shell_a11y.c: full UI as JSON (application > tablist/menubar/toolbar/
+  status) with stable refs ("tab:N", "menu:M:item:I", "tb:B") + shortcuts +
+  cmd ids. WUOS_A11Y_DUMP=<path> headless hook; ctest a11y_tree validates
+  JSON structure. Agents and screen readers share one semantic surface.
+- Live-verified: 7 tabs, 30+ menu items with shortcuts+cmd ids, toolbar
+  buttons all present in the dump.
