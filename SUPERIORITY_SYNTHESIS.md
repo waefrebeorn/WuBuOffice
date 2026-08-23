@@ -166,3 +166,11 @@ create/list/close/quit). Upgrade to superiority:
   CellV undo/redo stacks (depth 32), snapshot-before-commit on Enter, and
   Ctrl+Z / Ctrl+Y wired through the shell keymap with formula re-eval on
   restore so dependents stay correct after undo.
+
+### Hop 12 (2026-08-22): H6d shipped -- cnfStyle/tblStyle end-to-end
+- wubuoxml_docx_to_model_ex: document.xml + word/styles.xml parsed together.
+- tblPr (tblStyle id + tblLook flags) and per-cell cnfStyle captured; on
+  cell close the chain resolves via table_styles_resolve and the resolved
+  props land as direct style on the cell's runs (bold/center/shading).
+- model_io passes word/styles.xml through. E2E test tbl_styles_e2e proves
+  the header run carries resolved bold after a full ingest.
