@@ -41,7 +41,10 @@ int main(void){
 
     FILE *f = fopen("/tmp/wb_i18n.pdf", "rb");
     ck(f != NULL, "pdf written");
+    fseek(f, 0, SEEK_END); long fsz = ftell(f); fseek(f, 0, SEEK_SET);
+    ck(fsz > 700000, "embedded font makes the PDF substantial");
     char buf[32768]; size_t n = fread(buf,1,sizeof buf-1,f); buf[n]=0; fclose(f);
+    n = 0; (void)n;
 
     /* the non-Latin run must be a UTF-16BE hex string on font F4:
      * "Hello " is latin (F1 path), 世界 becomes hex 4E16 754C via F4. */
@@ -50,6 +53,9 @@ int main(void){
     ck(strstr(buf, "/Identity-H") != NULL, "Identity-H encoding present");
     ck(strstr(buf, "<4E16754C>") != NULL,
        "世界 encoded as UTF-16BE hex (4E16 754C)");
+    /* hop 15: real font program embedded for the Type0 font */
+    ck(strstr(buf, "/Subtype /CIDFontType2") != NULL, "CIDFontType2 descendant");
+    ck(strstr(buf, "/FontFile2") != NULL, "FontFile2 stream (embedded program)");
     ck(strstr(buf, "(Hello ) Tj") == NULL && strstr(buf, "(Hello") != NULL,
        "latin part still emitted");
 

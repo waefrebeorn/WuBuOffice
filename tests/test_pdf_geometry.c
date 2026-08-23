@@ -47,7 +47,10 @@ int main(void){
     FILE *f = fopen("/tmp/wb_geom.pdf", "rb");
     ck(f != NULL, "pdf file written");
     if (!f) return 1;
-    char buf[65536]; size_t n = fread(buf, 1, sizeof buf - 1, f); buf[n]=0; fclose(f);
+    fseek(f, 0, SEEK_END); long fsz = ftell(f); fseek(f, 0, SEEK_SET);
+    char *buf = malloc((size_t)fsz + 1);
+    size_t n = fread(buf, 1, (size_t)fsz, f); buf[n]=0; fclose(f);
+    (void)n;
 
     ck(strstr(buf, "%PDF-1.4") == buf, "valid PDF header");
     ck(strstr(buf, "/Helvetica-Bold") != NULL, "bold font resource present");
@@ -56,9 +59,11 @@ int main(void){
        "heading font size preserved (not flattened to 12)");
     ck(strstr(buf, "(Quarterly) Tj") != NULL && strstr(buf, "(Report) Tj") != NULL,
        "text content present (word-level runs)");
-    ck(strstr(buf, "%%EOF") != NULL, "PDF terminated");
+    ck(fsz > 100 && strstr(buf + fsz - 32, "%%EOF") != NULL,
+       "PDF terminated");   /* search the tail: binary font bytes contain NULs */
     ck(n > 500, "non-trivial output");
 
+    free(buf);
     wubumodel_doc_destroy(doc);
     fprintf(stderr, bad ? "PDF_GEOMETRY FAIL\n" : "PDF_GEOMETRY PASS\n");
     return bad ? 1 : 0;

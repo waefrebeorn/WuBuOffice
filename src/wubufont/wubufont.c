@@ -28,3 +28,15 @@
 #include "font_svg.inc"
 /* --- raw contour access + even-odd rasterizer (bitmap output) --- */
 #include "font_raster.inc"
+
+/* ---- public: advance width via hmtx (hop 15) ---- */
+int font_advance(const Font *f, uint32_t codepoint) {
+    if (!f) return -1;
+    size_t ho, hl;
+    if (!font_find_table(f, TAG('h','m','t','x'), &ho, &hl)) return -1;
+    uint16_t gi = font_cmap(f, codepoint);
+    uint16_t ng = font_glyph_count(f);
+    if (gi >= ng) return -1;
+    const uint8_t *hm = f->data + ho;
+    return rd16(hm + (size_t)gi * 4);
+}

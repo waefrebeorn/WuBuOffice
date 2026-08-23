@@ -55,6 +55,10 @@ char *font_name(const Font *f, uint16_t name_id);
  * returns 0 if not present. */
 uint16_t font_cmap(const Font *f, uint32_t codepoint);
 
+/* Advance width (font units) for a Unicode code point via 'hmtx'.
+ * Returns -1 if the font has no hmtx/cmap. */
+int font_advance(const Font *f, uint32_t codepoint);
+
 /* Glyph outline as an SVG path 'd' string. Flips Y so the coordinate system
  * matches SVG (glyph space has +Y up). Returns a malloc'd string (caller
  * frees) or NULL on failure. contours are separated by Z. */

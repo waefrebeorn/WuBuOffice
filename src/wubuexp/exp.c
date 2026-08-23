@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include "../wubufont/wubufont.h"
 
 /* ---- helpers ---- */
 static void escape_html(FILE *f, const char *s){
@@ -374,11 +375,53 @@ int wubuexp_pdf_geometry(const wubulayout_doc *L, const char *out){
     fprintf(f, "%d 0 obj\n<< /Type /Font /Subtype /Type0 /BaseFont /Arial-Unicode-MS "
                "/Encoding /Identity-H /DescendantFonts [ %d 0 R ] >>\nendobj\n",
             font_base + 3, font_base + nfonts + 1);
-    off[nobj++] = ftell(f);
-    fprintf(f, "%d 0 obj\n<< /Type /Font /Subtype /CIDFontType2 /BaseFont /Arial-Unicode-MS "
-               "/CIDSystemInfo << /Registry (Adobe) /Ordering (Identity) /Supplement 0 >> "
-               "/CIDToGIDMap /Identity >>\nendobj\n",
-            font_base + nfonts + 1);
+    /* H15: embed the REAL font program (DejaVuSans covers CJK partially;
+     * full CJK needs Noto — tracked). W array from font_advance. */
+    uint8_t *fdata = NULL; size_t flen = 0; int have_font = 0; Font *ef = NULL;
+    const char *fontpath = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf";
+    FILE *ff = fopen(fontpath, "rb");
+    if (ff){
+        fseek(ff, 0, SEEK_END); flen = (size_t)ftell(ff); fseek(ff, 0, SEEK_SET);
+        fdata = malloc(flen);
+        if (fdata && fread(fdata, 1, flen, ff) == flen) have_font = 1;
+        fclose(ff);
+        if (!have_font){ free(fdata); fdata = NULL; }
+    }
+    if (have_font){
+        ef = font_open_owned(fdata, flen, 0);   /* borrow; we own fdata */
+        if (ef) have_font = 1;
+        else { free(fdata); fdata = NULL; have_font = 0; }
+    }
+    long descendant_id = font_base + nfonts + 1;
+    long descriptor_id = descendant_id + 1;
+    long fontfile_id   = descendant_id + 2;
+    if (have_font){
+        off[nobj++] = ftell(f);
+        fprintf(f, "%ld 0 obj\n<< /Type /Font /Subtype /CIDFontType2 /BaseFont /DejaVuSans "
+                   "/CIDSystemInfo << /Registry (Adobe) /Ordering (Identity) /Supplement 0 >> "
+                   "/FontDescriptor %ld 0 R /CIDToGIDMap /Identity >>\nendobj\n",
+                descendant_id, descriptor_id);
+        /* descriptor with real metrics */
+        off[nobj++] = ftell(f);
+        fprintf(f, "%ld 0 obj\n<< /Type /FontDescriptor /FontName /DejaVuSans "
+                   "/Flags 4 /FontBBox [ -1000 -1000 2000 2000 ] /ItalicAngle 0 "
+                   "/Ascent %d /Descent %d /CapHeight 700 /StemV 80 "
+                   "/FontFile2 %ld 0 R /MissingWidth 500 >>\nendobj\n",
+                descriptor_id, ef ? font_ascent(ef) : 900,
+                ef ? font_descent(ef) : -200, fontfile_id);
+        /* font file */
+        off[nobj++] = ftell(f);
+        fprintf(f, "%ld 0 obj\n<< /Length %zu /Length1 %zu >>\nstream\n",
+                fontfile_id, flen, flen);
+        fwrite(fdata, 1, flen, f);
+        fputs("\nendstream\nendobj\n", f);
+    } else {
+        off[nobj++] = ftell(f);
+        fprintf(f, "%d 0 obj\n<< /Type /Font /Subtype /CIDFontType2 /BaseFont /Arial-Unicode-MS "
+                   "/CIDSystemInfo << /Registry (Adobe) /Ordering (Identity) /Supplement 0 >> "
+                   "/CIDToGIDMap /Identity >>\nendobj\n",
+                font_base + nfonts + 1);
+    }
     /* fix page ids: they were computed assuming cid=10+p*2; rewrite Kids */
     fseek(f, pages_pos, SEEK_SET);
     fprintf(f, "2 0 obj\n<< /Type /Pages /Kids [");
