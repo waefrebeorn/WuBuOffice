@@ -260,7 +260,10 @@ int wubumodel_load_docx(const char *path, wubumodel_doc **out) {
     }
 
     /* Structural map: document.xml -> SECTION/(PARAGRAPH|TABLE)/... */
-    if (wubuoxml_docx_to_model(doc->bytes, doc->len, d) != 0) {
+    const wubuoxml_part *styles = wubuoxml_part_find(&pkg, "word/styles.xml");
+    if (wubuoxml_docx_to_model_ex(doc->bytes, doc->len,
+                                  styles ? styles->bytes : NULL,
+                                  styles ? styles->len : 0, d) != 0) {
         wubumodel_doc_destroy(d);
         free(data);
         wubuoxml_free(&pkg);

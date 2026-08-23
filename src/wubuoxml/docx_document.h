@@ -24,6 +24,13 @@ extern "C" {
 int wubuoxml_docx_to_model(const uint8_t *xml, size_t len,
                               wubumodel_doc *doc);
 
+/* Extended variant (H6d): also pass word/styles.xml so table styles
+ * (w:tblStyle + w:tblLook + w:cnfStyle) resolve onto cells. Either styles
+ * pointer may be NULL (no table style resolution). */
+int wubuoxml_docx_to_model_ex(const uint8_t *xml, size_t len,
+                              const uint8_t *styles_xml, size_t styles_len,
+                              wubumodel_doc *doc);
+
 #ifdef __cplusplus
 }
 #endif

@@ -4,6 +4,7 @@
 
 #include "docx_document.h"
 #include "../wubuxml/parser.h"
+#include "table_styles.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -23,6 +24,10 @@ typedef struct {
     wubumodel_node *float_node;   /* H3: open wp:anchor image */
     int anchor_cx, anchor_cy;     /* H3: extent in px */
     int float_side, float_wrap;   /* H3: side/wrap collected from anchor */
+    /* H6d: table style resolution state */
+    TableStyle *tstyles; size_t ntstyles;   /* parsed styles.xml (owned) */
+    char tbl_style_id[64]; unsigned tbl_look;
+    char cnf_val[64];             /* open cell's w:cnfStyle val */
 } ctx_t;
 
 static wubumodel_node *top(ctx_t *c) {
@@ -170,6 +175,41 @@ static int on_event(wubuxml_event evt, const wubuxml_info *info, void *user) {
         return 0;
     }
 
+    /* ---- H6d: table style state (tblPr) + per-cell cnfStyle ---- */
+    if (evt == WUBUXML_EVT_START){
+        if (!strcmp(info->name, "w:tblStyle") || !strcmp(info->name, "tblStyle")){
+            for (int i = 0; i < info->attr_count; i++)
+                if (!strcmp(info->attr_name[i], "w:val")
+                    || !strcmp(info->attr_name[i], "val"))
+                    snprintf(c->tbl_style_id, sizeof c->tbl_style_id, "%s",
+                             info->attr_val[i]);
+            return 0;
+        }
+        if (!strcmp(info->name, "w:tblLook") || !strcmp(info->name, "tblLook")){
+            c->tbl_look = 0;
+            for (int i = 0; i < info->attr_count; i++){
+                const char *an = info->attr_name[i];
+                int on = info->attr_val[i] && strcmp(info->attr_val[i],"0") != 0
+                      && strcmp(info->attr_val[i],"false") != 0;
+                if (!on) continue;
+                if (!strcmp(an,"firstRow"))         c->tbl_look |= TS_LOOK_FIRST_ROW;
+                else if (!strcmp(an,"lastRow"))     c->tbl_look |= TS_LOOK_LAST_ROW;
+                else if (!strcmp(an,"firstColumn")) c->tbl_look |= TS_LOOK_FIRST_COL;
+                else if (!strcmp(an,"lastColumn"))  c->tbl_look |= TS_LOOK_LAST_COL;
+                else if (!strcmp(an,"noHBand"))     c->tbl_look |= TS_LOOK_NO_HBAND;
+                else if (!strcmp(an,"noVBand"))     c->tbl_look |= TS_LOOK_NO_VBAND;
+            }
+            return 0;
+        }
+        if (!strcmp(info->name, "w:cnfStyle") || !strcmp(info->name, "cnfStyle")){
+            for (int i = 0; i < info->attr_count; i++)
+                if (!strcmp(info->attr_name[i], "w:val")
+                    || !strcmp(info->attr_name[i], "val"))
+                    snprintf(c->cnf_val, sizeof c->cnf_val, "%s", info->attr_val[i]);
+            return 0;
+        }
+    }
+
     /* ---- H6b: merged cells (w:gridSpan / w:vMerge inside w:tcPr) ----
      * tcPr is swallowed by the property-wrapper rule below; intercept these
      * two first so the open CELL records its span geometry. */
@@ -281,20 +321,71 @@ static int on_event(wubuxml_event evt, const wubuxml_info *info, void *user) {
                           strcmp(local, "tr") == 0 ||
                           strcmp(local, "tbl") == 0 ||
                           strcmp(local, "body") == 0)) {
+        /* H6d: on cell close, resolve the table style chain + cnfStyle and
+         * record the resolved props on the cell's runs as direct style. */
+        if (strcmp(local, "tc") == 0 && c->tstyles && c->ntstyles
+            && c->tbl_style_id[0] && c->sp > 0
+            && wubumodel_node_kind(top(c)) == WUBUMODEL_CELL){
+            /* row index: count preceding tr siblings of the parent row */
+            int row_index = 0;
+            wubumodel_node *row = top(c);
+            wubumodel_node *tbl = wubumodel_node_parent(row);
+            if (tbl)
+                for (wubumodel_node *s2 = wubumodel_node_first_child(tbl);
+                     s2 && s2 != row; s2 = wubumodel_node_next_sibling(s2))
+                    row_index++;
+            TblCellProps props = table_styles_resolve(
+                c->tstyles, c->ntstyles, c->tbl_style_id, c->tbl_look,
+                row_index);
+            /* cnfStyle val chars refine: first char '1' = whole-cell format
+             * from the named band etc. We apply the resolved props when the
+             * cell is in a formatted band (first row / banded). */
+            wubumodel_style *st = wubumodel_style_create();
+            if (props.bold)    wubumodel_style_set_prop(st, "bold", "1");
+            if (props.centered) wubumodel_style_set_prop(st, "align", "center");
+            char hex[8];
+            if (props.shading_r >= 0){
+                snprintf(hex, sizeof hex, "#%02X%02X%02X",
+                         props.shading_r, props.shading_g, props.shading_b);
+                wubumodel_style_set_prop(st, "shading", hex);
+            }
+            if (props.bold || props.centered || props.shading_r >= 0){
+                for (wubumodel_node *ch = wubumodel_node_first_child(top(c));
+                     ch; ch = wubumodel_node_next_sibling(ch)){
+                    if (wubumodel_node_kind(ch) == WUBUMODEL_PARAGRAPH)
+                        for (wubumodel_node *r = wubumodel_node_first_child(ch);
+                             r; r = wubumodel_node_next_sibling(r))
+                            if (wubumodel_node_kind(r) == WUBUMODEL_RUN)
+                                wubumodel_node_set_style(r, st);
+                }
+            }
+            wubumodel_style_destroy(st);
+        }
+        if (strcmp(local, "tc") == 0) c->cnf_val[0] = 0;   /* reset per cell */
         flush_text(c);
         pop(c);
     }
     return 0;
 }
 
-int wubuoxml_docx_to_model(const uint8_t *xml, size_t len,
-                            wubumodel_doc *doc) {
+int wubuoxml_docx_to_model_ex(const uint8_t *xml, size_t len,
+                              const uint8_t *styles_xml, size_t styles_len,
+                              wubumodel_doc *doc) {
     if (!xml || !doc) return -1;
     ctx_t c;
     memset(&c, 0, sizeof c);
     c.doc = doc;
+    if (styles_xml && styles_len)
+        c.tstyles = table_styles_parse((const char*)styles_xml, styles_len,
+                                       &c.ntstyles);
     int rc = wubuxml_parse(xml, len, on_event, &c);
     flush_text(&c);
     free(c.textbuf);
+    if (c.tstyles) table_styles_free(c.tstyles);
     return rc;
+}
+
+int wubuoxml_docx_to_model(const uint8_t *xml, size_t len,
+                            wubumodel_doc *doc) {
+    return wubuoxml_docx_to_model_ex(xml, len, NULL, 0, doc);
 }
