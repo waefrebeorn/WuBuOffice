@@ -5,10 +5,10 @@
  * the WS11 design principle "I/O is separate from the canonical model". */
 #define _POSIX_C_SOURCE 200809L
 #include "model_internal.h"
-#include "../wubuoxml/package.h"
-#include "../wubuoxml/reader.h"
-#include "../wubuoxml/docx_text.h"
-#include "../wubuoxml/docx_document.h"
+#include "../../src/wubuoxml/package.h"
+#include "../../src/wubuoxml/reader.h"
+#include "../../src/wubuoxml/docx_text.h"
+#include "../../src/wubuoxml/docx_document.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

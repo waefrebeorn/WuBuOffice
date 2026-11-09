@@ -1,7 +1,7 @@
 #ifndef WUBUWORD_ASSEMBLE_H
 #define WUBUWORD_ASSEMBLE_H
 
-#include "../wubuoxml/package.h"
+#include "../../src/wubuoxml/package.h"
 #include "word.h"
 
 /* Assemble a complete .docx package from a pre-rendered word/document.xml

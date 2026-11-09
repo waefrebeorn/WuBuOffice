@@ -1,7 +1,7 @@
 #ifndef WUBUWORD_WORD_H
 #define WUBUWORD_WORD_H
 
-#include "../wubuoxml/package.h"
+#include "../../src/wubuoxml/package.h"
 #include "../wubuxml/xml.h"
 #include <stddef.h>
 

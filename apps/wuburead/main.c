@@ -1,5 +1,5 @@
-#include "../wubuoxml/reader.h"
-#include "../wubuoxml/docx_text.h"
+#include "../../src/wubuoxml/reader.h"
+#include "../../src/wubuoxml/docx_text.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

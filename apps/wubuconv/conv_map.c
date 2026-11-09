@@ -41,7 +41,7 @@ enum { NONE, TEXT, SHEET, SHOW };
 #include "../wubulegacy/legacy.h"
 #include "../wubupdf/pdf.h"
 #include "../wuburead/readers.h"
-#include "../wubuoxml/reader.h"
+#include "../../src/wubuoxml/reader.h"
 #include "../wubuxml/parser.h"
 
 static char *extof(const char *path) {

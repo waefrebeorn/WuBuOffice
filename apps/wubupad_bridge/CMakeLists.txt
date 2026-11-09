@@ -1,15 +1,15 @@
 # wubupad_bridge: cross-repo reuse of WuBuPad's from-scratch editor core.
-# Locate the sibling WuBuPad build (../WuBuPad/build) and its headers
-# (../WuBuPad/src). If WuBuPad has been built, this gives WuBuOffice a fast,
+# Locate the sibling WuBuPad build (../wubupad/build) and its headers
+# (../wubupad/src). If WuBuPad has been built, this gives WuBuOffice a fast,
 # tested editing engine (Doc + DONE search) without duplicating it.
 
-find_library(WUBUPAD_UI_LIB     NAMES wubupad_ui    PATHS ${CMAKE_SOURCE_DIR}/../WuBuPad/build NO_DEFAULT_PATH)
-find_library(WUBUPAD_CORE_LIB   NAMES wubupad_core  PATHS ${CMAKE_SOURCE_DIR}/../WuBuPad/build NO_DEFAULT_PATH)
-find_library(WUBUPAD_ATOM_LIB   NAMES wubupad_atom  PATHS ${CMAKE_SOURCE_DIR}/../WuBuPad/build NO_DEFAULT_PATH)
-find_path(WUBUPAD_INC          NAMES doc.h         PATHS ${CMAKE_SOURCE_DIR}/../WuBuPad/src NO_DEFAULT_PATH)
+find_library(WUBUPAD_UI_LIB     NAMES wubupad_ui    PATHS ${CMAKE_SOURCE_DIR}/../wubupad/build NO_DEFAULT_PATH)
+find_library(WUBUPAD_CORE_LIB   NAMES wubupad_core  PATHS ${CMAKE_SOURCE_DIR}/../wubupad/build NO_DEFAULT_PATH)
+find_library(WUBUPAD_ATOM_LIB   NAMES wubupad_atom  PATHS ${CMAKE_SOURCE_DIR}/../wubupad/build NO_DEFAULT_PATH)
+find_path(WUBUPAD_INC          NAMES doc.h         PATHS ${CMAKE_SOURCE_DIR}/../wubupad/src NO_DEFAULT_PATH)
 
 if(NOT WUBUPAD_UI_LIB OR NOT WUBUPAD_CORE_LIB OR NOT WUBUPAD_ATOM_LIB OR NOT WUBUPAD_INC)
-  message(STATUS "wubupad_bridge: WuBuPad not built at ../WuBuPad/build -- bridge DISABLED (run WuBuPad build first).")
+  message(STATUS "wubupad_bridge: WuBuPad not built at ../wubupad/build -- bridge DISABLED (run WuBuPad build first).")
   return()
 endif()
 

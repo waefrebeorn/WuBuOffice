@@ -1,7 +1,7 @@
 #include "assemble.h"
 #include "word.h"
 #include "word_internal.h"
-#include "../wubuoxml/package.h"
+#include "../../src/wubuoxml/package.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

@@ -1,7 +1,7 @@
 #ifndef WUBUCELL_CELL_H
 #define WUBUCELL_CELL_H
 
-#include "../wubuoxml/package.h"
+#include "../../src/wubuoxml/package.h"
 #include <stddef.h>
 
 #ifdef __cplusplus

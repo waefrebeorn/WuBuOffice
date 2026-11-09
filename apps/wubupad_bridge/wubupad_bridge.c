@@ -7,7 +7,7 @@
  * Clean C11. See PLAN_BLITZ Phase E. */
 #include "wubupad_bridge.h"
 
-/* WuBuPad headers live in the sibling repo (../WuBuPad/src). */
+/* WuBuPad headers live in the sibling repo (../wubupad/src). */
 #include "doc.h"
 #include "ui/ui.h"
 #include "ui/ui_headless.h"

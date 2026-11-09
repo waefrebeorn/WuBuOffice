@@ -1,7 +1,7 @@
 #ifndef WUBUSSHOW_SHOW_H
 #define WUBUSSHOW_SHOW_H
 
-#include "../wubuoxml/package.h"
+#include "../../src/wubuoxml/package.h"
 #include <stddef.h>
 
 #ifdef __cplusplus

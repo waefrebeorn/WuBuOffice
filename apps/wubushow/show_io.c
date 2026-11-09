@@ -6,7 +6,7 @@
  * Clean-room, from-scratch (SLERM): no third-party spreadsheet code. */
 
 #include "show_internal.h"
-#include "../wubuoxml/package.h"
+#include "../../src/wubuoxml/package.h"
 
 int wubushow_assemble(wubushow_pres *p, const char *outpath) {
     FILE *out = fopen(outpath, "wb");
