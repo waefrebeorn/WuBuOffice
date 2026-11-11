@@ -10,6 +10,8 @@ version from scratch — not a fork, not a vendored copy, not a
 thin wrapper. Every byte is written by us, zero third-party code
 compiled or linked.
 
+> **~WuBu~ AGI** — one system, many repositories. This is the **office suite**. The Body is [WuBuOS](https://github.com/waefrebeorn/WuBuOS), the Brain wubuwizard, the Compiler WuBuNOS.
+
 ## Table of contents
 
 1. [Quick start](#quick-start)
