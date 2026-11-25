@@ -42,3 +42,8 @@ build-perf/
 build-asan2/
 build-plugin/
 docs/refs/
+*.d
+*.o
+*.a
+build/
+*.bin

@@ -353,3 +353,15 @@ See the [LICENSE](LICENSE) file for the full license text.
 
 The Waefrebeorn Umbrella License is a custom source-available license.
 It is not OSI-approved and not FSF-approved.
+
+## Standard
+
+- **Layer:** wubuoffice app suite
+- **Build:** `built by the parent: no Makefile of its own`
+- **Verify:** `no gate yet -- same as wubupad`
+- **Docs:** `docs/` in this repo
+- **Provenance:** own C11; no vendored third-party source without a note
+
+Part of the ~WuBu~ tree: this repository is held to the same conventions as the
+parent. See the parent's `docs/compendium/04-roadmap/submodule-standard.md` for the
+checklist and why each item exists.
